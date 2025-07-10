@@ -51,7 +51,7 @@ command to run if program contains helper info
 
 ## Authors
 
-* Angela Su
+* Qian (Angela) Su
 * Alex/Qinyue Li
 * Ina Wang
 * Sophia Lin
