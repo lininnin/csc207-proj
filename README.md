@@ -1,1 +1,1 @@
-# csc207-proj
+# csc207 Project - MindTrack 
