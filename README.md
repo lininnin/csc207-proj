@@ -60,6 +60,6 @@ command to run if program contains helper info
 
 * 0.2
     * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
+    * See [commit change]()
 * 0.1
     * Initial Release

@@ -1,12 +1,10 @@
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
-public class task{
-    info info;
+public class task extends info {
     boolean isComplete;
-    LocalDataTime completedDateTime;
-    beginAndDueDates beginAndDueDate;
+    LocalDateTime completedDateTime;
     boolean overDue;
+    priority taskPriority;
 
     enum priority {
         LOW,
@@ -14,25 +12,33 @@ public class task{
         HIGH
     }
 
-    public void creatTask(info info, LocalDateTime time){
-        this.info = info;
+    public task(info info, LocalDateTime beginDate, LocalDateTime dueDate) {
+        super(info.name, info.description, info.category);
+        this.id = info.id;
         this.isComplete = false;
-        completeData = null;
-        beginAndDueDate.setBeginDate(time);
-        overDue = false;
+        this.completedDateTime = null;
+        this.beginDate = beginDate;
+        this.dueDate = LocalDate.now();
+        this.overDue = false;
+        this.taskPriority = priority.MEDIUM; // default priority
     }
 
-    public void setOverDue(LocalDateTime time){
-        if completedDateTime.isBefore(time){
+    public void setOverDue() {
+        if (dueDate != null && LocalDateTime.now().isAfter(dueDate) && !isComplete) {
             overDue = true;
         }
     }
 
-    public void completeData(){ // waiting for input type
+    public void completeTask(LocalDateTime completionTime) {
         this.isComplete = true;
+        this.completedDateTime = completionTime;
     }
 
+    public void setPriority(priority p) {
+        this.taskPriority = p;
+    }
 
-
-
+    public priority getPriority() {
+        return this.taskPriority;
+    }
 }
