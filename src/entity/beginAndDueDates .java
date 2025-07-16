@@ -1,25 +1,27 @@
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-public class beginAndDueDates {
-    protected LocalDateTime beginDate;
-    protected LocalDateTime dueDate;
+public class BeginAndDueDates {
+    private LocalDate beginDate;
+    private LocalDate dueDate;
 
-    public LocalDateTime setBeginDate() {
-        this.beginDate = LocalDateTime.now();
-        return this.beginDate;
-    }
-
-    public LocalDateTime setDueDate(LocalDateTime dueDate) {
+    public BeginAndDueDates(LocalDate beginDate, LocalDate dueDate) {
+        this.beginDate = beginDate;
         this.dueDate = dueDate;
-        return this.dueDate;
     }
 
-    public LocalDateTime getBeginDate() {
+    public LocalDate getBeginDate() {
         return beginDate;
     }
 
-    public LocalDateTime getDueDate() {
+    public void setBeginDate(LocalDate beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public LocalDate getDueDate() {
         return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 }
