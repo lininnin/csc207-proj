@@ -25,4 +25,3 @@ public class BeginAndDueDates {
         this.dueDate = dueDate;
     }
 }
-

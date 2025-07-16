@@ -115,4 +115,3 @@ public class Goal {
         return currentProgress;
     }
 }
-
