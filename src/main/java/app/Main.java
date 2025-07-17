@@ -1,8 +1,7 @@
 package app;
 
-import interface_adapter.persistence.InMemoryDailyLogRepository;
-import interface_adapter.persistence.InMemoryTaskRepository;
-import entity.Task;
+import data_access.InMemoryDailyLogRepository;
+import data_access.InMemoryTaskRepository;
 import interface_adapter.controller.*;
 import interface_adapter.presenter.*;
 import use_case.create_task.*;
