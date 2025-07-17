@@ -1,4 +1,4 @@
-package interface_adapter.persistence;
+package data_access;
 
 import entity.Task;
 import use_case.repository.TaskRepository;

@@ -1,4 +1,4 @@
-package interface_adapter.persistence;
+package data_access;
 
 import entity.DailyLog;
 import use_case.repository.DailyLogRepository;
