@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 /**
  * Represents a task that can be scheduled, prioritized, and marked as complete.
  * Each task is associated with Info metadata and a time range.
- *
  * This entity follows Clean Architecture principles and is immutable except for
  * completion status which represents a valid state transition.
  */

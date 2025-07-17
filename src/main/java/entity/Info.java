@@ -44,7 +44,10 @@ public class Info {
         return name;
     }
 
-    /** @return The description, if available */
+    /** @return The description, if available
+     *
+     * TODO: Will be used in task detail views and tooltips
+     */
     public String getDescription() {
         return description;
     }
@@ -54,7 +57,10 @@ public class Info {
         return category;
     }
 
-    /** @return The date this Info was created */
+    /** @return The date this Info was created
+     *
+     * TODO: Will be used for audit logs and sorting tasks by creation date
+     */
     public LocalDate getCreatedDate() {
         return createdDate;
     }

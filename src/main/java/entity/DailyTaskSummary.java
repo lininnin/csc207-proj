@@ -81,6 +81,7 @@ public class DailyTaskSummary {
     }
 
     // Getters
+    // TODO: These getters will be used in Angela's analytics story for data visualization
     public String getId() {
         return id;
     }
