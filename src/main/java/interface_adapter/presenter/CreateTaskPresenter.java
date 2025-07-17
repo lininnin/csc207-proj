@@ -19,7 +19,6 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
     public void presentSuccess(CreateTaskOutputData outputData) {
         // Update view model with success message
         taskViewModel.setMessage("Success: " + outputData.getMessage());
-        taskViewModel.setLastCreatedTaskId(outputData.getTaskId());
         taskViewModel.refreshTaskLists();
     }
 
