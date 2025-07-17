@@ -1,3 +1,5 @@
+package entity;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -5,7 +7,7 @@ import java.util.List;
 /**
  * Organizes tasks and goals into "Completed Today" and "To Do Today" lists.
  */
-public class DailyTaskOrganizer {
+public class DailyTaskSummary {
     private final List<Task> completedToday = new ArrayList<>();
     private final List<Task> toDoToday = new ArrayList<>();
     private final LocalDate today = LocalDate.now();
@@ -18,7 +20,8 @@ public class DailyTaskOrganizer {
     public void process(Object object) {
         if (object instanceof Task task) {
             handleTask(task);
-        } else if (object instanceof Goal goal) {
+        }
+        else if (object instanceof Goal goal) {
             handleTask(goal.getTargetTask());
         }
     }
@@ -49,4 +52,3 @@ public class DailyTaskOrganizer {
         return toDoToday;
     }
 }
-
