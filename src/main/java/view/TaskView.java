@@ -26,7 +26,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     private JComboBox<String> priorityCombo;
     private JTextField beginDateField;
     private JTextField dueDateField;
-    private JButton createButton;
+
 
     private DefaultListModel<TaskListItem> todayTasksModel;
     private DefaultListModel<TaskListItem> completedTasksModel;
@@ -65,6 +65,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     }
 
     private JPanel createTaskCreationPanel() {
+        JButton createButton;
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Create New Task"));
 
@@ -136,6 +137,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         todayTasksModel = new DefaultListModel<>();
         JList<TaskListItem> todayList = new JList<>(todayTasksModel);
         todayList.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     TaskListItem item = todayList.getSelectedValue();
