@@ -77,7 +77,7 @@ public class Goal {
      * @return true if current progress is greater than or equal to frequency; false otherwise
      */
     public boolean isGoalAchieved() {
-        return currentProgress >= frequency;
+        return getCurrentProgress() >= frequency;
     }
 
     /**
@@ -86,7 +86,7 @@ public class Goal {
      * @return A string like "Progress: 2/3"
      */
     public String getGoalStatus() {
-        return "Progress: " + currentProgress + "/" + frequency;
+        return "Progress: " + getCurrentProgress() + "/" + frequency;
     }
 
     /**

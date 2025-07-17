@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  *
  * This entity follows Clean Architecture principles and is immutable except for
  * completion status which represents a valid state transition.
- * /
+ */
 public class Task {
     private final Info info;
     private final BeginAndDueDates beginAndDueDates;
@@ -90,10 +90,5 @@ public class Task {
     /** @return Task priority */
     public Priority getTaskPriority() {
         return taskPriority;
-    }
-
-    /** @param priority The new task priority */
-    public void setTaskPriority(Priority priority) {
-        this.taskPriority = priority;
     }
 }
