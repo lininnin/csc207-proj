@@ -1,4 +1,4 @@
-package use_case;
+package use_case.mark_task_complete;
 
 /**
  * Output boundary interface for marking task complete.

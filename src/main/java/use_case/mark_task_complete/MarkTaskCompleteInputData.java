@@ -1,4 +1,4 @@
-package use_case;
+package use_case.mark_task_complete;
 
 /**
  * Input data for marking task complete.

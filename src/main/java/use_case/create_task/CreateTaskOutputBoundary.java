@@ -1,4 +1,4 @@
-package use_case;
+package use_case.create_task;
 
 /**
  * Output boundary interface for task creation.

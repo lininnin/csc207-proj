@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.controller;
 
-import use_case.CreateTaskUseCase;
-import use_case.CreateTaskInputData;
+import use_case.create_task.CreateTaskUseCase;
+import use_case.create_task.CreateTaskInputData;
 import entity.Task;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

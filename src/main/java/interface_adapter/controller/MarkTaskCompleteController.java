@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.controller;
 
-import use_case.MarkTaskCompleteUseCase;
-import use_case.MarkTaskCompleteInputData;
+import use_case.mark_task_complete.MarkTaskCompleteUseCase;
+import use_case.mark_task_complete.MarkTaskCompleteInputData;
 
 /**
  * Controller for marking tasks as complete.

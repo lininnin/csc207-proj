@@ -1,9 +1,8 @@
-package interface_adapter;
+package interface_adapter.presenter;
 
-import use_case.CreateTaskOutputBoundary;
-import use_case.CreateTaskOutputData;
+import use_case.create_task.CreateTaskOutputBoundary;
+import use_case.create_task.CreateTaskOutputData;
 import view.TaskViewModel;
-import view.TaskViewModelUpdateListener;
 
 /**
  * Presenter for task creation.

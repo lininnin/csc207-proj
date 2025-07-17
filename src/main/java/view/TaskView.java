@@ -1,8 +1,8 @@
 package view;
 
 import entity.Task;
-import interface_adapter.CreateTaskController;
-import interface_adapter.MarkTaskCompleteController;
+import interface_adapter.controller.CreateTaskController;
+import interface_adapter.controller.MarkTaskCompleteController;
 
 import javax.swing.*;
 import java.awt.*;

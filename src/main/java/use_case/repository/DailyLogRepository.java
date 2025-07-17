@@ -1,4 +1,4 @@
-package use_case;
+package use_case.repository;
 
 import entity.DailyLog;
 import java.time.LocalDate;

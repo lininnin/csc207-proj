@@ -1,7 +1,7 @@
-package data_access;
+package interface_adapter.persistence;
 
 import entity.Task;
-import use_case.TaskRepository;
+import use_case.repository.TaskRepository;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;

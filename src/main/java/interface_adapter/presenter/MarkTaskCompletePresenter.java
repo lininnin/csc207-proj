@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.presenter;
 
-import use_case.MarkTaskCompleteOutputBoundary;
-import use_case.MarkTaskCompleteOutputData;
+import use_case.mark_task_complete.MarkTaskCompleteOutputBoundary;
+import use_case.mark_task_complete.MarkTaskCompleteOutputData;
 import view.TaskViewModel;
 import java.time.format.DateTimeFormatter;
 

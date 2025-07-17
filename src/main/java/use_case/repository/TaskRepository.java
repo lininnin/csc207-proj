@@ -1,4 +1,4 @@
-package use_case;
+package use_case.repository;
 
 import entity.Task;
 import java.util.List;

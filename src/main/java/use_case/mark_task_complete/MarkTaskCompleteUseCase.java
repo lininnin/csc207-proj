@@ -1,7 +1,10 @@
-package use_case;
+package use_case.mark_task_complete;
 
 import entity.Task;
 import entity.DailyLog;
+import use_case.repository.DailyLogRepository;
+import use_case.repository.TaskRepository;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

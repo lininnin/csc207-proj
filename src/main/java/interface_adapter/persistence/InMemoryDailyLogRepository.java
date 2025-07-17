@@ -1,7 +1,7 @@
-package data_access;
+package interface_adapter.persistence;
 
 import entity.DailyLog;
-import use_case.DailyLogRepository;
+import use_case.repository.DailyLogRepository;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
