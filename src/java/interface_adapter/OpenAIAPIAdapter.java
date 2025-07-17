@@ -27,7 +27,7 @@ public class OpenAIAPIAdapter implements GPTService{
         Request request = new Request.Builder()
                 .url(endpoint)
                 .header("Authorization", "Bearer" + API_KEY)
-                .post(RequestBody.create((body.toString(), MediaType.parse("application/json")))
+                .post(RequestBody.create((body.toString()), MediaType.parse("application/json")))
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
