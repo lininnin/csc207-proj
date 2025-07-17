@@ -2,7 +2,9 @@ package use_case.create_task;
 
 import entity.Task;
 
-import java.time.LocalDate; /**
+import java.time.LocalDate;
+
+/**
  * Input data for creating a task.
  */
 public class CreateTaskInputData {
