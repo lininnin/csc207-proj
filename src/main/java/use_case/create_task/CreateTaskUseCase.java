@@ -44,11 +44,6 @@ public class CreateTaskUseCase {
             // Save the task
             taskRepository.save(newTask);
 
-            // Add to today's available tasks if it starts today
-            if (inputData.getBeginDate().equals(LocalDate.now())) {
-                taskRepository.addToTodaysTasks(newTask);
-            }
-
             // Prepare success output
             CreateTaskOutputData outputData = new CreateTaskOutputData(
                     newTask.getInfo().getId(),
