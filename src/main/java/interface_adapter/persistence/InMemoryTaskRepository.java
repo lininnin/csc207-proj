@@ -38,10 +38,7 @@ public class InMemoryTaskRepository implements TaskRepository {
     public List<Task> findTodaysTasks() {
         LocalDate today = LocalDate.now();
         return tasks.values().stream()
-                .filter(task -> {
-                    LocalDate beginDate = task.getBeginAndDueDates().getBeginDate();
-                    return beginDate.equals(today) || todaysTaskIds.contains(task.getInfo().getId());
-                })
+                .filter(task -> todaysTaskIds.contains(task.getInfo().getId()))
                 .filter(task -> !task.isComplete())
                 .collect(Collectors.toList());
     }
@@ -73,7 +70,28 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     /**
-     * Additional method to get completed tasks for today.
+     * Gets tasks that are available (within date range but not in today's tasks).
+     */
+    public List<Task> findAvailableTasks() {
+        LocalDate today = LocalDate.now();
+        return tasks.values().stream()
+                .filter(task -> !task.isComplete())
+                .filter(task -> !todaysTaskIds.contains(task.getInfo().getId()))
+                .filter(task -> {
+                    LocalDate beginDate = task.getBeginAndDueDates().getBeginDate();
+                    LocalDate dueDate = task.getBeginAndDueDates().getDueDate();
+
+                    // Task is available if today is within its date range
+                    boolean afterBegin = !today.isBefore(beginDate);
+                    boolean beforeDue = dueDate == null || !today.isAfter(dueDate);
+
+                    return afterBegin && beforeDue;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets completed tasks for today.
      */
     public List<Task> findTodaysCompletedTasks() {
         LocalDate today = LocalDate.now();
