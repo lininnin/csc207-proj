@@ -9,13 +9,20 @@ import java.util.List;
  * Holds the state that the view needs to display.
  */
 public class TaskViewModel {
+    private List<Task> availableTasks = new ArrayList<>();
     private List<Task> todaysTasks = new ArrayList<>();
     private List<Task> completedTasks = new ArrayList<>();
     private List<Task> overdueTasks = new ArrayList<>();
+    private double completionRate = 0.0;
     private String message = "";
     private final List<TaskViewModelUpdateListener> listeners = new ArrayList<>();
 
     // Methods to update state
+    public void setAvailableTasks(List<Task> tasks) {
+        this.availableTasks = new ArrayList<>(tasks);
+        notifyListeners();
+    }
+
     public void setTodaysTasks(List<Task> tasks) {
         this.todaysTasks = new ArrayList<>(tasks);
         notifyListeners();
@@ -31,12 +38,21 @@ public class TaskViewModel {
         notifyListeners();
     }
 
+    public void setCompletionRate(double rate) {
+        this.completionRate = rate;
+        notifyListeners();
+    }
+
     public void setMessage(String message) {
         this.message = message;
         notifyListeners();
     }
 
     // Getters
+    public List<Task> getAvailableTasks() {
+        return new ArrayList<>(availableTasks);
+    }
+
     public List<Task> getTodaysTasks() {
         return new ArrayList<>(todaysTasks);
     }
@@ -47,6 +63,10 @@ public class TaskViewModel {
 
     public List<Task> getOverdueTasks() {
         return new ArrayList<>(overdueTasks);
+    }
+
+    public double getCompletionRate() {
+        return completionRate;
     }
 
     public String getMessage() {
