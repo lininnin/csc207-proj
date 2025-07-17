@@ -1,10 +1,13 @@
 package app;
 
-import data_access.InMemoryDailyLogRepository;
-import data_access.InMemoryTaskRepository;
-import entity.Task;
-import interface_adapter.*;
-import use_case.*;
+import interface_adapter.persistence.InMemoryDailyLogRepository;
+import interface_adapter.persistence.InMemoryTaskRepository;
+import interface_adapter.controller.CreateTaskController;
+import interface_adapter.controller.MarkTaskCompleteController;
+import interface_adapter.presenter.CreateTaskPresenter;
+import interface_adapter.presenter.MarkTaskCompletePresenter;
+import use_case.create_task.CreateTaskUseCase;
+import use_case.mark_task_complete.MarkTaskCompleteUseCase;
 import view.TaskView;
 import view.TaskViewModel;
 
@@ -67,7 +70,7 @@ public class Main {
 
         // Create main window
         JFrame frame = new JFrame("MindTrack - Task Management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         // Add components
