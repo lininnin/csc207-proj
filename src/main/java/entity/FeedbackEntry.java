@@ -17,6 +17,6 @@ public class FeedbackEntry {
 
 
     public String toString() {
-        return "Feedback Entry for"
+        return "Feedback Entry for";
     }
 }

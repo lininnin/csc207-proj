@@ -66,12 +66,17 @@ public class Task {
         return LocalDate.now().isAfter(beginAndDueDates.getDueDate());
     }
 
-    /** @return Task metadata (Info) */
-    public Info getInfo() {
-        return info;
+    /** @return get task infos */
+    public String printTask(){
+        return info.getInfo() +
+                "\nBegin Date: " + beginAndDueDates.getBeginDate() + "\n" +
+                "Due Date: " + beginAndDueDates.getDueDate() + "\n" +
+                "Priority: " + taskPriority;
     }
 
-    /** @return Task time range */
+
+
+        /** @return Task time range */
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
     }
@@ -89,5 +94,13 @@ public class Task {
     /** @return Task priority */
     public Priority getTaskPriority() {
         return taskPriority;
+    }
+
+    public String getCategory() {
+        return info.getCategory();
+    }
+
+    public Info getInfo(){
+        return info;
     }
 }
