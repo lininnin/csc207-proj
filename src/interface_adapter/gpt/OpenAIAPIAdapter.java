@@ -1,12 +1,13 @@
-package interface_adapter;
+package interface_adapter.gpt;
 
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import use_case.GPTService;
 
 import java.io.IOException;
 
-public class OpenAIAPIAdapter implements GPTService{
+public class OpenAIAPIAdapter implements GPTService {
     private static final String API_KEY = ""; // to be replaced by actual apikey
     private static final String endpoint = ""; // to be replaced by actual endpt
     private final OkHttpClient client = new OkHttpClient();
@@ -22,7 +23,7 @@ public class OpenAIAPIAdapter implements GPTService{
                 .put("model", "gpt-4o")
                 .put("messages", new JSONArray().put(message))
                 .put("temperature", 0.7);
-        // so how diversed would we want the response to be? consider a stable advice?
+        // so how diverse would we want the response to be? consider a stable advice?
 
         Request request = new Request.Builder()
                 .url(endpoint)
