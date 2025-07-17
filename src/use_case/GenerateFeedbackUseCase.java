@@ -1,6 +1,8 @@
 package use_case;
-import interface_adapter.GPTService;
-import interface_adapter.PromptBuilder;
+
+import entity.DailyLog;
+import entity.FeedbackEntry;
+import interface_adapter.gpt.PromptBuilder;
 
 import java.io.IOException;
 
@@ -24,6 +26,6 @@ public class GenerateFeedbackUseCase {
                 "Correlation details..."
         );
 
-        feedbackRepo.saveFeedback(entry);
+        feedbackRepo.save(entry);
     }
 }

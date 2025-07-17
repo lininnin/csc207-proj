@@ -1,4 +1,4 @@
-package interface_adapter;
+package use_case;
 
 public interface GPTService {
     String generateFeedback(String prompt);
