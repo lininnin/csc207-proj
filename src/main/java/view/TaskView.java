@@ -3,6 +3,7 @@ package view;
 import entity.Task;
 import interface_adapter.controller.CreateTaskController;
 import interface_adapter.controller.MarkTaskCompleteController;
+import interface_adapter.controller.AddTaskToTodayController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     private final TaskViewModel viewModel;
     private final CreateTaskController createTaskController;
     private final MarkTaskCompleteController markCompleteController;
+    private AddTaskToTodayController addTaskToTodayController;
     private Runnable dataReloader; // Callback to reload data
 
     // UI Components
@@ -28,11 +30,13 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     private JTextField beginDateField;
     private JTextField dueDateField;
 
+    private DefaultListModel<TaskListItem> availableTasksModel;
     private DefaultListModel<TaskListItem> todayTasksModel;
     private DefaultListModel<TaskListItem> completedTasksModel;
     private DefaultListModel<TaskListItem> overdueTasksModel;
 
     private JLabel messageLabel;
+    private JLabel completionRateLabel;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -48,6 +52,14 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         initializeUI();
     }
 
+    public void setAddTaskToTodayController(AddTaskToTodayController controller) {
+        this.addTaskToTodayController = controller;
+    }
+
+    public void setDataReloader(Runnable dataReloader) {
+        this.dataReloader = dataReloader;
+    }
+
     private void initializeUI() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -58,10 +70,8 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         // Center: Task Lists
         add(createTaskListsPanel(), BorderLayout.CENTER);
 
-        // Bottom: Message Label
-        messageLabel = new JLabel(" ");
-        messageLabel.setForeground(Color.BLUE);
-        add(messageLabel, BorderLayout.SOUTH);
+        // Bottom: Status Panel
+        add(createStatusPanel(), BorderLayout.SOUTH);
     }
 
     private JPanel createTaskCreationPanel() {
@@ -129,21 +139,39 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     }
 
     private JPanel createTaskListsPanel() {
-        JPanel panel = new JPanel(new GridLayout(1, 3, 10, 0));
+        JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
 
-        // Today's Tasks
+        // Available Tasks (top-left)
+        JPanel availablePanel = new JPanel(new BorderLayout());
+        availablePanel.setBorder(BorderFactory.createTitledBorder("Available Tasks"));
+        availableTasksModel = new DefaultListModel<>();
+        JList<TaskListItem> availableList = new JList<>(availableTasksModel);
+        availablePanel.add(new JScrollPane(availableList), BorderLayout.CENTER);
+
+        JButton addToTodayButton = new JButton("Add to Today");
+        addToTodayButton.addActionListener(e -> {
+            TaskListItem selected = availableList.getSelectedValue();
+            if (selected != null && addTaskToTodayController != null) {
+                addTaskToTodayController.addTaskToToday(selected.task.getInfo().getId());
+                if (dataReloader != null) {
+                    dataReloader.run();
+                }
+            }
+        });
+        availablePanel.add(addToTodayButton, BorderLayout.SOUTH);
+        panel.add(availablePanel);
+
+        // Today's Tasks (top-right)
         JPanel todayPanel = new JPanel(new BorderLayout());
         todayPanel.setBorder(BorderFactory.createTitledBorder("Today's Tasks"));
         todayTasksModel = new DefaultListModel<>();
         JList<TaskListItem> todayList = new JList<>(todayTasksModel);
         todayList.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     TaskListItem item = todayList.getSelectedValue();
                     if (item != null) {
                         markCompleteController.markTaskComplete(item.task.getInfo().getId());
-                        // Reload data after marking complete
                         if (dataReloader != null) {
                             dataReloader.run();
                         }
@@ -155,7 +183,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         todayPanel.add(new JLabel("Double-click to complete"), BorderLayout.SOUTH);
         panel.add(todayPanel);
 
-        // Completed Tasks
+        // Completed Tasks (bottom-left)
         JPanel completedPanel = new JPanel(new BorderLayout());
         completedPanel.setBorder(BorderFactory.createTitledBorder("Completed Today"));
         completedTasksModel = new DefaultListModel<>();
@@ -163,7 +191,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         completedPanel.add(new JScrollPane(completedList), BorderLayout.CENTER);
         panel.add(completedPanel);
 
-        // Overdue Tasks
+        // Overdue Tasks (bottom-right)
         JPanel overduePanel = new JPanel(new BorderLayout());
         overduePanel.setBorder(BorderFactory.createTitledBorder("Overdue Tasks"));
         overdueTasksModel = new DefaultListModel<>();
@@ -175,8 +203,18 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         return panel;
     }
 
-    public void setDataReloader(Runnable dataReloader) {
-        this.dataReloader = dataReloader;
+    private JPanel createStatusPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        completionRateLabel = new JLabel("Today's Completion Rate: 0%");
+        completionRateLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        panel.add(completionRateLabel, BorderLayout.WEST);
+
+        messageLabel = new JLabel(" ");
+        messageLabel.setForeground(Color.BLUE);
+        panel.add(messageLabel, BorderLayout.CENTER);
+
+        return panel;
     }
 
     private void createTask() {
@@ -215,9 +253,14 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     @Override
     public void onViewModelUpdated() {
         // Update task lists
+        updateTaskList(availableTasksModel, viewModel.getAvailableTasks());
         updateTaskList(todayTasksModel, viewModel.getTodaysTasks());
         updateTaskList(completedTasksModel, viewModel.getCompletedTasks());
         updateTaskList(overdueTasksModel, viewModel.getOverdueTasks());
+
+        // Update completion rate
+        double rate = viewModel.getCompletionRate();
+        completionRateLabel.setText(String.format("Today's Completion Rate: %.1f%%", rate * 100));
 
         // Update message
         messageLabel.setText(viewModel.getMessage());
@@ -243,7 +286,11 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
             String priority = task.getTaskPriority().name();
             String category = task.getInfo().getCategory() != null ?
                     "[" + task.getInfo().getCategory() + "] " : "";
-            return String.format("%s%s (%s)", category, task.getInfo().getName(), priority);
+            String dates = "";
+            if (task.getBeginAndDueDates().getDueDate() != null) {
+                dates = " (due: " + task.getBeginAndDueDates().getDueDate() + ")";
+            }
+            return String.format("%s%s (%s)%s", category, task.getInfo().getName(), priority, dates);
         }
     }
 }
