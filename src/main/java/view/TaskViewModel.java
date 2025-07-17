@@ -13,7 +13,6 @@ public class TaskViewModel {
     private List<Task> completedTasks = new ArrayList<>();
     private List<Task> overdueTasks = new ArrayList<>();
     private String message = "";
-    private String lastCreatedTaskId = "";
     private final List<TaskViewModelUpdateListener> listeners = new ArrayList<>();
 
     // Methods to update state
@@ -35,10 +34,6 @@ public class TaskViewModel {
     public void setMessage(String message) {
         this.message = message;
         notifyListeners();
-    }
-
-    public void setLastCreatedTaskId(String taskId) {
-        this.lastCreatedTaskId = taskId;
     }
 
     // Getters
