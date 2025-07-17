@@ -6,7 +6,7 @@ import java.time.LocalDate;
 /**
  * Repository interface for DailyLog persistence.
  */
-public class DailyLogRepository {
+public interface DailyLogRepository {
     /**
      * Saves or updates a daily log.
      *
