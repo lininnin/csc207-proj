@@ -2,7 +2,6 @@ package interface_adapter;
 
 import use_case.MarkTaskCompleteOutputBoundary;
 import use_case.MarkTaskCompleteOutputData;
-import use_case.MarkTaskCompleteUseCase;
 import view.TaskViewModel;
 import java.time.format.DateTimeFormatter;
 
