@@ -9,7 +9,7 @@ MindTrack is a wellness tracing application based on users' tasks and their dail
 ### Dependencies
 
 * Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
+* Java 11 or higher
 
 ### Installing
 
@@ -51,10 +51,12 @@ command to run if program contains helper info
 
 ## Authors
 
-* Qian (Angela) Su
-* Alex/Qinyue Li
-* Ina Wang
-* Sophia Lin
+| Name | GitHub Username |
+|------|----------------|
+| Angela (Qian) Su | @angelaqaa |
+| Alex/Qinyue Li | @lininnin |
+| Ina Wang | @iwa964 |
+| Sophia Lin | @phiaLXY28 |
 
 ## Version History
 
