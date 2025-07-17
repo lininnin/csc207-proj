@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * Represents the collection of tasks available to be added to a specific day.
  * This serves as a pool of tasks that users can choose from when planning their day.
+ *
+ * TODO: Will be used in Sophia's story #2 for filtering and organizing tasks by category/priority
  */
 public class TaskAvailable {
     private final List<Task> taskAvailable;

@@ -7,6 +7,8 @@ import java.util.List;
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
  * Each goal has associated metadata (info), a date range, frequency requirements, and current progress tracking.
+ *
+ * TODO: Will be implemented in Sophia's story #1 for weekly/monthly goal tracking
  */
 public class Goal {
     private final Info info;
