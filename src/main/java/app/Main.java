@@ -2,12 +2,12 @@ package app;
 
 import interface_adapter.persistence.InMemoryDailyLogRepository;
 import interface_adapter.persistence.InMemoryTaskRepository;
-import interface_adapter.controller.CreateTaskController;
-import interface_adapter.controller.MarkTaskCompleteController;
-import interface_adapter.presenter.CreateTaskPresenter;
-import interface_adapter.presenter.MarkTaskCompletePresenter;
-import use_case.create_task.CreateTaskUseCase;
-import use_case.mark_task_complete.MarkTaskCompleteUseCase;
+import entity.Task;
+import interface_adapter.controller.*;
+import interface_adapter.presenter.*;
+import use_case.create_task.*;
+import use_case.mark_task_complete.*;
+import use_case.add_task_to_today.*;
 import view.TaskView;
 import view.TaskViewModel;
 
@@ -44,6 +44,7 @@ public class Main {
         // Create presenters (interface adapters)
         CreateTaskPresenter createTaskPresenter = new CreateTaskPresenter(taskViewModel);
         MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(taskViewModel);
+        AddTaskToTodayPresenter addTaskToTodayPresenter = new AddTaskToTodayPresenter(taskViewModel);
 
         // Create use cases
         CreateTaskUseCase createTaskUseCase = new CreateTaskUseCase(
@@ -57,12 +58,20 @@ public class Main {
                 markCompletePresenter
         );
 
+        AddTaskToTodayUseCase addTaskToTodayUseCase = new AddTaskToTodayUseCase(
+                taskRepository,
+                dailyLogRepository,
+                addTaskToTodayPresenter
+        );
+
         // Create controllers (interface adapters)
         CreateTaskController createTaskController = new CreateTaskController(createTaskUseCase);
         MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(markCompleteUseCase);
+        AddTaskToTodayController addTaskToTodayController = new AddTaskToTodayController(addTaskToTodayUseCase);
 
         // Create view
         TaskView taskView = new TaskView(taskViewModel, createTaskController, markCompleteController);
+        taskView.setAddTaskToTodayController(addTaskToTodayController);
 
         // Create a data loader to populate view model
         TaskDataLoader dataLoader = new TaskDataLoader(taskRepository, taskViewModel);
@@ -120,9 +129,17 @@ class TaskDataLoader {
         }
 
         isLoading = true;
+        taskViewModel.setAvailableTasks(taskRepository.findAvailableTasks());
         taskViewModel.setTodaysTasks(taskRepository.findTodaysTasks());
         taskViewModel.setCompletedTasks(taskRepository.findTodaysCompletedTasks());
         taskViewModel.setOverdueTasks(taskRepository.findOverdueTasks());
+
+        // Calculate completion rate
+        int scheduled = taskRepository.findTodaysTasks().size() + taskRepository.findTodaysCompletedTasks().size();
+        int completed = taskRepository.findTodaysCompletedTasks().size();
+        double rate = scheduled > 0 ? (double) completed / scheduled : 0.0;
+        taskViewModel.setCompletionRate(rate);
+
         isLoading = false;
     }
 }
