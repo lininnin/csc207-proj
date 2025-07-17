@@ -75,9 +75,3 @@ public class TaskViewModel {
     }
 }
 
-/**
- * Interface for view model update notifications.
- */
-interface TaskViewModelUpdateListener {
-    void onViewModelUpdated();
-}
