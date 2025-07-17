@@ -7,14 +7,14 @@ import java.util.List;
  * Represents the collection of tasks available to be added to a specific day.
  * This serves as a pool of tasks that users can choose from when planning their day.
  */
-public class TaskAvaliable {
-    private final List<Task> taskAvaliable;
+public class TaskAvailable {
+    private final List<Task> taskAvailable;
 
     /**
-     * Constructs a new TaskAvaliable with an empty list of tasks.
+     * Constructs a new TaskAvailable with an empty list of tasks.
      */
-    public TaskAvaliable() {
-        this.taskAvaliable = new ArrayList<>();
+    public TaskAvailable() {
+        this.taskAvailable = new ArrayList<>();
     }
 
     /**
@@ -27,7 +27,7 @@ public class TaskAvaliable {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
         }
-        taskAvaliable.add(task);
+        taskAvailable.add(task);
     }
 
     /**
@@ -37,7 +37,7 @@ public class TaskAvaliable {
      * @return true if the task was removed, false if it wasn't in the list
      */
     public boolean removeTask(Task task) {
-        return taskAvaliable.remove(task);
+        return taskAvailable.remove(task);
     }
 
     /**
@@ -45,8 +45,8 @@ public class TaskAvaliable {
      *
      * @return A copy of the list of available tasks
      */
-    public List<Task> getTaskAvaliable() {
-        return new ArrayList<>(taskAvaliable);
+    public List<Task> getTaskAvailable() {
+        return new ArrayList<>(taskAvailable);
     }
 
     /**
@@ -57,7 +57,7 @@ public class TaskAvaliable {
      */
     public List<Task> getTasksByCategory(String category) {
         List<Task> filtered = new ArrayList<>();
-        for (Task task : taskAvaliable) {
+        for (Task task : taskAvailable) {
             if (category.equals(task.getInfo().getCategory())) {
                 filtered.add(task);
             }
@@ -73,7 +73,7 @@ public class TaskAvaliable {
      */
     public List<Task> getTasksByPriority(Task.Priority priority) {
         List<Task> filtered = new ArrayList<>();
-        for (Task task : taskAvaliable) {
+        for (Task task : taskAvailable) {
             if (task.getTaskPriority() == priority) {
                 filtered.add(task);
             }
@@ -88,7 +88,7 @@ public class TaskAvaliable {
      */
     public List<Task> getIncompleteTasks() {
         List<Task> incomplete = new ArrayList<>();
-        for (Task task : taskAvaliable) {
+        for (Task task : taskAvailable) {
             if (!task.isComplete()) {
                 incomplete.add(task);
             }
@@ -102,7 +102,7 @@ public class TaskAvaliable {
      * @return The size of the task list
      */
     public int getTaskCount() {
-        return taskAvaliable.size();
+        return taskAvailable.size();
     }
 
     /**
@@ -112,13 +112,13 @@ public class TaskAvaliable {
      * @return true if the task is available, false otherwise
      */
     public boolean contains(Task task) {
-        return taskAvaliable.contains(task);
+        return taskAvailable.contains(task);
     }
 
     /**
      * Clears all tasks from the available list.
      */
     public void clearAll() {
-        taskAvaliable.clear();
+        taskAvailable.clear();
     }
 }
