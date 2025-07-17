@@ -24,7 +24,6 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
                 outputData.getCompletionRate() * 100
         );
         taskViewModel.setMessage(message);
-        taskViewModel.refreshTaskLists();
     }
 
     @Override

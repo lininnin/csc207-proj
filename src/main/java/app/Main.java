@@ -66,6 +66,7 @@ public class Main {
 
         // Create a data loader to populate view model
         TaskDataLoader dataLoader = new TaskDataLoader(taskRepository, taskViewModel);
+        taskView.setDataReloader(dataLoader::loadInitialData);
         dataLoader.loadInitialData();
 
         // Create main window
@@ -102,13 +103,11 @@ public class Main {
 class TaskDataLoader {
     private final InMemoryTaskRepository taskRepository;
     private final TaskViewModel taskViewModel;
+    private boolean isLoading = false;
 
     TaskDataLoader(InMemoryTaskRepository taskRepository, TaskViewModel taskViewModel) {
         this.taskRepository = taskRepository;
         this.taskViewModel = taskViewModel;
-
-        // Listen for view model updates to refresh data
-        taskViewModel.addUpdateListener(this::loadData);
     }
 
     void loadInitialData() {
@@ -116,8 +115,14 @@ class TaskDataLoader {
     }
 
     private void loadData() {
+        if (isLoading) {
+            return; // Prevent recursive calls
+        }
+
+        isLoading = true;
         taskViewModel.setTodaysTasks(taskRepository.findTodaysTasks());
         taskViewModel.setCompletedTasks(taskRepository.findTodaysCompletedTasks());
         taskViewModel.setOverdueTasks(taskRepository.findOverdueTasks());
+        isLoading = false;
     }
 }

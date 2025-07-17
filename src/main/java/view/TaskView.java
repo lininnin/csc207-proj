@@ -18,6 +18,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     private final TaskViewModel viewModel;
     private final CreateTaskController createTaskController;
     private final MarkTaskCompleteController markCompleteController;
+    private Runnable dataReloader; // Callback to reload data
 
     // UI Components
     private JTextField nameField;
@@ -26,7 +27,6 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
     private JComboBox<String> priorityCombo;
     private JTextField beginDateField;
     private JTextField dueDateField;
-
 
     private DefaultListModel<TaskListItem> todayTasksModel;
     private DefaultListModel<TaskListItem> completedTasksModel;
@@ -143,6 +143,10 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
                     TaskListItem item = todayList.getSelectedValue();
                     if (item != null) {
                         markCompleteController.markTaskComplete(item.task.getInfo().getId());
+                        // Reload data after marking complete
+                        if (dataReloader != null) {
+                            dataReloader.run();
+                        }
                     }
                 }
             }
@@ -171,6 +175,10 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
         return panel;
     }
 
+    public void setDataReloader(Runnable dataReloader) {
+        this.dataReloader = dataReloader;
+    }
+
     private void createTask() {
         try {
             String name = nameField.getText().trim();
@@ -193,6 +201,11 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
             descriptionArea.setText("");
             categoryField.setText("");
             dueDateField.setText("");
+
+            // Reload data
+            if (dataReloader != null) {
+                dataReloader.run();
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error creating task: " + e.getMessage());

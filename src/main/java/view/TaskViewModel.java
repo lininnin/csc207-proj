@@ -63,10 +63,5 @@ public class TaskViewModel {
             listener.onViewModelUpdated();
         }
     }
-
-    public void refreshTaskLists() {
-        // This will be called by presenters to trigger a refresh
-        notifyListeners();
-    }
 }
 
