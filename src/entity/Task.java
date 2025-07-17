@@ -1,16 +1,21 @@
+package entity;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * Represents a task that can be scheduled, prioritized, and marked as complete.
  * Each task is associated with Info metadata and a time range.
- */
+ *
+ * This entity follows Clean Architecture principles and is immutable except for
+ * completion status which represents a valid state transition.
+ * /
 public class Task {
     private final Info info;
     private final BeginAndDueDates beginAndDueDates;
     private boolean isComplete;
     private LocalDateTime completedDateTime;
-    private boolean overDue;
-    private Priority taskPriority;
+    private final Priority taskPriority;
 
     /**
      * Enum for task priority level.
@@ -32,30 +37,34 @@ public class Task {
         this.taskPriority = priority != null ? priority : Priority.MEDIUM;
         this.isComplete = false;
         this.completedDateTime = null;
-        this.overDue = false;
     }
 
     /**
      * Marks the task as complete and records the completion time.
+     * This is the only state mutation allowed as it represents a valid business transition.
      *
      * @param completionTime Time of task completion
      */
     public void completeTask(LocalDateTime completionTime) {
-        this.isComplete = true;
-        this.completedDateTime = completionTime;
+        if (!this.isComplete) {
+            this.isComplete = true;
+            this.completedDateTime = completionTime;
+        }
     }
 
     /**
-     * Checks if the task is overdue based on current time and due date.
+     * Checks if the task is overdue based on current time.
+     * A task is overdue if it has a due date, the current date is past the due date,
+     * and the task is not complete.
+     * Implemented as a method rather than stored attribute to ensure data consistency.
      *
-     * @param currentTime The current time to compare against due date
+     * @return true if task is past due date and not complete, false otherwise
      */
-    public void checkIfOverdue(LocalDateTime currentTime) {
-        if (beginAndDueDates.getDueDate() != null &&
-                currentTime.isAfter(beginAndDueDates.getDueDate().atStartOfDay()) &&
-                !isComplete) {
-            this.overDue = true;
+    public boolean isOverdue() {
+        if (beginAndDueDates.getDueDate() == null || isComplete) {
+            return false;
         }
+        return LocalDate.now().isAfter(beginAndDueDates.getDueDate());
     }
 
     /** @return Task metadata (Info) */
@@ -76,11 +85,6 @@ public class Task {
     /** @return When the task was completed (if any) */
     public LocalDateTime getCompletedDateTime() {
         return completedDateTime;
-    }
-
-    /** @return Whether the task is overdue */
-    public boolean isOverDue() {
-        return overDue;
     }
 
     /** @return Task priority */

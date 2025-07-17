@@ -1,3 +1,5 @@
+package entity;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -16,15 +18,19 @@ public class Info {
     /**
      * Constructs a new Info object with optional description and category.
      *
-     * @param name        The name of the item
+     * @param name        The name of the item (required)
      * @param description Optional description
-     * @param category    Optional category (e.g., "work", "personal")
+     * @param category    Optional category (e.g., "work", "personal", "academic")
+     * @throws IllegalArgumentException if name is null or empty
      */
     public Info(String name, String description, String category) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
         this.id = UUID.randomUUID().toString();
-        this.name = name != null && !name.isEmpty() ? name : null;
-        this.description = description != null && !description.isEmpty() ? description : null;
-        this.category = category != null && !category.isEmpty() ? category : null;
+        this.name = name.trim();
+        this.description = (description != null && !description.trim().isEmpty()) ? description.trim() : null;
+        this.category = (category != null && !category.trim().isEmpty()) ? category.trim() : null;
         this.createdDate = LocalDate.now();
     }
 

@@ -1,4 +1,8 @@
+package entity;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
@@ -8,8 +12,9 @@ public class Goal {
     private final Info info;
     private final BeginAndDueDates beginAndDueDates;
     private final Task targetTask;
+    private final TimePeriod timePeriod;
     private final int frequency;
-    private int currentProgress;
+    private final List<LocalDate> completionDates;
 
     /**
      * Enum representing whether the goal is tracked weekly or monthly.
@@ -26,21 +31,44 @@ public class Goal {
      * @param targetTask     The task to track progress against
      * @param timePeriod     The period for the goal (WEEK or MONTH)
      * @param frequency      The required number of task completions within the time period
+     * @throws IllegalArgumentException if any required parameter is null or frequency is negative
      */
     public Goal(Info info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
+        if (info == null || dates == null || targetTask == null || timePeriod == null) {
+            throw new IllegalArgumentException("Goal parameters cannot be null");
+        }
+        if (frequency < 0) {
+            throw new IllegalArgumentException("Frequency cannot be negative");
+        }
         this.info = info;
         this.beginAndDueDates = dates;
         this.targetTask = targetTask;
         this.timePeriod = timePeriod;
         this.frequency = frequency;
-        this.currentProgress = 0;
+        this.completionDates = new ArrayList<>();
     }
 
     /**
-     * Increments the current progress counter by 1.
+     * Records a task completion on the specified date.
+     *
+     * @param completionDate The date when the task was completed
      */
-    public void incrementProgress() {
-        currentProgress++;
+    public void recordCompletion(LocalDate completionDate) {
+        if (completionDate != null) {
+            completionDates.add(completionDate);
+        }
+    }
+
+    /**
+     * Calculates the current progress based on completions within the goal's date range.
+     *
+     * @return The number of completions within the active period
+     */
+    public int getCurrentProgress() {
+        return (int) completionDates.stream()
+                .filter(date -> !date.isBefore(beginAndDueDates.getBeginDate()) &&
+                        (beginAndDueDates.getDueDate() == null || !date.isAfter(beginAndDueDates.getDueDate())))
+                .count();
     }
 
     /**
@@ -107,11 +135,11 @@ public class Goal {
     }
 
     /**
-     * Returns the current number of task completions toward this goal.
+     * Returns a defensive copy of the completion dates.
      *
-     * @return The current progress count
+     * @return List of completion dates
      */
-    public int getCurrentProgress() {
-        return currentProgress;
+    public List<LocalDate> getCompletionDates() {
+        return new ArrayList<>(completionDates);
     }
 }
