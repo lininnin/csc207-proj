@@ -28,15 +28,28 @@ public class Task {
      *
      * @param info       Metadata for the task
      * @param dates      Time window of the task
-     * @param priority   Task priority (defaults to MEDIUM if null)
+     * @param value   input value for priority (defaults to MEDIUM if null)
      */
-    public Task(Info info, BeginAndDueDates dates, Priority priority) {
+    public Task(Info info, BeginAndDueDates dates, Object value) {
         this.info = info;
         this.beginAndDueDates = dates;
-        this.taskPriority = priority != null ? priority : Priority.MEDIUM;
+
+        if (value == null) {
+            this.taskPriority = Priority.MEDIUM;
+        } else if (value instanceof Priority) {
+            this.taskPriority = (Priority) value;
+        } else if (value instanceof Integer) {
+            int index = (Integer) value;
+            this.taskPriority = Priority.values()[index];
+        } else {
+            throw new IllegalArgumentException("Invalid priority input");
+        }
+
         this.isComplete = false;
         this.completedDateTime = null;
     }
+
+
 
     /**
      * Marks the task as complete and records the completion time.
@@ -71,7 +84,8 @@ public class Task {
         return info.getInfo() +
                 "\nBegin Date: " + beginAndDueDates.getBeginDate() + "\n" +
                 "Due Date: " + beginAndDueDates.getDueDate() + "\n" +
-                "Priority: " + taskPriority;
+                "Priority: " + taskPriority +
+                (isComplete == true ? "\nCompleted: " + completedDateTime : "");
     }
 
 
@@ -79,6 +93,11 @@ public class Task {
         /** @return Task time range */
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
+    }
+
+    /** @return String of dates */
+    public String printBeginAndDueDates() {
+        return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
     }
 
     /** @return Whether the task is complete */
@@ -100,6 +119,9 @@ public class Task {
         return info.getCategory();
     }
 
+    /*
+    * Todo: might consider to put getInfo and printTask (do it later)
+     */
     public Info getInfo(){
         return info;
     }
