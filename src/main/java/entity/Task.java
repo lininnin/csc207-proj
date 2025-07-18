@@ -28,12 +28,28 @@ public class Task {
      *
      * @param info       Metadata for the task
      * @param dates      Time window of the task
-     * @param priority   Task priority (defaults to MEDIUM if null)
+     * @param value   input value for priority (defaults to MEDIUM if null)
+     * @throws IllegalArgumentException
+     *
      */
-    public Task(Info info, BeginAndDueDates dates, Priority priority) {
+    public Task(Info info, BeginAndDueDates dates, Object value) {
         this.info = info;
         this.beginAndDueDates = dates;
-        this.taskPriority = priority != null ? priority : Priority.MEDIUM;
+
+        if (value == null) {
+            this.taskPriority = Priority.MEDIUM;
+        }
+        else if (value instanceof Priority) {
+            this.taskPriority = (Priority) value;
+        }
+        else if (value instanceof Integer) {
+            int index = (Integer) value;
+            this.taskPriority = Priority.values()[index];
+        }
+        else {
+            throw new IllegalArgumentException("Invalid priority input");
+        }
+
         this.isComplete = false;
         this.completedDateTime = null;
     }
@@ -66,28 +82,73 @@ public class Task {
         return LocalDate.now().isAfter(beginAndDueDates.getDueDate());
     }
 
-    /** @return Task metadata (Info) */
-    public Info getInfo() {
-        return info;
+    /**
+     * Print task info in neat format.
+     * @return get task info
+     * */
+    public String printTask(){
+        return info.getInfo()
+                 + "\nBegin Date: " + beginAndDueDates.getBeginDate()
+                + "\nDue Date: " + beginAndDueDates.getDueDate() + "\n"
+                + (isComplete == true ? "\nCompleted: " + completedDateTime : "");
     }
 
-    /** @return Task time range */
+    /**
+     * get the begin and end date for task in object type.
+     * @return Task time range
+     */
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
-    /** @return Whether the task is complete */
+    /**
+     * print the begin and end date for task.
+     * @return String of dates
+     */
+    public String printBeginAndDueDates() {
+        return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
+    }
+
+    /**
+     * return if the task is complete.
+     * @return Whether the task is complete
+     */
     public boolean isComplete() {
         return isComplete;
     }
 
-    /** @return When the task was completed (if any) */
+    /**
+     * the time task was completed.
+     * @return When the task was completed (if any)
+     */
     public LocalDateTime getCompletedDateTime() {
         return completedDateTime;
     }
 
-    /** @return Task priority */
+    /**
+     * task's priority.
+     * @return Task priority
+     */
     public Priority getTaskPriority() {
         return taskPriority;
+    }
+
+    /**
+     * get task category.
+     * @return Info category
+     */
+    public String getCategory() {
+        return info.getCategory();
+    }
+
+    /*
+    * Todo: might consider to put getInfo and printTask (do it later)
+    */
+    /**
+     * get the info in object type.
+     * @return Info object
+     */
+    public Info getInfo(){
+        return info;
     }
 }

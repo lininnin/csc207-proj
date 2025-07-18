@@ -16,7 +16,8 @@ public class Goal {
     private final Task targetTask;
     private final TimePeriod timePeriod;
     private final int frequency;
-    private final List<LocalDate> completionDates;
+    private List<LocalDate> completionDates;
+    private boolean isComplete;
 
     /**
      * Enum representing whether the goal is tracked weekly or monthly.
@@ -48,6 +49,7 @@ public class Goal {
         this.timePeriod = timePeriod;
         this.frequency = frequency;
         this.completionDates = new ArrayList<>();
+        this.isComplete = false;
     }
 
     /**
@@ -58,6 +60,9 @@ public class Goal {
     public void recordCompletion(LocalDate completionDate) {
         if (completionDate != null) {
             completionDates.add(completionDate);
+            if (completionDates.size() == frequency){
+                this.isComplete = true;
+            }
         }
     }
 
@@ -92,30 +97,13 @@ public class Goal {
     }
 
     /**
-     * Returns the metadata (info) associated with this goal.
-     *
-     * @return The Info object
-     */
-    public Info getInfo() {
-        return info;
-    }
-
-    /**
      * Returns the date range during which this goal is active.
      *
      * @return A BeginAndDueDates object representing the goal's active period
      */
-    public BeginAndDueDates getBeginAndDueDates() {
-        return beginAndDueDates;
-    }
+    public String getBeginAndDueDates() {
 
-    /**
-     * Returns the task being tracked by this goal.
-     *
-     * @return The target Task
-     */
-    public Task getTargetTask() {
-        return targetTask;
+        return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
     }
 
     /**
@@ -132,16 +120,35 @@ public class Goal {
      *
      * @return The frequency requirement
      */
-    public int getFrequency() {
-        return frequency;
+    public String getFrequency() {
+
+        return frequency + "/"+this.timePeriod;
     }
 
     /**
      * Returns a defensive copy of the completion dates.
-     *
+     * Todo maybe find a way to print better
      * @return List of completion dates
      */
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
+    }
+
+    /**
+     * Returns the metadata (info) associated with this goal.
+     *
+     * @return String of info
+     */
+    public String printGoal(){
+
+        String checkComplete = null;
+        if (!this.isComplete) {
+            checkComplete = null;
+        }
+
+        return info.getInfo() +
+                "\n" + targetTask.printTask() + "\n" +
+                "Is complete: " + isComplete +
+                (checkComplete != null ? "\nCompleted": "");
     }
 }
