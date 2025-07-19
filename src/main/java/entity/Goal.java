@@ -101,7 +101,8 @@ public class Goal {
      *
      * @return A BeginAndDueDates object representing the goal's active period
      */
-    public String getBeginAndDueDates() {
+    public BeginAndDueDates getBeginAndDueDates() {
+        return beginAndDueDates;
 
         return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
     }
