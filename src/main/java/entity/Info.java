@@ -64,12 +64,4 @@ public class Info {
     public LocalDate getCreatedDate() {
         return createdDate;
     }
-
-    public String getInfo(){
-        return "Name: " + name +
-                (description != null ? "\nDescription: " + description : "") +
-                (category != null ? "\nCategory: " + category : "") +
-                "\nCreated on: " + createdDate;
-
-    }
 }
