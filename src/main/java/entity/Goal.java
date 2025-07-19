@@ -104,7 +104,6 @@ public class Goal {
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
 
-        return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
     }
 
     /**
