@@ -1,28 +1,34 @@
-# csc207 Project - MindTrack 
+# MindTrack — CSC207 Project
 
 ## Description
 
-MindTrack is a wellness tracing application based on users' tasks and their daily life.  It incorporates wellness awareness by analyzing correlations between users’ task behavior and mental or physical states through integrated AI analysis and pattern recognition across customizable time segments throughout the day. We are not dealing with user login. 
+MindTrack is a wellness tracking application that helps users monitor their mental and physical well-being by analyzing their daily tasks and life events. The app identifies correlations between users’ task behaviors and their wellness indicators (mood, stress, energy, fatigue) through integrated AI analysis and pattern recognition over customizable time segments throughout the day.
+
+> **Note:** This project does not include user login functionality.
 
 ## Getting Started
 
-### Dependencies
+### Prerequisites
 
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* Java 11 or higher
+- IntelliJ IDEA
+- Compatible operating system (Windows, macOS, Linux)
+- Internet connection (required for AI integration, if applicable)
 
-### Installing
+### Installation
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+1. Clone or download the repository from (https://github.com/lininnin/csc207-proj)
+2. No additional configuration required; dependencies are managed within the project.
 
-### Executing program
+### Running the Program
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+To compile and run the application, use the following commands:
+
+```bash
+# Compile all Java source files to the `out` directory
+javac -d out src/main/java/app/main.java/main
+
+# Run the main class
+
 
 ### User stories
 Team Story: As a new user, Bob wants to create and organize daily tasks, mark them as complete or incomplete, so he can track his productivity across different parts of the day.
