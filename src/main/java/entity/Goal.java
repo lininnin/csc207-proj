@@ -134,22 +134,21 @@ public class Goal {
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
     }
-
     /**
      * Returns the metadata (info) associated with this goal.
      *
-     * @return String of info
+     * @return The Info object
      */
-    public String printGoal(){
-
-        String checkComplete = null;
-        if (!this.isComplete) {
-            checkComplete = null;
-        }
-
-        return info.getInfo() +
-                "\n" + targetTask.printTask() + "\n" +
-                "Is complete: " + isComplete +
-                (checkComplete != null ? "\nCompleted": "");
+    public Info getInfo() {
+        return info;
     }
+    
+    
+    /**
+     * Returns the task being tracked by this goal.
+     *
+     * @return The target Task
+     */
+    public Task getTargetTask() {
+        return targetTask;
 }
