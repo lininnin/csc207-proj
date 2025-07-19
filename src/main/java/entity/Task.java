@@ -35,21 +35,7 @@ public class Task {
     public Task(Info info, BeginAndDueDates dates, Object value) {
         this.info = info;
         this.beginAndDueDates = dates;
-
-        if (value == null) {
-            this.taskPriority = Priority.MEDIUM;
-        }
-        else if (value instanceof Priority) {
-            this.taskPriority = (Priority) value;
-        }
-        else if (value instanceof Integer) {
-            int index = (Integer) value;
-            this.taskPriority = Priority.values()[index];
-        }
-        else {
-            throw new IllegalArgumentException("Invalid priority input");
-        }
-
+        this.taskPriority = priority != null ? priority : Priority.MEDIUM;
         this.isComplete = false;
         this.completedDateTime = null;
     }
