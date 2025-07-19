@@ -3,12 +3,11 @@ package entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
- * Each goal has associated metadata (info), a date range, frequency requirements, and current progress tracking.
- *
- * TODO: Will be implemented in Sophia's story #1 for weekly/monthly goal tracking
+ * It tracks completion dates toward achieving the goal frequency within the goal's date range.
  */
 public class Goal {
     private final Info info;
@@ -26,13 +25,13 @@ public class Goal {
     }
 
     /**
-     * Constructs a new Goal with the given metadata, time range, target task, time period, and frequency.
+     * Constructs a new Goal with given parameters.
      *
-     * @param info           Metadata about the goal (name, description, category)
-     * @param dates          Begin and due dates for the goal
-     * @param targetTask     The task to track progress against
-     * @param timePeriod     The period for the goal (WEEK or MONTH)
-     * @param frequency      The required number of task completions within the time period
+     * @param info Metadata about the goal (name, description, category)
+     * @param dates Begin and due dates for the goal
+     * @param targetTask The task to track progress against
+     * @param timePeriod The period for the goal (WEEK or MONTH)
+     * @param frequency Required number of completions within the time period
      * @throws IllegalArgumentException if any required parameter is null or frequency is negative
      */
     public Goal(Info info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
@@ -51,7 +50,7 @@ public class Goal {
     }
 
     /**
-     * Records a task completion on the specified date.
+     * Records a completion date toward this goal.
      *
      * @param completionDate The date when the task was completed
      */
@@ -62,9 +61,9 @@ public class Goal {
     }
 
     /**
-     * Calculates the current progress based on completions within the goal's date range.
+     * Returns the number of completion dates within the active goal date range.
      *
-     * @return The number of completions within the active period
+     * @return Number of completions counted within goal period
      */
     public int getCurrentProgress() {
         return (int) completionDates.stream()
@@ -74,7 +73,7 @@ public class Goal {
     }
 
     /**
-     * Checks whether the goal has been achieved based on current progress and required frequency.
+     * Returns true if the goal has been achieved based on current progress and frequency.
      *
      * @return true if current progress is greater than or equal to frequency; false otherwise
      */
@@ -103,7 +102,7 @@ public class Goal {
     /**
      * Returns the date range during which this goal is active.
      *
-     * @return A BeginAndDueDates object representing the goal's active period
+     * @return Begin and due dates of this goal
      */
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
@@ -143,5 +142,25 @@ public class Goal {
      */
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
+    }
+
+    /**
+     * Resets the progress by clearing all recorded completion dates.
+     */
+    public void resetProgress() {
+        completionDates.clear();
+    }
+
+    /**
+     * Static helper method to filter goals by the specified time period.
+     *
+     * @param allGoals List of all goals
+     * @param period TimePeriod to filter by (WEEK or MONTH)
+     * @return Filtered list of goals matching the time period
+     */
+    public static List<Goal> filterGoalsByTimePeriod(List<Goal> allGoals, TimePeriod period) {
+        return allGoals.stream()
+                .filter(goal -> goal.getTimePeriod() == period)
+                .collect(Collectors.toList());
     }
 }
