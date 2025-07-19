@@ -29,7 +29,7 @@ javac -d out src/main/java/app/main.java/main
 
 # Run the main class
 
-
+```
 ### User stories
 Team Story: As a new user, Bob wants to create and organize daily tasks, mark them as complete or incomplete, so he can track his productivity across different parts of the day.
 
