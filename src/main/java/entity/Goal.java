@@ -16,7 +16,7 @@ public class Goal {
     private final Task targetTask;
     private final TimePeriod timePeriod;
     private final int frequency;
-    private List<LocalDate> completionDates;
+    private final List<LocalDate> completionDates;
     private boolean isComplete;
 
     /**
