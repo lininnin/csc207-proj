@@ -20,7 +20,7 @@ public class GenerateFeedbackUseCase {
         String feedbackText = gptService.generateFeedback(prompt);
 
         FeedbackEntry entry = new FeedbackEntry(
-                log.getDate(),
+                log,
                 feedbackText,
                 "See analysis above",
                 "Correlation details..."
