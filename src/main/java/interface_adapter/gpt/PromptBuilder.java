@@ -50,6 +50,7 @@ public class PromptBuilder {
 
 
 
+        return String.valueOf(prompt);
 
     }
 }
