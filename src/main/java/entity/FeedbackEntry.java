@@ -5,17 +5,21 @@ import java.time.LocalDate;
 public class FeedbackEntry {
     private final LocalDate date;
     private final String aiAnalysis;
+    private final String correlationData;
     private final String recommendations;
-    private final String correlationData = "";
+    // TODO: Check algorithm for generate feedback use case
 
-    public FeedbackEntry(
-            DailyLog log,
-            String aiAnalysis,
-            String recommendations) {
-        this.date = log.getDate();
+    public FeedbackEntry(LocalDate date,
+                         String aiAnalysis,
+                         String correlationData,
+                         String recommendations) {
+        this.date = date;
+        // TODO: Prompt for AI to analyze correlation to be implemented in PromptBuilder?
+        //  check what we want
         this.aiAnalysis = aiAnalysis;
-        this.recommendations = recommendations;
         this.correlationData = correlationData;
+        this.recommendations = recommendations;
+
     }
 
     public String getAiAnalysis() {
@@ -31,11 +35,14 @@ public class FeedbackEntry {
     }
 
 
-
     public String toString() {
         return "Feedback Entry on" + date + ':' + '\'' +
-                "Analysis: " + aiAnalysis + '\'' +
-                "Recommendations given:" + recommendations +'\'' +
-                "Correlation:" + correlationData + '\'';
+                "Wellness nalysis: " + aiAnalysis + '\'' +
+                "Task vs productivity correlation:" + correlationData + '\'' +
+                "Recommendations given:" + recommendations +'\'';
+    }
+
+    public Object getDate() {
+        return date;
     }
 }

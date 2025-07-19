@@ -1,17 +1,21 @@
-package use_case;
+package fixtures;
 
 import entity.DailyLog;
 import entity.FeedbackEntry;
 import interface_adapter.gpt.PromptBuilder;
+import use_case.FeedbackRepository;
+import use_case.GPTService;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-public class GenerateFeedbackUseCase {
+import static fixtures.DefaultPromptProvider.DEFAULT_PROMPT;
+
+public class StubGenerateFeedback {
     private final GPTService gptService;
     private final FeedbackRepository feedbackRepo;
 
-    public GenerateFeedbackUseCase(GPTService gptService, FeedbackRepository feedbackRepo) {
+    public StubGenerateFeedback(GPTService gptService, FeedbackRepository feedbackRepo) {
         this.gptService = gptService;
         this.feedbackRepo = feedbackRepo;
     }
@@ -30,14 +34,12 @@ public class GenerateFeedbackUseCase {
             return todayFeedback;
         }
 
-        // Build prompt
-        String prompt = PromptBuilder.buildPromptFromDailyLog(log);
         // Call GPT
-        String aiAnalysis = gptService.generateFeedback(prompt);
+        String aiAnalysis = gptService.generateFeedback(DEFAULT_PROMPT);
 
         //
 
-        FeedbackEntry todayEntry = new FeedbackEntry(date, aiAnalysis); // TODO: How should we get the other 2?
+        FeedbackEntry todayEntry = new FeedbackEntry(date, aiAnalysis, recommendations, computeTaskStressCorr); // TODO: How should we get the other 2?
 
         feedbackRepo.save(todayEntry);
         return todayEntry;
