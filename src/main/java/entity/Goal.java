@@ -16,7 +16,7 @@ public class Goal {
     private final Task targetTask;
     private final TimePeriod timePeriod;
     private final int frequency;
-    private final List<LocalDate> completionDates;
+    private List<LocalDate> completionDates;
     private boolean isComplete;
 
     /**
@@ -92,8 +92,8 @@ public class Goal {
      *
      * @return A string like "Progress: 2/3"
      */
-    public String getGoalStatus() {
-        return "Progress: " + getCurrentProgress() + "/" + frequency;
+    public int getGoalStatus() {
+        return getCurrentProgress();
     }
 
     /**
@@ -102,8 +102,8 @@ public class Goal {
      * @return A BeginAndDueDates object representing the goal's active period
      */
     public BeginAndDueDates getBeginAndDueDates() {
-        return beginAndDueDates;
 
+        return beginAndDueDates;
     }
 
     /**
@@ -121,32 +121,13 @@ public class Goal {
      * @return The frequency requirement
      */
     public int getFrequency() {
+
         return frequency;
     }
 
-    /**
-     * Returns a defensive copy of the completion dates.
-     * Todo maybe find a way to print better
-     * @return List of completion dates
-     */
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
     }
-    /**
-     * Returns the metadata (info) associated with this goal.
-     *
-     * @return The Info object
-     */
-    public Info getInfo() {
-        return info;
-    }
-    
-    
-    /**
-     * Returns the task being tracked by this goal.
-     *
-     * @return The target Task
-     */
-    public Task getTargetTask() {
-        return targetTask;
+
+
 }

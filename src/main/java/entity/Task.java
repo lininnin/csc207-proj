@@ -28,11 +28,11 @@ public class Task {
      *
      * @param info       Metadata for the task
      * @param dates      Time window of the task
-     * @param value   input value for priority (defaults to MEDIUM if null)
+     * @param priority   input value for priority (defaults to MEDIUM if null)
      * @throws IllegalArgumentException
      *
      */
-    public Task(Info info, BeginAndDueDates dates, Object value) {
+    public Task(Info info, BeginAndDueDates dates, Priority priority) {
         this.info = info;
         this.beginAndDueDates = dates;
         this.taskPriority = priority != null ? priority : Priority.MEDIUM;
@@ -66,17 +66,6 @@ public class Task {
             return false;
         }
         return LocalDate.now().isAfter(beginAndDueDates.getDueDate());
-    }
-
-    /**
-     * Print task info in neat format.
-     * @return get task info
-     * */
-    public String printTask(){
-        return info.getInfo()
-                 + "\nBegin Date: " + beginAndDueDates.getBeginDate()
-                + "\nDue Date: " + beginAndDueDates.getDueDate() + "\n"
-                + (isComplete == true ? "\nCompleted: " + completedDateTime : "");
     }
 
     /**
