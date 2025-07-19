@@ -51,9 +51,6 @@ Sophia:
 ## Help
 
 Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
 
 ## Authors
 
@@ -68,6 +65,6 @@ command to run if program contains helper info
 
 * 0.2
     * Various bug fixes and optimizations
-    * See [commit change]()
+    * See [commit change]
 * 0.1
     * Initial Release
