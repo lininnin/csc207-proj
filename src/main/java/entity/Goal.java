@@ -121,9 +121,8 @@ public class Goal {
      *
      * @return The frequency requirement
      */
-    public String getFrequency() {
-
-        return frequency + "/"+this.timePeriod;
+    public int getFrequency() {
+        return frequency;
     }
 
     /**
