@@ -101,13 +101,6 @@ public class Task {
         return beginAndDueDates;
     }
 
-    /**
-     * print the begin and end date for task.
-     * @return String of dates
-     */
-    public String printBeginAndDueDates() {
-        return "Begin Date: " + beginAndDueDates.getBeginDate() + "\n"+ "Due Date: " + beginAndDueDates.getDueDate();
-    }
 
     /**
      * return if the task is complete.
