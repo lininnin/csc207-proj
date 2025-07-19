@@ -1,7 +1,6 @@
 package data_access;
 
 import entity.FeedbackEntry;
-import data_access.InMemoryDailyLogRepository;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import use_case.FeedbackRepository;
@@ -15,6 +14,7 @@ import java.time.LocalDate;
 
 public class FeedbackRepositoryImpl implements FeedbackRepository {
     private static final String file_path = "feedback.json";
+    //read directly from file
     /**
      * @param entry
      */

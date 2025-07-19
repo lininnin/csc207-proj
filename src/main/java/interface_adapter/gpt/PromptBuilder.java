@@ -10,8 +10,9 @@ public class PromptBuilder {
 
         StringBuilder prompt = new StringBuilder();
 
-        prompt.append("Analyze the following for today's user productivity and wellness insights:");
-        prompt.append("Date: ").append(log.getDate()).append("\n\n");
+        prompt.append("Analyze the following for today's " +
+                "user productivity and wellness insights and return a feedback entry:");
+        prompt.append("Today's date: ").append(log.getDate()).append("\n\n");
 
         // Daily Summary Info
         DailyTaskSummary summary = log.getDailyTaskSummary();
