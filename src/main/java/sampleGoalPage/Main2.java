@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.awt.*;
-
+/*
 public class Main2 {
 
     public static void main(String[] args) {
@@ -67,4 +67,4 @@ public class Main2 {
             });
         }
     }
-}
+}*/
