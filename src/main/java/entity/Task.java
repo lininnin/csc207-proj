@@ -2,6 +2,8 @@ package entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a task that can be scheduled, prioritized, and marked as complete.
@@ -48,8 +50,10 @@ public class Task {
         if (!this.isComplete) {
             this.isComplete = true;
             this.completedDateTime = completionTime;
+            notifyListeners();  // <-- Add this line
         }
     }
+
 
     /**
      * Checks if the task is overdue based on current time.
@@ -90,4 +94,26 @@ public class Task {
     public Priority getTaskPriority() {
         return taskPriority;
     }
+
+    // Listener interface lives INSIDE entity layer
+    public interface TaskCompleteListener {
+        void onTaskCompleted(Task task, LocalDateTime completionTime);
+    }
+
+    private final List<TaskCompleteListener> listeners = new ArrayList<>();
+
+    public void addTaskCompleteListener(TaskCompleteListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeTaskCompleteListener(TaskCompleteListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyListeners() {
+        for (TaskCompleteListener listener : listeners) {
+            listener.onTaskCompleted(this, this.completedDateTime);
+        }
+    }
+
 }
