@@ -28,7 +28,9 @@ public class Task {
      *
      * @param info       Metadata for the task
      * @param dates      Time window of the task
-     * @param priority   Task priority (defaults to MEDIUM if null)
+     * @param priority   input value for priority (defaults to MEDIUM if null)
+     * @throws IllegalArgumentException
+     *
      */
     public Task(Info info, BeginAndDueDates dates, Priority priority) {
         this.info = info;
@@ -66,28 +68,55 @@ public class Task {
         return LocalDate.now().isAfter(beginAndDueDates.getDueDate());
     }
 
-    /** @return Task metadata (Info) */
-    public Info getInfo() {
-        return info;
-    }
-
-    /** @return Task time range */
+    /**
+     * get the begin and end date for task in object type.
+     * @return Task time range
+     */
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
-    /** @return Whether the task is complete */
+
+    /**
+     * return if the task is complete.
+     * @return Whether the task is complete
+     */
     public boolean isComplete() {
         return isComplete;
     }
 
-    /** @return When the task was completed (if any) */
+    /**
+     * the time task was completed.
+     * @return When the task was completed (if any)
+     */
     public LocalDateTime getCompletedDateTime() {
         return completedDateTime;
     }
 
-    /** @return Task priority */
+    /**
+     * task's priority.
+     * @return Task priority
+     */
     public Priority getTaskPriority() {
         return taskPriority;
+    }
+
+    /**
+     * get task category.
+     * @return Info category
+     */
+    public String getCategory() {
+        return info.getCategory();
+    }
+
+    /*
+    * Todo: might consider to put getInfo and printTask (do it later)
+    */
+    /**
+     * get the info in object type.
+     * @return Info object
+     */
+    public Info getInfo(){
+        return info;
     }
 }

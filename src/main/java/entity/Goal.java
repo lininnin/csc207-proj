@@ -17,6 +17,7 @@ public class Goal {
     private final TimePeriod timePeriod;
     private final int frequency;
     private final List<LocalDate> completionDates;
+    private boolean isComplete;
 
     /**
      * Enum representing whether the goal is tracked weekly or monthly.
@@ -48,6 +49,7 @@ public class Goal {
         this.timePeriod = timePeriod;
         this.frequency = frequency;
         this.completionDates = new ArrayList<>();
+        this.isComplete = false;
     }
 
     /**
@@ -58,6 +60,9 @@ public class Goal {
     public void recordCompletion(LocalDate completionDate) {
         if (completionDate != null) {
             completionDates.add(completionDate);
+            if (completionDates.size() == frequency){
+                this.isComplete = true;
+            }
         }
     }
 
@@ -87,17 +92,8 @@ public class Goal {
      *
      * @return A string like "Progress: 2/3"
      */
-    public String getGoalStatus() {
-        return "Progress: " + getCurrentProgress() + "/" + frequency;
-    }
-
-    /**
-     * Returns the metadata (info) associated with this goal.
-     *
-     * @return The Info object
-     */
-    public Info getInfo() {
-        return info;
+    public int getCurrentProgress() {
+        return completionDates.size();
     }
 
     /**
@@ -106,16 +102,8 @@ public class Goal {
      * @return A BeginAndDueDates object representing the goal's active period
      */
     public BeginAndDueDates getBeginAndDueDates() {
-        return beginAndDueDates;
-    }
 
-    /**
-     * Returns the task being tracked by this goal.
-     *
-     * @return The target Task
-     */
-    public Task getTargetTask() {
-        return targetTask;
+        return beginAndDueDates;
     }
 
     /**
@@ -133,15 +121,13 @@ public class Goal {
      * @return The frequency requirement
      */
     public int getFrequency() {
+
         return frequency;
     }
 
-    /**
-     * Returns a defensive copy of the completion dates.
-     *
-     * @return List of completion dates
-     */
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
     }
+
+
 }
