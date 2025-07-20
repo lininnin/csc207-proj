@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="API Key and Endpoint" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="ms-17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="DOPENAI_API_BASE_URL" value="https://api.openai.com/v1/chat/completions" />
+      <env name="DOPENAI_API_KEY" value="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" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="interface_adapter.gpt.OpenAIAPIAdapter" />
+    <module name="csc207-proj" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
