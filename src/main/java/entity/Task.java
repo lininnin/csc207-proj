@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+/*
 /**
  * Represents a task that can be scheduled, prioritized, and marked as complete.
  * Each task is associated with Info metadata and a time range.
@@ -17,6 +17,9 @@ public class Task {
     private boolean isComplete;
     private LocalDateTime completedDateTime;
     private final Priority taskPriority;
+    private Goal goal = null;
+    private final List<Goal> goals = new ArrayList<>();
+    private boolean isRegular = false;
 
     /**
      * Enum for task priority level.
@@ -32,12 +35,13 @@ public class Task {
      * @param dates      Time window of the task
      * @param priority   Task priority (defaults to MEDIUM if null)
      */
-    public Task(Info info, BeginAndDueDates dates, Priority priority) {
+    public Task(Info info, BeginAndDueDates dates, Priority priority, Boolean regular) {
         this.info = info;
         this.beginAndDueDates = dates;
         this.taskPriority = priority != null ? priority : Priority.MEDIUM;
         this.isComplete = false;
         this.completedDateTime = null;
+        this.isRegular = regular;
     }
 
     /**
@@ -45,12 +49,15 @@ public class Task {
      * This is the only state mutation allowed as it represents a valid business transition.
      *
      * @param completionTime Time of task completion
+     * Todo: if it's a regular task i think it should just update on log/history?
      */
     public void completeTask(LocalDateTime completionTime) {
-        if (!this.isComplete) {
+        if (!this.isComplete && !isRegular) {
             this.isComplete = true;
             this.completedDateTime = completionTime;
-            notifyListeners();  // <-- Add this line
+        }
+        else{
+
         }
     }
 
@@ -95,6 +102,20 @@ public class Task {
         return taskPriority;
     }
 
+    public void addGoal(Goal goal) {
+        if (goal != null && !goals.contains(goal)) {
+            goals.add(goal);
+            this.isRegular = true;
+        }
+    }
+
+    public List<Goal> getGoals() {
+        return new ArrayList<>(goals); // defensive copy
+    }
+
+
+
+/*
     // Listener interface lives INSIDE entity layer
     public interface TaskCompleteListener {
         void onTaskCompleted(Task task, LocalDateTime completionTime);
@@ -110,10 +131,15 @@ public class Task {
         listeners.remove(listener);
     }
 
+    public void setIsRegular(boolean regular) {
+        this.isRegular = regular;
+    }
+
     private void notifyListeners() {
         for (TaskCompleteListener listener : listeners) {
             listener.onTaskCompleted(this, this.completedDateTime);
         }
-    }
+    }*/
+
 
 }

@@ -8,14 +8,16 @@ import java.util.stream.Collectors;
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
  * It tracks completion dates toward achieving the goal frequency within the goal's date range.
+ * Todo: If task not found, simulate user creating new task (dont think it should be part of this)
+ * Todo: edit info
  */
 public class Goal {
-    private final Info info;
-    private final BeginAndDueDates beginAndDueDates;
+    private Info info;
+    private BeginAndDueDates beginAndDueDates;
     private final Task targetTask;
-    private final TimePeriod timePeriod;
-    private final int frequency;
-    private final List<LocalDate> completionDates;
+    private TimePeriod timePeriod;
+    private int frequency;
+    private List<LocalDate> completionDates;
 
     /**
      * Enum representing whether the goal is tracked weekly or monthly.
@@ -35,7 +37,7 @@ public class Goal {
      * @throws IllegalArgumentException if any required parameter is null or frequency is negative
      */
     public Goal(Info info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
-        if (info == null || dates == null || targetTask == null || timePeriod == null) {
+        if (info == null || dates == null || timePeriod == null) {
             throw new IllegalArgumentException("Goal parameters cannot be null");
         }
         if (frequency < 0) {
@@ -44,6 +46,7 @@ public class Goal {
         this.info = info;
         this.beginAndDueDates = dates;
         this.targetTask = targetTask;
+        targetTask.addGoal(this);
         this.timePeriod = timePeriod;
         this.frequency = frequency;
         this.completionDates = new ArrayList<>();
@@ -78,7 +81,11 @@ public class Goal {
      * @return true if current progress is greater than or equal to frequency; false otherwise
      */
     public boolean isGoalAchieved() {
-        return getCurrentProgress() >= frequency;
+        if (this.targetTask.isComplete()) {
+            return true;
+        } else {
+            return getCurrentProgress() >= frequency;
+        }
     }
 
     /**
@@ -162,5 +169,21 @@ public class Goal {
         return allGoals.stream()
                 .filter(goal -> goal.getTimePeriod() == period)
                 .collect(Collectors.toList());
+    }
+
+    public void setTimePeriod(TimePeriod timePeriod) {
+        this.timePeriod = timePeriod;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+    public void setBeginDates(LocalDate beginDates) {
+        this.beginAndDueDates.setBeginDate(beginDates);
+    }
+
+    public void setDueDates(LocalDate dueDates) {
+        this.beginAndDueDates.setDueDate(dueDates);
     }
 }
