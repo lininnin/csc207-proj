@@ -92,8 +92,8 @@ public class Goal {
      *
      * @return A string like "Progress: 2/3"
      */
-    public int getGoalStatus() {
-        return getCurrentProgress();
+    public int getCurrentProgress() {
+        return completionDates.size();
     }
 
     /**
