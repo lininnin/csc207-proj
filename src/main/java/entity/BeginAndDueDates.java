@@ -7,8 +7,8 @@ import java.time.LocalDate;
  * This class is immutable to ensure data integrity.
  */
 public class BeginAndDueDates {
-    private final LocalDate beginDate;
-    private final LocalDate dueDate;
+    private LocalDate beginDate;
+    private LocalDate dueDate;
 
     /**
      * Constructs a new time range with validation.
@@ -40,5 +40,19 @@ public class BeginAndDueDates {
      */
     public LocalDate getDueDate() {
         return dueDate;
+    }
+
+    public void setBeginDate(LocalDate beginDate) {
+        if (beginDate == null) {
+            throw new IllegalArgumentException("Begin date cannot be null");
+        }
+        this.beginDate = beginDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+        this.dueDate = dueDate;
     }
 }

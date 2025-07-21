@@ -10,9 +10,9 @@ import java.util.UUID;
  */
 public class Info {
     private final String id;
-    private final String name;
-    private final String description;
-    private final String category;
+    private String name;
+    private String description;
+    private String category;
     private final LocalDate createdDate;
 
     /**
@@ -63,5 +63,17 @@ public class Info {
      */
     public LocalDate getCreatedDate() {
         return createdDate;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
