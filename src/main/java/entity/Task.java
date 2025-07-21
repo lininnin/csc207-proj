@@ -1,9 +1,10 @@
 package entity;
 
+import use_case.taskWithGoalFuntions.ManageTaskWithGoal;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 /*
 /**
  * Represents a task that can be scheduled, prioritized, and marked as complete.
@@ -17,9 +18,7 @@ public class Task {
     private boolean isComplete;
     private LocalDateTime completedDateTime;
     private final Priority taskPriority;
-    private Goal goal = null;
-    private final List<Goal> goals = new ArrayList<>();
-    private boolean isRegular = false;
+    private final ManageTaskWithGoal manageTask = new ManageTaskWithGoal();
 
     /**
      * Enum for task priority level.
@@ -35,13 +34,12 @@ public class Task {
      * @param dates      Time window of the task
      * @param priority   Task priority (defaults to MEDIUM if null)
      */
-    public Task(Info info, BeginAndDueDates dates, Priority priority, Boolean regular) {
+    public Task(Info info, BeginAndDueDates dates, Priority priority) {
         this.info = info;
         this.beginAndDueDates = dates;
         this.taskPriority = priority != null ? priority : Priority.MEDIUM;
         this.isComplete = false;
         this.completedDateTime = null;
-        this.isRegular = regular;
     }
 
     /**
@@ -49,10 +47,10 @@ public class Task {
      * This is the only state mutation allowed as it represents a valid business transition.
      *
      * @param completionTime Time of task completion
-     * Todo: if it's a regular task i think it should just update on log/history?
+     * Todo: if it's a regular task i think it should just update on log/history? Let me leave this for later
      */
     public void completeTask(LocalDateTime completionTime) {
-        if (!this.isComplete && !isRegular) {
+        if (!this.isComplete) {
             this.isComplete = true;
             this.completedDateTime = completionTime;
         }
@@ -102,15 +100,9 @@ public class Task {
         return taskPriority;
     }
 
-    public void addGoal(Goal goal) {
-        if (goal != null && !goals.contains(goal)) {
-            goals.add(goal);
-            this.isRegular = true;
-        }
-    }
-
-    public List<Goal> getGoals() {
-        return new ArrayList<>(goals); // defensive copy
+    // need it to add linked goals and all "edit task" functions
+    public ManageTaskWithGoal getManageTask() {
+        return manageTask;
     }
 
 

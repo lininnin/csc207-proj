@@ -3,7 +3,6 @@ package entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
@@ -29,11 +28,11 @@ public class Goal {
     /**
      * Constructs a new Goal with given parameters.
      *
-     * @param info Metadata about the goal (name, description, category)
-     * @param dates Begin and due dates for the goal
+     * @param info       Metadata about the goal (name, description, category)
+     * @param dates      Begin and due dates for the goal
      * @param targetTask The task to track progress against
      * @param timePeriod The period for the goal (WEEK or MONTH)
-     * @param frequency Required number of completions within the time period
+     * @param frequency  Required number of completions within the time period
      * @throws IllegalArgumentException if any required parameter is null or frequency is negative
      */
     public Goal(Info info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
@@ -46,7 +45,7 @@ public class Goal {
         this.info = info;
         this.beginAndDueDates = dates;
         this.targetTask = targetTask;
-        targetTask.addGoal(this);
+        targetTask.getManageTask().addGoal(this);
         this.timePeriod = timePeriod;
         this.frequency = frequency;
         this.completionDates = new ArrayList<>();
@@ -93,8 +92,8 @@ public class Goal {
      *
      * @return A string like "Progress: 2/3"
      */
-    public String getGoalStatus() {
-        return "Progress: " + getCurrentProgress() + "/" + frequency;
+    public int getGoalStatus() {
+        return getCurrentProgress();
     }
 
     /**
@@ -158,32 +157,8 @@ public class Goal {
         completionDates.clear();
     }
 
-    /**
-     * Static helper method to filter goals by the specified time period.
-     *
-     * @param allGoals List of all goals
-     * @param period TimePeriod to filter by (WEEK or MONTH)
-     * @return Filtered list of goals matching the time period
-     */
-    public static List<Goal> filterGoalsByTimePeriod(List<Goal> allGoals, TimePeriod period) {
-        return allGoals.stream()
-                .filter(goal -> goal.getTimePeriod() == period)
-                .collect(Collectors.toList());
-    }
+   public List<LocalDate> getCompletions(){
+        return new ArrayList<>(completionDates);
+   }
 
-    public void setTimePeriod(TimePeriod timePeriod) {
-        this.timePeriod = timePeriod;
-    }
-
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-
-    public void setBeginDates(LocalDate beginDates) {
-        this.beginAndDueDates.setBeginDate(beginDates);
-    }
-
-    public void setDueDates(LocalDate dueDates) {
-        this.beginAndDueDates.setDueDate(dueDates);
-    }
 }
