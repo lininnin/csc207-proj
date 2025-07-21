@@ -15,9 +15,9 @@ public class Goal {
     private Info info;
     private BeginAndDueDates beginAndDueDates;
     private final Task targetTask;
-    private TimePeriod timePeriod;
-    private int frequency;
-    private List<LocalDate> completionDates;
+    private final TimePeriod timePeriod;
+    private final int frequency;
+    private final List<LocalDate> completionDates;
 
     /**
      * Enum representing whether the goal is tracked weekly or monthly.
