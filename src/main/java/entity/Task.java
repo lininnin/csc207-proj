@@ -102,17 +102,6 @@ public class Task {
         return taskPriority;
     }
 
-    public void addGoal(Goal goal) {
-        if (goal != null && !goals.contains(goal)) {
-            goals.add(goal);
-            this.isRegular = true;
-        }
-    }
-
-    public List<Goal> getGoals() {
-        return new ArrayList<>(goals); // defensive copy
-    }
-
 
 
 /*
