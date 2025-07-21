@@ -151,16 +151,3 @@ public class Goal {
         completionDates.clear();
     }
 
-    /**
-     * Static helper method to filter goals by the specified time period.
-     *
-     * @param allGoals List of all goals
-     * @param period TimePeriod to filter by (WEEK or MONTH)
-     * @return Filtered list of goals matching the time period
-     */
-    public static List<Goal> filterGoalsByTimePeriod(List<Goal> allGoals, TimePeriod period) {
-        return allGoals.stream()
-                .filter(goal -> goal.getTimePeriod() == period)
-                .collect(Collectors.toList());
-    }
-}
