@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
  * Todo: edit info
  */
 public class Goal {
-    private Info info;
-    private BeginAndDueDates beginAndDueDates;
+    private final Info info;
+    private final BeginAndDueDates beginAndDueDates;
     private final Task targetTask;
     private final TimePeriod timePeriod;
     private final int frequency;
