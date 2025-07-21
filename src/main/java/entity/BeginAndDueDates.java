@@ -29,14 +29,14 @@ public class BeginAndDueDates {
     }
 
     /**
-     * @return The begin date
+     * @return The starting date
      */
     public LocalDate getBeginDate() {
         return beginDate;
     }
 
     /**
-     * @return The due date (may be null)
+     * @return The due date (might be null)
      */
     public LocalDate getDueDate() {
         return dueDate;

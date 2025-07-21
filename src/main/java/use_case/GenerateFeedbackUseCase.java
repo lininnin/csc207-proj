@@ -5,6 +5,7 @@ import entity.FeedbackEntry;
 import interface_adapter.gpt.PromptBuilder;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class GenerateFeedbackUseCase {
     private final GPTService gptService;
@@ -15,17 +16,30 @@ public class GenerateFeedbackUseCase {
         this.feedbackRepo = feedbackRepo;
     }
 
-    public void generateFeedback(DailyLog log) throws IOException {
+    /**
+     * Generate today's feedback
+     *
+     * @return today's generated feedback entry
+     */
+    public FeedbackEntry generateFeedback(DailyLog log) throws IOException {
+        LocalDate date = log.getDate();
+
+        // If feedback already generated today,
+        FeedbackEntry todayFeedback = feedbackRepo.loadByDate(date);
+        if (todayFeedback != null) {
+            return todayFeedback;
+        }
+
+        // Build prompt
         String prompt = PromptBuilder.buildPromptFromDailyLog(log);
-        String feedbackText = gptService.generateFeedback(prompt);
+        // Call GPT
+        String aiAnalysis = gptService.generateFeedback(prompt);
 
-        FeedbackEntry entry = new FeedbackEntry(
-                log,
-                feedbackText,
-                "See analysis above",
-                "Correlation details..."
-        );
+        //
 
-        feedbackRepo.save(entry);
+        FeedbackEntry todayEntry = new FeedbackEntry(date, aiAnalysis); // TODO: How should we get the other 2?
+
+        feedbackRepo.save(todayEntry);
+        return todayEntry;
     }
 }
