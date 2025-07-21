@@ -5,34 +5,21 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Represents a Task that are added to Today's tasks area,
+ * Represents an event that are added to Today's tasks area,
  * info: Info — info of this task
- * priority: enum— Optional Task Priority level (HIGH, MEDIUM, LOW)
- * isCompleted: boolean — Whether the task is currently marked as done
- * completedDateTime: LocalDateTime — Optional completed date for the instance
  * beginAndDueDates:  BeginAndDueDates — Begin and due dates of this task
- * overDue: boolean — The Task is overdue or not
  */
-public class Task {
-    public enum Priority {
-        Low,
-        Medium,
-        High
-    }
+public class Event {
 
     private Info info;
-    private Priority priority;
-    private boolean isCompleted;
-    private LocalDateTime completedDateTimes;
     private BeginAndDueDates beginAndDueDates;
-    private boolean overDue;
 
     /**
      * Constructs a new Info object with optional description and category.
-      * @param builder the builder of the item
+     * @param builder the builder of the item
      */
 
-    private Task(Builder builder) {
+    private Event(Builder builder) {
         if (builder.info == null) {
             throw new IllegalArgumentException("Info is required to create a Task");
         }
@@ -40,16 +27,12 @@ public class Task {
             throw new IllegalArgumentException("BeginAndDueDates is required to create a Task");
         }
         this.info = builder.info; //pass the info
-        this.priority = builder.priority; //pass the priority
-        this.isCompleted = false; //the status of a new task is always not completed
-        this.completedDateTimes = null; //do not have information of completed date & time for a new task
         this.beginAndDueDates = builder.beginAndDueDates; //pass the beginning and due dates
-        this.overDue = false; //a new task is always not overdue
+
     }
 
     public static class Builder {
         private final Info info;
-        private Priority priority = null;
         private BeginAndDueDates beginAndDueDates;
 
         public Builder(Info info) {
@@ -57,14 +40,6 @@ public class Task {
                 throw new IllegalArgumentException("Info cannot be null");
             }
             this.info = info;
-        }
-
-        public Builder priority(Priority priority) {
-            if (priority == null) {
-                throw new IllegalArgumentException("Priority cannot be null");
-            }
-            this.priority = priority;
-            return this;
         }
 
         public Builder beginAndDueDates(BeginAndDueDates beginAndDueDates) {
@@ -75,11 +50,11 @@ public class Task {
             return this;
         }
 
-        public Task build() {
+        public Event build() {
             if (beginAndDueDates == null) {
                 throw new IllegalStateException("BeginAndDueDates must be set before building the task");
             }
-            return new Task(this);
+            return new Event(this);
         }
     }
 
@@ -87,18 +62,6 @@ public class Task {
 
     public Info getInfo() {
         return info;
-    }
-
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public boolean getStatus() {
-        return isCompleted;
-    }
-
-    public LocalDateTime getCompletedDateTimes() {
-        return completedDateTimes;
     }
 
     public BeginAndDueDates getBeginAndDueDates() {
@@ -115,30 +78,6 @@ public class Task {
         this.info = info;
     }
 
-
-    public void editPriority(Priority newPriority) {
-        if (newPriority == null) {
-            throw new IllegalArgumentException("Priority cannot be null");
-        }
-        this.priority = newPriority;
-    }
-
-    public void editStatus(boolean status) {
-        this.isCompleted = status;
-        if (status) {
-            this.completedDateTimes = LocalDateTime.now();
-        } else {
-            this.completedDateTimes = null;
-        }
-    }
-
-    public void editCompletedDateTimes(LocalDateTime completedDateTime) {
-        if (completedDateTime == null) {
-            throw new IllegalArgumentException("CompletedDateTimes cannot be null");
-        }
-        this.completedDateTimes = completedDateTime;
-    }
-
     public void editDueDate(LocalDate newDueDate) {
         if (newDueDate == null) {
             throw new IllegalArgumentException("Due date cannot be null");
@@ -152,6 +91,5 @@ public class Task {
         }
         this.beginAndDueDates.setDueDate(newDueDate);
     }
-
 
 }
