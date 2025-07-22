@@ -3,7 +3,7 @@ package data_access;
 import entity.FeedbackEntry;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import use_case.FeedbackRepository;
+import use_case.repository.FeedbackRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 
 public class FeedbackRepositoryImpl implements FeedbackRepository {
-    private static final String file_path = "feedback.json";
+    private static final String file_path = "feedback_cache.json";
     //read directly from file
     /**
      * @param entry
@@ -43,6 +43,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepository {
     }
 
     /**
+     * Load the entry saved on date from file.
      * @param date
      * @return the FeedbackEntry logged on date.
      */
@@ -51,7 +52,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepository {
         try {
             Path path = Paths.get(file_path);
             if (!Files.exists(path) || Files.size(path) == 0) {
-                return "No feedback found for" + date; // TODO: What to return?
+                return null; // TODO: What to return?
             }
             String content = Files.readString(path, StandardCharsets.UTF_8);
             JSONObject root = new JSONObject(new JSONTokener(content));
