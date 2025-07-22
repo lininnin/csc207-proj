@@ -105,6 +105,10 @@ public class Task {
         return beginAndDueDates;
     }
 
+    public boolean isOverDue() {
+        return overDue;
+    }
+
 
 // ----------------- Editors with validation -----------------
 
@@ -152,6 +156,5 @@ public class Task {
         }
         this.beginAndDueDates.setDueDate(newDueDate);
     }
-
 
 }

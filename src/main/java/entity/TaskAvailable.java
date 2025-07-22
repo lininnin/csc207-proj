@@ -10,117 +10,102 @@ import java.util.List;
  * TODO: Will be used in Sophia's story #2 for filtering and organizing tasks by category/priority
  */
 public class TaskAvailable {
-    private final List<Task> taskAvailable;
+    private final List<Info> taskInfoAvailable;
 
     /**
      * Constructs a new TaskAvailable with an empty list of tasks.
      */
     public TaskAvailable() {
-        this.taskAvailable = new ArrayList<>();
+        this.taskInfoAvailable = new ArrayList<>();
     }
 
     /**
      * Adds a task to the available tasks pool.
      *
-     * @param task The task to add
-     * @throws IllegalArgumentException if task is null
+     * @param info The Info to add
+     * @throws IllegalArgumentException if info is null
      */
-    public void addTask(Task task) {
-        if (task == null) {
-            throw new IllegalArgumentException("Task cannot be null");
+    public void addTask(Info info) {
+        if (info == null) {
+            throw new IllegalArgumentException("Info cannot be null");
         }
-        taskAvailable.add(task);
+        taskInfoAvailable.add(info);
     }
 
     /**
      * Removes a task from the available tasks pool.
      *
-     * @param task The task to remove
-     * @return true if the task was removed, false if it wasn't in the list
+     * @param info The Info to remove
+     * @return true if the Info was removed, false if it wasn't in the list
      */
-    public boolean removeTask(Task task) {
-        return taskAvailable.remove(task);
+    public boolean removeTask(Info info) {
+        return taskInfoAvailable.remove(info);
     }
 
     /**
      * Returns all available tasks.
      *
-     * @return A copy of the list of available tasks
+     * @return A copy of the list of available Info
      */
-    public List<Task> getTaskAvailable() {
-        return new ArrayList<>(taskAvailable);
+    public List<Info> getTaskAvailable() {
+        return new ArrayList<>(taskInfoAvailable);
     }
 
     /**
      * Returns tasks filtered by category.
      *
      * @param category The category to filter by
-     * @return List of tasks in the specified category
+     * @return List of Info in the specified category
      */
-    public List<Task> getTasksByCategory(String category) {
-        List<Task> filtered = new ArrayList<>();
-        for (Task task : taskAvailable) {
-            if (category.equals(task.getInfo().getCategory())) {
-                filtered.add(task);
+    public List<Info> getTasksByCategory(String category) {
+        List<Info> filtered = new ArrayList<>();
+        for (Info info : taskInfoAvailable) {
+            if (category.equals(info.getCategory())) {
+                filtered.add(info);
             }
         }
         return filtered;
     }
 
     /**
-     * Returns tasks filtered by priority.
+     * Returns tasks filtered by name.
      *
-     * @param priority The priority level to filter by
-     * @return List of tasks with the specified priority
+     * @param name The name to filter by
+     * @return List of Info with the specified name
      */
-    public List<Task> getTasksByPriority(Task.Priority priority) {
-        List<Task> filtered = new ArrayList<>();
-        for (Task task : taskAvailable) {
-            if (task.getTaskPriority() == priority) {
-                filtered.add(task);
+    public List<Info> getTasksByName(String name) {
+        List<Info> filtered = new ArrayList<>();
+        for (Info info : taskInfoAvailable) {
+            if (name.equals(info.getName())) {
+                filtered.add(info);
             }
         }
         return filtered;
-    }
-
-    /**
-     * Returns incomplete tasks only.
-     *
-     * @return List of tasks that are not completed
-     */
-    public List<Task> getIncompleteTasks() {
-        List<Task> incomplete = new ArrayList<>();
-        for (Task task : taskAvailable) {
-            if (!task.isComplete()) {
-                incomplete.add(task);
-            }
-        }
-        return incomplete;
     }
 
     /**
      * Returns the number of available tasks.
      *
-     * @return The size of the task list
+     * @return The size of the info list
      */
     public int getTaskCount() {
-        return taskAvailable.size();
+        return taskInfoAvailable.size();
     }
 
     /**
-     * Checks if a specific task is in the available list.
+     * Checks if a specific Info is in the available list.
      *
-     * @param task The task to check
-     * @return true if the task is available, false otherwise
+     * @param info The Info to check
+     * @return true if the Info is available, false otherwise
      */
-    public boolean contains(Task task) {
-        return taskAvailable.contains(task);
+    public boolean contains(Info info) {
+        return taskInfoAvailable.contains(info);
     }
 
     /**
-     * Clears all tasks from the available list.
+     * Clears all Info from the available list.
      */
     public void clearAll() {
-        taskAvailable.clear();
+        taskInfoAvailable.clear();
     }
 }

@@ -39,14 +39,14 @@ public class InMemoryTaskRepository implements TaskRepository {
         LocalDate today = LocalDate.now();
         return tasks.values().stream()
                 .filter(task -> todaysTaskIds.contains(task.getInfo().getId()))
-                .filter(task -> !task.isComplete())
+                .filter(task -> !task.getStatus())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Task> findOverdueTasks() {
         return tasks.values().stream()
-                .filter(Task::isOverdue)
+                .filter(Task::isOverDue)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,7 @@ public class InMemoryTaskRepository implements TaskRepository {
     @Override
     public List<Task> findByPriority(Task.Priority priority) {
         return tasks.values().stream()
-                .filter(task -> task.getTaskPriority() == priority)
+                .filter(task -> task.getPriority() == priority)
                 .collect(Collectors.toList());
     }
 
@@ -75,13 +75,12 @@ public class InMemoryTaskRepository implements TaskRepository {
     public List<Task> findAvailableTasks() {
         LocalDate today = LocalDate.now();
         return tasks.values().stream()
-                .filter(task -> !task.isComplete())
+                .filter(task -> !task.getStatus())
                 .filter(task -> !todaysTaskIds.contains(task.getInfo().getId()))
                 .filter(task -> {
                     LocalDate beginDate = task.getBeginAndDueDates().getBeginDate();
                     LocalDate dueDate = task.getBeginAndDueDates().getDueDate();
 
-                    // Task is available if today is within its date range
                     boolean afterBegin = !today.isBefore(beginDate);
                     boolean beforeDue = dueDate == null || !today.isAfter(dueDate);
 
@@ -96,10 +95,10 @@ public class InMemoryTaskRepository implements TaskRepository {
     public List<Task> findTodaysCompletedTasks() {
         LocalDate today = LocalDate.now();
         return tasks.values().stream()
-                .filter(Task::isComplete)
+                .filter(Task::getStatus)
                 .filter(task -> {
-                    if (task.getCompletedDateTime() != null) {
-                        return task.getCompletedDateTime().toLocalDate().equals(today);
+                    if (task.getCompletedDateTimes() != null) {
+                        return task.getCompletedDateTimes().toLocalDate().equals(today);
                     }
                     return false;
                 })
