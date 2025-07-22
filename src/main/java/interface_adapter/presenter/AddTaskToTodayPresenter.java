@@ -2,7 +2,7 @@ package interface_adapter.presenter;
 
 import use_case.add_task_to_today.AddTaskToTodayOutputBoundary;
 import use_case.add_task_to_today.AddTaskToTodayOutputData;
-import view.TaskViewModel;
+import view.Task.TaskViewModel;
 
 /**
  * Presenter for adding tasks to today.

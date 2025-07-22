@@ -1,4 +1,4 @@
-package view;
+package view.Task;
 
 /**
  * Interface for view model update notifications.

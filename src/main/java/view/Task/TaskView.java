@@ -1,4 +1,4 @@
-package view;
+package view.Task;
 
 import entity.Task;
 import interface_adapter.controller.CreateTaskController;
@@ -283,7 +283,7 @@ public class TaskView extends JPanel implements TaskViewModelUpdateListener {
 
         @Override
         public String toString() {
-            String priority = task.getTaskPriority().name();
+            String priority = task.getPriority().name();
             String category = task.getInfo().getCategory() != null ?
                     "[" + task.getInfo().getCategory() + "] " : "";
             String dates = "";

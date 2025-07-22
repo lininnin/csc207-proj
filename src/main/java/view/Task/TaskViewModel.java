@@ -1,6 +1,7 @@
-package view;
+package view.Task;
 
 import entity.Task;
+
 import java.util.ArrayList;
 import java.util.List;
 
