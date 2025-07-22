@@ -1,4 +1,4 @@
-package fixtures;
+package interface_adapter.gpt;
 
 public final class DefaultPromptProvider {
     private DefaultPromptProvider() {}
