@@ -7,8 +7,8 @@ import java.time.LocalDate;
  * This class is immutable to ensure data integrity.
  */
 public class BeginAndDueDates {
-    private final LocalDate beginDate;
-    private final LocalDate dueDate;
+    private LocalDate beginDate;
+    private LocalDate dueDate;
 
     /**
      * Constructs a new time range with validation.
