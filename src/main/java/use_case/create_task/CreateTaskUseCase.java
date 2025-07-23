@@ -1,9 +1,9 @@
 package use_case.create_task;
 
-import entity.*;
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.Info.Info;
+import entity.Angela.Task.Task;
 import use_case.repository.TaskRepository;
-
-import java.time.LocalDate;
 
 /**
  * Use case for creating a new task.
@@ -25,26 +25,25 @@ public class CreateTaskUseCase {
      */
     public void execute(CreateTaskInputData inputData) {
         try {
-            // Create Info object with task metadata
-            Info taskInfo = new Info(
-                    inputData.getName(),
-                    inputData.getDescription(),
-                    inputData.getCategory()
-            );
+            // Step 1: Build Info object using builder pattern
+            Info taskInfo = new Info.Builder(inputData.getName())
+                    .description(inputData.getDescription())
+                    .category(inputData.getCategory())
+                    .build();
 
-            // Create date range
+            // Step 2: Build BeginAndDueDates object
             BeginAndDueDates dates = new BeginAndDueDates(
                     inputData.getBeginDate(),
                     inputData.getDueDate()
             );
 
-            // Create the task
+            // Step 3: Create Task (assume Task does not use Builder but accepts Info + Dates + Priority)
             Task newTask = new Task(taskInfo, dates, inputData.getPriority());
 
-            // Save the task
+            // Step 4: Save task to repository
             taskRepository.save(newTask);
 
-            // Prepare success output
+            // Step 5: Notify output boundary of success
             CreateTaskOutputData outputData = new CreateTaskOutputData(
                     newTask.getInfo().getId(),
                     newTask.getInfo().getName(),
@@ -58,4 +57,5 @@ public class CreateTaskUseCase {
         }
     }
 }
+
 

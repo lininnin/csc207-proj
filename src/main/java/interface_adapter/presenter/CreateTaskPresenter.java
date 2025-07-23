@@ -2,7 +2,7 @@ package interface_adapter.presenter;
 
 import use_case.create_task.CreateTaskOutputBoundary;
 import use_case.create_task.CreateTaskOutputData;
-import view.TaskViewModel;
+import view.Task.TaskViewModel;
 
 /**
  * Presenter for task creation.

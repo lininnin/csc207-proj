@@ -1,6 +1,6 @@
 package use_case.repository;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import java.util.List;
 
 /**

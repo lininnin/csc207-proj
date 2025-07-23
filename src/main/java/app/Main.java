@@ -1,144 +1,54 @@
 package app;
 
-import data_access.InMemoryDailyLogRepository;
-import data_access.InMemoryTaskRepository;
-import interface_adapter.controller.*;
-import interface_adapter.presenter.*;
-import use_case.create_task.*;
-import use_case.mark_task_complete.*;
-import use_case.add_task_to_today.*;
-import view.TaskView;
-import view.TaskViewModel;
+import interface_adapter.Alex.CreateEventController;
+import interface_adapter.Alex.CreatedEventViewModel;
+import use_case.Alex.create_event.CreateEventInputBoundary;
+import use_case.Alex.create_event.CreateEventInputData;
+import view.Alex.CreateEventView;
+import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 
-/**
- * Main application class for MindTrack.
- * Sets up the application using Clean Architecture principles.
- */
-public class Main {
+class CreateEventTestApp {
+
     public static void main(String[] args) {
-        // Use Swing's event dispatch thread
         SwingUtilities.invokeLater(() -> {
-            try {
-                // Set system look and feel
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                // Use default look and feel
-            }
+            JFrame frame = new JFrame("Create Event Test");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(1000, 600);
 
-            createAndShowGUI();
+            // 1. 创建 ViewModel 和 Controller（用 Mock 代替真正 UseCase）
+            CreatedEventViewModel viewModel = new CreatedEventViewModel();
+
+            CreateEventInputBoundary mockUseCase = new CreateEventInputBoundary() {
+                @Override
+                public void execute(CreateEventInputData inputData) {
+                    System.out.println("Mock Created: " + inputData.getName() + " (" + inputData.getCategory() + ")");
+                    JOptionPane.showMessageDialog(null, "Mock Created: " + inputData.getName());
+                }
+            };
+
+            CreateEventController controller = new CreateEventController(mockUseCase);
+
+            // 2. 创建 View 并注入依赖
+            CreateEventView createEventView = new CreateEventView(viewModel);
+            createEventView.setCreateEventController(controller);
+
+            // 3. 准备主界面卡片视图
+            JPanel mainContent = new JPanel(new CardLayout());
+            mainContent.add(createEventView, "Events");
+
+            // 4. 构建带 Sidebar 的主界面
+            CollapsibleSidebarView fullView = new CollapsibleSidebarView(mainContent);
+
+            frame.setContentPane(fullView);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
         });
     }
-
-    private static void createAndShowGUI() {
-        // Create repositories (data layer)
-        InMemoryTaskRepository taskRepository = new InMemoryTaskRepository();
-        InMemoryDailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
-
-        // Create view model
-        TaskViewModel taskViewModel = new TaskViewModel();
-
-        // Create presenters (interface adapters)
-        CreateTaskPresenter createTaskPresenter = new CreateTaskPresenter(taskViewModel);
-        MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(taskViewModel);
-        AddTaskToTodayPresenter addTaskToTodayPresenter = new AddTaskToTodayPresenter(taskViewModel);
-
-        // Create use cases
-        CreateTaskUseCase createTaskUseCase = new CreateTaskUseCase(
-                taskRepository,
-                createTaskPresenter
-        );
-
-        MarkTaskCompleteUseCase markCompleteUseCase = new MarkTaskCompleteUseCase(
-                taskRepository,
-                dailyLogRepository,
-                markCompletePresenter
-        );
-
-        AddTaskToTodayUseCase addTaskToTodayUseCase = new AddTaskToTodayUseCase(
-                taskRepository,
-                dailyLogRepository,
-                addTaskToTodayPresenter
-        );
-
-        // Create controllers (interface adapters)
-        CreateTaskController createTaskController = new CreateTaskController(createTaskUseCase);
-        MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(markCompleteUseCase);
-        AddTaskToTodayController addTaskToTodayController = new AddTaskToTodayController(addTaskToTodayUseCase);
-
-        // Create view
-        TaskView taskView = new TaskView(taskViewModel, createTaskController, markCompleteController);
-        taskView.setAddTaskToTodayController(addTaskToTodayController);
-
-        // Create a data loader to populate view model
-        TaskDataLoader dataLoader = new TaskDataLoader(taskRepository, taskViewModel);
-        taskView.setDataReloader(dataLoader::loadInitialData);
-        dataLoader.loadInitialData();
-
-        // Create main window
-        JFrame frame = new JFrame("MindTrack - Task Management");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-
-        // Add components
-        frame.add(createHeaderPanel(), BorderLayout.NORTH);
-        frame.add(taskView, BorderLayout.CENTER);
-
-        // Set window properties
-        frame.setSize(1000, 700);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    private static JPanel createHeaderPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setBackground(new Color(41, 128, 185));
-
-        JLabel titleLabel = new JLabel("MindTrack - Daily Task Tracker");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.WHITE);
-        panel.add(titleLabel);
-
-        return panel;
-    }
 }
 
-/**
- * Helper class to load data into the view model.
- */
-class TaskDataLoader {
-    private final InMemoryTaskRepository taskRepository;
-    private final TaskViewModel taskViewModel;
-    private boolean isLoading = false;
 
-    TaskDataLoader(InMemoryTaskRepository taskRepository, TaskViewModel taskViewModel) {
-        this.taskRepository = taskRepository;
-        this.taskViewModel = taskViewModel;
-    }
 
-    void loadInitialData() {
-        loadData();
-    }
-
-    private void loadData() {
-        if (isLoading) {
-            return; // Prevent recursive calls
-        }
-
-        isLoading = true;
-        taskViewModel.setAvailableTasks(taskRepository.findAvailableTasks());
-        taskViewModel.setTodaysTasks(taskRepository.findTodaysTasks());
-        taskViewModel.setCompletedTasks(taskRepository.findTodaysCompletedTasks());
-        taskViewModel.setOverdueTasks(taskRepository.findOverdueTasks());
-
-        // Calculate completion rate
-        int scheduled = taskRepository.findTodaysTasks().size() + taskRepository.findTodaysCompletedTasks().size();
-        int completed = taskRepository.findTodaysCompletedTasks().size();
-        double rate = scheduled > 0 ? (double) completed / scheduled : 0.0;
-        taskViewModel.setCompletionRate(rate);
-
-        isLoading = false;
-    }
-}
