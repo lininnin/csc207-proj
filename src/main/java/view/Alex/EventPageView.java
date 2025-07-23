@@ -1,8 +1,8 @@
 package view.Alex;
 
-import interface_adapter.Alex.CreateEventController;
-import interface_adapter.Alex.CreatedEventViewModel;
-import interface_adapter.Alex.CreatedEventState;
+import interface_adapter.Alex.create_event.CreateEventController;
+import interface_adapter.Alex.create_event.CreatedEventViewModel;
+import interface_adapter.Alex.create_event.CreatedEventState;
 import interface_adapter.Alex.create_event.CreateEventViewModelUpdateListener;
 import view.LabelComponentPanel;
 
@@ -16,49 +16,61 @@ import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.UUID;
 
-/**
- * The View for the Create Event Use Case.
- */
-public class CreateEventView extends JPanel implements ActionListener,
+public class EventPageView extends JPanel implements ActionListener,
         PropertyChangeListener, CreateEventViewModelUpdateListener {
 
     private final String viewName = "New Available Event";
 
     private final CreatedEventViewModel createdEventViewModel;
-
-    private final JTextField nameInputField = new JTextField(20);
-    private final JTextField categoryInputField = new JTextField(20);
-    private final JTextArea descriptionInputArea = new JTextArea(4, 25);
+    private final JTextField nameInputField = new JTextField(8);
+    private final JTextField categoryInputField = new JTextField(8);
+    private final JTextArea descriptionInputArea = new JTextArea(2, 8);
     private final JCheckBox oneTimeCheckbox = new JCheckBox();
-
     private final JButton create;
     private final JButton cancel;
-
     private CreateEventController createEventController;
 
-    public CreateEventView(CreatedEventViewModel createdEventViewModel) {
+    public EventPageView(CreatedEventViewModel createdEventViewModel) {
         this.createdEventViewModel = createdEventViewModel;
         createdEventViewModel.addPropertyChangeListener(this);
-        createdEventViewModel.addListener(this); // 注册 ViewModel 的监听器
+        createdEventViewModel.addListener(this);
+
+        this.setMaximumSize(new Dimension(150, 70));
+        this.setPreferredSize(new Dimension(150, 70));
 
         final JLabel title = new JLabel(CreatedEventViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setFont(new Font("Arial", Font.BOLD, 16));
+        title.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
-        final LabelComponentPanel nameInfo = new LabelComponentPanel(
+        nameInputField.setMaximumSize(new Dimension(100, 25));
+        categoryInputField.setMaximumSize(new Dimension(100, 25));
+        descriptionInputArea.setLineWrap(true);
+        descriptionInputArea.setWrapStyleWord(true);
+
+        LabelComponentPanel nameInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.NAME_LABEL), nameInputField);
-
-        final LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
+        LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.ONE_TIME_LABEL), oneTimeCheckbox);
-
-        final LabelComponentPanel categoryInfo = new LabelComponentPanel(
+        LabelComponentPanel categoryInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.CATEGORY_LABEL), categoryInputField);
+        LabelComponentPanel descriptionInfo = new LabelComponentPanel(
+                new JLabel(CreatedEventViewModel.DESCRIPTION_LABEL),
+                new JScrollPane(descriptionInputArea));
 
-        final LabelComponentPanel descriptionInfo = new LabelComponentPanel(
-                new JLabel(CreatedEventViewModel.DESCRIPTION_LABEL), new JScrollPane(descriptionInputArea));
+        JPanel row1 = new JPanel(new GridLayout(1, 2, 5, 1));
+        row1.add(nameInfo);
+        row1.add(oneTimeInfo);
 
-        final JPanel buttons = new JPanel();
+        JPanel row2 = new JPanel(new GridLayout(1, 2, 5, 1));
+        row2.add(categoryInfo);
+        row2.add(descriptionInfo);
+
+        JPanel buttons = new JPanel();
         create = new JButton(CreatedEventViewModel.CREATE_EVENT_INFO_LABEL);
         cancel = new JButton("Cancel");
+        create.setPreferredSize(new Dimension(120, 25));
+        cancel.setPreferredSize(new Dimension(70, 25));
         buttons.add(create);
         buttons.add(cancel);
 
@@ -74,15 +86,15 @@ public class CreateEventView extends JPanel implements ActionListener,
         });
 
         cancel.addActionListener(this);
-
         addFieldListeners();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setBorder(BorderFactory.createEmptyBorder(5, 5, 1, 5));
         this.add(title);
-        this.add(nameInfo);
-        this.add(oneTimeInfo);
-        this.add(categoryInfo);
-        this.add(descriptionInfo);
+        this.add(row1);
+        this.add(Box.createVerticalStrut(1));
+        this.add(row2);
+        this.add(Box.createVerticalStrut(1));
         this.add(buttons);
     }
 
@@ -120,7 +132,6 @@ public class CreateEventView extends JPanel implements ActionListener,
 
     @Override
     public void onViewModelUpdated() {
-        // 自动将 ViewModel 的状态更新反映到界面组件
         CreatedEventState state = createdEventViewModel.getState();
         if (!nameInputField.getText().equals(state.getName())) {
             nameInputField.setText(state.getName());
@@ -157,7 +168,6 @@ public class CreateEventView extends JPanel implements ActionListener,
         this.createEventController = controller;
     }
 
-    // Adapter for DocumentListener
     private abstract static class DocumentAdapter implements DocumentListener {
         public abstract void update(DocumentEvent e);
         public void insertUpdate(DocumentEvent e) { update(e); }
@@ -165,5 +175,3 @@ public class CreateEventView extends JPanel implements ActionListener,
         public void changedUpdate(DocumentEvent e) { update(e); }
     }
 }
-
-

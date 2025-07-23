@@ -1,7 +1,6 @@
-package interface_adapter.Alex;
+package interface_adapter.Alex.create_event;
 
 //import interface_adapter.CreateEventViewModelUpdateListener;
-import interface_adapter.Alex.create_event.CreateEventViewModelUpdateListener;
 import interface_adapter.ViewModel;
 
 import java.util.ArrayList;

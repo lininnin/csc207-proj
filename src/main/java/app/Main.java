@@ -1,54 +1,82 @@
 package app;
 
-import interface_adapter.Alex.CreateEventController;
-import interface_adapter.Alex.CreatedEventViewModel;
+import interface_adapter.Alex.create_event.CreateEventController;
+import interface_adapter.Alex.create_event.CreatedEventViewModel;
 import use_case.Alex.create_event.CreateEventInputBoundary;
-import use_case.Alex.create_event.CreateEventInputData;
-import view.Alex.CreateEventView;
+import view.Alex.EventPageView;
 import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
 
 class CreateEventTestApp {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Create Event Test");
+            JFrame frame = new JFrame("MindTrack");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1000, 600);
+            frame.setSize(1200, 700);
 
-            // 1. 创建 ViewModel 和 Controller（用 Mock 代替真正 UseCase）
+            // --- ViewModel + Mock UseCase ---
             CreatedEventViewModel viewModel = new CreatedEventViewModel();
-
-            CreateEventInputBoundary mockUseCase = new CreateEventInputBoundary() {
-                @Override
-                public void execute(CreateEventInputData inputData) {
-                    System.out.println("Mock Created: " + inputData.getName() + " (" + inputData.getCategory() + ")");
-                    JOptionPane.showMessageDialog(null, "Mock Created: " + inputData.getName());
-                }
+            CreateEventInputBoundary mockUseCase = inputData -> {
+                System.out.println("Mock Created: " + inputData.getName());
+                JOptionPane.showMessageDialog(null, "Mock Created: " + inputData.getName());
             };
-
             CreateEventController controller = new CreateEventController(mockUseCase);
 
-            // 2. 创建 View 并注入依赖
-            CreateEventView createEventView = new CreateEventView(viewModel);
-            createEventView.setCreateEventController(controller);
+            // --- Sidebar ---
+            JPanel sidebar = new CollapsibleSidebarView(new JPanel());
 
-            // 3. 准备主界面卡片视图
-            JPanel mainContent = new JPanel(new CardLayout());
-            mainContent.add(createEventView, "Events");
+            // --- CreateEventView (上左部分上半) ---
+            EventPageView eventPageView = new EventPageView(viewModel);
+            eventPageView.setCreateEventController(controller);
+            eventPageView.setPreferredSize(new Dimension(300, 40));
 
-            // 4. 构建带 Sidebar 的主界面
-            CollapsibleSidebarView fullView = new CollapsibleSidebarView(mainContent);
+            // --- 中央区域左边：上 = NewAvailableEvent，下 = 预留 ---
+            JPanel upperLeftTop = eventPageView;
+            JPanel upperLeftBottom = new JPanel(); // 可放 future box
+            upperLeftBottom.setBackground(new Color(220, 220, 220));
 
-            frame.setContentPane(fullView);
+            JSplitPane verticalLeftSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperLeftTop, upperLeftBottom);
+            verticalLeftSplit.setResizeWeight(0.5); // 上下平分
+            verticalLeftSplit.setDividerSize(2);
+            verticalLeftSplit.setEnabled(false);
+
+            // --- 中央区域右边：占右侧上半 ---
+            JPanel upperRightPanel = new JPanel();
+            upperRightPanel.setBackground(new Color(240, 240, 255));
+
+            // --- 上方整行区域：左侧是verticalLeftSplit，右侧是upperRightPanel ---
+            JPanel topCenterRow = new JPanel(new GridLayout(1, 2));
+            topCenterRow.add(verticalLeftSplit);
+            topCenterRow.add(upperRightPanel);
+
+            // --- Bottom Box ---
+            JPanel bottomBox = new JPanel();
+            bottomBox.setPreferredSize(new Dimension(800, 350));
+            bottomBox.setBackground(Color.GRAY);
+
+            // --- 中央总区域：上方两列 + 底部一列 ---
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(topCenterRow, BorderLayout.CENTER);
+            centerPanel.add(bottomBox, BorderLayout.SOUTH);
+
+            // --- 右侧详情面板 ---
+            JPanel rightPanel = new JPanel();
+            rightPanel.setPreferredSize(new Dimension(300, 0));
+            rightPanel.setBackground(Color.WHITE);
+
+            // --- 总体布局 ---
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
+            mainPanel.add(rightPanel, BorderLayout.EAST);
+
+            frame.setContentPane(mainPanel);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
     }
 }
-
-
 

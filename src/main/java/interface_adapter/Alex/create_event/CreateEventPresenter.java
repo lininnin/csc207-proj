@@ -1,4 +1,4 @@
-package interface_adapter.Alex;
+package interface_adapter.Alex.create_event;
 
 import use_case.Alex.create_event.CreateEventOutputBoundary;
 import use_case.Alex.create_event.CreateEventOutputData;
