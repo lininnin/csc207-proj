@@ -1,9 +1,14 @@
 package app;
 
-import interface_adapter.Alex.create_event.CreateEventController;
-import interface_adapter.Alex.create_event.CreatedEventViewModel;
-import use_case.Alex.create_event.CreateEventInputBoundary;
-import view.Alex.EventPageView;
+import interface_adapter.Alex.available_event.AvailableEventViewModel;
+import interface_adapter.Alex.create_event.*;
+import interface_adapter.Alex.delete_event.*;
+import use_case.Alex.create_event.*;
+import use_case.Alex.delete_event.*;
+import data_access.EventAvailableDataAccessObject;
+import entity.Info.InfoFactory;
+import view.Alex.CreateEventView;
+import view.Alex.AvailableEventView;
 import view.CollapsibleSidebarView;
 
 import javax.swing.*;
@@ -17,60 +22,84 @@ class CreateEventTestApp {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 700);
 
-            // --- ViewModel + Mock UseCase ---
-            CreatedEventViewModel viewModel = new CreatedEventViewModel();
-            CreateEventInputBoundary mockUseCase = inputData -> {
-                System.out.println("Mock Created: " + inputData.getName());
-                JOptionPane.showMessageDialog(null, "Mock Created: " + inputData.getName());
-            };
-            CreateEventController controller = new CreateEventController(mockUseCase);
+            // --- ViewModels ---
+            CreatedEventViewModel createdEventViewModel = new CreatedEventViewModel();
+            AvailableEventViewModel availableEventViewModel = new AvailableEventViewModel();
+            DeletedEventViewModel deletedEventViewModel = new DeletedEventViewModel();
 
-            // --- Sidebar ---
-            JPanel sidebar = new CollapsibleSidebarView(new JPanel());
+            // --- Data Access & Factory ---
+            EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject();
+            CreateEventDataAccessInterface createAccess = commonDao;
+            DeleteEventDataAccessInterf deleteAccess = commonDao;
+            InfoFactory infoFactory = new InfoFactory();
 
-            // --- CreateEventView (上左部分上半) ---
-            EventPageView eventPageView = new EventPageView(viewModel);
-            eventPageView.setCreateEventController(controller);
-            eventPageView.setPreferredSize(new Dimension(300, 40));
+            // --- Create Event Use Case ---
+            CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(
+                    createdEventViewModel, availableEventViewModel, createAccess);
+            CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(createAccess, createEventPresenter, infoFactory);
+            CreateEventController createEventController = new CreateEventController(createEventInteractor);
 
-            // --- 中央区域左边：上 = NewAvailableEvent，下 = 预留 ---
-            JPanel upperLeftTop = eventPageView;
-            JPanel upperLeftBottom = new JPanel(); // 可放 future box
-            upperLeftBottom.setBackground(new Color(220, 220, 220));
+            // --- Delete Event Use Case ---
+            DeleteEventOutputBoundary deleteEventPresenter = new DeleteEventPresenter(
+                    deletedEventViewModel, availableEventViewModel);
+            DeleteEventInputBoundary deleteEventInteractor = new DeleteEventInteractor(deleteAccess, deleteEventPresenter);
+            DeleteEventController deleteEventController = new DeleteEventController(deleteEventInteractor);
 
-            JSplitPane verticalLeftSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperLeftTop, upperLeftBottom);
-            verticalLeftSplit.setResizeWeight(0.5); // 上下平分
-            verticalLeftSplit.setDividerSize(2);
-            verticalLeftSplit.setEnabled(false);
+            // --- CreateEventView ---
+            CreateEventView createEventView = new CreateEventView(createdEventViewModel);
+            createEventView.setCreateEventController(createEventController);
 
-            // --- 中央区域右边：占右侧上半 ---
+            // --- AvailableEventView ---
+            AvailableEventView availableEventView = new AvailableEventView(
+                    availableEventViewModel, deleteEventController, deletedEventViewModel, createdEventViewModel);
+
+            // --- Upper Panel Layout (left top + left bottom) ---
+            JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createEventView, new JPanel());
+            verticalSplit.setResizeWeight(0.5);
+            verticalSplit.setDividerSize(2);
+            verticalSplit.setEnabled(false);
+
+            // --- Top Center Row ---
             JPanel upperRightPanel = new JPanel();
             upperRightPanel.setBackground(new Color(240, 240, 255));
-
-            // --- 上方整行区域：左侧是verticalLeftSplit，右侧是upperRightPanel ---
             JPanel topCenterRow = new JPanel(new GridLayout(1, 2));
-            topCenterRow.add(verticalLeftSplit);
+            topCenterRow.add(verticalSplit);
             topCenterRow.add(upperRightPanel);
 
-            // --- Bottom Box ---
-            JPanel bottomBox = new JPanel();
+            // --- Bottom Content Area ---
+            JPanel bottomBox = new JPanel(new BorderLayout());
+            bottomBox.add(availableEventView, BorderLayout.NORTH);
             bottomBox.setPreferredSize(new Dimension(800, 350));
             bottomBox.setBackground(Color.GRAY);
 
-            // --- 中央总区域：上方两列 + 底部一列 ---
             JPanel centerPanel = new JPanel(new BorderLayout());
             centerPanel.add(topCenterRow, BorderLayout.CENTER);
             centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
-            // --- 右侧详情面板 ---
+            // --- Sidebar Panel (buttons only) ---
+            JPanel sidebarPanel = new JPanel();
+            sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
+            sidebarPanel.setBackground(new Color(60, 63, 65));
+            sidebarPanel.setPreferredSize(new Dimension(200, 700));
+            sidebarPanel.add(new JButton("📋 Tasks"));
+            sidebarPanel.add(new JButton("📆 Events"));
+            sidebarPanel.add(new JButton("🎯 Goals"));
+            sidebarPanel.add(new JButton("🧠 Wellness Log"));
+            sidebarPanel.add(new JButton("📊 Charts"));
+            sidebarPanel.add(new JButton("🤖 AI-Feedback & Analysis"));
+            sidebarPanel.add(new JButton("⚙️ Settings"));
+
+            // --- Wrap sidebar + centerPanel into a collapsible container ---
+            CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
+
+            // --- Right Panel (Details) ---
             JPanel rightPanel = new JPanel();
             rightPanel.setPreferredSize(new Dimension(300, 0));
             rightPanel.setBackground(Color.WHITE);
 
-            // --- 总体布局 ---
+            // --- Final Frame Layout ---
             JPanel mainPanel = new JPanel(new BorderLayout());
-            mainPanel.add(sidebar, BorderLayout.WEST);
-            mainPanel.add(centerPanel, BorderLayout.CENTER);
+            mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
             mainPanel.add(rightPanel, BorderLayout.EAST);
 
             frame.setContentPane(mainPanel);
@@ -79,4 +108,5 @@ class CreateEventTestApp {
         });
     }
 }
+
 

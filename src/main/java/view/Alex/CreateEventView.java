@@ -10,14 +10,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class EventPageView extends JPanel implements ActionListener,
-        PropertyChangeListener, CreateEventViewModelUpdateListener {
+public class CreateEventView extends JPanel implements PropertyChangeListener, CreateEventViewModelUpdateListener {
 
     private final String viewName = "New Available Event";
 
@@ -27,10 +25,9 @@ public class EventPageView extends JPanel implements ActionListener,
     private final JTextArea descriptionInputArea = new JTextArea(2, 8);
     private final JCheckBox oneTimeCheckbox = new JCheckBox();
     private final JButton create;
-    private final JButton cancel;
     private CreateEventController createEventController;
 
-    public EventPageView(CreatedEventViewModel createdEventViewModel) {
+    public CreateEventView(CreatedEventViewModel createdEventViewModel) {
         this.createdEventViewModel = createdEventViewModel;
         createdEventViewModel.addPropertyChangeListener(this);
         createdEventViewModel.addListener(this);
@@ -68,14 +65,10 @@ public class EventPageView extends JPanel implements ActionListener,
 
         JPanel buttons = new JPanel();
         create = new JButton(CreatedEventViewModel.CREATE_EVENT_INFO_LABEL);
-        cancel = new JButton("Cancel");
         create.setPreferredSize(new Dimension(120, 25));
-        cancel.setPreferredSize(new Dimension(70, 25));
         buttons.add(create);
-        buttons.add(cancel);
 
         create.addActionListener(evt -> {
-            CreatedEventState currentState = createdEventViewModel.getState();
             createEventController.execute(
                     UUID.randomUUID().toString(),
                     nameInputField.getText(),
@@ -85,7 +78,6 @@ public class EventPageView extends JPanel implements ActionListener,
             );
         });
 
-        cancel.addActionListener(this);
         addFieldListeners();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -148,15 +140,11 @@ public class EventPageView extends JPanel implements ActionListener,
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(this, "Cancel not implemented yet.");
-    }
-
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         CreatedEventState state = (CreatedEventState) evt.getNewValue();
-        if (state.getNameError() != null) {
-            JOptionPane.showMessageDialog(this, state.getNameError());
+        String errorMsg = state.getNameError();
+        if (errorMsg != null && !errorMsg.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, errorMsg);
         }
     }
 
@@ -175,3 +163,4 @@ public class EventPageView extends JPanel implements ActionListener,
         public void changedUpdate(DocumentEvent e) { update(e); }
     }
 }
+

@@ -3,10 +3,11 @@ package data_access;
 import entity.Alex.EventAvailable.EventAvailable;
 import entity.Info.Info;
 import use_case.Alex.create_event.CreateEventDataAccessInterface;
+import use_case.Alex.delete_event.DeleteEventDataAccessInterf;
 
 import java.util.List;
 
-public class EventAvailableDataAccessObject implements CreateEventDataAccessInterface {
+public class EventAvailableDataAccessObject implements CreateEventDataAccessInterface, DeleteEventDataAccessInterf {
 
     private final EventAvailable eventAvailable = new EventAvailable();
 
@@ -49,5 +50,17 @@ public class EventAvailableDataAccessObject implements CreateEventDataAccessInte
     public void clearAll() {
         eventAvailable.clearAll();
     }
+
+    // ✅ 补充实现
+    @Override
+    public Info getEventById(String id) {
+        for (Info info : eventAvailable.getEventAvailable()) {
+            if (info.getId().equals(id)) {
+                return info;
+            }
+        }
+        return null;
+    }
 }
+
 
