@@ -1,8 +1,8 @@
 package entityTest;
 
-import entity.Event;
-import entity.Info;
-import entity.BeginAndDueDates;
+import entity.Alex.Event.Event;
+import entity.Info.Info;
+import entity.BeginAndDueDates.BeginAndDueDates;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

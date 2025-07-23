@@ -7,7 +7,7 @@ public interface CreateEventInputBoundary {
 
     /**
      * Execute the Change Password Use Case.
-     * @param changePasswordInputData the input data for this use case
+     * @param CreateEventInputData the input data for this use case
      */
     void execute(CreateEventInputData CreateEventInputData);
 

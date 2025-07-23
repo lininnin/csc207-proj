@@ -1,6 +1,6 @@
 package use_case.goalFunctions.manageGoals;
 
-import entity.Goal;
+import entity.Sophia.Goal;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ public class availableGoals {
      */
     public void recordCompletionAndClean(Goal goal, LocalDate completionDate) {
         if (completionDate != null && availableGoals.contains(goal)) {
-            goal.recordCompletion(completionDate);
-            if (goal.isGoalAchieved()) {
+            goal.recordCompletion();
+            if (goal.isCompleted()) {
                 availableGoals.remove(goal);
             }
         }
@@ -69,7 +69,7 @@ public class availableGoals {
         while (iterator.hasNext()) {
             Goal goal = iterator.next();
 
-            if (goal.isGoalAchieved()) {
+            if (goal.isCompleted()) {
                 LocalDate startDate = goal.getBeginAndDueDates().getBeginDate();
 
                 boolean isWeekly = goal.getTimePeriod() == Goal.TimePeriod.WEEK;

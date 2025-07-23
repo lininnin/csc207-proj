@@ -1,6 +1,6 @@
 package use_case.manageGoals;
 
-import entity.Goal;
+import entity.Sophia.Goal;
 
 import java.time.LocalDate;
 import java.util.Iterator;

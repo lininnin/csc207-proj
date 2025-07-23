@@ -1,7 +1,7 @@
 package entityTest;
 
-import entity.MoodLabel;
-import entity.WellnessLogEntry;
+import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

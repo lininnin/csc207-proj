@@ -1,7 +1,7 @@
 package use_case.manageGoals;
 
-import entity.Goal;
-import entity.Task;
+import entity.Sophia.Goal;
+import entity.Angela.Task.Task;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

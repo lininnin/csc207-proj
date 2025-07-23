@@ -1,7 +1,7 @@
 package entityTest;
 
-import entity.Info;
-import entity.TaskAvailable;
+import entity.Info.Info;
+import entity.Angela.TaskAvailable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

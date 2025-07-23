@@ -1,6 +1,6 @@
 package view.Task;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,9 @@
 package entityTest;
 
-import entity.UserSettings;
-import entity.NotificationTime;
+import entity.Alex.UserSettings.UserSettings;
+import entity.Alex.NotificationTime.NotificationTime;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalTime;
 
 public class UserSettingsTest {
 

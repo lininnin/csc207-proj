@@ -1,7 +1,7 @@
 package interface_adapter.gpt;
 
-import entity.DailyLog;
-import entity.DailyTaskSummary;
+import entity.Angela.DailyLog;
+import entity.Angela.DailyTaskSummary;
 
 public class PromptBuilder {
     public static String buildPromptFromDailyLog(DailyLog log) {

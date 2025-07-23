@@ -1,14 +1,5 @@
 package sampleGoalPage;
 
-import entity.BeginAndDueDates;
-import entity.Goal;
-import entity.Info;
-import entity.Task;
-
-import javax.swing.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.awt.*;
 /*
 public class Main2 {
 

@@ -3,7 +3,7 @@ package interface_adapter.gpt;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import use_case.GPTService;
+import use_case.Ina.GPTService;
 
 import java.io.IOException;
 

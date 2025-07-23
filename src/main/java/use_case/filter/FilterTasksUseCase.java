@@ -1,8 +1,8 @@
 package use_case.filter;
 
-import entity.BeginAndDueDates;
-import entity.Info;
-import entity.Task;
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.Info.Info;
+import entity.Angela.Task.Task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

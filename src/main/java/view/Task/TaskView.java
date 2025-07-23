@@ -1,6 +1,6 @@
 package view.Task;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import interface_adapter.controller.CreateTaskController;
 import interface_adapter.controller.MarkTaskCompleteController;
 import interface_adapter.controller.AddTaskToTodayController;

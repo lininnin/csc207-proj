@@ -1,9 +1,9 @@
 package entityTest;
 
-import entity.Task;
-import entity.Task.Priority;
-import entity.Info;
-import entity.BeginAndDueDates;
+import entity.Angela.Task.Task;
+import entity.Angela.Task.Task.Priority;
+import entity.Info.Info;
+import entity.BeginAndDueDates.BeginAndDueDates;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

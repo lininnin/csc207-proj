@@ -1,7 +1,7 @@
 package use_case.add_task_to_today;
 
-import entity.Task;
-import entity.DailyLog;
+import entity.Angela.Task.Task;
+import entity.Angela.DailyLog;
 import use_case.repository.TaskRepository;
 import use_case.repository.DailyLogRepository;
 import java.time.LocalDate;

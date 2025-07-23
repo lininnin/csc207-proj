@@ -1,6 +1,6 @@
 package use_case.repository;
 
-import entity.DailyLog;
+import entity.Angela.DailyLog;
 import java.time.LocalDate;
 
 /**

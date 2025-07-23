@@ -1,7 +1,7 @@
 package use_case.mark_task_complete;
 
-import entity.Task;
-import entity.DailyLog;
+import entity.Angela.Task.Task;
+import entity.Angela.DailyLog;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.TaskRepository;
 

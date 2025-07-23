@@ -1,7 +1,7 @@
 package entityTest;
 
-import entity.MoodLabel;
-import entity.MoodLabel.Type;
+import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabel.Type;
 
 import org.junit.jupiter.api.Test;
 
