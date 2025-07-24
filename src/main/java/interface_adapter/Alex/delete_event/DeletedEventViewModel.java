@@ -1,47 +1,21 @@
 package interface_adapter.Alex.delete_event;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import interface_adapter.ViewModel;
 
-/**
- * ViewModel for DeleteAvailableEvent use case.
- * Holds the current DeletedEventState and notifies listeners (typically Views) on state change.
- */
-public class DeletedEventViewModel {
+public class DeletedEventViewModel extends ViewModel<DeletedEventState> {
 
     public static final String DELETE_EVENT_STATE_PROPERTY = "deletedEventState";
 
-    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
-    private DeletedEventState state = new DeletedEventState();
-
-    /**
-     * Returns the current state.
-     */
-    public DeletedEventState getState() {
-        return state;
+    public DeletedEventViewModel() {
+        super("deleted event view");
+        this.setState(new DeletedEventState());
     }
 
-    /**
-     * Updates the state and notifies listeners.
-     */
-    public void setState(DeletedEventState newState) {
-        DeletedEventState oldState = this.state;
-        this.state = newState;
-        support.firePropertyChange(DELETE_EVENT_STATE_PROPERTY, oldState, newState);
-    }
-
-    /**
-     * Adds a PropertyChangeListener to listen to DELETE_EVENT_STATE_PROPERTY changes.
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(DELETE_EVENT_STATE_PROPERTY, listener);
-    }
-
-    /**
-     * Removes a PropertyChangeListener.
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(DELETE_EVENT_STATE_PROPERTY, listener);
+    // 可选：封装触发事件（也可以用父类提供的 firePropertyChanged()）
+    public void updateState(DeletedEventState newState) {
+        this.setState(newState);
+        this.firePropertyChanged(DELETE_EVENT_STATE_PROPERTY);
     }
 }
+
 

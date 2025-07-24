@@ -1,7 +1,7 @@
 package data_access;
 
 import entity.Alex.Event.Event;
-import use_case.Alex.add_event.AddEventDataAccessInterface;
+import use_case.Alex.add_event.AddEventDataAccessInterf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Represents the collection of events that have been added to today.
  * This acts as today's finalized event list for display or tracking.
  */
-public class TodaysEventDataAccessObject implements AddEventDataAccessInterface {
+public class TodaysEventDataAccessObject implements AddEventDataAccessInterf {
     private final List<Event> todaysEvents;
 
     /**

@@ -37,9 +37,9 @@ public class ViewModel<T> {
     /**
      * Fires a property changed event for the state of this ViewModel.
      */
-    public void firePropertyChanged() {
-        this.support.firePropertyChange("state", null, this.state);
-    }
+//    public void firePropertyChanged() {
+//        this.support.firePropertyChange("state", null, this.state);
+//    }
 
     /**
      * Fires a property changed event for the state of this ViewModel, which

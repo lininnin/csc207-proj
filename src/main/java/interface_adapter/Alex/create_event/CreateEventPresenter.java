@@ -8,6 +8,7 @@ import use_case.Alex.create_event.CreateEventDataAccessInterface;
 import entity.Info.Info;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,15 +35,17 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
         CreatedEventState createdState = new CreatedEventState();
         createdState.setName(outputData.getName());
         createdEventViewModel.setState(createdState);
-        createdEventViewModel.firePropertyChanged("createdEvent");
+        createdEventViewModel.firePropertyChanged(CreatedEventViewModel.CREATED_EVENT_STATE_PROPERTY);
 
-        // 2. 从 DAO 获取完整列表，更新 AvailableEventViewModel
-        List<Info> updatedList = dataAccess.getAllEvents(); // ✅ 获取最新事件列表
+
+        // 2. 获取完整事件列表并更新 AvailableEventViewModel
+        List<Info> updatedList = dataAccess.getAllEvents();
         AvailableEventState newState = new AvailableEventState();
         newState.setAvailableEvents(updatedList);
         availableEventViewModel.setState(newState);
-        availableEventViewModel.firePropertyChanged(); // ✅ 通知视图刷新
+        availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
     }
+
 
     @Override
     public void prepareFailView(String errorMessage) {

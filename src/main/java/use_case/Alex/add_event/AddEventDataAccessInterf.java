@@ -8,7 +8,7 @@ import java.util.List;
  * Interface for the Create Event data access object.
  * Defines methods to persist and query available events.
  */
-public interface AddEventDataAccessInterface {
+public interface AddEventDataAccessInterf {
 
     /**
      * Saves the given Info object to the event pool.

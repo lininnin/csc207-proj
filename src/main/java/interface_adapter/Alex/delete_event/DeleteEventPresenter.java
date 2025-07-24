@@ -39,9 +39,11 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         List<Info> updatedList = new ArrayList<>(currentState.getAvailableEvents());
         updatedList.removeIf(info -> info.getId().equals(outputData.getEventId()));
         currentState.setAvailableEvents(updatedList);
-        availableEventViewModel.setState(currentState);
-        availableEventViewModel.firePropertyChanged();
+
+        // 3. 通知视图更新（不再使用 setState + 无参 firePropertyChanged）
+        availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
     }
+
 
     @Override
     public void prepareFailView(DeleteEventOutputData outputData) {

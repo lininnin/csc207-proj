@@ -1,5 +1,7 @@
 package view.Alex;
 
+import interface_adapter.Alex.add_event.AddedEventState;
+import interface_adapter.Alex.add_event.AddedEventViewModel;
 import interface_adapter.Alex.create_event.CreateEventController;
 import interface_adapter.Alex.create_event.CreatedEventViewModel;
 import interface_adapter.Alex.create_event.CreatedEventState;
@@ -14,6 +16,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import entity.Info.Info;
+import data_access.EventAvailableDataAccessObject;
 
 public class CreateEventView extends JPanel implements PropertyChangeListener, CreateEventViewModelUpdateListener {
 
@@ -27,8 +34,17 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
     private final JButton create;
     private CreateEventController createEventController;
 
-    public CreateEventView(CreatedEventViewModel createdEventViewModel) {
+    // 可选：注入以支持 AddEventViewModel 同步
+    private AddedEventViewModel addedEventViewModel;
+    private final EventAvailableDataAccessObject availableDAO;
+
+    public CreateEventView(CreatedEventViewModel createdEventViewModel,
+                           AddedEventViewModel addedEventViewModel,
+                           EventAvailableDataAccessObject availableDAO) {
         this.createdEventViewModel = createdEventViewModel;
+        this.addedEventViewModel = addedEventViewModel;
+        this.availableDAO = availableDAO;
+
         createdEventViewModel.addPropertyChangeListener(this);
         createdEventViewModel.addListener(this);
 
@@ -38,7 +54,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         final JLabel title = new JLabel(CreatedEventViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setFont(new Font("Arial", Font.BOLD, 16));
-        title.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
+        title.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         nameInputField.setMaximumSize(new Dimension(100, 25));
         categoryInputField.setMaximumSize(new Dimension(100, 25));
@@ -146,6 +162,14 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         if (errorMsg != null && !errorMsg.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, errorMsg);
         }
+
+        // ✅ 同步 AddEventViewModel 可用的事件名称
+        List<String> availableNames = availableDAO.getAllEvents().stream()
+                .map(Info::getName)
+                .collect(Collectors.toList());
+        AddedEventState addState = addedEventViewModel.getState();
+        addState.setAvailableNames(availableNames);
+        addedEventViewModel.setState(addState);
     }
 
     public String getViewName() {
@@ -163,4 +187,3 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         public void changedUpdate(DocumentEvent e) { update(e); }
     }
 }
-
