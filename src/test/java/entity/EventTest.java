@@ -2,7 +2,7 @@ package entityTest;
 
 import entity.Alex.Event.Event;
 import entity.Info.Info;
-import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
