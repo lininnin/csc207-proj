@@ -1,12 +1,11 @@
 package entity;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
- * Represents metadata information shared by various domain entities,
- * such as Task, Event, Goal, etc.
- * Includes fields like name, description, category, and created date.
+ * Base class for all trackable entities in the MindTrack system.
+ * Contains common properties shared by Tasks, Events, and Goals.
+ * Follows Single Responsibility Principle - only responsible for basic entity information.
  */
 public class Info {
     private final String id;
@@ -16,52 +15,79 @@ public class Info {
     private final LocalDate createdDate;
 
     /**
-     * Constructs a new Info object with optional description and category.
+     * Constructs a new Info object.
      *
-     * @param name        The name of the item (required)
-     * @param description Optional description
-     * @param category    Optional category (e.g., "work", "personal", "academic")
-     * @throws IllegalArgumentException if name is null or empty
+     * @param id Unique identifier (required)
+     * @param name Name of the entity (required, max 20 chars)
+     * @param description Optional description (max 100 chars)
+     * @param category Category name (optional)
+     * @param createdDate Date when the entity was created
+     * @throws IllegalArgumentException if required fields are invalid
      */
-    public Info(String name, String description, String category) {
+    public Info(String id, String name, String description, String category, LocalDate createdDate) {
+        validateId(id);
+        validateName(name);
+        validateDescription(description);
+
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.createdDate = createdDate != null ? createdDate : LocalDate.now();
+    }
+
+    private void validateId(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
+    }
+
+    private void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
-        this.id = UUID.randomUUID().toString();
-        this.name = name.trim();
-        this.description = (description != null && !description.trim().isEmpty()) ? description.trim() : null;
-        this.category = (category != null && !category.trim().isEmpty()) ? category.trim() : null;
-        this.createdDate = LocalDate.now();
+        if (name.length() > 20) {
+            throw new IllegalArgumentException("Name cannot exceed 20 characters");
+        }
     }
 
-    /** @return The unique ID of this Info */
+    private void validateDescription(String description) {
+        if (description != null && description.length() > 100) {
+            throw new IllegalArgumentException("Description cannot exceed 100 characters");
+        }
+    }
+
+    // Getters
     public String getId() {
         return id;
     }
 
-    /** @return The name of this Info */
     public String getName() {
         return name;
     }
 
-    /** @return The description, if available
-     *
-     * TODO: Will be used in task detail views and tooltips
-     */
     public String getDescription() {
         return description;
     }
 
-    /** @return The category, if available */
     public String getCategory() {
         return category;
     }
 
-    /** @return The date this Info was created
-     *
-     * TODO: Will be used for audit logs and sorting tasks by creation date
-     */
     public LocalDate getCreatedDate() {
         return createdDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Info info = (Info) o;
+        return id.equals(info.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
