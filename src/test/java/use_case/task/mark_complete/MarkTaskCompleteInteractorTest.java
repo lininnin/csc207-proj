@@ -121,12 +121,12 @@ public class MarkTaskCompleteInteractorTest {
     // Mock implementations
 
     private static class MockTaskRepository implements TaskRepository {
-        List<TodaysTask> todaysTasks = new ArrayList<>();
+        final List<TodaysTask> todaysTasks = new ArrayList<>();
         boolean updateCalled = false;
 
         @Override
         public List<TodaysTask> findAllTodaysTasks() {
-            return todaysTasks;
+            return new ArrayList<>(todaysTasks);
         }
 
         @Override
@@ -136,31 +136,77 @@ public class MarkTaskCompleteInteractorTest {
 
         // Other methods not used
         @Override
-        public void saveAvailableTask(AvailableTask task) {}
+        public void saveAvailableTask(AvailableTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public void updateAvailableTask(AvailableTask task) {}
+        public void updateAvailableTask(AvailableTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public boolean deleteAvailableTask(String taskId) { return false; }
+        public boolean deleteAvailableTask(String taskId) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public AvailableTask findAvailableTaskById(String taskId) { return null; }
+        public AvailableTask findAvailableTaskById(String taskId) {
+            // Not needed for this test
+            return null;
+        }
+
         @Override
-        public List<AvailableTask> findAllAvailableTasks() { return new ArrayList<>(); }
+        public List<AvailableTask> findAllAvailableTasks() {
+            // Not needed for this test
+            return new ArrayList<>();
+        }
+
         @Override
-        public boolean availableTaskNameExists(String name) { return false; }
+        public boolean availableTaskNameExists(String name) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public void addTodaysTask(TodaysTask task) {}
+        public void addTodaysTask(TodaysTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public boolean removeTodaysTask(String taskId) { return false; }
+        public boolean removeTodaysTask(String taskId) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public List<TodaysTask> findTodaysTasksByStatus(boolean completed) { return new ArrayList<>(); }
+        public List<TodaysTask> findTodaysTasksByStatus(boolean completed) {
+            // Not needed for this test
+            return new ArrayList<>();
+        }
+
         @Override
-        public List<TodaysTask> findOverdueTasks() { return new ArrayList<>(); }
+        public List<TodaysTask> findOverdueTasks() {
+            // Not needed for this test
+            return new ArrayList<>();
+        }
+
         @Override
-        public boolean isInTodaysList(String taskId) { return false; }
+        public boolean isInTodaysList(String taskId) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public void clearTodaysTasks() {}
+        public void clearTodaysTasks() {
+            // Not needed for this test
+        }
+
         @Override
-        public void removeOneTimeTasks(List<String> taskIds) {}
+        public void removeOneTimeTasks(List<String> taskIds) {
+            // Not needed for this test
+        }
     }
 
     private static class MockMarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary {
