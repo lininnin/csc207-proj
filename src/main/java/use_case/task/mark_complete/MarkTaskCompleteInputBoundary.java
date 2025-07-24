@@ -7,14 +7,14 @@ public interface MarkTaskCompleteInputBoundary {
     /**
      * Marks a task as complete.
      *
-     * @param taskId The ID of the task to mark complete
+     * @param inputData The input data containing task ID
      */
-    void markComplete(String taskId);
+    void markComplete(MarkTaskCompleteInputData inputData);
 
     /**
      * Marks a task as incomplete.
      *
-     * @param taskId The ID of the task to mark incomplete
+     * @param inputData The input data containing task ID
      */
-    void markIncomplete(String taskId);
+    void markIncomplete(MarkTaskCompleteInputData inputData);
 }

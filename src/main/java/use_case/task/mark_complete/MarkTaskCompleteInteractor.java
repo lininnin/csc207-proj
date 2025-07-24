@@ -18,10 +18,10 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
     }
 
     @Override
-    public void markComplete(String taskId) {
+    public void markComplete(MarkTaskCompleteInputData inputData) {
         try {
             List<TodaysTask> todaysTasks = taskRepository.findAllTodaysTasks();
-            TodaysTask task = findTaskById(todaysTasks, taskId);
+            TodaysTask task = findTaskById(todaysTasks, inputData.getTaskId());
 
             if (task == null) {
                 outputBoundary.presentError("Task not found in today's list");
@@ -38,7 +38,7 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
             taskRepository.updateTodaysTask(task);
 
             outputBoundary.presentSuccess(new MarkTaskCompleteOutputData(
-                    taskId,
+                    inputData.getTaskId(),
                     task.getInfo().getName(),
                     true,
                     task.getCompletedDateTime()
@@ -50,10 +50,10 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
     }
 
     @Override
-    public void markIncomplete(String taskId) {
+    public void markIncomplete(MarkTaskCompleteInputData inputData) {
         try {
             List<TodaysTask> todaysTasks = taskRepository.findAllTodaysTasks();
-            TodaysTask task = findTaskById(todaysTasks, taskId);
+            TodaysTask task = findTaskById(todaysTasks, inputData.getTaskId());
 
             if (task == null) {
                 outputBoundary.presentError("Task not found in today's list");
@@ -70,7 +70,7 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
             taskRepository.updateTodaysTask(task);
 
             outputBoundary.presentSuccess(new MarkTaskCompleteOutputData(
-                    taskId,
+                    inputData.getTaskId(),
                     task.getInfo().getName(),
                     false,
                     null
