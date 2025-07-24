@@ -1,6 +1,6 @@
 package use_case.orderGoal;
 
-import entity.Goal;
+import entity.Sophia.Goal;
 import java.util.List;
 
 public class OrderGoalsOutputData {

@@ -1,6 +1,7 @@
 package interface_adapter;
 
-import entity.Goal;
+import entity.Sophia.Goal;
+
 import java.util.List;
 
 public interface GoalRepository {
