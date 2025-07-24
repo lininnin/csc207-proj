@@ -1,7 +1,9 @@
-package use_case.mark_task_complete;
+package use_case.task.mark_complete;
 
 /**
- * Input data for marking task complete.
+ * Input data for marking task completion status.
+ * Even though it's just an ID now, this allows for future extension
+ * without changing the interface (e.g., adding completion notes).
  */
 public class MarkTaskCompleteInputData {
     private final String taskId;
@@ -10,5 +12,7 @@ public class MarkTaskCompleteInputData {
         this.taskId = taskId;
     }
 
-    public String getTaskId() { return taskId; }
+    public String getTaskId() {
+        return taskId;
+    }
 }
