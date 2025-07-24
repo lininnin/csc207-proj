@@ -1,7 +1,5 @@
 package entity.Angela;
 
-import entity.Info.Info;
-
 import java.util.ArrayList;
 import java.util.List;
 
