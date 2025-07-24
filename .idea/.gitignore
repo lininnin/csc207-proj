@@ -25,3 +25,6 @@ release.properties
 # OS files
 .DS_Store
 Thumbs.db
+
+# secrets
+.idea/runConfigurations/207Key.xml
