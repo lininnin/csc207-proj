@@ -124,8 +124,8 @@ public class AddTaskToTodayInteractorTest {
     // Mock implementations
 
     private static class MockTaskRepository implements TaskRepository {
-        Map<String, AvailableTask> availableTasks = new HashMap<>();
-        Map<String, TodaysTask> todaysTasks = new HashMap<>();
+        final Map<String, AvailableTask> availableTasks = new HashMap<>();
+        final Map<String, TodaysTask> todaysTasks = new HashMap<>();
 
         @Override
         public AvailableTask findAvailableTaskById(String taskId) {
@@ -142,31 +142,71 @@ public class AddTaskToTodayInteractorTest {
             todaysTasks.put(task.getInfo().getId(), task);
         }
 
-        // Other methods not used
+        // Other methods not used - adding comments to explain
         @Override
-        public void saveAvailableTask(AvailableTask task) {}
+        public void saveAvailableTask(AvailableTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public void updateAvailableTask(AvailableTask task) {}
+        public void updateAvailableTask(AvailableTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public boolean deleteAvailableTask(String taskId) { return false; }
+        public boolean deleteAvailableTask(String taskId) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public List<AvailableTask> findAllAvailableTasks() { return new ArrayList<>(); }
+        public List<AvailableTask> findAllAvailableTasks() {
+            return new ArrayList<>(availableTasks.values());
+        }
+
         @Override
-        public boolean availableTaskNameExists(String name) { return false; }
+        public boolean availableTaskNameExists(String name) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public void updateTodaysTask(TodaysTask task) {}
+        public void updateTodaysTask(TodaysTask task) {
+            // Not needed for this test
+        }
+
         @Override
-        public boolean removeTodaysTask(String taskId) { return false; }
+        public boolean removeTodaysTask(String taskId) {
+            // Not needed for this test
+            return false;
+        }
+
         @Override
-        public List<TodaysTask> findAllTodaysTasks() { return new ArrayList<>(todaysTasks.values()); }
+        public List<TodaysTask> findAllTodaysTasks() {
+            return new ArrayList<>(todaysTasks.values());
+        }
+
         @Override
-        public List<TodaysTask> findTodaysTasksByStatus(boolean completed) { return new ArrayList<>(); }
+        public List<TodaysTask> findTodaysTasksByStatus(boolean completed) {
+            // Not needed for this test
+            return new ArrayList<>();
+        }
+
         @Override
-        public List<TodaysTask> findOverdueTasks() { return new ArrayList<>(); }
+        public List<TodaysTask> findOverdueTasks() {
+            // Not needed for this test
+            return new ArrayList<>();
+        }
+
         @Override
-        public void clearTodaysTasks() {}
+        public void clearTodaysTasks() {
+            // Not needed for this test
+        }
+
         @Override
-        public void removeOneTimeTasks(List<String> taskIds) {}
+        public void removeOneTimeTasks(List<String> taskIds) {
+            // Not needed for this test
+        }
     }
 
     private static class MockAddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
