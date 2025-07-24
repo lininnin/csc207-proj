@@ -27,4 +27,4 @@ release.properties
 Thumbs.db
 
 # secrets
-.idea/runConfigurations/207Key.xml
+/runConfigurations/207Key.xml
