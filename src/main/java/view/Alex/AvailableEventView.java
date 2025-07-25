@@ -70,9 +70,12 @@ public class AvailableEventView extends JPanel {
 //            refreshEventList(availableEventViewModel.getState());
 //        });
         availableEventViewModel.addPropertyChangeListener(evt -> {
+            System.out.println("AvailableEventView received property change: " + evt.getPropertyName());
             if (AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY.equals(evt.getPropertyName())) {
                 refreshEventList((AvailableEventState) evt.getNewValue());
             }
+            System.out.println("AvailableEventViewModel triggered: " + evt.getPropertyName());
+
         });
 
 
@@ -116,16 +119,28 @@ public class AvailableEventView extends JPanel {
     }
 
     private void refreshEventList(AvailableEventState state) {
-        eventListPanel.removeAll();
+        eventListPanel.removeAll(); // 清空原有内容
+
         List<Info> events = state.getAvailableEvents();
+        System.out.println("Refreshing event list, count: " + events.size());
+
+        if (events.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No available events.", SwingConstants.CENTER);
+            emptyLabel.setPreferredSize(new Dimension(600, 40));
+            eventListPanel.add(emptyLabel);
+        }
 
         for (Info event : events) {
+            System.out.println("Rendering row for event: " + event.getName());
+
             JPanel row = new JPanel(new GridLayout(1, 5));
+            row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
             row.add(new JLabel(event.getName(), SwingConstants.CENTER));
             row.add(new JLabel(event.getCategory(), SwingConstants.CENTER));
             row.add(new JLabel(event.getDescription(), SwingConstants.CENTER));
 
-            // === 编辑按钮 ===
+            // === Edit Button ===
             JButton editButton = new JButton("edit");
             editButton.addActionListener(e -> {
                 JTextField nameField = new JTextField(event.getName());
@@ -158,7 +173,7 @@ public class AvailableEventView extends JPanel {
             });
             row.add(editButton);
 
-            // === 删除按钮 ===
+            // === Delete Button ===
             JButton deleteButton = new JButton("delete");
             deleteButton.addActionListener(e -> {
                 int confirm = JOptionPane.showConfirmDialog(this,
@@ -170,10 +185,17 @@ public class AvailableEventView extends JPanel {
             });
             row.add(deleteButton);
 
+            // === 设置样式和尺寸 ===
+            row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            row.setPreferredSize(new Dimension(600, 40));
+            row.setAlignmentX(Component.LEFT_ALIGNMENT);
+            row.setBackground(new Color(245, 245, 245)); // 浅灰色背景，方便观察行是否显示
+
             eventListPanel.add(row);
         }
 
         eventListPanel.revalidate();
         eventListPanel.repaint();
     }
+
 }

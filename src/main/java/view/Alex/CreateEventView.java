@@ -157,13 +157,17 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (!CreatedEventViewModel.CREATED_EVENT_STATE_PROPERTY.equals(evt.getPropertyName())) return;
+
         CreatedEventState state = (CreatedEventState) evt.getNewValue();
+
+        // 错误弹窗
         String errorMsg = state.getNameError();
         if (errorMsg != null && !errorMsg.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, errorMsg);
         }
 
-        // ✅ 同步 AddEventViewModel 可用的事件名称
+        // ✅ 更新 AddEventViewModel 中的名称（同步更新）
         List<String> availableNames = availableDAO.getAllEvents().stream()
                 .map(Info::getName)
                 .collect(Collectors.toList());
@@ -171,6 +175,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         addState.setAvailableNames(availableNames);
         addedEventViewModel.setState(addState);
     }
+
 
     public String getViewName() {
         return viewName;

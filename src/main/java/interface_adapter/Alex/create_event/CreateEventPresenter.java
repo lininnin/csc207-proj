@@ -41,9 +41,11 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
         // 2. 获取完整事件列表并更新 AvailableEventViewModel
         List<Info> updatedList = dataAccess.getAllEvents();
         AvailableEventState newState = new AvailableEventState();
+        availableEventViewModel.setState(newState);
         newState.setAvailableEvents(updatedList);
         availableEventViewModel.setState(newState);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
+        System.out.println("CreateEventPresenter triggered");
     }
 
 
