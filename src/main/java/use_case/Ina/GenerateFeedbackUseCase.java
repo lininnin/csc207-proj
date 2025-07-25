@@ -1,8 +1,8 @@
-package use_case;
+package use_case.Ina;
 
-import entity.DailyLog;
-import entity.FeedbackEntry;
-import use_case.repository.FeedbackRepository;
+import entity.Angela.DailyLog;
+import entity.Ina.FeedbackEntry;
+import interface_adapter.gpt.PromptBuilder;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -32,11 +32,10 @@ public class GenerateFeedbackUseCase {
                 return weekFeedback;
             }
 
-            //LocalDate date = logs.getDate();
-            // Build prompt
-            //String prompt = PromptBuilder.buildPromptFromDailyLog(log);
-            // Call GPT
-            String aiAnalysis = gptService.generateFeedback(DEFAULT_PROMPT); // for now use default as placeholder
+        // Build prompt
+        String prompt = PromptBuilder.buildPromptFromWeeklyLog();
+        // Call GPT
+        String aiAnalysis = gptService.generateFeedback(prompt);
 
         //
 
