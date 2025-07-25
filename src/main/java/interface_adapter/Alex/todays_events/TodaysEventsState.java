@@ -16,13 +16,13 @@ public class TodaysEventsState {
     /**
      * Returns the current list of available event Info objects.
      */
-    public List<Event> getAvailableEvents() {
+    public List<Event> getTodaysEvents() {
         return todaysEvents;
     }
 
     /**
      * Sets the available event list.
-     * @param availableEvents The new list of Info objects to be shown.
+     * @param todaysEvents The new list of Event objects to be shown.
      */
     public void setTodaysEvents(List<Event> todaysEvents) {
         this.todaysEvents = todaysEvents;

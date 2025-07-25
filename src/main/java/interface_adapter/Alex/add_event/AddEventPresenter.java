@@ -1,28 +1,47 @@
 package interface_adapter.Alex.add_event;
 
+import interface_adapter.Alex.todays_events.TodaysEventsState;
+import interface_adapter.Alex.todays_events.TodaysEventsViewModel;
 import use_case.Alex.add_event.AddEventOutputBoundary;
 import use_case.Alex.add_event.AddEventOutputData;
+import use_case.Alex.add_event.AddEventDataAccessInterf;
+import entity.Alex.Event.Event;
+
+import java.util.List;
 
 /**
  * Presenter for the AddEvent use case.
- * Updates the AddEventViewModel based on success or failure of the use case.
+ * Updates the AddedEventViewModel and TodaysEventsViewModel based on success or failure.
  */
 public class AddEventPresenter implements AddEventOutputBoundary {
 
     private final AddedEventViewModel addedEventViewModel;
+    private final TodaysEventsViewModel todaysEventsViewModel;
+    private final AddEventDataAccessInterf addEventDAO;
 
-    public AddEventPresenter(AddedEventViewModel addedEventViewModel) {
+    public AddEventPresenter(AddedEventViewModel addedEventViewModel,
+                             TodaysEventsViewModel todaysEventsViewModel,
+                             AddEventDataAccessInterf addEventDAO) {
         this.addedEventViewModel = addedEventViewModel;
+        this.todaysEventsViewModel = todaysEventsViewModel;
+        this.addEventDAO = addEventDAO;
     }
 
     @Override
     public void prepareSuccessView(AddEventOutputData outputData) {
+        // ✅ 更新 Add 模块提示
         AddedEventState state = addedEventViewModel.getState();
-        state.setErrorMessage(null); // Clear any previous error
+        state.setErrorMessage(null);
         state.setSuccessMessage("Event \"" + outputData.getName() + "\" added successfully.");
         state.setSelectedName(outputData.getName());
         state.setDueDate(outputData.getDueDate());
         addedEventViewModel.setState(state);
+
+        // ✅ 刷新 Today's Events 模块
+        List<Event> updatedEvents = addEventDAO.getTodaysEvents();  // 使用你提供的接口
+        TodaysEventsState todaysState = new TodaysEventsState();
+        todaysState.setTodaysEvents(updatedEvents);
+        todaysEventsViewModel.setState(todaysState);
     }
 
     @Override
@@ -33,4 +52,5 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         addedEventViewModel.setState(state);
     }
 }
+
 

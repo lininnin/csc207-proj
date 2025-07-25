@@ -3,8 +3,8 @@ package interface_adapter.Alex.edit_event;
 import entity.Info.Info;
 import interface_adapter.Alex.available_event.AvailableEventState;
 import interface_adapter.Alex.available_event.AvailableEventViewModel;
-import use_case.Alex.edit_event.EditEventOutputBoundary;
-import use_case.Alex.edit_event.EditEventOutputData;
+import use_case.Alex.avaliable_events_module.edit_event.EditEventOutputBoundary;
+import use_case.Alex.avaliable_events_module.edit_event.EditEventOutputData;
 
 import java.util.List;
 

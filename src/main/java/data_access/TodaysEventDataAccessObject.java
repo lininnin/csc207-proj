@@ -2,6 +2,8 @@ package data_access;
 
 import entity.Alex.Event.Event;
 import use_case.Alex.add_event.AddEventDataAccessInterf;
+import use_case.Alex.todays_events.delete_todays_event.DeleteTodaysEventDataAccessInterf;
+import use_case.Alex.todays_events.edit_todays_event.EditTodaysEventDataAccessInterf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.List;
  * Represents the collection of events that have been added to today.
  * This acts as today's finalized event list for display or tracking.
  */
-public class TodaysEventDataAccessObject implements AddEventDataAccessInterf {
+public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
+        DeleteTodaysEventDataAccessInterf,
+        EditTodaysEventDataAccessInterf {
     private final List<Event> todaysEvents;
 
     /**
@@ -108,6 +112,51 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf {
     public void clearAll() {
         todaysEvents.clear();
     }
+
+    /**
+     * Retrieves an Event by its ID.
+     *
+     * @param id The ID of the event to find.
+     * @return The Event if found, null otherwise.
+     */
+    @Override
+    public Event getEventById(String id) {
+        for (Event event : todaysEvents) {
+            if (event.getInfo().getId().equals(id)) {
+                return event;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Updates an existing Event in today's list.
+     * If the event with the same ID exists, it is replaced with the updated one.
+     *
+     * @param updatedEvent The updated Event object.
+     * @return true if update succeeded, false otherwise.
+     */
+    @Override
+    public boolean update(Event updatedEvent) {
+        for (int i = 0; i < todaysEvents.size(); i++) {
+            if (todaysEvents.get(i).getInfo().getId().equals(updatedEvent.getInfo().getId())) {
+                todaysEvents.set(i, updatedEvent);
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public boolean existsById(String id) {
+        for (Event event : todaysEvents) {
+            if (event.getInfo().getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
 
 

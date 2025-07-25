@@ -3,8 +3,10 @@ package interface_adapter.Alex.delete_event;
 import entity.Info.Info;
 import interface_adapter.Alex.available_event.AvailableEventState;
 import interface_adapter.Alex.available_event.AvailableEventViewModel;
-import use_case.Alex.delete_event.DeleteEventOutputBoundary;
-import use_case.Alex.delete_event.DeleteEventOutputData;
+import interface_adapter.Alex.add_event.AddedEventState;
+import interface_adapter.Alex.add_event.AddedEventViewModel;
+import use_case.Alex.avaliable_events_module.delete_event.DeleteEventOutputBoundary;
+import use_case.Alex.avaliable_events_module.delete_event.DeleteEventOutputData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,19 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
 
     private final DeletedEventViewModel deletedEventViewModel;
     private final AvailableEventViewModel availableEventViewModel;
+    private final AddedEventViewModel addedEventViewModel;
 
     public DeleteEventPresenter(DeletedEventViewModel deletedEventViewModel,
-                                AvailableEventViewModel availableEventViewModel) {
+                                AvailableEventViewModel availableEventViewModel,
+                                AddedEventViewModel addedEventViewModel) {
         this.deletedEventViewModel = deletedEventViewModel;
         this.availableEventViewModel = availableEventViewModel;
+        this.addedEventViewModel = addedEventViewModel;
     }
 
     @Override
     public void prepareSuccessView(DeleteEventOutputData outputData) {
-        // 1. 更新删除结果 ViewModel
+        // ✅ 更新删除结果 ViewModel
         DeletedEventState newState = new DeletedEventState();
         newState.setDeletedEventId(outputData.getEventId());
         newState.setDeletedEventName(outputData.getEventName());
@@ -34,16 +39,24 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         newState.setDeleteError(null);
         deletedEventViewModel.setState(newState);
 
-        // 2. 从 AvailableEventState 中移除已删除的事件
+        // ✅ 更新 AvailableEventViewModel
         AvailableEventState currentState = availableEventViewModel.getState();
         List<Info> updatedList = new ArrayList<>(currentState.getAvailableEvents());
         updatedList.removeIf(info -> info.getId().equals(outputData.getEventId()));
         currentState.setAvailableEvents(updatedList);
-
-        // 3. 通知视图更新（不再使用 setState + 无参 firePropertyChanged）
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
-    }
 
+        // ✅ 同步更新 AddedEventViewModel 中的下拉框 name 列表
+        List<String> names = new ArrayList<>();
+        for (Info info : updatedList) {
+            names.add(info.getName());
+        }
+
+        AddedEventState addedState = addedEventViewModel.getState();
+        addedState.setAvailableNames(names);
+        addedEventViewModel.setState(addedState);
+        addedEventViewModel.firePropertyChanged(AddedEventViewModel.ADD_EVENT_STATE_PROPERTY);
+    }
 
     @Override
     public void prepareFailView(DeleteEventOutputData outputData) {
@@ -54,4 +67,3 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         deletedEventViewModel.setState(newState);
     }
 }
-

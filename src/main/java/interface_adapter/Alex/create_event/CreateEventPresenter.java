@@ -8,7 +8,6 @@ import use_case.Alex.create_event.CreateEventDataAccessInterface;
 import entity.Info.Info;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +32,12 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
     public void prepareSuccessView(CreateEventOutputData outputData) {
         // 1. 更新创建结果视图
         CreatedEventState createdState = new CreatedEventState();
-        createdState.setName(outputData.getName());
+        createdState.setName("");
+        createdState.setCategory("");
+        createdState.setDescription("");
+        createdEventViewModel.setState(createdState);
+        createdEventViewModel.firePropertyChanged(CreatedEventViewModel.CREATED_EVENT_STATE_PROPERTY);
+
         createdEventViewModel.setState(createdState);
         createdEventViewModel.firePropertyChanged(CreatedEventViewModel.CREATED_EVENT_STATE_PROPERTY);
 

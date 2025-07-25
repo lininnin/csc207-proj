@@ -3,6 +3,7 @@ package view.Alex;
 import interface_adapter.Alex.add_event.AddEventController;
 import interface_adapter.Alex.add_event.AddedEventViewModel;
 import interface_adapter.Alex.add_event.AddedEventState;
+import view.DueDatePickerPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class AddEventView extends JPanel implements ActionListener, PropertyChangeListener {
@@ -21,7 +21,7 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
 
     private final JLabel titleLabel = new JLabel(AddedEventViewModel.TITLE_LABEL);
     private final JComboBox<String> nameComboBox = new JComboBox<>();
-    private final JTextField dueDateField = new JTextField(20);
+    private final DueDatePickerPanel dueDatePicker = new DueDatePickerPanel();  // ✅ 日历组件
     private final JButton addButton = new JButton(AddedEventViewModel.ADD_BUTTON_LABEL);
     private final JLabel messageLabel = new JLabel();
 
@@ -46,15 +46,11 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
         nameRow.add(new JLabel(AddedEventViewModel.NAME_LABEL));
         nameRow.add(nameComboBox);
 
-        JPanel dateRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        dateRow.add(new JLabel(AddedEventViewModel.DUE_DATE_LABEL));
-        dateRow.add(dueDateField);
-
         JPanel buttonRow = new JPanel();
         buttonRow.add(addButton);
 
         this.add(nameRow);
-        this.add(dateRow);
+        this.add(dueDatePicker); // ✅ 替代原 dateRow
         this.add(buttonRow);
         this.add(messageLabel);
 
@@ -75,17 +71,7 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
     @Override
     public void actionPerformed(ActionEvent e) {
         String selectedName = (String) nameComboBox.getSelectedItem();
-        String dueDateText = dueDateField.getText().trim();
-        LocalDate dueDate = null;
-
-        if (!dueDateText.isEmpty()) {
-            try {
-                dueDate = LocalDate.parse(dueDateText); // 格式必须为 yyyy-MM-dd
-            } catch (DateTimeParseException ex) {
-                messageLabel.setText("Invalid date format. Use yyyy-MM-dd.");
-                return;
-            }
-        }
+        LocalDate dueDate = dueDatePicker.getSelectedDate(); // ✅ 获取日历时间
 
         controller.execute(selectedName, dueDate);
     }
@@ -100,7 +86,7 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
         } else if (state.getSuccessMessage() != null) {
             messageLabel.setForeground(new Color(0, 128, 0));
             messageLabel.setText(state.getSuccessMessage());
-            dueDateField.setText("");
+            dueDatePicker.clear(); // ✅ 清除日期
         }
 
         refreshComboBox();
@@ -110,5 +96,3 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
         return viewModel.getViewName();
     }
 }
-
-
