@@ -11,7 +11,7 @@ import java.util.List;
  *
  * TODO: Will be used in Sophia's story #2 for filtering and organizing events by category/priority
  */
-public class EventAvailable {
+public class EventAvailable implements EventAvailableInterf {
     private final List<Info> eventInfoAvailable;
 
     /**

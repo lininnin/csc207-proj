@@ -2,11 +2,18 @@ package data_access;
 
 import entity.Alex.EventAvailable.EventAvailable;
 import entity.Info.Info;
+import use_case.Alex.add_event.ReadAvailableEventDataAccessInterf;
 import use_case.Alex.create_event.CreateEventDataAccessInterface;
+import use_case.Alex.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
+import use_case.Alex.avaliable_events_module.edit_event.EditEventDataAccessInterf;
 
 import java.util.List;
 
-public class EventAvailableDataAccessObject implements CreateEventDataAccessInterface {
+public class EventAvailableDataAccessObject implements
+        CreateEventDataAccessInterface,
+        DeleteEventDataAccessInterf,
+        EditEventDataAccessInterf,
+        ReadAvailableEventDataAccessInterf {
 
     private final EventAvailable eventAvailable = new EventAvailable();
 
@@ -49,5 +56,51 @@ public class EventAvailableDataAccessObject implements CreateEventDataAccessInte
     public void clearAll() {
         eventAvailable.clearAll();
     }
+
+    // ✅ 补充实现
+    @Override
+    public Info getEventById(String id) {
+        for (Info info : eventAvailable.getEventAvailable()) {
+            if (info.getId().equals(id)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean update(Info updatedInfo) {
+        for (Info info : eventAvailable.getEventAvailable()) {
+            if (info.getId().equals(updatedInfo.getId())) {
+                // ✅ 就地修改原 Info 的字段
+                info.setName(updatedInfo.getName());
+                info.setCategory(updatedInfo.getCategory());
+                info.setDescription(updatedInfo.getDescription());
+                return true;
+            }
+        }
+        return false; // 如果没找到
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        for (Info info : eventAvailable.getEventAvailable()) {
+            if (info.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Info findInfoByName(String name) {
+        for (Info info : eventAvailable.getEventAvailable()) {
+            if (info.getName().equals(name)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
 }
+
 

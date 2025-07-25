@@ -30,16 +30,19 @@ public class ViewModel<T> {
         return this.state;
     }
 
-    public void setState(T state) {
-        this.state = state;
+    public void setState(T newState) {
+        T oldState = this.state;
+        this.state = newState;
+        support.firePropertyChange(viewName, oldState, newState); // ✅ 关键！
     }
+
 
     /**
      * Fires a property changed event for the state of this ViewModel.
      */
-    public void firePropertyChanged() {
-        this.support.firePropertyChange("state", null, this.state);
-    }
+//    public void firePropertyChanged() {
+//        this.support.firePropertyChange("state", null, this.state);
+//    }
 
     /**
      * Fires a property changed event for the state of this ViewModel, which

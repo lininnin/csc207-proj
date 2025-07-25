@@ -1,4 +1,4 @@
-package interface_adapter.Alex;
+package interface_adapter.Alex.create_event;
 
 /**
  * State object for the Create Event View.
