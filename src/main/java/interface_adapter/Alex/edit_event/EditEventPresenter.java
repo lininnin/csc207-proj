@@ -25,19 +25,18 @@ public class EditEventPresenter implements EditEventOutputBoundary {
 
     @Override
     public void prepareSuccessView(EditEventOutputData outputData) {
-        // 1. 更新 EditedEventViewModel 状态
+        // 1. 更新 EditedEventViewModel 状态（用于弹窗提示）
         EditedEventState newState = new EditedEventState();
         newState.setEventId(outputData.getId());
         newState.setName(outputData.getName());
         newState.setCategory(outputData.getCategory());
         newState.setDescription(outputData.getDescription());
-
-        // ✅ 通知 ViewModel 并触发监听
         editedEventViewModel.updateState(newState);
 
-        // 2. 直接修改原有 Info 对象的可变字段
-        AvailableEventState currentState = availableEventViewModel.getState();
-        List<Info> eventList = currentState.getAvailableEvents();
+        // 2. 修改 Info 并用新 AvailableEventState 更新 ViewModel
+        AvailableEventState oldState = availableEventViewModel.getState();
+        List<Info> eventList = oldState.getAvailableEvents();
+
         for (Info info : eventList) {
             if (info.getId().equals(outputData.getId())) {
                 info.setName(outputData.getName());
@@ -47,9 +46,14 @@ public class EditEventPresenter implements EditEventOutputBoundary {
             }
         }
 
-        // 3. 通知 View 更新（使用 firePropertyChanged(String) 方法）
+        // 3. 用新 state 包装后更新 ViewModel ⇒ 触发 UI 监听
+        AvailableEventState newStateForView = new AvailableEventState();
+        newStateForView.setAvailableEvents(eventList); // 原列表也行
+        availableEventViewModel.setState(newStateForView);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
+
     }
+
 
 
     @Override
@@ -62,8 +66,3 @@ public class EditEventPresenter implements EditEventOutputBoundary {
         editedEventViewModel.updateState(newState);
     }
 }
-
-
-
-
-

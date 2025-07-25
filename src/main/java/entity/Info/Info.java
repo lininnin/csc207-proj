@@ -109,20 +109,17 @@ public class Info implements InfoInterf {
     }
 
     public void setCategory(String category) {
-        if (category == null || category.trim().isEmpty()) {
-            throw new IllegalArgumentException("Category cannot be null or empty");
-        }
-        this.category = category.trim();
+        // ✅ 允许 category 为 null 或空，统一设为 ""
+        this.category = (category == null || category.trim().isEmpty()) ? "" : category.trim();
     }
 
     public void setDescription(String description) {
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Description cannot be null or empty");
-        }
-        this.description = description.trim();
+        // ✅ 允许 description 为 null 或空，统一设为 ""
+        this.description = (description == null || description.trim().isEmpty()) ? "" : description.trim();
     }
 
     public void setName(String name) {
+        // ❗ name 保持必填，不能为空
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }

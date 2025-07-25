@@ -53,9 +53,11 @@ public class AvailableEventView extends JPanel {
 
         // 表头
         JPanel header = new JPanel(new GridLayout(1, 5));
+        // 原来是 Category - Description，应该调换顺序
         header.add(new JLabel("Name", SwingConstants.CENTER));
-        header.add(new JLabel("Category", SwingConstants.CENTER));
-        header.add(new JLabel("Description", SwingConstants.CENTER));
+        header.add(new JLabel("Description", SwingConstants.CENTER)); // 🟢 swapped
+        header.add(new JLabel("Category", SwingConstants.CENTER));    // 🟢 swapped
+
         header.add(new JLabel("Edit", SwingConstants.CENTER));
         header.add(new JLabel("Delete", SwingConstants.CENTER));
         add(header, BorderLayout.CENTER);
@@ -126,7 +128,7 @@ public class AvailableEventView extends JPanel {
 
         if (events.isEmpty()) {
             JLabel emptyLabel = new JLabel("No available events.", SwingConstants.CENTER);
-            emptyLabel.setPreferredSize(new Dimension(600, 40));
+            emptyLabel.setPreferredSize(new Dimension(600, 250));
             eventListPanel.add(emptyLabel);
         }
 
