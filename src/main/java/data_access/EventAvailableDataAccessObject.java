@@ -2,10 +2,10 @@ package data_access;
 
 import entity.Alex.EventAvailable.EventAvailable;
 import entity.Info.Info;
-import use_case.Alex.add_event.ReadAvailableEventDataAccessInterf;
-import use_case.Alex.create_event.CreateEventDataAccessInterface;
-import use_case.Alex.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
-import use_case.Alex.avaliable_events_module.edit_event.EditEventDataAccessInterf;
+import use_case.Alex.Event_related.add_event.ReadAvailableEventDataAccessInterf;
+import use_case.Alex.Event_related.create_event.CreateEventDataAccessInterface;
+import use_case.Alex.Event_related.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
+import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventDataAccessInterf;
 
 import java.util.List;
 
