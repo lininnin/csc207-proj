@@ -14,9 +14,7 @@ public class FeedbackEntry {
                          String aiAnalysis,
                          String correlationData,
                          String recommendations) {
-        this.date = date;
-        // TODO: Prompt for AI to analyze correlation to be implemented in PromptBuilder?
-        //  check what we want
+        this.date = date; // generation date of feedback entry
         this.aiAnalysis = aiAnalysis;
         this.correlationData = correlationData;
         this.recommendations = recommendations;
@@ -38,7 +36,7 @@ public class FeedbackEntry {
 
     public String toString() {
         return "Feedback Entry on" + date + ':' + '\'' +
-                "Wellness nalysis: " + aiAnalysis + '\'' +
+                "Wellness analysis: " + aiAnalysis + '\'' +
                 "Task vs productivity correlation:" + correlationData + '\'' +
                 "Recommendations given:" + recommendations +'\'';
     }
