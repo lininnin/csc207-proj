@@ -1,4 +1,4 @@
-package interface_adapter.Alex.WellnessLog_related.todays_wellness_log.todays_wellnesslog_module;
+package interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log;
 
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 

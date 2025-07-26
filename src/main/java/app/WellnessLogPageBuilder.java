@@ -7,12 +7,22 @@ import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogPresenter;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
-import interface_adapter.Alex.WellnessLog_related.todays_wellness_log.todays_wellnesslog_module.TodaysWellnessLogViewModel;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogPresenter;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogViewModel;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
 // import use_case.Alex.WellnessLog_related.delete_log.DeleteWellnessLogController;
 // import use_case.Alex.WellnessLog_related.edit_log.EditWellnessLogController;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogController;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogPresenter;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogViewModel;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInteractor;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogOutputBoundary;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputBoundary;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInteractor;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogOutputBoundary;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInteractor;
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
 import view.CollapsibleSidebarView;
@@ -29,6 +39,7 @@ public class WellnessLogPageBuilder {
         AddWellnessLogViewModel addLogViewModel = new AddWellnessLogViewModel();
         TodaysWellnessLogViewModel todaysLogViewModel = new TodaysWellnessLogViewModel();
 
+
         // --- DAO + Factory ---
         TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject();
         WellnessLogEntryFactoryInterf factory = new WellnessLogEntryFactory();
@@ -37,6 +48,28 @@ public class WellnessLogPageBuilder {
         AddWellnessLogOutputBoundary presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
         AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, factory, presenter);
         AddWellnessLogController addLogController = new AddWellnessLogController(interactor);
+
+        // --- Delete Log Controller wiring ---
+        DeleteWellnessLogViewModel deleteLogViewModel = new DeleteWellnessLogViewModel();
+        DeleteWellnessLogOutputBoundary deletePresenter = new DeleteWellnessLogPresenter(
+                deleteLogViewModel,
+                todaysLogViewModel,
+                wellnessLogDAO // 作为 DeleteWellnessLogDataAccessInterf 类型
+        );
+
+        DeleteWellnessLogInputBoundary deleteInteractor = new DeleteWellnessLogInteractor(wellnessLogDAO, deletePresenter);
+        DeleteWellnessLogController deleteLogController = new DeleteWellnessLogController(deleteInteractor);
+
+        // --- Edit Log Controller wiring ---
+        EditWellnessLogViewModel editLogViewModel = new EditWellnessLogViewModel();
+        EditWellnessLogPresenter editPresenter = new EditWellnessLogPresenter(
+                editLogViewModel,
+                todaysLogViewModel,
+                wellnessLogDAO
+        );
+        EditWellnessLogInteractor editInteractor = new EditWellnessLogInteractor(wellnessLogDAO, editPresenter);
+        EditWellnessLogController editLogController = new EditWellnessLogController(editInteractor);
+
 
         // --- 初始化 MoodLabel 下拉选项 ---
         List<entity.Alex.MoodLabel.MoodLabel> moodOptions = List.of(
@@ -72,7 +105,10 @@ public class WellnessLogPageBuilder {
 
         // --- View：TodaysWellnessLogView（暂不提供 edit/delete 控制器） ---
         TodaysWellnessLogView todaysLogView = new TodaysWellnessLogView(
-                todaysLogViewModel
+                todaysLogViewModel,
+                deleteLogController,
+                editLogController,
+                moodOptions // ✅ 传入
         );
         todaysLogView.setBackground(Color.WHITE);
 

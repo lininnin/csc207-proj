@@ -1,4 +1,4 @@
-package interface_adapter.Alex.WellnessLog_related.todays_wellness_log.todays_wellnesslog_module;
+package interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log;
 
 import interface_adapter.ViewModel;
 
@@ -10,4 +10,12 @@ public class TodaysWellnessLogViewModel extends ViewModel<TodaysWellnessLogState
         super("TodaysWellnessLogView");
         this.setState(new TodaysWellnessLogState());
     }
+
+    /**
+     * Notifies the view that the state has changed.
+     */
+    public void fireStateChanged() {
+        firePropertyChanged(TODAYS_WELLNESS_LOG_PROPERTY);
+    }
 }
+
