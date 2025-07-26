@@ -115,5 +115,13 @@ public class MoodLabel {
         }
         this.type = type;
     }
+
+    // ------------------ Display for JComboBox ------------------
+
+    @Override
+    public String toString() {
+        return name; // Or: return name + " (" + type + ")";
+    }
 }
+
 

@@ -1,8 +1,8 @@
 package entityTest;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,18 +27,18 @@ public class WellnessLogEntryTest {
     public void testBuildValidEntry() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(7)
-                .fatigueLevel(3)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.SEVEN)
+                .fatigueLevel(Levels.THREE)
                 .moodLabel(positiveMood)
                 .userNote("Feeling good.")
                 .build();
 
         assertNotNull(entry.getId());
         assertEquals(time, entry.getTime());
-        assertEquals(5, entry.getStressLevel());
-        assertEquals(7, entry.getEnergyLevel());
-        assertEquals(3, entry.getFatigueLevel());
+        assertEquals(Levels.FIVE, entry.getStressLevel());
+        assertEquals(Levels.SEVEN, entry.getEnergyLevel());
+        assertEquals(Levels.THREE, entry.getFatigueLevel());
         assertEquals(positiveMood, entry.getMoodLabel());
         assertEquals("Feeling good.", entry.getUserNote());
     }
@@ -47,9 +47,9 @@ public class WellnessLogEntryTest {
     public void testBuildWithoutOptionalUserNote() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(6)
-                .energyLevel(6)
-                .fatigueLevel(6)
+                .stressLevel(Levels.SIX)
+                .energyLevel(Levels.SIX)
+                .fatigueLevel(Levels.SIX)
                 .moodLabel(positiveMood)
                 .build();
 
@@ -59,9 +59,9 @@ public class WellnessLogEntryTest {
     @Test
     public void testBuildRejectsMissingTime() {
         WellnessLogEntry.Builder builder = new WellnessLogEntry.Builder()
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood);
 
         assertThrows(IllegalStateException.class, builder::build);
@@ -71,56 +71,52 @@ public class WellnessLogEntryTest {
     public void testBuildRejectsMissingMoodLabel() {
         WellnessLogEntry.Builder builder = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5);
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE);
 
         assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test
-    public void testInvalidStressLevelThrowsInBuilder() {
+    public void testNullStressLevelThrowsInBuilder() {
         assertThrows(IllegalArgumentException.class, () ->
-                new WellnessLogEntry.Builder().stressLevel(0));
-        assertThrows(IllegalArgumentException.class, () ->
-                new WellnessLogEntry.Builder().stressLevel(11));
+                new WellnessLogEntry.Builder().stressLevel(null));
     }
 
     @Test
-    public void testInvalidEnergyLevelThrowsInBuilder() {
+    public void testNullEnergyLevelThrowsInBuilder() {
         assertThrows(IllegalArgumentException.class, () ->
-                new WellnessLogEntry.Builder().energyLevel(0));
-        assertThrows(IllegalArgumentException.class, () ->
-                new WellnessLogEntry.Builder().energyLevel(15));
+                new WellnessLogEntry.Builder().energyLevel(null));
     }
 
     @Test
-    public void testInvalidFatigueLevelThrowsInBuilder() {
+    public void testNullFatigueLevelThrowsInBuilder() {
         assertThrows(IllegalArgumentException.class, () ->
-                new WellnessLogEntry.Builder().fatigueLevel(-1));
+                new WellnessLogEntry.Builder().fatigueLevel(null));
     }
 
     @Test
     public void testSettersWorkCorrectly() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood)
                 .build();
 
-        entry.setStressLevel(8);
-        entry.setEnergyLevel(9);
-        entry.setFatigueLevel(2);
+        entry.setStressLevel(Levels.EIGHT);
+        entry.setEnergyLevel(Levels.NINE);
+        entry.setFatigueLevel(Levels.TWO);
         entry.setUserNote("Updated note");
         entry.setMoodLabel(new MoodLabel.Builder("Anxious")
                 .type(MoodLabel.Type.Negative)
                 .build());
 
-        assertEquals(8, entry.getStressLevel());
-        assertEquals(9, entry.getEnergyLevel());
-        assertEquals(2, entry.getFatigueLevel());
+        assertEquals(Levels.EIGHT, entry.getStressLevel());
+        assertEquals(Levels.NINE, entry.getEnergyLevel());
+        assertEquals(Levels.TWO, entry.getFatigueLevel());
         assertEquals("Updated note", entry.getUserNote());
         assertEquals("Anxious", entry.getMoodLabel().getName());
     }
@@ -129,9 +125,9 @@ public class WellnessLogEntryTest {
     public void testSetUserNoteNullRemovesNote() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(3)
-                .energyLevel(4)
-                .fatigueLevel(5)
+                .stressLevel(Levels.THREE)
+                .energyLevel(Levels.FOUR)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood)
                 .userNote("Initial note")
                 .build();
@@ -144,9 +140,9 @@ public class WellnessLogEntryTest {
     public void testSetUserNoteBlankThrows() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood)
                 .build();
 
@@ -157,9 +153,9 @@ public class WellnessLogEntryTest {
     public void testSetNullMoodLabelThrows() {
         WellnessLogEntry entry = new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood)
                 .build();
 
@@ -167,31 +163,32 @@ public class WellnessLogEntryTest {
     }
 
     @Test
-    public void testSetInvalidStressLevelThrows() {
+    public void testSetNullStressLevelThrows() {
         WellnessLogEntry entry = createDefaultEntry();
-        assertThrows(IllegalArgumentException.class, () -> entry.setStressLevel(0));
+        assertThrows(IllegalArgumentException.class, () -> entry.setStressLevel(null));
     }
 
     @Test
-    public void testSetInvalidEnergyLevelThrows() {
+    public void testSetNullEnergyLevelThrows() {
         WellnessLogEntry entry = createDefaultEntry();
-        assertThrows(IllegalArgumentException.class, () -> entry.setEnergyLevel(100));
+        assertThrows(IllegalArgumentException.class, () -> entry.setEnergyLevel(null));
     }
 
     @Test
-    public void testSetInvalidFatigueLevelThrows() {
+    public void testSetNullFatigueLevelThrows() {
         WellnessLogEntry entry = createDefaultEntry();
-        assertThrows(IllegalArgumentException.class, () -> entry.setFatigueLevel(-5));
+        assertThrows(IllegalArgumentException.class, () -> entry.setFatigueLevel(null));
     }
 
     private WellnessLogEntry createDefaultEntry() {
         return new WellnessLogEntry.Builder()
                 .time(time)
-                .stressLevel(5)
-                .energyLevel(5)
-                .fatigueLevel(5)
+                .stressLevel(Levels.FIVE)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.FIVE)
                 .moodLabel(positiveMood)
                 .build();
     }
 }
+
 

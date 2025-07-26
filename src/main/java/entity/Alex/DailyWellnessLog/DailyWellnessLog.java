@@ -10,7 +10,7 @@ import java.util.*;
  * It holds a list of WellnessLogEntry objects recorded on that date,
  * each of which captures the user's mood, energy, stress, etc.
  */
-public class DailyWellnessLog {
+public class DailyWellnessLog implements DailyWellnessLogInterf {
 
     private final String id;
     private final LocalDate date;

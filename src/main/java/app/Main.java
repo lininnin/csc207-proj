@@ -2,10 +2,18 @@ package app;
 
 class MainApp {
     public static void main(String[] args) {
-        EventPageRunner eventPage = new EventPageRunner();
-        eventPage.run();
+        // 切换运行不同模块的页面：
+        //new EventPageRunner().run();
+        new WellnessLogPageRunner().run();
     }
 }
+
+//class MainApp {
+//    public static void main(String[] args) {
+//        EventPageRunner eventPage = new EventPageRunner();
+//        eventPage.run();
+//    }
+//}
 
 //package app;
 //
