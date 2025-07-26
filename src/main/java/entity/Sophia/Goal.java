@@ -2,7 +2,9 @@ package entity.Sophia;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Info.Info;
+import entity.Sophia.GoalInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import entity.Sophia.goalInterface.TimePeriod;
 
@@ -120,7 +122,17 @@ public class Goal implements goalInterface{
     public Info getTargetTaskInfo() {
         return goalInfo.getTargetTaskInfo();
     }
+
+    public boolean isAvailable() {
+        LocalDate today = LocalDate.now();
+        return !isCompleted
+                && !today.isBefore(beginAndDueDates.getBeginDate())
+                && !today.isAfter(beginAndDueDates.getDueDate());
+    }
+
+
 }
+
 
 
 
