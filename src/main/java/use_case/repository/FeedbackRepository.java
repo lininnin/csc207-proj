@@ -1,4 +1,4 @@
-package use_case.Ina;
+package use_case.repository;
 
 import entity.Ina.FeedbackEntry;
 

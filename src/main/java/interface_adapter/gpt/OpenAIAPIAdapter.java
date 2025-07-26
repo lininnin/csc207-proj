@@ -8,9 +8,8 @@ import use_case.Ina.GPTService;
 import java.io.IOException;
 
 public class OpenAIAPIAdapter implements GPTService {
-    private static final String API_KEY = "sk-proj-dpsfgmN1ZCdoLME8D3YPD1QAVJw3yVy_ATcMGTpOfKVX6aqN9HbjXMV05CvAH1Bpn" +
-            "-IxY0S0NNT3BlbkFJ01DCcbTtG2mleU0MY_wFjLo8SxsmwjroKbmiksnmtmy7YMxQ1TYK3em2T_sqLqSPMV1--vyjQA";
-    private static final String ENDPOINT = "https://api.openai.com/v1/chat/completions";
+    private static final String API_KEY = System.getProperty("OPENAI_API_KEY");
+    private static final String ENDPOINT = System.getProperty("OPENAI_API_KEY");
 
     private final OkHttpClient client = new OkHttpClient();
 
