@@ -1,8 +1,8 @@
 package interface_adapter.orderGoals;
 
+import entity.Sophia.Goal;
 import use_case.orderGoal.OrderGoalsOutputBoundary;
 import use_case.orderGoal.OrderGoalsOutputData;
-import entity.Goal;
 
 public class OrderGoalsPresenter implements OrderGoalsOutputBoundary {
     @Override

@@ -2,8 +2,11 @@ package entity.Sophia;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Info.Info;
+import entity.Sophia.GoalInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import entity.Sophia.goalInterface.TimePeriod;
 
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
@@ -11,11 +14,7 @@ import java.time.LocalDateTime;
  *
  * TODO: Will be implemented in Sophia's story #1 for weekly/monthly goal tracking
  */
-public class Goal {
-    public enum TimePeriod {
-        WEEK,
-        MONTH
-    }
+public class Goal implements goalInterface{
 
     private final GoalInfo goalInfo; // GoalInfo containing goal metadata and target task info
     private final BeginAndDueDates beginAndDueDates; // Begin and due dates of this goal
@@ -79,42 +78,61 @@ public class Goal {
 
     // ------------------ Getters ------------------
 
+    @Override
     public GoalInfo getGoalInfo() {
         return goalInfo;
     }
 
+    @Override
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
+    @Override
     public TimePeriod getTimePeriod() {
         return timePeriod;
     }
 
+    @Override
     public int getFrequency() {
         return frequency;
     }
 
+    @Override
     public int getCurrentProgress() {
         return currentProgress;
     }
 
+    @Override
     public boolean isCompleted() {
         return isCompleted;
     }
 
+    @Override
     public LocalDateTime getCompletedDateTime() {
         return completedDateTime;
     }
 
+    @Override
     public Info getInfo() {
         return goalInfo.getInfo();
     }
 
+    @Override
     public Info getTargetTaskInfo() {
         return goalInfo.getTargetTaskInfo();
     }
+
+    public boolean isAvailable() {
+        LocalDate today = LocalDate.now();
+        return !isCompleted
+                && !today.isBefore(beginAndDueDates.getBeginDate())
+                && !today.isAfter(beginAndDueDates.getDueDate());
+    }
+
+
 }
+
 
 
 

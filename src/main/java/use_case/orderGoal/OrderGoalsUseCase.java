@@ -1,8 +1,9 @@
 package use_case.orderGoal;
 
-import entity.Goal;
+import entity.Sophia.Goal;
 import interface_adapter.GoalRepository;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class OrderGoalsUseCase implements OrderGoalsInputBoundary {
 
     @Override
     public void execute(OrderGoalsInputData inputData) {
-        List<Goal> goals = goalRepository.getAllGoals();
+        List<entity.Sophia.Goal> goals = goalRepository.getAllGoals();
         String orderBy = inputData.getOrderBy().toLowerCase();
 
         switch (orderBy) {
@@ -34,6 +35,10 @@ public class OrderGoalsUseCase implements OrderGoalsInputBoundary {
                 // Optional
                 break;
         }
+        if (inputData.isReverse()) {
+            Collections.reverse(goals);
+        }
+
         presenter.present(new OrderGoalsOutputData(goals));
     }
 }

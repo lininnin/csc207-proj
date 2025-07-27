@@ -21,7 +21,7 @@ public class Info implements InfoInterf {
      *
      * @param builder Builder instance containing the fields.
      */
-    private Info(Builder builder) {
+    public Info(Builder builder) {
         this.id = UUID.randomUUID().toString();
         this.name = builder.name;
         this.description = builder.description;
