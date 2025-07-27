@@ -25,7 +25,7 @@ public class WellnessLogEntry {
      * Private constructor used by the Builder.
      */
     private WellnessLogEntry(Builder builder) {
-        this.id = UUID.randomUUID().toString();
+        this.id = builder.id != null ? builder.id : UUID.randomUUID().toString();
         this.time = builder.time;
         this.stressLevel = builder.stressLevel;
         this.energyLevel = builder.energyLevel;
@@ -34,10 +34,8 @@ public class WellnessLogEntry {
         this.userNote = builder.userNote;
     }
 
-    /**
-     * Builder class for WellnessLogEntry.
-     */
     public static class Builder {
+        private String id;
         private LocalDateTime time;
         private Levels stressLevel;
         private Levels energyLevel;
@@ -45,42 +43,40 @@ public class WellnessLogEntry {
         private MoodLabel moodLabel;
         private String userNote;
 
+        // ✅ 新增：从已有 WellnessLogEntry 构建一个可变 Builder
+        public static Builder from(WellnessLogEntry entry) {
+            Builder builder = new Builder();
+            builder.id = entry.id;
+            builder.time = entry.time;
+            builder.stressLevel = entry.stressLevel;
+            builder.energyLevel = entry.energyLevel;
+            builder.fatigueLevel = entry.fatigueLevel;
+            builder.moodLabel = entry.moodLabel;
+            builder.userNote = entry.userNote;
+            return builder;
+        }
+
         public Builder time(LocalDateTime time) {
-            if (time == null) {
-                throw new IllegalArgumentException("Time cannot be null");
-            }
             this.time = time;
             return this;
         }
 
         public Builder stressLevel(Levels level) {
-            if (level == null) {
-                throw new IllegalArgumentException("Stress level cannot be null");
-            }
             this.stressLevel = level;
             return this;
         }
 
         public Builder energyLevel(Levels level) {
-            if (level == null) {
-                throw new IllegalArgumentException("Energy level cannot be null");
-            }
             this.energyLevel = level;
             return this;
         }
 
         public Builder fatigueLevel(Levels level) {
-            if (level == null) {
-                throw new IllegalArgumentException("Fatigue level cannot be null");
-            }
             this.fatigueLevel = level;
             return this;
         }
 
         public Builder moodLabel(MoodLabel mood) {
-            if (mood == null) {
-                throw new IllegalArgumentException("Mood label cannot be null");
-            }
             this.moodLabel = mood;
             return this;
         }
@@ -96,14 +92,9 @@ public class WellnessLogEntry {
         }
 
         public WellnessLogEntry build() {
-            if (time == null) {
-                throw new IllegalStateException("Time must be provided");
-            }
-            if (moodLabel == null) {
-                throw new IllegalStateException("MoodLabel must be provided");
-            }
-            if (stressLevel == null || energyLevel == null || fatigueLevel == null) {
-                throw new IllegalStateException("All Levels must be provided");
+            if (time == null || moodLabel == null ||
+                    stressLevel == null || energyLevel == null || fatigueLevel == null) {
+                throw new IllegalStateException("All required fields must be set.");
             }
             return new WellnessLogEntry(this);
         }

@@ -6,6 +6,7 @@ import entity.Alex.MoodLabel.MoodLabel;
 
 /**
  * Interactor for the EditWellnessLog use case.
+ * Reconstructs a new WellnessLogEntry instead of mutating the original one.
  */
 public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
 
@@ -28,18 +29,19 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
         }
 
         try {
-            // 使用封装对象设置各项值
-            existing.setStressLevel(Levels.fromInt(inputData.getStressLevel()));
-            existing.setEnergyLevel(Levels.fromInt(inputData.getEnergyLevel()));
-            existing.setFatigueLevel(Levels.fromInt(inputData.getFatigueLevel()));
-            existing.setMoodLabel(new MoodLabel.Builder(inputData.getMoodName())
-                    .type(inputData.getMoodType())
-                    .build());
-            existing.setUserNote(inputData.getNote());
+            WellnessLogEntry updated = WellnessLogEntry.Builder.from(existing)
+                    .stressLevel(Levels.fromInt(inputData.getStressLevel()))
+                    .energyLevel(Levels.fromInt(inputData.getEnergyLevel()))
+                    .fatigueLevel(Levels.fromInt(inputData.getFatigueLevel()))
+                    .moodLabel(new MoodLabel.Builder(inputData.getMoodName())
+                            .type(inputData.getMoodType())
+                            .build())
+                    .userNote(inputData.getNote())
+                    .build();
 
-            boolean success = dataAccess.update(existing);
+            boolean success = dataAccess.update(updated);
             if (success) {
-                outputBoundary.prepareSuccessView(new EditWellnessLogOutputData(existing.getId(), true));
+                outputBoundary.prepareSuccessView(new EditWellnessLogOutputData(updated.getId(), true));
             } else {
                 outputBoundary.prepareFailView("Failed to update the wellness log.");
             }
@@ -49,5 +51,6 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
         }
     }
 }
+
 
 

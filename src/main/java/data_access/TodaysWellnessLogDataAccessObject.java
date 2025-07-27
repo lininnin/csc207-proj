@@ -7,6 +7,7 @@ import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellne
 import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,57 +19,59 @@ public class TodaysWellnessLogDataAccessObject implements
         DeleteWellnessLogDataAccessInterf,
         EditWellnessLogDataAccessInterf {
 
-    private DailyWellnessLog dailyLog;
+    private DailyWellnessLog dailyWellnessLog;
 
     public TodaysWellnessLogDataAccessObject() {
-        this.dailyLog = new DailyWellnessLog(LocalDate.now());
+        this.dailyWellnessLog = new DailyWellnessLog(LocalDate.now());
     }
 
     @Override
     public void save(WellnessLogEntry entry) {
-        if (!entry.getTime().toLocalDate().equals(dailyLog.getDate())) {
+        if (!entry.getTime().toLocalDate().equals(dailyWellnessLog.getDate())) {
             throw new IllegalArgumentException("Entry does not belong to today's log.");
         }
-        dailyLog.addEntry(entry);
+        dailyWellnessLog.addEntry(entry);
     }
 
     @Override
     public boolean remove(WellnessLogEntry entry) {
-        int before = dailyLog.getEntries().size();
-        dailyLog.removeEntry(entry.getId());
-        int after = dailyLog.getEntries().size();
+        int before = dailyWellnessLog.getEntries().size();
+        dailyWellnessLog.removeEntry(entry.getId());
+        int after = dailyWellnessLog.getEntries().size();
         return after < before;
     }
 
     @Override
     public boolean deleteById(String logId) {
-        int before = dailyLog.getEntries().size();
-        dailyLog.removeEntry(logId);
-        int after = dailyLog.getEntries().size();
+        int before = dailyWellnessLog.getEntries().size();
+        dailyWellnessLog.removeEntry(logId);
+        int after = dailyWellnessLog.getEntries().size();
         return after < before;
     }
 
     @Override
     public List<WellnessLogEntry> getTodaysWellnessLogEntries() {
-        return dailyLog.getEntries();
+        return new ArrayList<>(dailyWellnessLog.getEntries()); // ✅ copy list
     }
+
+
 
     @Override
     public boolean contains(WellnessLogEntry entry) {
-        return dailyLog.getEntries().stream()
+        return dailyWellnessLog.getEntries().stream()
                 .anyMatch(e -> e.getId().equals(entry.getId()));
     }
 
     @Override
     public void clearAll() {
-        this.dailyLog = new DailyWellnessLog(LocalDate.now());
+        this.dailyWellnessLog = new DailyWellnessLog(LocalDate.now());
     }
 
     // ✅ 实现 Edit 接口所需方法：
 
     @Override
     public WellnessLogEntry getById(String logId) {
-        return dailyLog.getEntries().stream()
+        return dailyWellnessLog.getEntries().stream()
                 .filter(e -> e.getId().equals(logId))
                 .findFirst()
                 .orElse(null);
