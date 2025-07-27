@@ -3,6 +3,7 @@ package use_case.orderGoal;
 import entity.Sophia.Goal;
 import interface_adapter.GoalRepository;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,6 +35,10 @@ public class OrderGoalsUseCase implements OrderGoalsInputBoundary {
                 // Optional
                 break;
         }
+        if (inputData.isReverse()) {
+            Collections.reverse(goals);
+        }
+
         presenter.present(new OrderGoalsOutputData(goals));
     }
 }
