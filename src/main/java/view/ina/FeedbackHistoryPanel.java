@@ -1,4 +1,4 @@
-package view;
+package view.ina;
 
 import entity.Ina.FeedbackEntry;
 
@@ -22,9 +22,18 @@ public class FeedbackHistoryPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
+        // Header
+        JLabel header = new JLabel("Feedback History");
+        header.setFont(header.getFont().deriveFont(Font.BOLD, 20f));
+        header.setBorder(new EmptyBorder(8, 12, 8, 12));
+        add(header, BorderLayout.NORTH);
+
+
+        // List
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
         listContainer.setBorder(new EmptyBorder(8, 8, 8, 8));
 
+        // Scroller
         JScrollPane scroll = new JScrollPane(listContainer);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         add(scroll, BorderLayout.CENTER);
