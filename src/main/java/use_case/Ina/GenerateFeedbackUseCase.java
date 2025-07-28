@@ -13,34 +13,38 @@ public class GenerateFeedbackUseCase {
     private final GPTService gptService;
     private final FeedbackRepository feedbackRepo;
 
-    public GenerateFeedbackUseCase(GPTService gptService, FeedbackRepository feedbackRepo) {
-        this.gptService = gptService;
-        this.feedbackRepo = feedbackRepo;
-    }
-
-    /**
-     * Generate this week's feedback
-     * @return this week's generated feedback entry
-     */
-    public FeedbackEntry generateFeedback(List<DailyLog> log) throws IOException {
+    public FeedbackEntry generateFeedback(List<DailyLog> logs) throws IOException {
         LocalDate date = LocalDate.now();
 
-        // If feedback already generated today,
-        FeedbackEntry todayFeedback = feedbackRepo.loadByDate(date);
-        if (todayFeedback != null) {
-            return todayFeedback;
+        FeedbackEntry existing = feedbackRepo.loadByDate(date);
+        if (existing != null) return existing;
+
+        String prompt = PromptBuilder.buildPromptFromWeeksLogs(logs);
+        String raw = gptService.generateFeedback(prompt);
+
+        String analysis = null;
+        String recommendations = null;
+        try {
+            org.json.JSONObject o = new org.json.JSONObject(raw);
+            if (o.has("analysis") && !o.isNull("analysis")) {
+                analysis = o.getString("analysis");
+            }
+            if (o.has("recommendations") && !o.isNull("recommendations")) {
+                recommendations = o.getString("recommendations");
+            }
+        } catch (org.json.JSONException ignore) { /* leave null */ }
+
+        // Nothing parsed → don't create/save entry
+        if (analysis == null && recommendations == null) {
+            // optionally log raw
+            return null; // or throw if you prefer
         }
 
-        // Build prompt
-        String prompt = PromptBuilder.buildPromptFromWeeksLogs(log);
-        // Call GPT
-        String aiAnalysis = gptService.generateFeedback(prompt);
+        FeedbackEntry weekEntry = new FeedbackEntry(date, analysis, recommendations);
+        //TODO: deal with correlation.?
+        feedbackRepo.save(weekEntry);
+        return weekEntry;
+    }
 
-        //
-
-        FeedbackEntry todayEntry = new FeedbackEntry(date, aiAnalysis, recommendation, ); // TODO: How should we get the other 2?
-
-        feedbackRepo.save(todayEntry);
-        return todayEntry;
     }
 }
