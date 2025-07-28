@@ -13,6 +13,11 @@ public class GenerateFeedbackUseCase {
     private final GPTService gptService;
     private final FeedbackRepository feedbackRepo;
 
+    public GenerateFeedbackUseCase(GPTService gptService, FeedbackRepository feedbackRepo) {
+        this.gptService = gptService;
+        this.feedbackRepo = feedbackRepo;
+    }
+
     public FeedbackEntry generateFeedback(List<DailyLog> logs) throws IOException {
         LocalDate date = LocalDate.now();
 
