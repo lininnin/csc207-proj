@@ -5,6 +5,9 @@ import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 import use_case.repository.TaskRepository;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,8 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * File-based implementation of TaskRepository.
- * Stores tasks in tasks.json using simple JSON format.
+ * File-based implementation of TaskRepository using org.json.
  */
 public class FileTaskRepository implements TaskRepository {
     private static final String TASKS_FILE = "data/tasks.json";
@@ -47,35 +49,27 @@ public class FileTaskRepository implements TaskRepository {
     private void loadTasks() {
         File file = new File(getTasksFilePath());
         if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                boolean inAvailableTasks = false;
-                boolean inTodaysTasks = false;
+            try {
+                String content = new String(Files.readAllBytes(file.toPath()));
+                JSONObject json = new JSONObject(content);
 
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-
-                    if (line.equals("\"availableTasks\": [")) {
-                        inAvailableTasks = true;
-                        continue;
-                    } else if (line.equals("\"todaysTaskIds\": [")) {
-                        inTodaysTasks = true;
-                        inAvailableTasks = false;
-                        continue;
-                    } else if (line.equals("]") || line.equals("],")) {
-                        inAvailableTasks = false;
-                        inTodaysTasks = false;
-                        continue;
-                    }
-
-                    if (inAvailableTasks && line.startsWith("{")) {
-                        Task task = parseTaskFromJson(reader, line);
+                // Load available tasks
+                JSONArray tasksArray = json.optJSONArray("availableTasks");
+                if (tasksArray != null) {
+                    for (int i = 0; i < tasksArray.length(); i++) {
+                        JSONObject taskJson = tasksArray.getJSONObject(i);
+                        Task task = reconstructTask(taskJson);
                         if (task != null) {
                             allTasks.put(task.getInfo().getId(), task);
                         }
-                    } else if (inTodaysTasks && line.startsWith("\"")) {
-                        String taskId = line.replace("\"", "").replace(",", "").trim();
-                        todaysTaskIds.add(taskId);
+                    }
+                }
+
+                // Load today's task IDs
+                JSONArray todaysArray = json.optJSONArray("todaysTaskIds");
+                if (todaysArray != null) {
+                    for (int i = 0; i < todaysArray.length(); i++) {
+                        todaysTaskIds.add(todaysArray.getString(i));
                     }
                 }
             } catch (IOException e) {
@@ -84,77 +78,52 @@ public class FileTaskRepository implements TaskRepository {
         }
     }
 
-    private Task parseTaskFromJson(BufferedReader reader, String firstLine) throws IOException {
-        Map<String, String> taskData = new HashMap<>();
-        String line = firstLine;
-
-        while (line != null && !line.contains("}")) {
-            if (line.contains(":")) {
-                String[] parts = line.split(":", 2);
-                if (parts.length == 2) {
-                    String key = parts[0].trim().replace("\"", "");
-                    String value = parts[1].trim().replace("\"", "").replace(",", "");
-                    taskData.put(key, value);
-                }
-            }
-            line = reader.readLine();
-        }
-
-        // Parse the last line if it contains data
-        if (line != null && line.contains(":")) {
-            String[] parts = line.split(":", 2);
-            if (parts.length == 2) {
-                String key = parts[0].trim().replace("\"", "");
-                String value = parts[1].trim()
-                        .replace("\"", "")
-                        .replace(",", "")
-                        .replace("}", "")
-                        .replace("]", "");
-                taskData.put(key, value);
-            }
-        }
-
-        // Create task from parsed data
-        return reconstructTask(taskData);
-    }
-
-    private Task reconstructTask(Map<String, String> data) {
+    private Task reconstructTask(JSONObject json) {
         try {
             // Create Info using Builder
-            Info info = new Info.Builder()
-                    .id(data.get("id"))
-                    .name(data.get("name"))
-                    .description(data.getOrDefault("description", ""))
-                    .category(data.get("category").equals("null") ? null : data.get("category"))
-                    .createdDate(LocalDate.parse(data.get("createdDate"), DATE_FORMATTER))
-                    .build();
+            String name = json.getString("name");
+            Info.Builder infoBuilder = new Info.Builder(name);
+
+            if (json.has("description") && !json.isNull("description")) {
+                infoBuilder.description(json.getString("description"));
+            }
+            if (json.has("category") && !json.isNull("category")) {
+                infoBuilder.category(json.getString("category"));
+            }
+
+            Info info = infoBuilder.build();
 
             // Create BeginAndDueDates
-            LocalDate beginDate = data.get("beginDate").equals("null") ?
-                    null : LocalDate.parse(data.get("beginDate"), DATE_FORMATTER);
-            LocalDate dueDate = data.get("dueDate").equals("null") ?
-                    null : LocalDate.parse(data.get("dueDate"), DATE_FORMATTER);
+            LocalDate beginDate = null;
+            LocalDate dueDate = null;
+
+            if (json.has("beginDate") && !json.isNull("beginDate")) {
+                beginDate = LocalDate.parse(json.getString("beginDate"), DATE_FORMATTER);
+            }
+            if (json.has("dueDate") && !json.isNull("dueDate")) {
+                dueDate = LocalDate.parse(json.getString("dueDate"), DATE_FORMATTER);
+            }
+
             BeginAndDueDates dates = new BeginAndDueDates(beginDate, dueDate);
 
             // Create Task
             Task task = new Task(info, dates);
 
             // Set additional properties
-            String priority = data.get("priority");
-            if (priority != null && !priority.equals("null")) {
-                task.setPriority(Task.Priority.valueOf(priority));
+            if (json.has("priority") && !json.isNull("priority")) {
+                task.setPriority(Task.Priority.valueOf(json.getString("priority")));
             }
 
-            boolean isCompleted = Boolean.parseBoolean(data.get("isCompleted"));
-            if (isCompleted) {
+            if (json.has("isCompleted") && json.getBoolean("isCompleted")) {
                 task.editStatus(true);
-                String completedDateTime = data.get("completedDateTime");
-                if (completedDateTime != null && !completedDateTime.equals("null")) {
-                    task.setCompletedDateTime(LocalDateTime.parse(completedDateTime, DATETIME_FORMATTER));
+                if (json.has("completedDateTime") && !json.isNull("completedDateTime")) {
+                    task.setCompletedDateTime(LocalDateTime.parse(json.getString("completedDateTime"), DATETIME_FORMATTER));
                 }
             }
 
-            task.setOneTime(Boolean.parseBoolean(data.get("oneTime")));
+            if (json.has("oneTime")) {
+                task.setOneTime(json.getBoolean("oneTime"));
+            }
 
             return task;
         } catch (Exception e) {
@@ -164,74 +133,55 @@ public class FileTaskRepository implements TaskRepository {
     }
 
     private void saveTasks() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(getTasksFilePath()))) {
-            writer.println("{");
-            writer.println("  \"availableTasks\": [");
+        try {
+            JSONObject root = new JSONObject();
 
-            // Write available tasks
-            List<Task> taskList = new ArrayList<>(allTasks.values());
-            for (int i = 0; i < taskList.size(); i++) {
-                writeTask(writer, taskList.get(i), i < taskList.size() - 1);
+            // Save available tasks
+            JSONArray tasksArray = new JSONArray();
+            for (Task task : allTasks.values()) {
+                tasksArray.put(taskToJson(task));
             }
+            root.put("availableTasks", tasksArray);
 
-            writer.println("  ],");
-            writer.println("  \"todaysTaskIds\": [");
+            // Save today's task IDs
+            JSONArray todaysArray = new JSONArray(todaysTaskIds);
+            root.put("todaysTaskIds", todaysArray);
 
-            // Write today's task IDs
-            List<String> todaysList = new ArrayList<>(todaysTaskIds);
-            for (int i = 0; i < todaysList.size(); i++) {
-                writer.print("    \"" + todaysList.get(i) + "\"");
-                if (i < todaysList.size() - 1) {
-                    writer.println(",");
-                } else {
-                    writer.println();
-                }
+            // Write to file
+            try (FileWriter writer = new FileWriter(getTasksFilePath())) {
+                writer.write(root.toString(2)); // Pretty print with indent
             }
-
-            writer.println("  ]");
-            writer.println("}");
         } catch (IOException e) {
             throw new RuntimeException("Failed to save tasks", e);
         }
     }
 
-    private void writeTask(PrintWriter writer, Task task, boolean hasNext) {
-        writer.println("    {");
-        writer.println("      \"id\": \"" + task.getInfo().getId() + "\",");
-        writer.println("      \"name\": \"" + escapeJson(task.getInfo().getName()) + "\",");
-        writer.println("      \"description\": \"" + escapeJson(task.getInfo().getDescription()) + "\",");
-        writer.println("      \"category\": " + (task.getInfo().getCategory() != null ?
-                "\"" + escapeJson(task.getInfo().getCategory()) + "\"" : "null") + ",");
-        writer.println("      \"createdDate\": \"" + task.getInfo().getCreatedDate().format(DATE_FORMATTER) + "\",");
+    private JSONObject taskToJson(Task task) {
+        JSONObject json = new JSONObject();
 
+        // Info fields
+        json.put("id", task.getInfo().getId());
+        json.put("name", task.getInfo().getName());
+        json.put("description", task.getInfo().getDescription());
+        json.put("category", task.getInfo().getCategory());
+        json.put("createdDate", task.getInfo().getCreatedDate().format(DATE_FORMATTER));
+
+        // Dates
         BeginAndDueDates dates = task.getBeginAndDueDates();
-        writer.println("      \"beginDate\": " + (dates.getBeginDate() != null ?
-                "\"" + dates.getBeginDate().format(DATE_FORMATTER) + "\"" : "null") + ",");
-        writer.println("      \"dueDate\": " + (dates.getDueDate() != null ?
-                "\"" + dates.getDueDate().format(DATE_FORMATTER) + "\"" : "null") + ",");
+        json.put("beginDate", dates.getBeginDate() != null ?
+                dates.getBeginDate().format(DATE_FORMATTER) : JSONObject.NULL);
+        json.put("dueDate", dates.getDueDate() != null ?
+                dates.getDueDate().format(DATE_FORMATTER) : JSONObject.NULL);
 
-        writer.println("      \"priority\": " + (task.getPriority() != null ?
-                "\"" + task.getPriority().name() + "\"" : "null") + ",");
-        writer.println("      \"isCompleted\": " + task.isComplete() + ",");
-        writer.println("      \"completedDateTime\": " + (task.getCompletedDateTime() != null ?
-                "\"" + task.getCompletedDateTime().format(DATETIME_FORMATTER) + "\"" : "null") + ",");
-        writer.println("      \"oneTime\": " + task.isOneTime());
+        // Task properties
+        json.put("priority", task.getPriority() != null ?
+                task.getPriority().name() : JSONObject.NULL);
+        json.put("isCompleted", task.isComplete());
+        json.put("completedDateTime", task.getCompletedDateTime() != null ?
+                task.getCompletedDateTime().format(DATETIME_FORMATTER) : JSONObject.NULL);
+        json.put("oneTime", task.isOneTime());
 
-        writer.print("    }");
-        if (hasNext) {
-            writer.println(",");
-        } else {
-            writer.println();
-        }
-    }
-
-    private String escapeJson(String value) {
-        if (value == null) return "";
-        return value.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        return json;
     }
 
     @Override
@@ -320,9 +270,6 @@ public class FileTaskRepository implements TaskRepository {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Removes completed one-time tasks at day end.
-     */
     public void removeCompletedOneTimeTasks() {
         List<String> toRemove = allTasks.values().stream()
                 .filter(task -> task.isOneTime() && task.isComplete())
@@ -339,17 +286,11 @@ public class FileTaskRepository implements TaskRepository {
         }
     }
 
-    /**
-     * Clears today's task list (except tasks with due dates).
-     */
     public void clearTodaysTasks() {
         todaysTaskIds.clear();
         saveTasks();
     }
 
-    /**
-     * Gets the file path for testing purposes.
-     */
     protected String getTasksFilePath() {
         return TASKS_FILE;
     }

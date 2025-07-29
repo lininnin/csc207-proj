@@ -3,6 +3,8 @@ package data_access;
 import entity.Angela.CategoryManager;
 import use_case.repository.CategoryRepository;
 
+import org.json.JSONArray;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,8 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * File-based implementation of CategoryRepository.
- * Stores categories in categories.json and syncs with CategoryManager.
+ * File-based implementation of CategoryRepository using org.json.
  */
 public class FileCategoryRepository implements CategoryRepository {
     private static final String CATEGORIES_FILE = "data/categories.json";
@@ -63,28 +64,14 @@ public class FileCategoryRepository implements CategoryRepository {
         Set<String> categories = new TreeSet<>();
 
         if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                boolean inArray = false;
+            try {
+                String content = new String(Files.readAllBytes(file.toPath()));
+                JSONArray array = new JSONArray(content);
 
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-
-                    if (line.equals("[")) {
-                        inArray = true;
-                        continue;
-                    } else if (line.equals("]")) {
-                        break;
-                    }
-
-                    if (inArray && line.startsWith("\"")) {
-                        String category = line
-                                .replace("\"", "")
-                                .replace(",", "")
-                                .trim();
-                        if (!category.isEmpty()) {
-                            categories.add(category);
-                        }
+                for (int i = 0; i < array.length(); i++) {
+                    String category = array.getString(i);
+                    if (!category.isEmpty()) {
+                        categories.add(category);
                     }
                 }
             } catch (IOException e) {
@@ -102,32 +89,15 @@ public class FileCategoryRepository implements CategoryRepository {
 
     @Override
     public void saveCategories(Set<String> categories) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(getCategoriesFilePath()))) {
-            writer.println("[");
+        try {
+            JSONArray array = new JSONArray(categories);
 
-            List<String> categoryList = new ArrayList<>(categories);
-            for (int i = 0; i < categoryList.size(); i++) {
-                writer.print("  \"" + escapeJson(categoryList.get(i)) + "\"");
-                if (i < categoryList.size() - 1) {
-                    writer.println(",");
-                } else {
-                    writer.println();
-                }
+            try (FileWriter writer = new FileWriter(getCategoriesFilePath())) {
+                writer.write(array.toString(2)); // Pretty print
             }
-
-            writer.println("]");
         } catch (IOException e) {
             throw new RuntimeException("Failed to save categories", e);
         }
-    }
-
-    private String escapeJson(String value) {
-        if (value == null) return "";
-        return value.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
     }
 
     @Override
@@ -157,12 +127,6 @@ public class FileCategoryRepository implements CategoryRepository {
         return updated;
     }
 
-    /**
-     * Gets the file path for testing purposes.
-     * Can be overridden in tests.
-     *
-     * @return The categories file path
-     */
     protected String getCategoriesFilePath() {
         return CATEGORIES_FILE;
     }
