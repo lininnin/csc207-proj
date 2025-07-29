@@ -9,6 +9,14 @@ import java.util.stream.Collectors;
 /**
  * Builds a Bayesian‑correlation prompt for the last 7 days.
  * The LLM should return JSON
+ * Expected JSON response:
+ *  {
+ *    "effect_summary":[
+ *      {"variable":"stress","direction":"positive|negative|none","confidence":0.0‑1.0},
+ *      { ... energy ... },
+ *      { ... fatigue ... }
+ *    ],
+ *    "notes":"one short sentence"
  */
 public final class BayesCorrelationPromptBuilder {
 
