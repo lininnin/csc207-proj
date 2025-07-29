@@ -1,4 +1,4 @@
-package use_case.Ina;
+package use_case.generate_feedback;
 
 import java.io.IOException;
 

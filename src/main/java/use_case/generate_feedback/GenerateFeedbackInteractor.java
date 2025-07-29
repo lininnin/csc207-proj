@@ -8,7 +8,6 @@ import interface_adapter.gpt.RecommendationPromptBuilder;
 import org.json.JSONObject;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
-import use_case.Ina.GPTService;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
