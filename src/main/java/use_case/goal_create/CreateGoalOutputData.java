@@ -1,4 +1,4 @@
-package use_case.goal;
+package use_case.goal_create;
 
 public class CreateGoalOutputData {
     public final String goalName;

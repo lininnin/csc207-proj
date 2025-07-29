@@ -1,4 +1,4 @@
-package use_case.goal;
+package use_case.goal_create;
 
 import entity.Sophia.Goal;
 import entity.Sophia.GoalFactoryInterface;

@@ -1,6 +1,4 @@
-package use_case.goal;
-
-import use_case.goal.CreateGoalInputData;
+package use_case.goal_create;
 
 public interface CreateGoalInputBoundary {
     void createGoal(CreateGoalInputData inputData);
