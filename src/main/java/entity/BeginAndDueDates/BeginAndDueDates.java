@@ -3,30 +3,32 @@ package entity.BeginAndDueDates;
 import java.time.LocalDate;
 
 /**
- * Represents a time range with a begin date and optional due date.
- * Made mutable to support updating dates when adding tasks to Today.
+ * Represents a time period with a begin date and optional due date.
+ * Used by tasks, events, and goals to track their active periods.
  */
 public class BeginAndDueDates {
     private LocalDate beginDate;
     private LocalDate dueDate;
 
     /**
-     * Constructs a new time range with validation.
+     * Constructs a new BeginAndDueDates with the given dates.
      *
-     * @param beginDate The start date (can be null initially)
-     * @param dueDate   The end date (can be null for open-ended tasks)
-     * @throws IllegalArgumentException if dueDate is before beginDate
+     * @param beginDate The start date (required)
+     * @param dueDate The due date (optional)
+     * @throws IllegalArgumentException if beginDate is null
      */
     public BeginAndDueDates(LocalDate beginDate, LocalDate dueDate) {
-        if (beginDate != null && dueDate != null && dueDate.isBefore(beginDate)) {
-            throw new IllegalArgumentException("Due date cannot be before begin date");
+        if (beginDate == null) {
+            throw new IllegalArgumentException("Begin date cannot be null");
         }
         this.beginDate = beginDate;
         this.dueDate = dueDate;
     }
 
     /**
-     * @return The starting date
+     * Gets the begin date.
+     *
+     * @return The begin date
      */
     public LocalDate getBeginDate() {
         return beginDate;
@@ -35,18 +37,20 @@ public class BeginAndDueDates {
     /**
      * Sets the begin date.
      *
-     * @param beginDate The begin date to set
-     * @throws IllegalArgumentException if beginDate is after current dueDate
+     * @param beginDate The new begin date
+     * @throws IllegalArgumentException if beginDate is null
      */
     public void setBeginDate(LocalDate beginDate) {
-        if (beginDate != null && dueDate != null && dueDate.isBefore(beginDate)) {
-            throw new IllegalArgumentException("Due date cannot be before begin date");
+        if (beginDate == null) {
+            throw new IllegalArgumentException("Begin date cannot be null");
         }
         this.beginDate = beginDate;
     }
 
     /**
-     * @return The due date (might be null)
+     * Gets the due date.
+     *
+     * @return The due date, or null if not set
      */
     public LocalDate getDueDate() {
         return dueDate;
@@ -55,18 +59,14 @@ public class BeginAndDueDates {
     /**
      * Sets the due date.
      *
-     * @param dueDate The due date to set (can be null)
-     * @throws IllegalArgumentException if dueDate is before current beginDate
+     * @param dueDate The new due date (can be null to clear)
      */
     public void setDueDate(LocalDate dueDate) {
-        if (beginDate != null && dueDate != null && dueDate.isBefore(beginDate)) {
-            throw new IllegalArgumentException("Due date cannot be before begin date");
-        }
         this.dueDate = dueDate;
     }
 
     /**
-     * Checks if the task has a due date.
+     * Checks if this period has a due date.
      *
      * @return true if due date is set, false otherwise
      */
@@ -75,36 +75,23 @@ public class BeginAndDueDates {
     }
 
     /**
-     * Checks if the dates are valid (begin date before or equal to due date).
+     * Checks if the due date has passed.
      *
-     * @return true if valid or if either date is null, false if invalid
+     * @return true if due date exists and is before today, false otherwise
      */
-    public boolean isValid() {
-        if (beginDate == null || dueDate == null) {
-            return true; // Can't validate if dates not set
-        }
-        return !beginDate.isAfter(dueDate);
+    public boolean isPastDue() {
+        return dueDate != null && dueDate.isBefore(LocalDate.now());
     }
 
     /**
-     * Checks if a given date falls within the begin and due date range.
+     * Gets the number of days until the due date.
      *
-     * @param date The date to check
-     * @return true if date is within range, false otherwise
+     * @return Days until due (negative if overdue), or null if no due date
      */
-    public boolean isDateInRange(LocalDate date) {
-        if (date == null) {
-            return false;
+    public Long getDaysUntilDue() {
+        if (dueDate == null) {
+            return null;
         }
-
-        if (beginDate != null && date.isBefore(beginDate)) {
-            return false;
-        }
-
-        if (dueDate != null && date.isAfter(dueDate)) {
-            return false;
-        }
-
-        return true;
+        return LocalDate.now().until(dueDate).getDays();
     }
 }
