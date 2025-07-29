@@ -1,7 +1,9 @@
 package use_case.mark_task_complete;
 
-import java.time.LocalDateTime; /**
- * Output data for marking task complete.
+import java.time.LocalDateTime;
+
+/**
+ * Output data for successful task completion.
  */
 public class MarkTaskCompleteOutputData {
     private final String taskId;
@@ -17,9 +19,19 @@ public class MarkTaskCompleteOutputData {
         this.completionRate = completionRate;
     }
 
-    // Getters
-    public String getTaskId() { return taskId; }
-    public String getTaskName() { return taskName; }
-    public LocalDateTime getCompletionTime() { return completionTime; }
-    public double getCompletionRate() { return completionRate; }
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public LocalDateTime getCompletionTime() {
+        return completionTime;
+    }
+
+    public double getCompletionRate() {
+        return completionRate;
+    }
 }

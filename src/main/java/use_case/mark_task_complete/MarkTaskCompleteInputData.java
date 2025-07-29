@@ -1,7 +1,7 @@
 package use_case.mark_task_complete;
 
 /**
- * Input data for marking task complete.
+ * Input data for marking a task complete.
  */
 public class MarkTaskCompleteInputData {
     private final String taskId;
@@ -10,5 +10,7 @@ public class MarkTaskCompleteInputData {
         this.taskId = taskId;
     }
 
-    public String getTaskId() { return taskId; }
+    public String getTaskId() {
+        return taskId;
+    }
 }

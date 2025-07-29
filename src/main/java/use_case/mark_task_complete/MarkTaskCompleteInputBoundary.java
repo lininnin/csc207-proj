@@ -1,4 +1,8 @@
 package use_case.mark_task_complete;
 
-public class MarkTaskCompleteInputBoundary {
+/**
+ * Input boundary for mark task complete use case.
+ */
+public interface MarkTaskCompleteInputBoundary {
+    void execute(MarkTaskCompleteInputData inputData);
 }
