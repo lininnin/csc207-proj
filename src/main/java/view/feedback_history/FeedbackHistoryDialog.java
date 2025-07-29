@@ -1,11 +1,10 @@
-package view.ina;
+package view.feedback_history;
 
 import entity.Ina.FeedbackEntry;
-import use_case.repository.FeedbackRepository;
+import view.feedback_entry.FeedbackEntryPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -14,20 +13,13 @@ import java.util.List;
  */
 public class FeedbackHistoryDialog extends JDialog {
 
-    public FeedbackHistoryDialog(Frame owner, FeedbackRepository repo) {
+    public FeedbackHistoryDialog(Frame owner, List<FeedbackEntry> history, FeedbackHistoryPanel.Viewer viewer) {
         super(owner, "Feedback History", true);
 
-        List<FeedbackEntry> history = repo.loadAll().stream()
-                .sorted(Comparator.comparing(FeedbackEntry::getDate).reversed())
-                .toList();
-
-        // The main history list panel (for return)
         FeedbackHistoryPanel[] panelRef = new FeedbackHistoryPanel[1];
 
-        // Detail-view callback
-        FeedbackHistoryPanel.Viewer viewer = entry -> {
-            FeedbackEntry full = repo.loadByDate(entry.getDate());
-            FeedbackEntryPanel detailPanel = new FeedbackEntryPanel(full);
+        FeedbackHistoryPanel historyPanel = new FeedbackHistoryPanel(history, entry -> {
+            FeedbackEntryPanel detailPanel = new FeedbackEntryPanel(entry);
 
             JButton backButton = new JButton("Back to History");
             backButton.addActionListener(e -> setContentPane(panelRef[0]));
@@ -39,9 +31,7 @@ public class FeedbackHistoryDialog extends JDialog {
             setContentPane(detailWrapper);
             revalidate();
             repaint();
-        };
-
-        FeedbackHistoryPanel historyPanel = new FeedbackHistoryPanel(history, viewer);
+        });
         panelRef[0] = historyPanel;
 
         setContentPane(historyPanel);

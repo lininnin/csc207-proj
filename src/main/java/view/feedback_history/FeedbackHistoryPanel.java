@@ -1,4 +1,4 @@
-package view.ina;
+package view.feedback_history;
 
 import entity.Ina.FeedbackEntry;
 
@@ -10,30 +10,24 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FeedbackHistoryPanel extends JPanel {
-
     public interface Viewer { void show(FeedbackEntry feedbackEntry); }
 
     private final JPanel listContainer = new JPanel();
-    private final DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
     private final Viewer viewer;
 
     public FeedbackHistoryPanel(List<FeedbackEntry> entries, Viewer viewer) {
         this.viewer = viewer;
 
         setLayout(new BorderLayout());
-
-        // Header
         JLabel header = new JLabel("Feedback History");
         header.setFont(header.getFont().deriveFont(Font.BOLD, 20f));
         header.setBorder(new EmptyBorder(8, 12, 8, 12));
         add(header, BorderLayout.NORTH);
 
-
-        // List
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
         listContainer.setBorder(new EmptyBorder(8, 8, 8, 8));
 
-        // Scroller
         JScrollPane scroll = new JScrollPane(listContainer);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         add(scroll, BorderLayout.CENTER);
@@ -46,12 +40,6 @@ public class FeedbackHistoryPanel extends JPanel {
         feedbackEntries.stream()
                 .sorted(Comparator.comparing(FeedbackEntry::getDate).reversed())
                 .forEach(e -> listContainer.add(row(e)));
-        listContainer.revalidate();
-        listContainer.repaint();
-    }
-
-    public void addEntry(FeedbackEntry entry) {
-        listContainer.add(row(entry), 0); // newest on top
         listContainer.revalidate();
         listContainer.repaint();
     }
