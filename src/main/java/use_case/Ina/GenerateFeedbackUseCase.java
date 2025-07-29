@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Generates the weekly feedback entry. The scheduler triggers this use‑case **only on Mondays**,
@@ -25,15 +24,15 @@ import java.util.Optional;
  *  3. Call GPT 3× (general analysis JSON → bayesian correlation JSON → recommendations).
  *  4. Persist and return a new FeedbackEntry.
  */
-public class GenerateWeeklyFeedbackUseCase {
+public class GenerateFeedbackUseCase {
 
     private final DailyLogRepository dailyRepo;
     private final FeedbackRepository feedbackRepo;
     private final GPTService gpt;
 
-    public GenerateWeeklyFeedbackUseCase(DailyLogRepository dailyRepo,
-                                         FeedbackRepository feedbackRepo,
-                                         GPTService gpt) {
+    public GenerateFeedbackUseCase(DailyLogRepository dailyRepo,
+                                   FeedbackRepository feedbackRepo,
+                                   GPTService gpt) {
         this.dailyRepo    = dailyRepo;
         this.feedbackRepo = feedbackRepo;
         this.gpt          = gpt;
