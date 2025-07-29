@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * Represents a task entity with all required fields per design.
  * Tasks are created with basic info, then enhanced with priority/dates when added to Today.
  */
-public class Task {
+public class Task implements TaskInterf {
     private final Info info;
     private Priority priority;
     private boolean isCompleted;
