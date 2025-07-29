@@ -1,15 +1,16 @@
 package interface_adapter.controller;
 
-import use_case.mark_task_complete.MarkTaskCompleteUseCase;
+import use_case.mark_task_complete.MarkTaskCompleteInteractor;
+import use_case.mark_task_complete.MarkTaskCompleteInteractor;
 import use_case.mark_task_complete.MarkTaskCompleteInputData;
 
 /**
  * Controller for marking tasks as complete.
  */
 public class MarkTaskCompleteController {
-    private final MarkTaskCompleteUseCase markTaskCompleteUseCase;
+    private final MarkTaskCompleteInteractor markTaskCompleteUseCase;
 
-    public MarkTaskCompleteController(MarkTaskCompleteUseCase markTaskCompleteUseCase) {
+    public MarkTaskCompleteController(MarkTaskCompleteInteractor markTaskCompleteUseCase) {
         this.markTaskCompleteUseCase = markTaskCompleteUseCase;
     }
 
