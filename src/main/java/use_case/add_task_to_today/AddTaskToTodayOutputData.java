@@ -1,7 +1,7 @@
 package use_case.add_task_to_today;
 
 /**
- * Output data for adding task to today.
+ * Output data for successful add to today operation.
  */
 public class AddTaskToTodayOutputData {
     private final String taskName;
@@ -12,6 +12,11 @@ public class AddTaskToTodayOutputData {
         this.message = message;
     }
 
-    public String getTaskName() { return taskName; }
-    public String getMessage() { return message; }
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

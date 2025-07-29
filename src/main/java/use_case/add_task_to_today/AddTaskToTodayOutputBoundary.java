@@ -1,7 +1,7 @@
 package use_case.add_task_to_today;
 
 /**
- * Output boundary interface.
+ * Output boundary for adding task to today use case.
  */
 public interface AddTaskToTodayOutputBoundary {
     void presentSuccess(AddTaskToTodayOutputData outputData);
