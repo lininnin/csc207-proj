@@ -1,35 +1,35 @@
 package use_case.create_task;
 
-import entity.Angela.Task.Task;
-
-import java.time.LocalDate;
-
 /**
  * Input data for creating a task.
+ * Contains only the fields available at creation time per design.
  */
 public class CreateTaskInputData {
     private final String name;
     private final String description;
     private final String category;
-    private final Task.Priority priority;
-    private final LocalDate beginDate;
-    private final LocalDate dueDate;
+    private final boolean oneTime;
 
-    public CreateTaskInputData(String name, String description, String category,
-                               Task.Priority priority, LocalDate beginDate, LocalDate dueDate) {
+    public CreateTaskInputData(String name, String description, String category, boolean oneTime) {
         this.name = name;
         this.description = description;
         this.category = category;
-        this.priority = priority;
-        this.beginDate = beginDate;
-        this.dueDate = dueDate;
+        this.oneTime = oneTime;
     }
 
-    // Getters
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getCategory() { return category; }
-    public Task.Priority getPriority() { return priority; }
-    public LocalDate getBeginDate() { return beginDate; }
-    public LocalDate getDueDate() { return dueDate; }
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public boolean isOneTime() {
+        return oneTime;
+    }
 }

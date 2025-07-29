@@ -1,7 +1,7 @@
 package use_case.create_task;
 
 /**
- * Output data for task creation.
+ * Output data for successful task creation.
  */
 public class CreateTaskOutputData {
     private final String taskId;
@@ -14,8 +14,15 @@ public class CreateTaskOutputData {
         this.message = message;
     }
 
-    // Getters
-    public String getTaskId() { return taskId; }
-    public String getTaskName() { return taskName; }
-    public String getMessage() { return message; }
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
