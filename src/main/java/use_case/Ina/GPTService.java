@@ -1,5 +1,7 @@
 package use_case.Ina;
 
 public interface GPTService {
-    String generateFeedback(String prompt);
+    String callGeneralAnalysis(String prompt);
+    String callCorrelationBayes(String prompt);
+    String callRecommendation(String prompt);
 }

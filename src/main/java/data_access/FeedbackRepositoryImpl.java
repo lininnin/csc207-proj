@@ -11,10 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FeedbackRepositoryImpl implements FeedbackRepository {
     private static final String file_path = "feedback_cache.json";
     //read directly from file
+
     /**
      * @param entry
      */
@@ -24,10 +27,10 @@ public class FeedbackRepositoryImpl implements FeedbackRepository {
             Path path = Paths.get(file_path);
             JSONObject root;
             if (Files.exists(path) && Files.size(path) > 0) {
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-            root = new JSONObject(new JSONTokener(content));
+                String content = Files.readString(path, StandardCharsets.UTF_8);
+                root = new JSONObject(new JSONTokener(content));
             } else {
-            root = new JSONObject();
+                root = new JSONObject();
             }
 
             JSONObject obj = new JSONObject();
@@ -70,5 +73,34 @@ public class FeedbackRepositoryImpl implements FeedbackRepository {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load FeedbackEntry", e);
         }
+    }
+
+    @Override
+    public List<FeedbackEntry> loadAll() {
+        List<FeedbackEntry> list = new ArrayList<>();
+        Path path = Paths.get(file_path);
+
+        if (!Files.exists(path)) return list;
+
+        try {
+            if (Files.size(path) == 0) return list;
+
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            JSONObject root = new JSONObject(new JSONTokener(content));
+
+            for (String key : root.keySet()) {
+                LocalDate date = LocalDate.parse(key);
+                JSONObject obj = root.getJSONObject(key);
+                list.add(new FeedbackEntry(
+                        date,
+                        obj.optString("aiAnalysis", null),
+                        obj.optString("Recommendations", null),
+                        obj.optString("correlationData", null)
+                ));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load feedback entries", e);
+        }
+        return list;
     }
 }

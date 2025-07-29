@@ -41,7 +41,7 @@ public class FeedbackEntry {
                 "Recommendations given:" + recommendations +'\'';
     }
 
-    public Object getDate() {
+    public LocalDate getDate() {
         return date;
     }
 }
