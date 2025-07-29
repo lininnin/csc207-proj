@@ -28,8 +28,13 @@ class FileTaskRepositoryTest {
         // Create test data directory
         Files.createDirectories(Paths.get(TEST_DATA_DIR));
 
+        // Clear any existing test file
+        File testFile = new File(TEST_TASKS_FILE);
+        if (testFile.exists()) {
+            testFile.delete();
+        }
+
         // Create repository with test file location
-        System.setProperty("tasks.file", TEST_TASKS_FILE);
         repository = new TestFileTaskRepository();
     }
 
@@ -43,14 +48,17 @@ class FileTaskRepositoryTest {
                     .map(Path::toFile)
                     .forEach(File::delete);
         }
-        System.clearProperty("tasks.file");
     }
 
     @Test
     @DisplayName("Should save and retrieve task")
     void testSaveAndRetrieveTask() {
-        // Create a task
-        Info info = new Info("task-1", "Test Task", "Description", "Work", LocalDate.now());
+        // Create a task using Info.Builder
+        Info info = new Info.Builder("Test Task")
+                .description("Description")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), LocalDate.now().plusDays(7));
         Task task = new Task(info, dates);
 
@@ -58,7 +66,7 @@ class FileTaskRepositoryTest {
         repository.save(task);
 
         // Retrieve task
-        Task retrieved = repository.findById("task-1");
+        Task retrieved = repository.findById(info.getId());
         assertNotNull(retrieved);
         assertEquals("Test Task", retrieved.getInfo().getName());
         assertEquals("Description", retrieved.getInfo().getDescription());
@@ -69,7 +77,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should update existing task")
     void testUpdateTask() {
         // Create and save task
-        Info info = new Info("task-1", "Original", "Desc", "Work", LocalDate.now());
+        Info info = new Info.Builder("Original")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
         Task task = new Task(info, dates);
         repository.save(task);
@@ -80,7 +92,7 @@ class FileTaskRepositoryTest {
         repository.update(task);
 
         // Verify update
-        Task retrieved = repository.findById("task-1");
+        Task retrieved = repository.findById(info.getId());
         assertEquals(Task.Priority.HIGH, retrieved.getPriority());
         assertTrue(retrieved.isComplete());
     }
@@ -90,7 +102,11 @@ class FileTaskRepositoryTest {
     void testFindAllTasks() {
         // Save multiple tasks
         for (int i = 1; i <= 3; i++) {
-            Info info = new Info("task-" + i, "Task " + i, "Desc", "Work", LocalDate.now());
+            Info info = new Info.Builder("Task " + i)
+                    .description("Desc")
+                    .category("Work")
+                    .build();
+
             BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
             Task task = new Task(info, dates);
             repository.save(task);
@@ -104,7 +120,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should handle today's tasks correctly")
     void testTodaysTasks() {
         // Create task and add to today
-        Info info = new Info("task-1", "Today Task", "Desc", "Work", LocalDate.now());
+        Info info = new Info.Builder("Today Task")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
         Task task = new Task(info, dates);
         task.setPriority(Task.Priority.MEDIUM);
@@ -121,7 +141,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should include tasks with due dates in today's tasks")
     void testDueDateTasksInToday() {
         // Task with due date (should appear in today automatically)
-        Info info1 = new Info("task-1", "Due Today", "Desc", "Work", LocalDate.now());
+        Info info1 = new Info.Builder("Due Today")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates1 = new BeginAndDueDates(
                 LocalDate.now().minusDays(2),
                 LocalDate.now().plusDays(3)
@@ -130,7 +154,11 @@ class FileTaskRepositoryTest {
         repository.save(dueTask);
 
         // Task without due date (not in today unless explicitly added)
-        Info info2 = new Info("task-2", "No Due", "Desc", "Personal", LocalDate.now());
+        Info info2 = new Info.Builder("No Due")
+                .description("Desc")
+                .category("Personal")
+                .build();
+
         BeginAndDueDates dates2 = new BeginAndDueDates(LocalDate.now(), null);
         Task noDueTask = new Task(info2, dates2);
         repository.save(noDueTask);
@@ -144,7 +172,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should find overdue tasks")
     void testFindOverdueTasks() {
         // Overdue task
-        Info info1 = new Info("task-1", "Overdue", "Desc", "Work", LocalDate.now());
+        Info info1 = new Info.Builder("Overdue")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates1 = new BeginAndDueDates(
                 LocalDate.now().minusDays(5),
                 LocalDate.now().minusDays(2) // Due 2 days ago
@@ -153,7 +185,11 @@ class FileTaskRepositoryTest {
         repository.save(overdueTask);
 
         // Not overdue task
-        Info info2 = new Info("task-2", "Future", "Desc", "Work", LocalDate.now());
+        Info info2 = new Info.Builder("Future")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates2 = new BeginAndDueDates(
                 LocalDate.now(),
                 LocalDate.now().plusDays(5)
@@ -172,7 +208,11 @@ class FileTaskRepositoryTest {
         // Save tasks with different categories
         String[] categories = {"Work", "Personal", "Work"};
         for (int i = 0; i < categories.length; i++) {
-            Info info = new Info("task-" + i, "Task " + i, "Desc", categories[i], LocalDate.now());
+            Info info = new Info.Builder("Task " + i)
+                    .description("Desc")
+                    .category(categories[i])
+                    .build();
+
             BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
             Task task = new Task(info, dates);
             repository.save(task);
@@ -191,7 +231,11 @@ class FileTaskRepositoryTest {
         // Save tasks with different priorities
         Task.Priority[] priorities = {Task.Priority.HIGH, Task.Priority.LOW, Task.Priority.HIGH};
         for (int i = 0; i < priorities.length; i++) {
-            Info info = new Info("task-" + i, "Task " + i, "Desc", "Work", LocalDate.now());
+            Info info = new Info.Builder("Task " + i)
+                    .description("Desc")
+                    .category("Work")
+                    .build();
+
             BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
             Task task = new Task(info, dates);
             task.setPriority(priorities[i]);
@@ -210,7 +254,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should remove completed one-time tasks")
     void testRemoveCompletedOneTimeTasks() {
         // Create one-time task
-        Info info1 = new Info("task-1", "One Time", "Desc", "Work", LocalDate.now());
+        Info info1 = new Info.Builder("One Time")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates1 = new BeginAndDueDates(LocalDate.now(), null);
         Task oneTimeTask = new Task(info1, dates1);
         oneTimeTask.setOneTime(true);
@@ -218,7 +266,11 @@ class FileTaskRepositoryTest {
         repository.save(oneTimeTask);
 
         // Create regular completed task
-        Info info2 = new Info("task-2", "Regular", "Desc", "Work", LocalDate.now());
+        Info info2 = new Info.Builder("Regular")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates2 = new BeginAndDueDates(LocalDate.now(), null);
         Task regularTask = new Task(info2, dates2);
         regularTask.setOneTime(false);
@@ -240,7 +292,11 @@ class FileTaskRepositoryTest {
     void testClearTodaysTasks() {
         // Add tasks to today
         for (int i = 1; i <= 3; i++) {
-            Info info = new Info("task-" + i, "Task " + i, "Desc", "Work", LocalDate.now());
+            Info info = new Info.Builder("Task " + i)
+                    .description("Desc")
+                    .category("Work")
+                    .build();
+
             BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
             Task task = new Task(info, dates);
             repository.save(task);
@@ -263,7 +319,11 @@ class FileTaskRepositoryTest {
     @DisplayName("Should persist data across repository instances")
     void testDataPersistence() {
         // Save task with first repository
-        Info info = new Info("task-1", "Persistent", "Desc", "Work", LocalDate.now());
+        Info info = new Info.Builder("Persistent")
+                .description("Desc")
+                .category("Work")
+                .build();
+
         BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
         Task task = new Task(info, dates);
         repository.save(task);
@@ -272,7 +332,7 @@ class FileTaskRepositoryTest {
         FileTaskRepository newRepository = new TestFileTaskRepository();
 
         // Should find the task
-        Task retrieved = newRepository.findById("task-1");
+        Task retrieved = newRepository.findById(info.getId());
         assertNotNull(retrieved);
         assertEquals("Persistent", retrieved.getInfo().getName());
     }
@@ -281,7 +341,7 @@ class FileTaskRepositoryTest {
     private static class TestFileTaskRepository extends FileTaskRepository {
         @Override
         protected String getTasksFilePath() {
-            return System.getProperty("tasks.file", TEST_TASKS_FILE);
+            return TEST_TASKS_FILE;
         }
     }
 }

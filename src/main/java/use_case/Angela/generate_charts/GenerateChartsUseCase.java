@@ -1,4 +1,4 @@
-package use_case.generate_charts;
+package use_case.Angela.generate_charts;
 
 public class GenerateChartsUseCase {
 }
