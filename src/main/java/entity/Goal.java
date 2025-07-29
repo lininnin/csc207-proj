@@ -1,5 +1,7 @@
 package entity;
 
+import entity.BeginAndDueDates.BeginAndDueDates;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

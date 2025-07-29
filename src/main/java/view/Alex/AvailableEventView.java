@@ -11,7 +11,7 @@ import interface_adapter.Alex.edit_event.EditEventController;
 import interface_adapter.Alex.edit_event.EditedEventViewModel;
 import interface_adapter.Alex.edit_event.EditedEventState;
 
-import entity.Info.Info;
+import entity.info.Info;
 
 import javax.swing.*;
 import java.awt.*;

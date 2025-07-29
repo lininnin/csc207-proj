@@ -1,6 +1,6 @@
 package use_case.Alex.avaliable_events_module.delete_event;
 
-import entity.Info.Info;
+import entity.info.Info;
 
 /**
  * Interface for data access operations related to deleting available events.

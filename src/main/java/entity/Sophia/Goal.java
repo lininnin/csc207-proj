@@ -1,12 +1,10 @@
 package entity.Sophia;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Info.Info;
-import entity.Sophia.GoalInfo;
+import entity.info.Info;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import entity.Sophia.goalInterface.TimePeriod;
 
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).

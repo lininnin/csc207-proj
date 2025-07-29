@@ -1,7 +1,7 @@
 package use_case.filter;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Info.Info;
+import entity.info.Info;
 import entity.Angela.Task.Task;
 
 import java.time.LocalDate;

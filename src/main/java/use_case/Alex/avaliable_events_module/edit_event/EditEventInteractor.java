@@ -1,6 +1,6 @@
 package use_case.Alex.avaliable_events_module.edit_event;
 
-import entity.Info.Info;
+import entity.info.Info;
 
 public class EditEventInteractor implements EditEventInputBoundary {
 
