@@ -16,7 +16,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Clean Architecture Interactor for weekly feedback generation.
+ * Generates the weekly feedback entry. The scheduler triggers this use‑case **only on Mondays**,
+ * so we no longer perform an explicit Day‑of‑Week check here—if the caller invokes it, generation proceeds.
+ *
+ * Workflow
+ *  1. Determine this week’s Monday and see if it is already cached → return if yes.
+ *  2. Load the last 7 days of DailyLogs (last Mon‑Sun inclusive).
+ *  3. Call GPT 3 times (general analysis JSON → bayesian correlation JSON → recommendations).
+ *  4. Persist and return a new FeedbackEntry.
  */
 public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary {
 
