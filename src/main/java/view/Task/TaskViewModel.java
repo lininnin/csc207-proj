@@ -1,61 +1,82 @@
 package view.Task;
 
 import entity.Angela.Task.Task;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * View Model for task-related data.
- * Holds the state that the view needs to display.
+ * View model for the task view.
+ * Holds the state and notifies listeners of updates.
  */
 public class TaskViewModel {
-    private List<Task> availableTasks = new ArrayList<>();
-    private List<Task> todaysTasks = new ArrayList<>();
-    private List<Task> completedTasks = new ArrayList<>();
-    private List<Task> overdueTasks = new ArrayList<>();
-    private double completionRate = 0.0;
-    private String message = "";
-    private final List<TaskViewModelUpdateListener> listeners = new ArrayList<>();
+    private List<Task> availableTasks;
+    private List<Task> todaysTasks;
+    private List<Task> completedTasks;
+    private List<Task> overdueTasks;
+    private double completionRate;
+    private String message;
 
-    // Methods to update state
-    public void setAvailableTasks(List<Task> tasks) {
-        this.availableTasks = new ArrayList<>(tasks);
-        notifyListeners();
+    private final List<TaskViewModelUpdateListener> updateListeners;
+
+    public TaskViewModel() {
+        this.availableTasks = new ArrayList<>();
+        this.todaysTasks = new ArrayList<>();
+        this.completedTasks = new ArrayList<>();
+        this.overdueTasks = new ArrayList<>();
+        this.completionRate = 0.0;
+        this.message = "";
+        this.updateListeners = new ArrayList<>();
     }
 
-    public void setTodaysTasks(List<Task> tasks) {
-        this.todaysTasks = new ArrayList<>(tasks);
-        notifyListeners();
+    /**
+     * Adds a listener for view model updates.
+     *
+     * @param listener The listener to add
+     */
+    public void addUpdateListener(TaskViewModelUpdateListener listener) {
+        if (listener != null && !updateListeners.contains(listener)) {
+            updateListeners.add(listener);
+        }
     }
 
-    public void setCompletedTasks(List<Task> tasks) {
-        this.completedTasks = new ArrayList<>(tasks);
-        notifyListeners();
+    /**
+     * Removes a listener.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeUpdateListener(TaskViewModelUpdateListener listener) {
+        updateListeners.remove(listener);
     }
 
-    public void setOverdueTasks(List<Task> tasks) {
-        this.overdueTasks = new ArrayList<>(tasks);
-        notifyListeners();
+    /**
+     * Notifies all listeners of an update.
+     */
+    private void notifyListeners() {
+        for (TaskViewModelUpdateListener listener : updateListeners) {
+            listener.onViewModelUpdated();
+        }
     }
 
-    public void setCompletionRate(double rate) {
-        this.completionRate = rate;
-        notifyListeners();
-    }
+    // Getters and setters with notification
 
-    public void setMessage(String message) {
-        this.message = message;
-        notifyListeners();
-    }
-
-    // Getters
     public List<Task> getAvailableTasks() {
         return new ArrayList<>(availableTasks);
     }
 
+    public void setAvailableTasks(List<Task> availableTasks) {
+        this.availableTasks = new ArrayList<>(availableTasks);
+        notifyListeners();
+    }
+
     public List<Task> getTodaysTasks() {
         return new ArrayList<>(todaysTasks);
+    }
+
+    public void setTodaysTasks(List<Task> todaysTasks) {
+        this.todaysTasks = new ArrayList<>(todaysTasks);
+        // Separate completed from incomplete
+        updateCompletedTasks();
+        notifyListeners();
     }
 
     public List<Task> getCompletedTasks() {
@@ -66,23 +87,85 @@ public class TaskViewModel {
         return new ArrayList<>(overdueTasks);
     }
 
+    public void setOverdueTasks(List<Task> overdueTasks) {
+        this.overdueTasks = new ArrayList<>(overdueTasks);
+        notifyListeners();
+    }
+
     public double getCompletionRate() {
         return completionRate;
+    }
+
+    public void setCompletionRate(double completionRate) {
+        this.completionRate = completionRate;
+        notifyListeners();
     }
 
     public String getMessage() {
         return message;
     }
 
-    // Observer pattern for view updates
-    public void addUpdateListener(TaskViewModelUpdateListener listener) {
-        listeners.add(listener);
+    public void setMessage(String message) {
+        this.message = message != null ? message : "";
+        notifyListeners();
     }
 
-    private void notifyListeners() {
-        for (TaskViewModelUpdateListener listener : listeners) {
-            listener.onViewModelUpdated();
+    /**
+     * Updates the completed tasks list from today's tasks.
+     */
+    private void updateCompletedTasks() {
+        completedTasks.clear();
+        for (Task task : todaysTasks) {
+            if (task.isComplete()) {
+                completedTasks.add(task);
+            }
         }
     }
-}
 
+    /**
+     * Updates all task lists from repositories.
+     * Called by the presenter when data changes.
+     *
+     * @param available Available tasks
+     * @param todays Today's tasks
+     * @param overdue Overdue tasks
+     * @param rate Completion rate
+     */
+    public void updateAllTasks(List<Task> available, List<Task> todays,
+                               List<Task> overdue, double rate) {
+        this.availableTasks = new ArrayList<>(available);
+        this.todaysTasks = new ArrayList<>(todays);
+        this.overdueTasks = new ArrayList<>(overdue);
+        this.completionRate = rate;
+        updateCompletedTasks();
+        notifyListeners();
+    }
+
+    /**
+     * Clears the message.
+     */
+    public void clearMessage() {
+        this.message = "";
+        notifyListeners();
+    }
+
+    /**
+     * Gets the count of incomplete tasks in today.
+     *
+     * @return Number of incomplete tasks
+     */
+    public int getIncompleteTodayCount() {
+        return (int) todaysTasks.stream()
+                .filter(task -> !task.isComplete())
+                .count();
+    }
+
+    /**
+     * Gets the count of completed tasks today.
+     *
+     * @return Number of completed tasks
+     */
+    public int getCompletedTodayCount() {
+        return completedTasks.size();
+    }
+}
