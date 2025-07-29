@@ -79,6 +79,22 @@ public class Task implements TaskInterf {
     }
 
     /**
+     * task's priority.
+     * @return Task priority
+     */
+    public Priority getTaskPriority() {
+        return taskPriority;
+    }
+
+    /**
+     * Unmarks this task as complete by creating a new incomplete instance.
+     * @return A new Task instance that is not complete
+     */
+    public Task unmarkComplete() {
+        return new Task(this.info, this.beginAndDueDates, this.taskPriority);
+    }
+
+    /**
      * Checks if the task is completed.
      *
      * @return true if completed, false otherwise

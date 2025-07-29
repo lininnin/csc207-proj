@@ -2,6 +2,8 @@ package entity.BeginAndDueDates;
 
 import java.time.LocalDate;
 
+import java.time.LocalDate;
+
 /**
  * Represents a time period with a begin date and optional due date.
  * Used by tasks, events, and goals to track their active periods.
@@ -86,12 +88,12 @@ public class BeginAndDueDates {
     /**
      * Gets the number of days until the due date.
      *
-     * @return Days until due (negative if overdue), or null if no due date
+     * @return Days until due (negative if overdue), or 0 if no due date
      */
-    public Long getDaysUntilDue() {
+    public int getDaysUntilDue() {
         if (dueDate == null) {
-            return null;
+            return 0;
         }
-        return LocalDate.now().until(dueDate).getDays();
+        return (int) LocalDate.now().until(dueDate).getDays();
     }
 }

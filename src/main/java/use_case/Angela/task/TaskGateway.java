@@ -1,6 +1,6 @@
 package use_case.Angela.task;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import entity.info.Info;
 import java.time.LocalDate;
 import java.util.List;

@@ -1,6 +1,6 @@
 package use_case.Angela.task.edit_todays;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import java.time.LocalDate;
 
 /**

@@ -2,7 +2,7 @@ package interface_adapter.presenter;
 
 import use_case.Angela.task.create_task.CreateTaskOutputBoundary;
 import use_case.Angela.task.create_task.CreateTaskOutputData;
-import view.Task.TaskViewModel;
+import interface_adapter.view_model.TaskViewModel;
 
 /**
  * Presenter for task creation.

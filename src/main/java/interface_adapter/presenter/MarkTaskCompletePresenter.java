@@ -2,7 +2,7 @@ package interface_adapter.presenter;
 
 import use_case.Angela.task.mark_task_complete.MarkTaskCompleteOutputBoundary;
 import use_case.Angela.task.mark_task_complete.MarkTaskCompleteOutputData;
-import view.Task.TaskViewModel;
+import interface_adapter.view_model.TaskViewModel;
 import java.time.format.DateTimeFormatter;
 
 /**

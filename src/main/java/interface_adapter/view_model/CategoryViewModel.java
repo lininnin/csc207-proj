@@ -135,4 +135,21 @@ public class CategoryViewModel extends ViewModel {
     public void clearEditingState() {
         this.editingCategoryId = null;
     }
+
+    // Controller references
+    private interface_adapter.controller.CreateCategoryController createController;
+    private interface_adapter.controller.DeleteCategoryController deleteController;
+    private interface_adapter.controller.EditCategoryController editController;
+
+    public void setCreateController(interface_adapter.controller.CreateCategoryController controller) {
+        this.createController = controller;
+    }
+
+    public void setDeleteController(interface_adapter.controller.DeleteCategoryController controller) {
+        this.deleteController = controller;
+    }
+
+    public void setEditController(interface_adapter.controller.EditCategoryController controller) {
+        this.editController = controller;
+    }
 }

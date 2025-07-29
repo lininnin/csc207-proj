@@ -1,6 +1,6 @@
 package use_case.Angela.task.unmark_complete;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import use_case.Angela.task.TaskGateway;
 
 /**

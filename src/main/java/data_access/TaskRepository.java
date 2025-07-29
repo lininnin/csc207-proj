@@ -1,6 +1,6 @@
 package data_access;
 
-import entity.Task;
+import entity.Angela.Task.Task;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import use_case.Angela.task.TaskGateway;
@@ -154,6 +154,7 @@ public class TaskRepository implements TaskGateway {
             if (originalPos != null) {
                 // Complex reordering logic would go here
                 // For now, just put it back in the map
+                // TODO: Implement position restoration logic
             }
 
             todaysTasks.put(taskId, newTask);

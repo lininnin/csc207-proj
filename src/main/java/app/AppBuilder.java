@@ -13,12 +13,9 @@ import use_case.Angela.category.edit.*;
 import use_case.Angela.task.*;
 import use_case.Angela.task.delete.*;
 import use_case.Angela.task.edit_available.*;
-import use_case.Angela.task.edit_todays.*;
-import use_case.Angela.task.remove_from_today.*;
-import use_case.Angela.task.unmark_complete.*;
-import view.*;
+import view.ViewManager;
+import view.CategoryDialogView;
 import view.Task.TaskView;
-import view.Task.TaskViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -131,11 +128,12 @@ public class AppBuilder {
                                   CategoryGateway categoryRepository,
                                   TaskViewModel taskViewModel) {
         // Create Task (already exists)
-        CreateTaskPresenter createTaskPresenter = new CreateTaskPresenter(taskViewModel);
-        CreateTaskInteractor createTaskInteractor =
-                new CreateTaskInteractor(taskRepository, createTaskPresenter);
-        CreateTaskController createTaskController =
-                new CreateTaskController(createTaskInteractor);
+        // Assuming CreateTaskPresenter and CreateTaskInteractor exist from previous implementation
+        // CreateTaskPresenter createTaskPresenter = new CreateTaskPresenter(taskViewModel);
+        // CreateTaskInteractor createTaskInteractor =
+        //     new CreateTaskInteractor(taskRepository, createTaskPresenter);
+        // CreateTaskController createTaskController =
+        //     new CreateTaskController(createTaskInteractor);
 
         // Delete Task
         DeleteTaskOutputBoundary deleteTaskPresenter =
@@ -156,7 +154,7 @@ public class AppBuilder {
         // Add more use cases similarly...
 
         // Set controllers in view model
-        taskViewModel.setCreateController(createTaskController);
+        // taskViewModel.setCreateController(createTaskController);
         taskViewModel.setDeleteController(deleteTaskController);
         taskViewModel.setEditAvailableController(editAvailableController);
     }

@@ -2,7 +2,7 @@ package interface_adapter.presenter;
 
 import use_case.Angela.task.add_task_to_today.AddTaskToTodayOutputBoundary;
 import use_case.Angela.task.add_task_to_today.AddTaskToTodayOutputData;
-import view.Task.TaskViewModel;
+import interface_adapter.view_model.TaskViewModel;
 
 /**
  * Presenter for adding tasks to today.
