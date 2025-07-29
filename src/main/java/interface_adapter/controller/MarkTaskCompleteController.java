@@ -1,8 +1,7 @@
 package interface_adapter.controller;
 
-import use_case.mark_task_complete.MarkTaskCompleteInteractor;
-import use_case.mark_task_complete.MarkTaskCompleteInteractor;
-import use_case.mark_task_complete.MarkTaskCompleteInputData;
+import use_case.Angela.task.mark_task_complete.MarkTaskCompleteInteractor;
+import use_case.Angela.task.mark_task_complete.MarkTaskCompleteInputData;
 
 /**
  * Controller for marking tasks as complete.
