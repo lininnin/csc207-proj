@@ -2,6 +2,7 @@ package use_case.create_task;
 
 import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesFactory;
 import entity.info.Info;
 import use_case.repository.TaskRepository;
 
@@ -101,17 +102,14 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
      * @return The created task
      */
     private Task createTaskFromInput(CreateTaskInputData inputData) {
-        // Create Info object using Builder pattern
-        Info info = new Info.Builder()
-                .id(UUID.randomUUID().toString())
-                .name(inputData.getName().trim())
+        // Create Info object using Builder pattern - name is required in constructor
+        Info info = new Info.Builder(inputData.getName().trim())
                 .description(inputData.getDescription() != null ? inputData.getDescription().trim() : "")
                 .category(inputData.getCategory() != null ? inputData.getCategory().trim() : null)
-                .createdDate(LocalDate.now())
                 .build();
 
         // Create BeginAndDueDates with nulls (will be set when added to Today)
-        BeginAndDueDates dates = new BeginAndDueDates(null, null);
+        BeginAndDueDates dates = BeginAndDueDatesFactory.createEmpty();
 
         // Create Task
         Task task = new Task(info, dates);
