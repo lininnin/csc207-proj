@@ -1,8 +1,8 @@
 package interface_adapter.presenter;
 
-import use_case.Angela.task.create_task.CreateTaskOutputBoundary;
-import use_case.Angela.task.create_task.CreateTaskOutputData;
 import interface_adapter.view_model.TaskViewModel;
+import use_case.Angela.task.create.CreateTaskOutputBoundary;
+import use_case.Angela.task.create.CreateTaskOutputData;
 
 /**
  * Presenter for task creation.
@@ -18,12 +18,16 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
     @Override
     public void presentSuccess(CreateTaskOutputData outputData) {
         // Update view model with success message
-        taskViewModel.setMessage("Success: " + outputData.getMessage());
+        taskViewModel.setSuccessMessage("Success: " + outputData.getMessage());
+        taskViewModel.clearError();
+        taskViewModel.clearForm();
+        taskViewModel.firePropertyChanged();
     }
 
     @Override
     public void presentError(String error) {
         // Update view model with error message
-        taskViewModel.setMessage("Error: " + error);
+        taskViewModel.setError("Error: " + error);
+        taskViewModel.firePropertyChanged();
     }
 }

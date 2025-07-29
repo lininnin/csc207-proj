@@ -1,22 +1,22 @@
 package interface_adapter.controller;
 
-import use_case.Angela.task.mark_task_complete.MarkTaskCompleteInteractor;
-import use_case.Angela.task.mark_task_complete.MarkTaskCompleteInputData;
+import use_case.Angela.task.mark_complete.MarkTaskCompleteInputBoundary;
+import use_case.Angela.task.mark_complete.MarkTaskCompleteInputData;
 
 /**
- * Controller for marking tasks as complete.
+ * Controller for marking tasks complete.
  */
 public class MarkTaskCompleteController {
-    private final MarkTaskCompleteInteractor markTaskCompleteUseCase;
+    private final MarkTaskCompleteInputBoundary markTaskCompleteUseCase;
 
-    public MarkTaskCompleteController(MarkTaskCompleteInteractor markTaskCompleteUseCase) {
+    public MarkTaskCompleteController(MarkTaskCompleteInputBoundary markTaskCompleteUseCase) {
         this.markTaskCompleteUseCase = markTaskCompleteUseCase;
     }
 
     /**
      * Marks a task as complete.
      *
-     * @param taskId The ID of the task to complete
+     * @param taskId The ID of the task to mark complete
      */
     public void markTaskComplete(String taskId) {
         MarkTaskCompleteInputData inputData = new MarkTaskCompleteInputData(taskId);

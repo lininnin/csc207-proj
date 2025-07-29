@@ -1,4 +1,4 @@
-package use_case.Angela.task.mark_task_complete;
+package use_case.Angela.task.mark_complete;
 
 /**
  * Input data for marking a task complete.

@@ -1,9 +1,9 @@
-package use_case.Angela.task.mark_task_complete;
+package use_case.Angela.task.mark_complete;
 
 import java.time.LocalDateTime;
 
 /**
- * Output data for successful task completion.
+ * Output data for marking a task complete.
  */
 public class MarkTaskCompleteOutputData {
     private final String taskId;

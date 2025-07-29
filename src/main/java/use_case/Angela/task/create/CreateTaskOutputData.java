@@ -1,7 +1,7 @@
-package use_case.Angela.task.create_task;
+package use_case.Angela.task.create;
 
 /**
- * Output data for successful task creation.
+ * Output data for the create task use case.
  */
 public class CreateTaskOutputData {
     private final String taskId;

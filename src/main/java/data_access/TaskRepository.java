@@ -68,6 +68,7 @@ public class TaskRepository implements TaskGateway {
                 if (todayTask.isComplete()) {
                     updatedTask.completeTask(todayTask.getCompletedDateTime());
                 }
+                updatedTask.setOneTime(todayTask.isOneTime());
                 todaysTasks.put(info.getId(), updatedTask);
             }
             saveToFile();
@@ -148,6 +149,7 @@ public class TaskRepository implements TaskGateway {
             // Create new incomplete task
             Task newTask = new Task(task.getInfo(), task.getBeginAndDueDates(),
                     task.getTaskPriority());
+            newTask.setOneTime(task.isOneTime());
 
             // Try to restore original position
             Integer originalPos = taskOriginalPositions.get(taskId);

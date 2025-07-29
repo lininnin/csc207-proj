@@ -1,13 +1,13 @@
-package use_case.Angela.task.create_task;
+package use_case.Angela.task.create;
 
 /**
  * Input boundary for the create task use case.
  */
 public interface CreateTaskInputBoundary {
     /**
-     * Executes the create task use case.
+     * Creates a new task with the given data.
      *
-     * @param inputData The input data for creating a task
+     * @param inputData The task creation data
      */
     void execute(CreateTaskInputData inputData);
 }

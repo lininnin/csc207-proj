@@ -1,8 +1,8 @@
 package interface_adapter.presenter;
 
-import use_case.Angela.task.mark_task_complete.MarkTaskCompleteOutputBoundary;
-import use_case.Angela.task.mark_task_complete.MarkTaskCompleteOutputData;
 import interface_adapter.view_model.TaskViewModel;
+import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputBoundary;
+import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -23,11 +23,22 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
                 outputData.getCompletionTime().format(TIME_FORMATTER),
                 outputData.getCompletionRate() * 100
         );
-        taskViewModel.setMessage(message);
+
+        taskViewModel.setSuccessMessage(message);
+        taskViewModel.clearError();
+
+        // Update the task status in view model
+        taskViewModel.getTodaysTasks().stream()
+                .filter(task -> task.getId().equals(outputData.getTaskId()))
+                .findFirst()
+                .ifPresent(task -> task.setComplete(true));
+
+        taskViewModel.firePropertyChanged();
     }
 
     @Override
     public void presentError(String error) {
-        taskViewModel.setMessage("Error: " + error);
+        taskViewModel.setError(error);
+        taskViewModel.firePropertyChanged();
     }
 }

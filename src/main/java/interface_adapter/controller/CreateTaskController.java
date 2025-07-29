@@ -1,11 +1,11 @@
 package interface_adapter.controller;
 
-import use_case.Angela.task.create_task.CreateTaskInputBoundary;
-import use_case.Angela.task.create_task.CreateTaskInputData;
+import use_case.Angela.task.create.CreateTaskInputBoundary;
+import use_case.Angela.task.create.CreateTaskInputData;
 
 /**
  * Controller for creating tasks.
- * Handles user input from the view and passes it to the use case.
+ * Handles user input from the task creation form.
  */
 public class CreateTaskController {
     private final CreateTaskInputBoundary createTaskUseCase;
@@ -15,16 +15,17 @@ public class CreateTaskController {
     }
 
     /**
-     * Creates a new task with the provided information.
-     * Note: Priority and dates are NOT set at creation per design.
+     * Creates a new task with the given information.
      *
-     * @param name Task name (required, max 20 characters)
-     * @param description Task description (optional, max 100 characters)
-     * @param category Task category (optional)
-     * @param oneTime Whether this is a one-time task
+     * @param taskName The name of the task
+     * @param description The task description
+     * @param categoryId The category ID
+     * @param isOneTime Whether this is a one-time task
      */
-    public void createTask(String name, String description, String category, boolean oneTime) {
-        CreateTaskInputData inputData = new CreateTaskInputData(name, description, category, oneTime);
+    public void createTask(String taskName, String description, String categoryId, boolean isOneTime) {
+        CreateTaskInputData inputData = new CreateTaskInputData(
+                taskName, description, categoryId, isOneTime
+        );
         createTaskUseCase.execute(inputData);
     }
 }

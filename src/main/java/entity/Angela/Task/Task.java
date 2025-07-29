@@ -52,6 +52,18 @@ public class Task implements TaskInterf {
     }
 
     /**
+     * Creates a new task with priority (for Today's tasks).
+     *
+     * @param info Basic task information
+     * @param beginAndDueDates Task date range
+     * @param priority Task priority
+     */
+    public Task(Info info, BeginAndDueDates beginAndDueDates, Priority priority) {
+        this(info, beginAndDueDates);
+        this.priority = priority;
+    }
+
+    /**
      * Gets the task's basic information.
      *
      * @return The task info
@@ -79,11 +91,11 @@ public class Task implements TaskInterf {
     }
 
     /**
-     * task's priority.
+     * Gets the task's priority (alias for getPriority).
      * @return Task priority
      */
     public Priority getTaskPriority() {
-        return taskPriority;
+        return priority;
     }
 
     /**
@@ -91,7 +103,9 @@ public class Task implements TaskInterf {
      * @return A new Task instance that is not complete
      */
     public Task unmarkComplete() {
-        return new Task(this.info, this.beginAndDueDates, this.taskPriority);
+        Task newTask = new Task(this.info, this.beginAndDueDates, this.priority);
+        newTask.setOneTime(this.oneTime);
+        return newTask;
     }
 
     /**
@@ -169,9 +183,18 @@ public class Task implements TaskInterf {
      *
      * @return true if overdue, false otherwise
      */
-    public boolean isOverDue() {
+    public boolean isOverdue() {
         updateOverdueStatus();
         return overDue;
+    }
+
+    /**
+     * Checks if the task is overdue (alternate method name).
+     *
+     * @return true if overdue, false otherwise
+     */
+    public boolean isOverDue() {
+        return isOverdue();
     }
 
     /**
