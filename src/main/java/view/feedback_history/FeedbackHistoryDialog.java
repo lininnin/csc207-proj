@@ -1,41 +1,48 @@
 package view.feedback_history;
 
 import entity.Ina.FeedbackEntry;
-import view.feedback_entry.FeedbackEntryPanel;
+import interface_adapter.feedback_history.FeedbackHistoryController;
+import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 /**
  * Dialog for browsing and viewing historical feedback entries.
- * Clicking “View” swaps to the entry’s detail panel, with “Back to History” button.
  */
 public class FeedbackHistoryDialog extends JDialog {
+    private final FeedbackHistoryPanel historyPanel;
 
-    public FeedbackHistoryDialog(Frame owner, List<FeedbackEntry> history, FeedbackHistoryPanel.Viewer viewer) {
+    public FeedbackHistoryDialog(
+            Frame owner,
+            FeedbackHistoryController controller,
+            FeedbackHistoryViewModel viewModel
+    ) {
         super(owner, "Feedback History", true);
 
-        FeedbackHistoryPanel[] panelRef = new FeedbackHistoryPanel[1];
+        // 1. Create historyPanel (with controller and view model)
+        this.historyPanel = new FeedbackHistoryPanel(controller, viewModel);
 
-        FeedbackHistoryPanel historyPanel = new FeedbackHistoryPanel(history, entry -> {
-            FeedbackEntryPanel detailPanel = new FeedbackEntryPanel(entry);
+        // 2. OPTIONAL: Add a "Close" button at the bottom
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> setVisible(false));
+        JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        south.add(closeButton);
 
-            JButton backButton = new JButton("Back to History");
-            backButton.addActionListener(e -> setContentPane(panelRef[0]));
+        // 3. Compose dialog
+        setLayout(new BorderLayout());
+        add(historyPanel, BorderLayout.CENTER);
+        add(south, BorderLayout.SOUTH);
 
-            JPanel detailWrapper = new JPanel(new BorderLayout());
-            detailWrapper.add(detailPanel, BorderLayout.CENTER);
-            detailWrapper.add(backButton, BorderLayout.SOUTH);
-
-            setContentPane(detailWrapper);
-            revalidate();
-            repaint();
-        });
-        panelRef[0] = historyPanel;
-
-        setContentPane(historyPanel);
         setSize(700, 500);
         setLocationRelativeTo(owner);
+
+        // 4. Load entries when opened (View triggers controller)
+        controller.loadFeedbackHistory();
+        historyPanel.refresh(); // update list on startup
+    }
+
+    public void refresh() {
+        historyPanel.refresh();
     }
 }
