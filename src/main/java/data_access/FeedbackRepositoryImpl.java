@@ -47,7 +47,6 @@ public class FeedbackRepositoryImpl implements FeedbackRepository {
 
     /**
      * Load the entry saved on date from file
-     *
      * @param date
      * @return the FeedbackEntry logged on date.
      */
