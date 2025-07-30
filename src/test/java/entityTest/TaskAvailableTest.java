@@ -1,6 +1,6 @@
 package entityTest;
 
-import entity.info.Info;
+import entity.Info.Info;
 import entity.Angela.TaskAvailable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

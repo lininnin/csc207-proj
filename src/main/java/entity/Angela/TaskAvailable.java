@@ -1,6 +1,6 @@
 package entity.Angela;
 
-import entity.info.Info;
+import entity.Info.Info;
 
 import java.util.ArrayList;
 import java.util.List;

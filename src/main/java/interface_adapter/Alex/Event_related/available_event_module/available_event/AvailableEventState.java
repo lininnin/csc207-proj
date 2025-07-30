@@ -1,6 +1,6 @@
 package interface_adapter.Alex.Event_related.available_event_module.available_event;
 
-import entity.info.Info;
+import entity.Info.Info;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package entityTest;
 
 import entity.Alex.EventAvailable.EventAvailable;
-import entity.info.Info;
+import entity.Info.Info;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

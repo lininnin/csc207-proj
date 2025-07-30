@@ -1,6 +1,6 @@
 package interface_adapter.Alex.Event_related.available_event_module.edit_event;
 
-import entity.info.Info;
+import entity.Info.Info;
 import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
 import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;

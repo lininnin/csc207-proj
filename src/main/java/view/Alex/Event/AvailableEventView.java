@@ -11,7 +11,7 @@ import interface_adapter.Alex.Event_related.available_event_module.edit_event.Ed
 import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditedEventViewModel;
 import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditedEventState;
 
-import entity.info.Info;
+import entity.Info.Info;
 
 import javax.swing.*;
 import java.awt.*;

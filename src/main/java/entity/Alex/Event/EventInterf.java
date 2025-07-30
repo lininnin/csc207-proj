@@ -1,6 +1,6 @@
 package entity.Alex.Event;
 
-import entity.info.Info;
+import entity.Info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
 import java.time.LocalDate;

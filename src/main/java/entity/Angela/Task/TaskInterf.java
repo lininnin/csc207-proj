@@ -1,7 +1,7 @@
 package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+import entity.Info.Info;
 
 import java.time.LocalDateTime;
 

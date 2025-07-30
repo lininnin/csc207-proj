@@ -1,6 +1,6 @@
 package use_case.Alex.Event_related.create_event;
 
-import entity.info.Info;
+import entity.Info.Info;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package interface_adapter.Alex.Event_related.available_event_module.delete_event;
 
-import entity.info.Info;
+import entity.Info.Info;
 import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.Alex.Event_related.add_event.AddedEventState;

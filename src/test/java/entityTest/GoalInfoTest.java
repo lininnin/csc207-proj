@@ -1,7 +1,7 @@
 package entityTest;
 
 import entity.Sophia.GoalInfo;
-import entity.info.Info;
+import entity.Info.Info;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

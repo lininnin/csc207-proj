@@ -31,7 +31,7 @@ import use_case.Alex.Event_related.todays_events_module.edit_todays_event.*;
 
 import data_access.EventAvailableDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
-import entity.info.InfoFactory;
+import entity.Info.InfoFactory;
 
 import view.Alex.Event.*;
 import view.CollapsibleSidebarView;

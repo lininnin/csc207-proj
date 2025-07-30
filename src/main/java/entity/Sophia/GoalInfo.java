@@ -1,6 +1,6 @@
 package entity.Sophia;
 
-import entity.info.Info;
+import entity.Info.Info;
 
 /**
  * Represents identifying information for a goal, including its own info

@@ -2,7 +2,7 @@ package entityTest;
 
 import entity.Angela.Task.Task;
 import entity.Angela.Task.Task.Priority;
-import entity.info.Info;
+import entity.Info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
 import org.junit.jupiter.api.BeforeEach;
