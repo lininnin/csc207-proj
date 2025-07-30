@@ -28,6 +28,10 @@ public class CategoryDialogView extends JPanel implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // Update view based on view model changes
+        if ("state".equals(evt.getPropertyName())) {
+            CategoryViewModel.CategoryState state = categoryViewModel.getState();
+            // Update view based on new state
+            // TODO: Implement view updates
+        }
     }
 }

@@ -1,7 +1,6 @@
 package view.Task;
 
 import interface_adapter.view_model.TaskViewModel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -29,6 +28,10 @@ public class TaskView extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // Update view based on view model changes
+        if ("state".equals(evt.getPropertyName())) {
+            TaskViewModel.TaskState state = taskViewModel.getState();
+            // Update view based on new state
+            // TODO: Implement view updates
+        }
     }
 }

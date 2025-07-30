@@ -8,7 +8,7 @@ import java.util.List;
  * View model for category management.
  * Holds the state for the category dialog and list.
  */
-public class CategoryViewModel extends ViewModel {
+public class CategoryViewModel extends ViewModel<CategoryViewModel.CategoryState> {
 
     public static final String TITLE_LABEL = "Categories";
     public static final String CREATE_BUTTON_LABEL = "Create New";
@@ -17,16 +17,65 @@ public class CategoryViewModel extends ViewModel {
     public static final String DELETE_BUTTON_LABEL = "Delete";
     public static final String EDIT_BUTTON_LABEL = "Edit";
 
-    private final List<CategoryItem> categories;
-    private String newCategoryName = "";
-    private String errorMessage = "";
-    private String successMessage = "";
-    private boolean isCreatingNew = false;
-    private String editingCategoryId = null;
-
     public CategoryViewModel() {
         super("category");
-        this.categories = new ArrayList<>();
+        setState(new CategoryState());
+    }
+
+    /**
+     * State class for category view model.
+     */
+    public static class CategoryState {
+        private final List<CategoryItem> categories = new ArrayList<>();
+        private String newCategoryName = "";
+        private String errorMessage = "";
+        private String successMessage = "";
+        private boolean isCreatingNew = false;
+        private String editingCategoryId = null;
+
+        public List<CategoryItem> getCategories() {
+            return new ArrayList<>(categories);
+        }
+
+        public String getNewCategoryName() {
+            return newCategoryName;
+        }
+
+        public void setNewCategoryName(String name) {
+            this.newCategoryName = name;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getSuccessMessage() {
+            return successMessage;
+        }
+
+        public void setSuccessMessage(String successMessage) {
+            this.successMessage = successMessage;
+        }
+
+        public boolean isCreatingNew() {
+            return isCreatingNew;
+        }
+
+        public void setCreatingNew(boolean creatingNew) {
+            this.isCreatingNew = creatingNew;
+        }
+
+        public String getEditingCategoryId() {
+            return editingCategoryId;
+        }
+
+        public void setEditingCategoryId(String editingCategoryId) {
+            this.editingCategoryId = editingCategoryId;
+        }
     }
 
     /**
@@ -49,91 +98,76 @@ public class CategoryViewModel extends ViewModel {
         public void setName(String name) { this.name = name; }
     }
 
-    // State management methods
+    // Convenience methods that modify state
 
     public void addCategory(String id, String name) {
-        categories.add(new CategoryItem(id, name, null));
-        clearNewCategoryName();
-        setCreatingNew(false);
+        CategoryState state = getState();
+        state.categories.add(new CategoryItem(id, name, null));
+        state.setNewCategoryName("");
+        state.setCreatingNew(false);
+        firePropertyChanged();
     }
 
     public void removeCategory(String id) {
-        categories.removeIf(cat -> cat.getId().equals(id));
+        CategoryState state = getState();
+        state.categories.removeIf(cat -> cat.getId().equals(id));
+        firePropertyChanged();
     }
 
     public void updateCategoryName(String id, String newName) {
-        categories.stream()
+        CategoryState state = getState();
+        state.categories.stream()
                 .filter(cat -> cat.getId().equals(id))
                 .findFirst()
                 .ifPresent(cat -> cat.setName(newName));
-    }
-
-    // Getters and setters
-
-    public List<CategoryItem> getCategories() {
-        return new ArrayList<>(categories);
-    }
-
-    public String getNewCategoryName() {
-        return newCategoryName;
+        firePropertyChanged();
     }
 
     public void setNewCategoryName(String name) {
-        this.newCategoryName = name;
+        getState().setNewCategoryName(name);
     }
 
     public void clearNewCategoryName() {
-        this.newCategoryName = "";
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
+        getState().setNewCategoryName("");
     }
 
     public void setError(String error) {
-        this.errorMessage = error;
-        this.successMessage = "";
+        CategoryState state = getState();
+        state.setErrorMessage(error);
+        state.setSuccessMessage("");
+        firePropertyChanged();
     }
 
     public void clearError() {
-        this.errorMessage = "";
-    }
-
-    public String getSuccessMessage() {
-        return successMessage;
+        getState().setErrorMessage("");
     }
 
     public void setSuccessMessage(String message) {
-        this.successMessage = message;
-        this.errorMessage = "";
-    }
-
-    public boolean isCreatingNew() {
-        return isCreatingNew;
+        CategoryState state = getState();
+        state.setSuccessMessage(message);
+        state.setErrorMessage("");
+        firePropertyChanged();
     }
 
     public void setCreatingNew(boolean creatingNew) {
-        this.isCreatingNew = creatingNew;
+        CategoryState state = getState();
+        state.setCreatingNew(creatingNew);
         if (creatingNew) {
-            clearNewCategoryName();
-            clearError();
+            state.setNewCategoryName("");
+            state.setErrorMessage("");
         }
     }
 
-    public String getEditingCategoryId() {
-        return editingCategoryId;
-    }
-
     public void setEditingCategoryId(String categoryId) {
-        this.editingCategoryId = categoryId;
+        getState().setEditingCategoryId(categoryId);
     }
 
     public boolean isEditing(String categoryId) {
-        return categoryId.equals(editingCategoryId);
+        return categoryId.equals(getState().getEditingCategoryId());
     }
 
     public void clearEditingState() {
-        this.editingCategoryId = null;
+        getState().setEditingCategoryId(null);
     }
 
     // Controller references
