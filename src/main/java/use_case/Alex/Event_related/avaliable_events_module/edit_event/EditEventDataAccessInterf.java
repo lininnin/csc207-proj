@@ -1,6 +1,6 @@
 package use_case.Alex.Event_related.avaliable_events_module.edit_event;
 
-import entity.Info.Info;
+import entity.info.Info;
 
 /**
  * Interface for data access operations related to editing available events.

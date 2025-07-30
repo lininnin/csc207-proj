@@ -1,4 +1,4 @@
-package entity.Info;
+package entity.info;
 
 public class InfoFactory implements InfoFactoryInterf {
 

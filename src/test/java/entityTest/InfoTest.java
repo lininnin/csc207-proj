@@ -1,6 +1,6 @@
 package entityTest;
 
-import entity.Info.Info;
+import entity.info.Info;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

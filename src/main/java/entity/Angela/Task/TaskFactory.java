@@ -1,7 +1,7 @@
 package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Info.Info;
+import entity.info.Info;
 public class TaskFactory implements TaskFactoryInterf {
 
     /**
