@@ -131,8 +131,60 @@ public class Goal implements goalInterface{
     }
 
 
-}
+    // ------------------ Setters ------------------
 
+    /**
+     * Sets the frequency of required task completions.
+     *
+     * @param frequency The new frequency value; must not be negative.
+     * @throws IllegalArgumentException if frequency is negative.
+     */
+    public void setFrequency(int frequency) {
+        if (frequency < 0) {
+            throw new IllegalArgumentException("Frequency cannot be negative.");
+        }
+        this.frequency = frequency;
+    }
+
+    /**
+     * Sets the current progress of this goal.
+     *
+     * @param currentProgress The new current progress; must not be negative.
+     * @throws IllegalArgumentException if currentProgress is negative.
+     */
+    public void setCurrentProgress(int currentProgress) {
+        if (currentProgress < 0) {
+            throw new IllegalArgumentException("Current progress cannot be negative.");
+        }
+        this.currentProgress = currentProgress;
+    }
+
+    /**
+     * Manually marks this goal as completed or not.
+     *
+     * @param completed Whether the goal is completed.
+     */
+    public void setCompleted(boolean completed) {
+        this.isCompleted = completed;
+        if (!completed) {
+            this.completedDateTime = null;
+        } else if (this.completedDateTime == null) {
+            this.completedDateTime = LocalDateTime.now();
+        }
+    }
+
+    /**
+     * Manually sets the completed date and time.
+     *
+     * @param completedDateTime The date and time when the goal was completed; can be null.
+     */
+    public void setCompletedDateTime(LocalDateTime completedDateTime) {
+        this.completedDateTime = completedDateTime;
+    }
+
+
+
+}
 
 
 
