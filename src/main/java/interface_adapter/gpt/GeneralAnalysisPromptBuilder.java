@@ -24,7 +24,6 @@ public class GeneralAnalysisPromptBuilder {
 
         StringBuilder prompt = new StringBuilder();
 
-        // TODO: MIGHT need refinement to give a more exact content.
         prompt.append("You are an analyst and coach. Analyse the 7-day report below, " +
                         "summarize productivity patterns (trends, correlations, effects of missing data across the week: ")
                 .append("Rules for missing data: If any day's data (tasks, wellness, or events) is missing or partial, explicitly flag it as MISSING.\n")
@@ -69,7 +68,8 @@ public class GeneralAnalysisPromptBuilder {
                             .append("Stress level: ").append(entry.getStressLevel()).append(",")
                             .append("Energy level: ").append(entry.getStressLevel()).append(",")
                             .append("Fatigue level: ").append(entry.getStressLevel()).append(",")
-                            .append("Mood").append(entry.getMoodLabel().getName());
+                            .append("Mood: ").append(entry.getMoodLabel().getName())
+                            .append(", analyze how this mood may influence the above wellness levels.");
                     if (entry.getUserNote() != null && !entry.getUserNote().isBlank()) {
                         prompt.append("Note: ").append(entry.getUserNote());
                     }
@@ -78,7 +78,6 @@ public class GeneralAnalysisPromptBuilder {
             } else {
                 prompt.append("No wellness data on record for this date.");
             }
-
 
             // ------ Event logs ------
             prompt.append("Events: ");

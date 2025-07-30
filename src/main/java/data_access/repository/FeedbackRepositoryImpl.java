@@ -1,4 +1,4 @@
-package data_access;
+package data_access.repository;
 
 import entity.Ina.FeedbackEntry;
 import org.json.JSONObject;
