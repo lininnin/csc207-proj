@@ -1,9 +1,9 @@
 package entity.Alex.MoodLabel;
 
 /**
- * Concrete factory for creating MoodLabel entities using the MoodLabel.Builder.
+ * Factory interface for creating MoodLabel entities.
  */
-public class MoodLabelFactory implements MoodLabelFactoryInterf {
+public interface MoodLabelFactoryInterf {
 
     /**
      * Creates a new MoodLabel instance with the specified name and type.
@@ -13,12 +13,6 @@ public class MoodLabelFactory implements MoodLabelFactoryInterf {
      * @return A new MoodLabelInterf instance
      * @throws IllegalArgumentException if name is null/empty or type is null
      */
-    @Override
-    public MoodLabel create(String name, MoodLabel.Type type) {
-        return new MoodLabel.Builder(name)
-                .type(type)
-                .build();
-    }
+    MoodLabel create(String name, MoodLabel.Type type);
 }
-
 

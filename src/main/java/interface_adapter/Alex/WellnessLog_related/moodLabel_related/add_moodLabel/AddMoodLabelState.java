@@ -1,8 +1,11 @@
 package interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * State class for adding a new MoodLabel.
- * Stores user input and error messages related to the creation form.
+ * Stores user input, error messages, and available mood label names.
  */
 public class AddMoodLabelState {
 
@@ -13,6 +16,15 @@ public class AddMoodLabelState {
     private String typeError = "";
 
     private boolean isCreating = false; // 是否处于“new”添加状态
+
+    /** All available mood label names (for dropdown or duplication check). */
+    private List<String> availableNames = new ArrayList<>();
+
+    /** Error message to display at the view level (e.g., general error). */
+    private String errorMessage = null;
+
+    /** Optional success message for confirmation. */
+    private String successMessage = null;
 
     // ---------------- Getters ----------------
 
@@ -36,6 +48,18 @@ public class AddMoodLabelState {
         return isCreating;
     }
 
+    public List<String> getAvailableNames() {
+        return availableNames;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getSuccessMessage() {
+        return successMessage;
+    }
+
     // ---------------- Setters ----------------
 
     public void setMoodName(String moodName) {
@@ -57,5 +81,18 @@ public class AddMoodLabelState {
     public void setCreating(boolean creating) {
         isCreating = creating;
     }
+
+    public void setAvailableNames(List<String> availableNames) {
+        this.availableNames = availableNames != null ? availableNames : new ArrayList<>();
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public void setSuccessMessage(String successMessage) {
+        this.successMessage = successMessage;
+    }
 }
+
 
