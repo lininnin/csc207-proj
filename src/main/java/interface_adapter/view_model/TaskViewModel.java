@@ -11,28 +11,11 @@ import java.util.List;
  * View model for task management.
  * Holds the state for both Available Tasks and Today's Tasks.
  */
-public class TaskViewModel extends ViewModel {
+public class TaskViewModel extends ViewModel<TaskViewModel.TaskState> {
 
     public static final String TITLE_LABEL = "Task Management";
     public static final String CREATE_BUTTON_LABEL = "Create Task";
     public static final String ADD_TO_TODAY_LABEL = "Add to Today";
-
-    private final List<TaskItem> availableTasks;
-    private final List<TodayTaskItem> todaysTasks;
-    private String errorMessage = "";
-    private String successMessage = "";
-
-    // Form fields
-    private String newTaskName = "";
-    private String newTaskDescription = "";
-    private String selectedCategoryId = "";
-    private boolean isOneTime = false;
-
-    // Warning dialog state
-    private boolean warningDialogVisible = false;
-    private String warningDialogTitle = "";
-    private String warningDialogMessage = "";
-    private String pendingDeleteTaskId = "";
 
     // Controllers
     private CreateTaskController createController;
@@ -41,8 +24,118 @@ public class TaskViewModel extends ViewModel {
 
     public TaskViewModel() {
         super("task");
-        this.availableTasks = new ArrayList<>();
-        this.todaysTasks = new ArrayList<>();
+        setState(new TaskState());
+    }
+
+    /**
+     * State class for task view model.
+     */
+    public static class TaskState {
+        private final List<TaskItem> availableTasks = new ArrayList<>();
+        private final List<TodayTaskItem> todaysTasks = new ArrayList<>();
+        private String errorMessage = "";
+        private String successMessage = "";
+
+        // Form fields
+        private String newTaskName = "";
+        private String newTaskDescription = "";
+        private String selectedCategoryId = "";
+        private boolean isOneTime = false;
+
+        // Warning dialog state
+        private boolean warningDialogVisible = false;
+        private String warningDialogTitle = "";
+        private String warningDialogMessage = "";
+        private String pendingDeleteTaskId = "";
+
+        // Getters and setters
+        public List<TaskItem> getAvailableTasks() {
+            return new ArrayList<>(availableTasks);
+        }
+
+        public List<TodayTaskItem> getTodaysTasks() {
+            return new ArrayList<>(todaysTasks);
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getSuccessMessage() {
+            return successMessage;
+        }
+
+        public void setSuccessMessage(String successMessage) {
+            this.successMessage = successMessage;
+        }
+
+        public String getNewTaskName() {
+            return newTaskName;
+        }
+
+        public void setNewTaskName(String newTaskName) {
+            this.newTaskName = newTaskName;
+        }
+
+        public String getNewTaskDescription() {
+            return newTaskDescription;
+        }
+
+        public void setNewTaskDescription(String newTaskDescription) {
+            this.newTaskDescription = newTaskDescription;
+        }
+
+        public String getSelectedCategoryId() {
+            return selectedCategoryId;
+        }
+
+        public void setSelectedCategoryId(String selectedCategoryId) {
+            this.selectedCategoryId = selectedCategoryId;
+        }
+
+        public boolean isOneTime() {
+            return isOneTime;
+        }
+
+        public void setOneTime(boolean oneTime) {
+            this.isOneTime = oneTime;
+        }
+
+        public boolean isWarningDialogVisible() {
+            return warningDialogVisible;
+        }
+
+        public void setWarningDialogVisible(boolean warningDialogVisible) {
+            this.warningDialogVisible = warningDialogVisible;
+        }
+
+        public String getWarningDialogTitle() {
+            return warningDialogTitle;
+        }
+
+        public void setWarningDialogTitle(String warningDialogTitle) {
+            this.warningDialogTitle = warningDialogTitle;
+        }
+
+        public String getWarningDialogMessage() {
+            return warningDialogMessage;
+        }
+
+        public void setWarningDialogMessage(String warningDialogMessage) {
+            this.warningDialogMessage = warningDialogMessage;
+        }
+
+        public String getPendingDeleteTaskId() {
+            return pendingDeleteTaskId;
+        }
+
+        public void setPendingDeleteTaskId(String pendingDeleteTaskId) {
+            this.pendingDeleteTaskId = pendingDeleteTaskId;
+        }
     }
 
     /**
@@ -100,24 +193,29 @@ public class TaskViewModel extends ViewModel {
         public void setComplete(boolean complete) { this.isComplete = complete; }
     }
 
-    // Task management methods
+    // Convenience methods that modify state
 
     public void addAvailableTask(Info taskInfo) {
-        availableTasks.add(new TaskItem(
+        TaskState state = getState();
+        state.availableTasks.add(new TaskItem(
                 taskInfo.getId(),
                 taskInfo.getName(),
                 taskInfo.getDescription(),
                 taskInfo.getCategory(),
                 false // TODO: Add one-time flag to Info
         ));
+        firePropertyChanged();
     }
 
     public void removeAvailableTask(String taskId) {
-        availableTasks.removeIf(task -> task.getId().equals(taskId));
+        TaskState state = getState();
+        state.availableTasks.removeIf(task -> task.getId().equals(taskId));
+        firePropertyChanged();
     }
 
     public void addTodaysTask(Task task) {
-        todaysTasks.add(new TodayTaskItem(
+        TaskState state = getState();
+        state.todaysTasks.add(new TodayTaskItem(
                 task.getInfo().getId(),
                 task.getInfo().getName(),
                 task.getInfo().getDescription(),
@@ -127,110 +225,85 @@ public class TaskViewModel extends ViewModel {
                         task.getBeginAndDueDates().getDueDate().toString() : "",
                 task.isComplete()
         ));
+        firePropertyChanged();
     }
 
     public void removeTodaysTask(String taskId) {
-        todaysTasks.removeIf(task -> task.getId().equals(taskId));
+        TaskState state = getState();
+        state.todaysTasks.removeIf(task -> task.getId().equals(taskId));
+        firePropertyChanged();
     }
 
-    // Getters and setters
+    // Convenience getters for common operations
 
     public List<TaskItem> getAvailableTasks() {
-        return new ArrayList<>(availableTasks);
+        return getState().getAvailableTasks();
     }
 
     public List<TodayTaskItem> getTodaysTasks() {
-        return new ArrayList<>(todaysTasks);
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
+        return getState().getTodaysTasks();
     }
 
     public void setError(String error) {
-        this.errorMessage = error;
-        this.successMessage = "";
+        TaskState state = getState();
+        state.setErrorMessage(error);
+        state.setSuccessMessage("");
+        firePropertyChanged();
     }
 
     public void clearError() {
-        this.errorMessage = "";
-    }
-
-    public String getSuccessMessage() {
-        return successMessage;
+        getState().setErrorMessage("");
     }
 
     public void setSuccessMessage(String message) {
-        this.successMessage = message;
-        this.errorMessage = "";
+        TaskState state = getState();
+        state.setSuccessMessage(message);
+        state.setErrorMessage("");
+        firePropertyChanged();
     }
 
-    // Form field getters/setters
-
-    public String getNewTaskName() {
-        return newTaskName;
-    }
+    // Form field convenience methods
 
     public void setNewTaskName(String name) {
-        this.newTaskName = name;
-    }
-
-    public String getNewTaskDescription() {
-        return newTaskDescription;
+        getState().setNewTaskName(name);
     }
 
     public void setNewTaskDescription(String description) {
-        this.newTaskDescription = description;
-    }
-
-    public String getSelectedCategoryId() {
-        return selectedCategoryId;
+        getState().setNewTaskDescription(description);
     }
 
     public void setSelectedCategoryId(String categoryId) {
-        this.selectedCategoryId = categoryId;
-    }
-
-    public boolean isOneTime() {
-        return isOneTime;
+        getState().setSelectedCategoryId(categoryId);
     }
 
     public void setOneTime(boolean oneTime) {
-        this.isOneTime = oneTime;
+        getState().setOneTime(oneTime);
     }
 
-    // Warning dialog getters/setters
-
-    public boolean isWarningDialogVisible() {
-        return warningDialogVisible;
-    }
+    // Warning dialog convenience methods
 
     public void setWarningDialogVisible(boolean visible) {
-        this.warningDialogVisible = visible;
-    }
-
-    public String getWarningDialogTitle() {
-        return warningDialogTitle;
+        getState().setWarningDialogVisible(visible);
     }
 
     public void setWarningDialogTitle(String title) {
-        this.warningDialogTitle = title;
-    }
-
-    public String getWarningDialogMessage() {
-        return warningDialogMessage;
+        getState().setWarningDialogTitle(title);
     }
 
     public void setWarningDialogMessage(String message) {
-        this.warningDialogMessage = message;
-    }
-
-    public String getPendingDeleteTaskId() {
-        return pendingDeleteTaskId;
+        getState().setWarningDialogMessage(message);
     }
 
     public void setPendingDeleteTaskId(String taskId) {
-        this.pendingDeleteTaskId = taskId;
+        getState().setPendingDeleteTaskId(taskId);
+    }
+
+    public void clearForm() {
+        TaskState state = getState();
+        state.setNewTaskName("");
+        state.setNewTaskDescription("");
+        state.setSelectedCategoryId("");
+        state.setOneTime(false);
     }
 
     // Controller setters
@@ -245,12 +318,5 @@ public class TaskViewModel extends ViewModel {
 
     public void setEditAvailableController(EditAvailableTaskController controller) {
         this.editAvailableController = controller;
-    }
-
-    public void clearForm() {
-        this.newTaskName = "";
-        this.newTaskDescription = "";
-        this.selectedCategoryId = "";
-        this.isOneTime = false;
     }
 }

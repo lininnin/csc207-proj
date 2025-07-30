@@ -4,18 +4,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * The ViewModel for our CA implementation
- * This class delegates work to a PropertyChangeSupport object for
- * managing the property change events.
+ * Base class for all view models in the application.
+ * Provides property change support for observer pattern implementation.
  *
- * @param <T> The type of state object contained in the model.
+ * @param <T> The type of state this view model manages
  */
-public class ViewModel<T> {
+public abstract class ViewModel<T> {
 
     private final String viewName;
-
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
-
     private T state;
 
     public ViewModel(String viewName) {
@@ -23,45 +20,60 @@ public class ViewModel<T> {
     }
 
     public String getViewName() {
-        return this.viewName;
+        return viewName;
     }
-
-    public T getState() {
-        return this.state;
-    }
-
-    public void setState(T newState) {
-        T oldState = this.state;
-        this.state = newState;
-        support.firePropertyChange(viewName, oldState, newState); // ✅ 关键！
-    }
-
 
     /**
-     * Fires a property changed event for the state of this ViewModel.
+     * Gets the current state.
+     *
+     * @return The current state
      */
-//    public void firePropertyChanged() {
-//        this.support.firePropertyChange("state", null, this.state);
-//    }
+    public T getState() {
+        return state;
+    }
 
     /**
-     * Fires a property changed event for the state of this ViewModel, which
-     * allows the user to specify a different propertyName. This can be useful
-     * when a class is listening for multiple kinds of property changes.
-     * <p/>
-     * For example, the LoggedInView listens for two kinds of property changes;
-     * it can use the property name to distinguish which property has changed.
-     * @param propertyName the label for the property that was changed
+     * Sets the state and fires a property change event.
+     *
+     * @param state The new state
+     */
+    public void setState(T state) {
+        T oldState = this.state;
+        this.state = state;
+        support.firePropertyChange("state", oldState, state);
+    }
+
+    /**
+     * Fires a property change event to notify observers that the state has changed.
+     */
+    public void firePropertyChanged() {
+        support.firePropertyChange("state", null, this.state);
+    }
+
+    /**
+     * Fires a property change event with a specific property name.
+     *
+     * @param propertyName The name of the property that changed
      */
     public void firePropertyChanged(String propertyName) {
-        this.support.firePropertyChange(propertyName, null, this.state);
+        support.firePropertyChange(propertyName, null, this.state);
     }
 
     /**
-     * Adds a PropertyChangeListener to this ViewModel.
-     * @param listener The PropertyChangeListener to be added
+     * Adds a property change listener.
+     *
+     * @param listener The listener to add
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Removes a property change listener.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
     }
 }
