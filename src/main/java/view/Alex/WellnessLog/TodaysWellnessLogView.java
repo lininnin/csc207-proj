@@ -2,6 +2,10 @@ package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
@@ -17,25 +21,32 @@ public class TodaysWellnessLogView extends JPanel {
     private final JPanel logDisplayPanel = new JPanel();
     private final DeleteWellnessLogController deleteController;
     private final EditWellnessLogController editController;
-    private final List<MoodLabel> moodOptions;
+    private final AvailableMoodLabelViewModel moodLabelViewModel;
+    private final AddMoodLabelController addMoodController;
+    private final EditMoodLabelController editMoodController;
+    private final DeleteMoodLabelController deleteMoodController;
 
     public TodaysWellnessLogView(TodaysWellnessLogViewModel viewModel,
                                  DeleteWellnessLogController deleteController,
                                  EditWellnessLogController editController,
-                                 List<MoodLabel> moodOptions) {
+                                 AvailableMoodLabelViewModel moodLabelViewModel,
+                                 AddMoodLabelController addMoodController,
+                                 EditMoodLabelController editMoodController,
+                                 DeleteMoodLabelController deleteMoodController) {
         this.viewModel = viewModel;
         this.deleteController = deleteController;
         this.editController = editController;
-        this.moodOptions = moodOptions;
+        this.moodLabelViewModel = moodLabelViewModel;
+        this.addMoodController = addMoodController;
+        this.editMoodController = editMoodController;
+        this.deleteMoodController = deleteMoodController;
 
         setLayout(new BorderLayout());
 
-        // Title
-        JLabel title = new JLabel("Today's wellness Log", SwingConstants.CENTER);
+        JLabel title = new JLabel("Today's Wellness Log", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         add(title, BorderLayout.NORTH);
 
-        // Header row
         JPanel header = new JPanel(new GridLayout(1, 7));
         header.add(new JLabel("Mood", SwingConstants.CENTER));
         header.add(new JLabel("Energy", SwingConstants.CENTER));
@@ -46,27 +57,19 @@ public class TodaysWellnessLogView extends JPanel {
         header.add(new JLabel("Delete", SwingConstants.CENTER));
         add(header, BorderLayout.PAGE_START);
 
-        // Log display panel with vertical layout
         logDisplayPanel.setLayout(new BoxLayout(logDisplayPanel, BoxLayout.Y_AXIS));
         logDisplayPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        // Set preferred size to trigger scroll when needed
         logDisplayPanel.setPreferredSize(new Dimension(400, 400));
 
         JScrollPane scrollPane = new JScrollPane(logDisplayPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        add(scrollPane, BorderLayout.CENTER);
 
-        add(scrollPane, BorderLayout.CENTER); // ✅ 可滚动区域放中间
-
-        // Register for state updates
         viewModel.addPropertyChangeListener(evt -> {
             if (TodaysWellnessLogViewModel.TODAYS_WELLNESS_LOG_PROPERTY.equals(evt.getPropertyName())) {
                 refreshDisplay(viewModel.getState());
             }
         });
 
-        // Initial render
         refreshDisplay(viewModel.getState());
     }
 
@@ -76,10 +79,9 @@ public class TodaysWellnessLogView extends JPanel {
         List<WellnessLogEntry> entries = state.getEntries();
 
         if (entries.isEmpty()) {
-            JLabel empty = new JLabel("No wellness log recorded today.", SwingConstants.CENTER);
-            logDisplayPanel.add(empty);
+            logDisplayPanel.add(new JLabel("No wellness log recorded today.", SwingConstants.CENTER));
         } else {
-            for (int i = entries.size() - 1; i >= 0; i--) { // 最新的显示在最上面
+            for (int i = entries.size() - 1; i >= 0; i--) {
                 WellnessLogEntry entry = entries.get(i);
 
                 JPanel row = new JPanel(new GridLayout(1, 7));
@@ -91,7 +93,6 @@ public class TodaysWellnessLogView extends JPanel {
                 row.add(new JLabel(String.valueOf(entry.getFatigueLevel().getValue()), SwingConstants.CENTER));
                 row.add(new JLabel(entry.getUserNote() != null ? entry.getUserNote() : "", SwingConstants.CENTER));
 
-                // 单独按钮列
                 JButton editButton = new JButton("edit");
                 editButton.addActionListener(e -> {
                     JPanel panel = new JPanel(new GridLayout(0, 2, 10, 5));
@@ -100,32 +101,38 @@ public class TodaysWellnessLogView extends JPanel {
                     JTextField energyField = new JTextField(String.valueOf(entry.getEnergyLevel().getValue()));
                     JTextField fatigueField = new JTextField(String.valueOf(entry.getFatigueLevel().getValue()));
                     JTextArea noteArea = new JTextArea(entry.getUserNote() != null ? entry.getUserNote() : "", 3, 20);
-                    noteArea.setLineWrap(true);
-                    noteArea.setWrapStyleWord(true);
                     JScrollPane noteScrollPane = new JScrollPane(noteArea);
 
-                    JComboBox<MoodLabel> moodComboBox = new JComboBox<>();
-                    for (MoodLabel mood : moodOptions) {
-                        moodComboBox.addItem(mood);
-                    }
-                    // 预设当前 mood
-                    moodComboBox.setSelectedItem(
-                            moodOptions.stream()
-                                    .filter(m -> m.getName().equals(entry.getMoodLabel().getName()))
-                                    .findFirst()
-                                    .orElse(null)
-                    );
+                    JLabel moodDisplay = new JLabel(entry.getMoodLabel().getName());
+                    JButton chooseMoodBtn = new JButton("Choose...");
+                    final MoodLabel[] selectedMood = {entry.getMoodLabel()};
 
-                    panel.add(new JLabel("Stress (1-10):"));
-                    panel.add(stressField);
-                    panel.add(new JLabel("Energy (1-10):"));
-                    panel.add(energyField);
-                    panel.add(new JLabel("Fatigue (1-10):"));
-                    panel.add(fatigueField);
-                    panel.add(new JLabel("Note:"));
-                    panel.add(noteScrollPane);
-                    panel.add(new JLabel("Mood:"));
-                    panel.add(moodComboBox);
+                    chooseMoodBtn.addActionListener(evt -> {
+                        AvailableMoodLabelView labelView = new AvailableMoodLabelView(
+                                moodLabelViewModel,
+                                addMoodController,
+                                editMoodController,
+                                deleteMoodController
+                        );
+                        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Select Mood Label", true);
+                        dialog.setContentPane(labelView);
+                        dialog.pack();
+                        dialog.setLocationRelativeTo(this);
+                        dialog.setVisible(true);
+
+                        MoodLabel chosen = labelView.getSelectedLabel();
+                        if (chosen != null) {
+                            selectedMood[0] = chosen;
+                            moodDisplay.setText(chosen.getName());
+                        }
+                    });
+
+                    panel.add(new JLabel("Stress (1-10):")); panel.add(stressField);
+                    panel.add(new JLabel("Energy (1-10):")); panel.add(energyField);
+                    panel.add(new JLabel("Fatigue (1-10):")); panel.add(fatigueField);
+                    panel.add(new JLabel("Note:")); panel.add(noteScrollPane);
+                    panel.add(new JLabel("Mood:")); panel.add(moodDisplay);
+                    panel.add(new JLabel("")); panel.add(chooseMoodBtn);
 
                     int result = JOptionPane.showConfirmDialog(
                             this,
@@ -141,21 +148,16 @@ public class TodaysWellnessLogView extends JPanel {
                             int energy = Integer.parseInt(energyField.getText().trim());
                             int fatigue = Integer.parseInt(fatigueField.getText().trim());
                             String note = noteArea.getText().trim();
-                            MoodLabel selectedMood = (MoodLabel) moodComboBox.getSelectedItem();
 
                             if (stress < 1 || stress > 10 || energy < 1 || energy > 10 || fatigue < 1 || fatigue > 10) {
                                 JOptionPane.showMessageDialog(this, "Levels must be between 1 and 10.");
                                 return;
                             }
 
+                            MoodLabel mood = selectedMood[0];
                             editController.execute(
-                                    entry.getId(),
-                                    energy,
-                                    stress,
-                                    fatigue,
-                                    selectedMood.getName(),
-                                    selectedMood.getType(),
-                                    note
+                                    entry.getId(), energy, stress, fatigue,
+                                    mood.getName(), mood.getType(), note
                             );
 
                         } catch (NumberFormatException ex) {
@@ -163,8 +165,6 @@ public class TodaysWellnessLogView extends JPanel {
                         }
                     }
                 });
-
-
 
                 JButton deleteButton = new JButton("delete");
                 deleteButton.addActionListener(e -> {
@@ -179,7 +179,6 @@ public class TodaysWellnessLogView extends JPanel {
 
                 row.add(editButton);
                 row.add(deleteButton);
-
                 row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
                 logDisplayPanel.add(row);
             }
@@ -188,7 +187,7 @@ public class TodaysWellnessLogView extends JPanel {
         logDisplayPanel.revalidate();
         logDisplayPanel.repaint();
     }
-
 }
+
 
 

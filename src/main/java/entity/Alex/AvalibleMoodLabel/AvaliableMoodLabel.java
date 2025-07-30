@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
 
-    private final List<String> positiveLabels;
-    private final List<String> negativeLabels;
+    private final List<MoodLabel> positiveLabels;
+    private final List<MoodLabel> negativeLabels;
 
     /**
      * Default constructor initializes empty lists.
@@ -27,6 +27,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      *
      * @param moodLabel A mood label to add (must not be null)
      */
+    @Override
     public void addLabel(MoodLabelInterf moodLabel) {
         if (moodLabel == null) {
             throw new IllegalArgumentException("MoodLabel cannot be null.");
@@ -35,29 +36,15 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
         String name = moodLabel.getName();
         MoodLabel.Type type = moodLabel.getType();
 
-        if (type == MoodLabel.Type.Positive) {
-            if (!positiveLabels.contains(name)) {
-                positiveLabels.add(name);
-            }
-        } else if (type == MoodLabel.Type.Negative) {
-            if (!negativeLabels.contains(name)) {
-                negativeLabels.add(name);
-            }
+        if (containsName(name)) {
+            return; // 避免重复
         }
-    }
 
-    /**
-     * Returns the list of positive mood labels.
-     */
-    public List<String> getPositiveLabels() {
-        return new ArrayList<>(positiveLabels);
-    }
-
-    /**
-     * Returns the list of negative mood labels.
-     */
-    public List<String> getNegativeLabels() {
-        return new ArrayList<>(negativeLabels);
+        if (type == MoodLabel.Type.Positive) {
+            positiveLabels.add((MoodLabel) moodLabel);
+        } else if (type == MoodLabel.Type.Negative) {
+            negativeLabels.add((MoodLabel) moodLabel);
+        }
     }
 
     /**
@@ -65,16 +52,67 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      *
      * @param name The label name to remove
      */
+    @Override
     public void removeLabelByName(String name) {
-        positiveLabels.remove(name);
-        negativeLabels.remove(name);
+        positiveLabels.removeIf(label -> label.getName().equals(name));
+        negativeLabels.removeIf(label -> label.getName().equals(name));
     }
 
     /**
      * Clears all stored mood labels.
      */
+    @Override
     public void clear() {
         positiveLabels.clear();
         negativeLabels.clear();
     }
+
+    /**
+     * Returns a list of positive mood label names.
+     */
+    @Override
+    public List<String> getPositiveLabels() {
+        List<String> names = new ArrayList<>();
+        for (MoodLabel label : positiveLabels) {
+            names.add(label.getName());
+        }
+        return names;
+    }
+
+    /**
+     * Returns a list of negative mood label names.
+     */
+    @Override
+    public List<String> getNegativeLabels() {
+        List<String> names = new ArrayList<>();
+        for (MoodLabel label : negativeLabels) {
+            names.add(label.getName());
+        }
+        return names;
+    }
+
+    /**
+     * Returns all positive MoodLabel objects.
+     */
+    @Override
+    public List<MoodLabel> getPositiveLabelObjects() {
+        return new ArrayList<>(positiveLabels);
+    }
+
+    /**
+     * Returns all negative MoodLabel objects.
+     */
+    @Override
+    public List<MoodLabel> getNegativeLabelObjects() {
+        return new ArrayList<>(negativeLabels);
+    }
+
+    /**
+     * Checks whether a label name exists in either list.
+     */
+    private boolean containsName(String name) {
+        return positiveLabels.stream().anyMatch(l -> l.getName().equals(name))
+                || negativeLabels.stream().anyMatch(l -> l.getName().equals(name));
+    }
 }
+

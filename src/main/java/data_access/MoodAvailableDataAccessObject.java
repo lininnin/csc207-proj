@@ -3,94 +3,106 @@ package data_access;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabel;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-/**
- * In-memory DAO for managing available mood labels.
- * Internally uses an AvaliableMoodLabel object to store categorized labels.
- */
-public class MoodAvailableDataAccessObject {
+public class MoodAvailableDataAccessObject implements
+        AddMoodLabelDataAccessInterf,
+        DeleteMoodLabelDataAccessInterf,
+        EditMoodLabelDataAccessInterface {
 
     private final AvaliableMoodLabel availableLabels;
 
-    /**
-     * Initializes the DAO with some default labels.
-     */
     public MoodAvailableDataAccessObject() {
         this.availableLabels = new AvaliableMoodLabel();
-        // 初始化默认正向
         availableLabels.addLabel(new MoodLabel.Builder("Happy").type(MoodLabel.Type.Positive).build());
         availableLabels.addLabel(new MoodLabel.Builder("Calm").type(MoodLabel.Type.Positive).build());
-        // 初始化默认负向
         availableLabels.addLabel(new MoodLabel.Builder("Anxious").type(MoodLabel.Type.Negative).build());
         availableLabels.addLabel(new MoodLabel.Builder("Stressed").type(MoodLabel.Type.Negative).build());
     }
 
-    /**
-     * Adds a mood label to the appropriate category.
-     *
-     * @param moodLabel mood label to add
-     */
-    public void add(MoodLabelInterf moodLabel) {
+    // ----------- AddMoodLabelDataAccessInterf 实现 -----------
+
+    @Override
+    public void save(MoodLabel moodLabel) {
         if (contains(moodLabel.getName())) {
             throw new IllegalArgumentException("Label with the same name already exists");
         }
         availableLabels.addLabel(moodLabel);
     }
 
-    /**
-     * Removes a label by name from both positive and negative lists.
-     *
-     * @param name label name
-     * @return true if removed, false otherwise
-     */
-    public boolean removeByName(String name) {
-        boolean before = contains(name);
-        availableLabels.removeLabelByName(name);
-        return before;
+    @Override
+    public List<MoodLabel> getAllLabels() {
+        List<MoodLabel> all = new ArrayList<>();
+        all.addAll(availableLabels.getPositiveLabelObjects());
+        all.addAll(availableLabels.getNegativeLabelObjects());
+        return all;
     }
 
-    /**
-     * Returns a categorized view of available mood labels.
-     *
-     * @return AvaliableMoodLabel object
-     */
+    // ----------- DeleteMoodLabelDataAccessInterf 实现 -----------
+
+    @Override
+    public boolean remove(MoodLabel moodLabel) {
+        return removeByName(moodLabel.getName());
+    }
+
+    @Override
+    public boolean contains(MoodLabel moodLabel) {
+        return contains(moodLabel.getName());
+    }
+
+    @Override
+    public MoodLabel getByName(String name) {
+        for (MoodLabel label : getAllLabels()) {
+            if (label.getName().equals(name)) {
+                return label;
+            }
+        }
+        return null;
+    }
+
+    // ----------- EditMoodLabelDataAccessInterface 实现 -----------
+
+    @Override
+    public boolean update(MoodLabel updatedLabel) {
+        String name = updatedLabel.getName();
+        if (!contains(name)) return false;
+        availableLabels.removeLabelByName(name);
+        availableLabels.addLabel(updatedLabel);
+        return true;
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        return contains(name);
+    }
+
+    // ----------- 工具方法 -----------
+
+    public boolean removeByName(String name) {
+        boolean existed = contains(name);
+        availableLabels.removeLabelByName(name);
+        return existed;
+    }
+
+    public boolean contains(String name) {
+        return availableLabels.getPositiveLabelObjects().stream().anyMatch(l -> l.getName().equals(name)) ||
+                availableLabels.getNegativeLabelObjects().stream().anyMatch(l -> l.getName().equals(name));
+    }
+
     public AvaliableMoodLabel getCategorized() {
         return availableLabels;
     }
 
-    /**
-     * Checks if a label name exists in either category.
-     *
-     * @param name label name
-     * @return true if present
-     */
-    public boolean contains(String name) {
-        return availableLabels.getPositiveLabels().contains(name)
-                || availableLabels.getNegativeLabels().contains(name);
-    }
-
-    /**
-     * Updates a label by replacing the name and type.
-     *
-     * @param oldName  label to update
-     * @param newLabel new version
-     * @return true if successful
-     */
-    public boolean update(String oldName, MoodLabelInterf newLabel) {
-        if (!contains(oldName)) return false;
-        availableLabels.removeLabelByName(oldName);
-        availableLabels.addLabel(newLabel);
-        return true;
-    }
-
-    /**
-     * Clears all stored labels.
-     */
     public void clearAll() {
         availableLabels.clear();
     }
 }
+
 
 

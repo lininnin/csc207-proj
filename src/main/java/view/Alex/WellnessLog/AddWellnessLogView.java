@@ -2,6 +2,10 @@ package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.WellnessLogEntry.Levels;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogState;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
@@ -21,20 +25,39 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
     private final AddWellnessLogViewModel viewModel;
     private final AddWellnessLogController controller;
 
-    private final JComboBox<MoodLabel> moodLabelComboBox = new JComboBox<>();
+    // 删除这一行
+// private final JComboBox<MoodLabel> moodLabelComboBox = new JComboBox<>();
+
+    // 添加这两行
+    private MoodLabel selectedMoodLabel = null;
+    private final JLabel selectedMoodLabelLabel = new JLabel("Selected: None");
     private final JComboBox<Levels> stressComboBox = new JComboBox<>(Levels.values());
     private final JComboBox<Levels> energyComboBox = new JComboBox<>(Levels.values());
     private final JComboBox<Levels> fatigueComboBox = new JComboBox<>(Levels.values());
     private final JTextField userNoteField = new JTextField(20);
     private final JButton submitButton = new JButton();
+    private final AvailableMoodLabelViewModel availableMoodLabelViewModel;
+    private final AddMoodLabelController addLabelController;
+    private final EditMoodLabelController editLabelController;
+    private final DeleteMoodLabelController deleteLabelController;
+
 
     private final JLabel messageLabel = new JLabel();
 
-    public AddWellnessLogView(AddWellnessLogViewModel viewModel,
-                              AddWellnessLogController controller) {
+    public AddWellnessLogView(
+            AddWellnessLogViewModel viewModel,
+            AddWellnessLogController controller,
+            AvailableMoodLabelViewModel availableMoodLabelViewModel,
+            AddMoodLabelController addLabelController,
+            EditMoodLabelController editLabelController,
+            DeleteMoodLabelController deleteLabelController
+    ) {
         this.viewModel = viewModel;
         this.controller = controller;
-        this.viewModel.addPropertyChangeListener(this);
+        this.availableMoodLabelViewModel = availableMoodLabelViewModel;
+        this.addLabelController = addLabelController;
+        this.editLabelController = editLabelController;
+        this.deleteLabelController = deleteLabelController;
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,8 +78,37 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         // Mood label
         gbc.gridy++;
         add(new JLabel("Mood label:"), gbc);
+
         gbc.gridx = 1;
-        add(moodLabelComboBox, gbc);
+        JPanel moodLabelPanel = new JPanel(new BorderLayout());
+
+        JButton chooseBtn = new JButton("Choose...");
+        chooseBtn.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        chooseBtn.addActionListener(e -> {
+            AvailableMoodLabelView labelView = new AvailableMoodLabelView(
+                    availableMoodLabelViewModel,
+                    addLabelController,
+                    editLabelController,
+                    deleteLabelController
+            );
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Select Mood Label", true);
+            dialog.setContentPane(labelView);
+            dialog.pack();
+            dialog.setLocationRelativeTo(this);
+            dialog.setVisible(true);
+
+            MoodLabel selected = labelView.getSelectedLabel();
+            if (selected != null) {
+                selectedMoodLabel = selected;
+                selectedMoodLabelLabel.setText("Selected: " + selected.getName());
+            }
+        });
+
+        moodLabelPanel.add(selectedMoodLabelLabel, BorderLayout.CENTER);
+        moodLabelPanel.add(chooseBtn, BorderLayout.EAST);
+        add(moodLabelPanel, gbc);
+
+
 
         // Energy
         gbc.gridy++;
@@ -101,7 +153,8 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         // Submit listener
         submitButton.addActionListener(e -> {
             System.out.println("Submit button clicked!");
-            MoodLabel mood = (MoodLabel) moodLabelComboBox.getSelectedItem();
+            MoodLabel mood = selectedMoodLabel;
+
             Levels stress = (Levels) stressComboBox.getSelectedItem();
             Levels energy = (Levels) energyComboBox.getSelectedItem();
             Levels fatigue = (Levels) fatigueComboBox.getSelectedItem();
@@ -118,11 +171,11 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         AddWellnessLogState state = viewModel.getState();
 
         // 更新 mood label 下拉框选项
-        List<MoodLabel> moodOptions = state.getAvailableMoodLabels();
-        moodLabelComboBox.removeAllItems();
-        for (MoodLabel label : moodOptions) {
-            moodLabelComboBox.addItem(label);
-        }
+//        List<MoodLabel> moodOptions = state.getAvailableMoodLabels();
+//        moodLabelComboBox.removeAllItems();
+//        for (MoodLabel label : moodOptions) {
+//            moodLabelComboBox.addItem(label);
+//        }
 
         messageLabel.setText(state.getErrorMessage() != null
                 ? state.getErrorMessage()

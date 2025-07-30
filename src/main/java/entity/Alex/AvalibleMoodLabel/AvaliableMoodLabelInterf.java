@@ -1,5 +1,6 @@
 package entity.Alex.AvalibleMoodLabel;
 
+import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.util.List;
@@ -42,5 +43,20 @@ public interface AvaliableMoodLabelInterf {
      * Clears all stored mood labels.
      */
     void clear();
+
+    /**
+     * Returns all positive MoodLabel objects.
+     *
+     * @return list of positive MoodLabel objects
+     */
+    List<MoodLabel> getPositiveLabelObjects();
+
+    /**
+     * Returns all negative MoodLabel objects.
+     *
+     * @return list of negative MoodLabel objects
+     */
+    List<MoodLabel> getNegativeLabelObjects();
 }
+
 

@@ -1,34 +1,60 @@
 package app;
 
 import data_access.TodaysWellnessLogDataAccessObject;
+import data_access.MoodAvailableDataAccessObject;
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
+
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelViewModel;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelViewModel;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogPresenter;
 import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogPresenter;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogViewModel;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
-// import use_case.Alex.WellnessLog_related.delete_log.DeleteWellnessLogController;
-// import use_case.Alex.WellnessLog_related.edit_log.EditWellnessLogController;
+
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelPresenter;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelViewModel;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelPresenter;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelPresenter;
+
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogController;
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogPresenter;
 import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogViewModel;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInteractor;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogOutputBoundary;
+
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogPresenter;
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogViewModel;
+
+import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
+
+//import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.MoodAvailableDataAccessObject;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelInteractor;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelInteractor;
+import use_case.Alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelInteractor;
+
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputBoundary;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInteractor;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogOutputBoundary;
+
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInteractor;
+import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogOutputBoundary;
+
 import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInteractor;
+
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
 import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WellnessLogPageBuilder {
@@ -39,7 +65,6 @@ public class WellnessLogPageBuilder {
         AddWellnessLogViewModel addLogViewModel = new AddWellnessLogViewModel();
         TodaysWellnessLogViewModel todaysLogViewModel = new TodaysWellnessLogViewModel();
 
-
         // --- DAO + Factory ---
         TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject();
         WellnessLogEntryFactoryInterf factory = new WellnessLogEntryFactory();
@@ -49,52 +74,68 @@ public class WellnessLogPageBuilder {
         AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, factory, presenter);
         AddWellnessLogController addLogController = new AddWellnessLogController(interactor);
 
-        // --- Delete Log Controller wiring ---
-        DeleteWellnessLogViewModel deleteLogViewModel = new DeleteWellnessLogViewModel();
-        DeleteWellnessLogOutputBoundary deletePresenter = new DeleteWellnessLogPresenter(
-                deleteLogViewModel,
-                todaysLogViewModel,
-                wellnessLogDAO // 作为 DeleteWellnessLogDataAccessInterf 类型
-        );
+        // --- MoodLabel Controllers ---
+        AvailableMoodLabelViewModel availableMoodLabelViewModel = new AvailableMoodLabelViewModel();
+        AddMoodLabelViewModel addMoodLabelViewModel = new AddMoodLabelViewModel();
+        MoodAvailableDataAccessObject moodDAO = new MoodAvailableDataAccessObject();
 
-        DeleteWellnessLogInputBoundary deleteInteractor = new DeleteWellnessLogInteractor(wellnessLogDAO, deletePresenter);
-        DeleteWellnessLogController deleteLogController = new DeleteWellnessLogController(deleteInteractor);
+        AddMoodLabelPresenter addLabelPresenter = new AddMoodLabelPresenter(addMoodLabelViewModel, availableMoodLabelViewModel, moodDAO);
+        AddMoodLabelInteractor addLabelInteractor = new AddMoodLabelInteractor(moodDAO, addLabelPresenter, new MoodLabelFactory());
+        AddMoodLabelController addLabelController = new AddMoodLabelController(addLabelInteractor);
 
-        // --- Edit Log Controller wiring ---
-        EditWellnessLogViewModel editLogViewModel = new EditWellnessLogViewModel();
-        EditWellnessLogPresenter editPresenter = new EditWellnessLogPresenter(
-                editLogViewModel,
-                todaysLogViewModel,
-                wellnessLogDAO
-        );
-        EditWellnessLogInteractor editInteractor = new EditWellnessLogInteractor(wellnessLogDAO, editPresenter);
-        EditWellnessLogController editLogController = new EditWellnessLogController(editInteractor);
+        EditMoodLabelViewModel editMoodLabelViewModel = new EditMoodLabelViewModel(); // ✅ 新增
+
+        EditMoodLabelPresenter editLabelPresenter = new EditMoodLabelPresenter(
+                editMoodLabelViewModel, availableMoodLabelViewModel); // ✅ 正确参数类型
+        EditMoodLabelInteractor editLabelInteractor = new EditMoodLabelInteractor(moodDAO, editLabelPresenter);
+        EditMoodLabelController editLabelController = new EditMoodLabelController(editLabelInteractor);
 
 
-        // --- 初始化 MoodLabel 下拉选项 ---
-        List<entity.Alex.MoodLabel.MoodLabel> moodOptions = List.of(
-                new entity.Alex.MoodLabel.MoodLabel.Builder("Calm")
-                        .type(entity.Alex.MoodLabel.MoodLabel.Type.Positive)
-                        .build(),
-                new entity.Alex.MoodLabel.MoodLabel.Builder("Happy")
-                        .type(entity.Alex.MoodLabel.MoodLabel.Type.Positive)
-                        .build(),
-                new entity.Alex.MoodLabel.MoodLabel.Builder("Tired")
-                        .type(MoodLabel.Type.Negative)
-                        .build(),
-                new entity.Alex.MoodLabel.MoodLabel.Builder("Anxious")
-                        .type(entity.Alex.MoodLabel.MoodLabel.Type.Negative)
-                        .build(),
-                new entity.Alex.MoodLabel.MoodLabel.Builder("Sad")
-                        .type(entity.Alex.MoodLabel.MoodLabel.Type.Negative)
-                        .build()
-        );
+        DeleteMoodLabelViewModel deleteMoodLabelViewModel = new DeleteMoodLabelViewModel(); // ✅ 新建
+
+        DeleteMoodLabelPresenter deleteLabelPresenter = new DeleteMoodLabelPresenter(
+                deleteMoodLabelViewModel, availableMoodLabelViewModel); // ✅ 修复类型
+        DeleteMoodLabelInteractor deleteLabelInteractor = new DeleteMoodLabelInteractor(moodDAO, deleteLabelPresenter);
+        DeleteMoodLabelController deleteLabelController = new DeleteMoodLabelController(deleteLabelInteractor);
+
+        // --- 初始化标签列表 ---
+        List<MoodLabel> moodOptions = moodDAO.getAllLabels();
         addLogViewModel.getState().setAvailableMoodLabels(moodOptions);
-        addLogViewModel.setState(addLogViewModel.getState());
+        // ✅ 添加这两行用于同步初始标签给 AvailableMoodLabelViewModel
+//        availableMoodLabelViewModel.getState().setMoodLabels(
+//                moodOptions.stream()
+//                        .map(label -> new AvailableMoodLabelState.MoodLabelEntry(label.getName(), label.getType().name()))
+//                        .toList()
+//        );
+//        addLogViewModel.setState(addLogViewModel.getState());
+//        AvailableMoodLabelState initialState = new AvailableMoodLabelState();
+//        List<AvailableMoodLabelState.MoodLabelEntry> entries = moodOptions.stream()
+//                .map(label -> new AvailableMoodLabelState.MoodLabelEntry(label.getName(), label.getType().name()))
+//                .toList();
+//        initialState.setMoodLabels(entries);
+//        availableMoodLabelViewModel.setState(initialState); // ✅ 触发 property change
+        AvailableMoodLabelState initialState = new AvailableMoodLabelState();
+        List<AvailableMoodLabelState.MoodLabelEntry> labelList = new ArrayList<>();
+
+        for (MoodLabel label : moodOptions) {
+            labelList.add(new AvailableMoodLabelState.MoodLabelEntry(label.getName(), label.getType().name()));
+        }
+
+        initialState.setMoodLabels(labelList);
+        availableMoodLabelViewModel.setState(initialState);
+
+// ✅ 确保后续 add 操作是对同一个 list
 
 
-        // --- View：AddWellnessLogView ---
-        AddWellnessLogView addLogView = new AddWellnessLogView(addLogViewModel, addLogController);
+        // --- Add WellnessLog View（整合弹窗标签选择）---
+        AddWellnessLogView addLogView = new AddWellnessLogView(
+                addLogViewModel,
+                addLogController,
+                availableMoodLabelViewModel,
+                addLabelController,
+                editLabelController,
+                deleteLabelController
+        );
         addLogView.setPreferredSize(new Dimension(Short.MAX_VALUE, 300));
         addLogView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
 
@@ -103,30 +144,47 @@ public class WellnessLogPageBuilder {
         fixedHeightWrapper.setPreferredSize(new Dimension(Short.MAX_VALUE, 300));
         fixedHeightWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
 
-        // --- View：TodaysWellnessLogView（暂不提供 edit/delete 控制器） ---
+        // --- Today's Log View ---
         TodaysWellnessLogView todaysLogView = new TodaysWellnessLogView(
                 todaysLogViewModel,
-                deleteLogController,
-                editLogController,
-                moodOptions // ✅ 传入
+                new DeleteWellnessLogController(
+                        new DeleteWellnessLogInteractor(wellnessLogDAO,
+                                new DeleteWellnessLogPresenter(
+                                        new DeleteWellnessLogViewModel(),
+                                        todaysLogViewModel,
+                                        wellnessLogDAO
+                                )
+                        )
+                ),
+                new EditWellnessLogController(
+                        new EditWellnessLogInteractor(wellnessLogDAO,
+                                new EditWellnessLogPresenter(
+                                        new EditWellnessLogViewModel(),
+                                        todaysLogViewModel,
+                                        wellnessLogDAO
+                                )
+                        )
+                ),
+                availableMoodLabelViewModel,
+                addLabelController,
+                editLabelController,
+                deleteLabelController
         );
-        todaysLogView.setBackground(Color.WHITE);
+
 
         JPanel lowerPart = new JPanel(new BorderLayout());
         lowerPart.setBorder(BorderFactory.createTitledBorder("Today's Wellness Log"));
         lowerPart.add(todaysLogView, BorderLayout.CENTER);
 
-        // --- Split 上下部分 ---
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, fixedHeightWrapper, lowerPart);
         verticalSplit.setDividerLocation(300);
-        verticalSplit.setResizeWeight(0); // 上部分固定高度
+        verticalSplit.setResizeWeight(0);
         verticalSplit.setDividerSize(2);
         verticalSplit.setEnabled(false);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(verticalSplit, BorderLayout.CENTER);
 
-        // --- 左侧导航栏 ---
         JPanel sidebarPanel = new JPanel();
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBackground(new Color(60, 63, 65));
@@ -141,12 +199,10 @@ public class WellnessLogPageBuilder {
 
         CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
 
-        // --- 右侧空白预留 ---
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(500, 0));
         rightPanel.setBackground(Color.WHITE);
 
-        // --- 主面板整合 ---
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -154,5 +210,6 @@ public class WellnessLogPageBuilder {
         return mainPanel;
     }
 }
+
 
 

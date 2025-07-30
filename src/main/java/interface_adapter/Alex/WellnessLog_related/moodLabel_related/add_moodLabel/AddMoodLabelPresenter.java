@@ -55,11 +55,20 @@ public class AddMoodLabelPresenter implements AddMoodLabelOutputBoundary {
 
     @Override
     public void prepareFailView(String errorMessage) {
+        // 更新错误提示
         AddMoodLabelState state = addMoodLabelViewModel.getState();
         state.setErrorMessage(errorMessage);
         state.setSuccessMessage(null);
         addMoodLabelViewModel.setState(state);
+
+        // ✅ 清理 isNew 且 name 为空的 entry（防止 UI 中出现空白标签）
+        AvailableMoodLabelState availableState = availableMoodLabelViewModel.getState();
+        List<AvailableMoodLabelState.MoodLabelEntry> entries = availableState.getMoodLabels();
+        entries.removeIf(entry -> entry.isNew() && entry.getName().trim().isEmpty());
+
+        availableMoodLabelViewModel.fireLabelListChanged();
     }
+
 }
 
 
