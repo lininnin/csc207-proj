@@ -1,12 +1,12 @@
-package interface_adapter.Alex.delete_event;
+package interface_adapter.Alex.Event_related.available_event_module.delete_event;
 
 import entity.info.Info;
-import interface_adapter.Alex.available_event.AvailableEventState;
-import interface_adapter.Alex.available_event.AvailableEventViewModel;
-import interface_adapter.Alex.add_event.AddedEventState;
-import interface_adapter.Alex.add_event.AddedEventViewModel;
-import use_case.Alex.avaliable_events_module.delete_event.DeleteEventOutputBoundary;
-import use_case.Alex.avaliable_events_module.delete_event.DeleteEventOutputData;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.Alex.Event_related.add_event.AddedEventState;
+import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
+import use_case.Alex.Event_related.avaliable_events_module.delete_event.DeleteEventOutputBoundary;
+import use_case.Alex.Event_related.avaliable_events_module.delete_event.DeleteEventOutputData;
 
 import java.util.ArrayList;
 import java.util.List;

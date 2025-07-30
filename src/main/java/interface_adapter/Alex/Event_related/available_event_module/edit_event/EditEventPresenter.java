@@ -1,10 +1,10 @@
-package interface_adapter.Alex.edit_event;
+package interface_adapter.Alex.Event_related.available_event_module.edit_event;
 
 import entity.info.Info;
-import interface_adapter.Alex.available_event.AvailableEventState;
-import interface_adapter.Alex.available_event.AvailableEventViewModel;
-import use_case.Alex.avaliable_events_module.edit_event.EditEventOutputBoundary;
-import use_case.Alex.avaliable_events_module.edit_event.EditEventOutputData;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
+import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
+import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventOutputData;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
-package interface_adapter.Alex.create_event;
+package interface_adapter.Alex.Event_related.create_event;
 
-import interface_adapter.Alex.available_event.AvailableEventViewModel;
-import interface_adapter.Alex.available_event.AvailableEventState;
-import use_case.Alex.create_event.CreateEventOutputBoundary;
-import use_case.Alex.create_event.CreateEventOutputData;
-import use_case.Alex.create_event.CreateEventDataAccessInterface;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
+import use_case.Alex.Event_related.create_event.CreateEventOutputBoundary;
+import use_case.Alex.Event_related.create_event.CreateEventOutputData;
+import use_case.Alex.Event_related.create_event.CreateEventDataAccessInterface;
 import entity.info.Info;
 
 import javax.swing.*;
