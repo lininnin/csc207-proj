@@ -1,0 +1,44 @@
+package use_case.Alex.WellnessLog_related.Moodlabel_related.delete_moodLabel;
+
+import entity.Alex.MoodLabel.MoodLabel;
+
+/**
+ * Interactor for the DeleteMoodLabel use case.
+ * Handles business logic for removing a mood label from the system.
+ */
+public class DeleteMoodLabelInteractor implements DeleteMoodLabelInputBoundary {
+
+    private final DeleteMoodLabelDataAccessInterf dataAccess;
+    private final DeleteMoodLabelOutputBoundary outputBoundary;
+
+    public DeleteMoodLabelInteractor(DeleteMoodLabelDataAccessInterf dataAccess,
+                                     DeleteMoodLabelOutputBoundary outputBoundary) {
+        this.dataAccess = dataAccess;
+        this.outputBoundary = outputBoundary;
+    }
+
+    @Override
+    public void execute(DeleteMoodLabelInputData inputData) {
+        String name = inputData.getMoodLabelName();
+
+        MoodLabel targetLabel = dataAccess.getByName(name);
+        if (targetLabel == null) {
+            outputBoundary.prepareFailView(
+                    new DeleteMoodLabelOutputData(name, "Mood label not found.")
+            );
+            return;
+        }
+
+        boolean success = dataAccess.remove(targetLabel);
+        if (success) {
+            outputBoundary.prepareSuccessView(
+                    new DeleteMoodLabelOutputData(name)
+            );
+        } else {
+            outputBoundary.prepareFailView(
+                    new DeleteMoodLabelOutputData(name, "Failed to delete mood label.")
+            );
+        }
+    }
+}
+

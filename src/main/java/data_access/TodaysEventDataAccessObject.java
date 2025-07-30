@@ -1,9 +1,9 @@
 package data_access;
 
 import entity.Alex.Event.Event;
-import use_case.Alex.add_event.AddEventDataAccessInterf;
-import use_case.Alex.todays_events.delete_todays_event.DeleteTodaysEventDataAccessInterf;
-import use_case.Alex.todays_events.edit_todays_event.EditTodaysEventDataAccessInterf;
+import use_case.Alex.Event_related.add_event.AddEventDataAccessInterf;
+import use_case.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
+import use_case.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventDataAccessInterf;
 
 import java.util.ArrayList;
 import java.util.List;

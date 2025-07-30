@@ -4,13 +4,14 @@ package entity.Alex.MoodLabel;
  * Represents a mood label with a name and a type (positive or negative).
  * Used in wellness tracking to categorize emotional states.
  */
-public class MoodLabel {
+public class MoodLabel implements MoodLabelInterf {
 
     /**
      * Type of the mood: Positive or Negative.
      */
     public enum Type {
-        Positive, Negative
+        Positive,
+        Negative
     }
 
     private Type type;
@@ -115,5 +116,13 @@ public class MoodLabel {
         }
         this.type = type;
     }
+
+    // ------------------ Display for JComboBox ------------------
+
+    @Override
+    public String toString() {
+        return name; // Or: return name + " (" + type + ")";
+    }
 }
+
 
