@@ -1,6 +1,6 @@
 package entity.Alex.EventAvailable;
 
-import entity.Info.Info;
+import entity.info.Info;
 
 import java.util.ArrayList;
 import java.util.List;

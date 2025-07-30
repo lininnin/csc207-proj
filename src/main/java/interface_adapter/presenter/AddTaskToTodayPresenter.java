@@ -1,13 +1,14 @@
 package interface_adapter.presenter;
 
-import use_case.add_task_to_today.AddTaskToTodayOutputBoundary;
-import use_case.add_task_to_today.AddTaskToTodayOutputData;
-import view.Task.TaskViewModel;
+import interface_adapter.view_model.TaskViewModel;
+import use_case.Angela.task.add_to_today.AddTaskToTodayOutputBoundary;
+import use_case.Angela.task.add_to_today.AddTaskToTodayOutputData;
 
 /**
  * Presenter for adding tasks to today.
+ * Implements the output boundary and updates the view model.
  */
-public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary{
+public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
     private final TaskViewModel taskViewModel;
 
     public AddTaskToTodayPresenter(TaskViewModel taskViewModel) {
@@ -16,12 +17,16 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary{
 
     @Override
     public void presentSuccess(AddTaskToTodayOutputData outputData) {
-        String message = String.format("'%s' added to today's tasks", outputData.getTaskName());
-        taskViewModel.setMessage(message);
+        // Add the task to today's list in view model
+        taskViewModel.addTodaysTask(outputData.getTask());
+        taskViewModel.setSuccessMessage("Task added to today: " + outputData.getTaskName());
+        taskViewModel.clearError();
+        taskViewModel.firePropertyChanged();
     }
 
     @Override
     public void presentError(String error) {
-        taskViewModel.setMessage("Error: " + error);
+        taskViewModel.setError(error);
+        taskViewModel.firePropertyChanged();
     }
 }

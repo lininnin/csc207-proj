@@ -5,7 +5,7 @@ import interface_adapter.Alex.available_event.AvailableEventState;
 import use_case.Alex.create_event.CreateEventOutputBoundary;
 import use_case.Alex.create_event.CreateEventOutputData;
 import use_case.Alex.create_event.CreateEventDataAccessInterface;
-import entity.Info.Info;
+import entity.info.Info;
 
 import javax.swing.*;
 import java.util.List;

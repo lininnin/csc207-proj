@@ -2,7 +2,7 @@ package use_case.Alex.add_event;
 
 import entity.Alex.Event.Event;
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Info.Info;
+import entity.info.Info;
 
 import java.time.LocalDate;
 

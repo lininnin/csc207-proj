@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
-  <component name="AdditionalModuleElements">
-    <content url="file://$MODULE_DIR$" dumb="true">
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/controller" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/gpt" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/presenter" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/Ina" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/add_task_to_today" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/create_task" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/filter" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/generate_charts" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goalFunctions" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goalFunctions/manageGoals" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/manageGoals" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/mark_task_complete" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/repository" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/view_analytics" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/view/Task" />
-    </content>
+  <component name="CheckStyle-IDEA-Module" serialisationVersion="2">
+    <option name="activeLocationsIds" />
   </component>
 </module>

@@ -1,8 +1,7 @@
 package entity.Alex.Event;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Alex.Event.EventInterf;
-import entity.Info.Info;
+import entity.info.Info;
 
 import java.time.LocalDate;
 
@@ -15,27 +14,28 @@ public class Event implements EventInterf {
 
     private Info info;
     private BeginAndDueDates beginAndDueDates;
+    private boolean oneTime;
 
     /**
      * Constructs a new Info object with optional description and category.
      * @param builder the builder of the item
      */
-
     private Event(Builder builder) {
         if (builder.info == null) {
-            throw new IllegalArgumentException("Info is required to create a Task");
+            throw new IllegalArgumentException("Info is required to create an Event");
         }
         if (builder.beginAndDueDates == null) {
-            throw new IllegalArgumentException("BeginAndDueDates is required to create a Task");
+            throw new IllegalArgumentException("BeginAndDueDates is required to create an Event");
         }
-        this.info = builder.info; //pass the info
-        this.beginAndDueDates = builder.beginAndDueDates; //pass the beginning and due dates
-
+        this.info = builder.info;
+        this.beginAndDueDates = builder.beginAndDueDates;
+        this.oneTime = builder.oneTime;
     }
 
     public static class Builder {
         private final Info info;
         private BeginAndDueDates beginAndDueDates;
+        private boolean oneTime = false;
 
         public Builder(Info info) {
             if (info == null) {
@@ -52,15 +52,20 @@ public class Event implements EventInterf {
             return this;
         }
 
+        public Builder oneTime(boolean oneTime) {
+            this.oneTime = oneTime;
+            return this;
+        }
+
         public Event build() {
             if (beginAndDueDates == null) {
-                throw new IllegalStateException("BeginAndDueDates must be set before building the task");
+                throw new IllegalStateException("BeginAndDueDates must be set before building the event");
             }
             return new Event(this);
         }
     }
 
-// ----------------- Getters -----------------
+    // ----------------- Getters -----------------
 
     public Info getInfo() {
         return info;
@@ -70,8 +75,11 @@ public class Event implements EventInterf {
         return beginAndDueDates;
     }
 
+    public boolean isOneTime() {
+        return oneTime;
+    }
 
-// ----------------- Editors with validation -----------------
+    // ----------------- Setters with validation -----------------
 
     public void editInfo(Info info) {
         if (info == null) {
@@ -94,4 +102,7 @@ public class Event implements EventInterf {
         this.beginAndDueDates.setDueDate(newDueDate);
     }
 
+    public void setOneTime(boolean oneTime) {
+        this.oneTime = oneTime;
+    }
 }

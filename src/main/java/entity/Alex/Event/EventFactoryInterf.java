@@ -1,6 +1,6 @@
 package entity.Alex.Event;
 
-import entity.Info.Info;
+import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
 /**

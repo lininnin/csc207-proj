@@ -1,7 +1,7 @@
 package data_access;
 
 import entity.Alex.EventAvailable.EventAvailable;
-import entity.Info.Info;
+import entity.info.Info;
 import use_case.Alex.add_event.ReadAvailableEventDataAccessInterf;
 import use_case.Alex.create_event.CreateEventDataAccessInterface;
 import use_case.Alex.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;

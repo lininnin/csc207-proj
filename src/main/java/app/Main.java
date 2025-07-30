@@ -30,7 +30,7 @@ import use_case.Alex.create_event.*;
 import data_access.EventAvailableDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 
-import entity.Info.InfoFactory;
+import entity.info.InfoFactory;
 import use_case.Alex.todays_events.delete_todays_event.DeleteTodaysEventDataAccessInterf;
 import use_case.Alex.todays_events.delete_todays_event.DeleteTodaysEventInputBoundary;
 import use_case.Alex.todays_events.delete_todays_event.DeleteTodaysEventInteractor;

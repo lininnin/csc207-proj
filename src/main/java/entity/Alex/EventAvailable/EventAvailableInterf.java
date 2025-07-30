@@ -1,6 +1,6 @@
 package entity.Alex.EventAvailable;
 
-import entity.Info.Info;
+import entity.info.Info;
 import java.util.List;
 
 public interface EventAvailableInterf {

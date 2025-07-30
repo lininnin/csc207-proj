@@ -5,7 +5,7 @@ import entity.Sophia.GoalFactoryInterface;
 import entity.Sophia.GoalInfo;
 import entity.Sophia.goalInterface;
 import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.Info.Info;
+import entity.info.Info;
 
 import java.time.LocalDate;
 import java.util.Set;

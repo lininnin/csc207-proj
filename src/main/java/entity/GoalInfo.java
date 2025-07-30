@@ -1,5 +1,7 @@
 package entity;
 
+import entity.info.Info;
+
 /**
  * Represents identifying information for a goal, including its own info
  * and the info of the task it targets.

@@ -1,5 +1,9 @@
 package entity;
 
+import entity.Angela.Task.Task;
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.Info;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
