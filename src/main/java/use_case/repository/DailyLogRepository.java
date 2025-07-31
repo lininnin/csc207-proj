@@ -2,6 +2,7 @@ package use_case.repository;
 
 import entity.Angela.DailyLog;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Repository interface for DailyLog persistence.
@@ -21,4 +22,6 @@ public interface DailyLogRepository {
      * @return The daily log if found, null otherwise
      */
     DailyLog findByDate(LocalDate date);
+
+    List<DailyLog> loadBetween(LocalDate from, LocalDate to);
 }
