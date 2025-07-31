@@ -10,7 +10,7 @@ public class OrderGoalsController {
         this.interactor = interactor;
     }
 
-    public void orderGoalsBy(String orderBy) {
-        interactor.execute(new OrderGoalsInputData(orderBy));
+    public void orderGoalsBy(String orderBy, boolean reverse) {
+        interactor.execute(new OrderGoalsInputData(orderBy, reverse));
     }
 }

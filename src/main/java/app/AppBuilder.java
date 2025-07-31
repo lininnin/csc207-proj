@@ -2,8 +2,17 @@ package app;
 
 import data_access.CategoryRepository;
 import data_access.TaskRepository;
+import entity.info.InfoFactory;
+import interface_adapter.Sophia.create_goal.CreateGoalController;
+import interface_adapter.Sophia.create_goal.CreateGoalPresenter;
+import interface_adapter.Sophia.create_goal.CreatedGoalViewModel; // update this after new pr are merged
+import interface_adapter.Sophia.delete_goal.DeleteGoalController;
+import interface_adapter.Sophia.delete_goal.DeleteGoalPresenter;
+import interface_adapter.Sophia.delete_goal.DeletedGoalViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.controller.*;
+import interface_adapter.orderGoals.OrderGoalsController;
+import interface_adapter.orderGoals.OrderGoalsPresenter;
 import interface_adapter.presenter.*;
 import interface_adapter.view_model.*;
 import use_case.Angela.category.*;
@@ -13,6 +22,8 @@ import use_case.Angela.category.edit.*;
 import use_case.Angela.task.*;
 import use_case.Angela.task.delete.*;
 import use_case.Angela.task.edit_available.*;
+import use_case.orderGoal.OrderGoalsInputBoundary;
+import use_case.orderGoal.OrderGoalsOutputBoundary;
 import view.ViewManager;
 import view.CategoryDialogView;
 import view.Task.TaskView;
@@ -195,5 +206,125 @@ public class AppBuilder {
             viewManagerModel.firePropertyChanged();
         });
         return button;
+    }
+
+    public static class GoalPageBuilder {
+
+        public JPanel build() {
+            // --- ViewModels ---
+            CreatedGoalViewModel createdGoalViewModel = new CreatedGoalViewModel();
+            DeletedGoalViewModel deletedGoalViewModel = new DeletedGoalViewModel();
+            EditedGoalViewModel editedGoalViewModel = new EditedGoalViewModel();
+            AddedGoalViewModel addedGoalViewModel = new AddedGoalViewModel();
+            TodaysGoalsViewModel todaysGoalsViewModel = new TodaysGoalsViewModel();
+            OrderGoalsViewModel orderGoalsViewModel = new OrderGoalsViewModel();
+
+            // --- Data Access & Factory ---
+            GoalRepository goalRepository = new GoalRepository();
+            InfoFactory infoFactory = new InfoFactory();
+
+            // --- Use Case Wiring ---
+            // Create Goal
+            CreateGoalOutputBoundary createGoalPresenter = new CreateGoalPresenter(
+                    createdGoalViewModel,
+                    goalRepository
+            );
+            CreateGoalInputBoundary createGoalInteractor = new CreateGoalInteractor(
+                    goalRepository,
+                    createGoalPresenter,
+                    infoFactory
+            );
+            CreateGoalController createGoalController = new CreateGoalController(createGoalInteractor);
+
+            // Delete Goal
+            DeleteGoalOutputBoundary deleteGoalPresenter = new DeleteGoalPresenter(
+                    deletedGoalViewModel,
+                    goalRepository
+            );
+            DeleteGoalInputBoundary deleteGoalInteractor = new DeleteGoalInteractor(
+                    goalRepository,
+                    deleteGoalPresenter
+            );
+            DeleteGoalController deleteGoalController = new DeleteGoalController(deleteGoalInteractor);
+
+            // Edit Goal
+            EditGoalOutputBoundary editGoalPresenter = new EditGoalPresenter(
+                    editedGoalViewModel,
+                    goalRepository
+            );
+            EditGoalInputBoundary editGoalInteractor = new EditGoalInteractor(
+                    goalRepository,
+                    editGoalPresenter
+            );
+            EditGoalController editGoalController = new EditGoalController(editGoalInteractor);
+
+            // Add Goal to Today
+            AddGoalToTodayOutputBoundary addGoalPresenter = new AddGoalToTodayPresenter(
+                    addedGoalViewModel,
+                    todaysGoalsViewModel,
+                    goalRepository
+            );
+            AddGoalToTodayInputBoundary addGoalInteractor = new AddGoalToTodayInteractor(
+                    goalRepository,
+                    addGoalPresenter
+            );
+            AddGoalToTodayController addGoalController = new AddGoalToTodayController(addGoalInteractor);
+
+            // Order Goals
+            OrderGoalsOutputBoundary orderGoalsPresenter = new OrderGoalsPresenter(orderGoalsViewModel);
+            OrderGoalsInputBoundary orderGoalsInteractor = new OrderGoalsInteractor(
+                    goalRepository,
+                    orderGoalsPresenter
+            );
+            OrderGoalsController orderGoalsController = new OrderGoalsController(orderGoalsInteractor);
+
+            // --- Views --- (Simplified placeholder views)
+            JPanel createGoalView = new JPanel();
+            createGoalView.add(new JLabel("Create Goal Form"));
+
+            JPanel todaysGoalsView = new JPanel();
+            todaysGoalsView.add(new JLabel("Today's Goals List"));
+
+            JPanel availableGoalsView = new JPanel();
+            availableGoalsView.add(new JLabel("Available Goals List"));
+
+            JPanel orderGoalsView = new JPanel();
+            orderGoalsView.add(new JLabel("Order/Sort Controls"));
+
+            // --- Layout ---
+            JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
+            // Left Panel (Create/View Goals)
+            JPanel leftPanel = new JPanel(new BorderLayout());
+            leftPanel.add(createGoalView, BorderLayout.NORTH);
+            leftPanel.add(availableGoalsView, BorderLayout.CENTER);
+
+            // Right Panel (Today's Goals)
+            JPanel rightPanel = new JPanel(new BorderLayout());
+            rightPanel.add(todaysGoalsView, BorderLayout.CENTER);
+            rightPanel.add(orderGoalsView, BorderLayout.SOUTH);
+
+            mainSplit.setLeftComponent(leftPanel);
+            mainSplit.setRightComponent(rightPanel);
+            mainSplit.setDividerLocation(600);
+
+            // Sidebar
+            JPanel sidebarPanel = new JPanel();
+            sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
+            sidebarPanel.setBackground(new Color(60, 63, 65));
+            sidebarPanel.add(new JButton("📋 Tasks"));
+            sidebarPanel.add(new JButton("📆 Events"));
+            sidebarPanel.add(new JButton("🎯 Goals"));
+            sidebarPanel.add(new JButton("🧠 Wellness Log"));
+            sidebarPanel.add(new JButton("📊 Charts"));
+            sidebarPanel.add(new JButton("🤖 AI-Feedback"));
+            sidebarPanel.add(new JButton("⚙️ Settings"));
+
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(sidebarPanel, BorderLayout.WEST);
+            mainPanel.add(mainSplit, BorderLayout.CENTER);
+
+            return mainPanel;
+        }
     }
 }
