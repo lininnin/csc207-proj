@@ -30,13 +30,13 @@ public class DeleteTaskInteractor implements DeleteTaskInputBoundary {
         boolean existsInToday = taskGateway.existsInToday(taskId);
 
         if (existsInToday && inputData.isFromAvailable()) {
-            // Show warning dialog
+            // Show warning dialog - task exists in both lists
             String taskName = taskGateway.getTaskName(taskId);
             outputBoundary.showDeleteFromBothWarning(taskId, taskName);
             return;
         }
 
-        // Delete the task
+        // Delete the task completely
         boolean deleted = taskGateway.deleteTaskCompletely(taskId);
 
         if (deleted) {

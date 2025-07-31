@@ -1,7 +1,7 @@
 package use_case.Angela.category.delete;
 
 /**
- * Output boundary for the delete category use case.
+ * Output boundary for delete category use case.
  */
 public interface DeleteCategoryOutputBoundary {
     /**

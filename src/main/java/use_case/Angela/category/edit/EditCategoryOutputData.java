@@ -1,7 +1,7 @@
 package use_case.Angela.category.edit;
 
 /**
- * Output data for the edit category use case.
+ * Output data for edit category use case.
  */
 public class EditCategoryOutputData {
     private final String categoryId;

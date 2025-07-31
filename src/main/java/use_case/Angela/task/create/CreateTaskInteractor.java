@@ -25,7 +25,7 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
     public void execute(CreateTaskInputData inputData) {
         String taskName = inputData.getTaskName();
 
-        // Validate input
+        // Validate task name
         if (taskName == null || taskName.trim().isEmpty()) {
             outputBoundary.presentError("Task name cannot be empty");
             return;
@@ -36,9 +36,16 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Check if task name already exists
+        // Check for duplicate names (case-insensitive)
         if (taskGateway.availableTaskNameExists(taskName)) {
             outputBoundary.presentError("The Task name already exists");
+            return;
+        }
+
+        // Validate description length
+        String description = inputData.getDescription();
+        if (description != null && description.length() > 100) {
+            outputBoundary.presentError("Description cannot exceed 100 characters");
             return;
         }
 
@@ -53,20 +60,25 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             categoryName = category.getName();
         }
 
-        // Create new task info
+        // Create task info (no begin date - that's only for Today's tasks)
         Info.Builder builder = new Info.Builder(taskName);
-        if (inputData.getDescription() != null && !inputData.getDescription().trim().isEmpty()) {
-            builder.description(inputData.getDescription());
+
+        if (description != null && !description.trim().isEmpty()) {
+            builder.description(description);
         }
+
         if (!categoryName.isEmpty()) {
             builder.category(categoryName);
         }
 
         Info taskInfo = builder.build();
 
-        // Save the task
+        // Save the task (Info already has a unique ID)
+        // Note: isOneTime flag is not stored yet - this will be handled when
+        // you implement the full TaskRepository that saves TaskAvailable entities
         String taskId = taskGateway.saveAvailableTask(taskInfo);
 
+        // Present success
         CreateTaskOutputData outputData = new CreateTaskOutputData(
                 taskId, taskName, "Task created successfully"
         );

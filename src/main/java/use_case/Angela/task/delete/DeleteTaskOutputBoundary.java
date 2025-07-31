@@ -5,24 +5,24 @@ package use_case.Angela.task.delete;
  */
 public interface DeleteTaskOutputBoundary {
     /**
-     * Prepares the success view after task deletion.
+     * Presents successful task deletion.
      *
-     * @param outputData The output data
+     * @param outputData The output data containing deletion details
      */
     void prepareSuccessView(DeleteTaskOutputData outputData);
 
     /**
-     * Prepares the fail view with an error message.
+     * Presents an error that occurred during deletion.
      *
      * @param error The error message
      */
     void prepareFailView(String error);
 
     /**
-     * Shows a warning dialog when task exists in both Available and Today's lists.
+     * Shows warning dialog when task exists in both lists.
      *
      * @param taskId The task ID
-     * @param taskName The task name for display
+     * @param taskName The task name
      */
     void showDeleteFromBothWarning(String taskId, String taskName);
 }
