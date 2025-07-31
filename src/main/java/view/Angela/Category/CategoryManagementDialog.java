@@ -39,6 +39,9 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
     // State
     private String editingCategoryId = null;
 
+    // Listener for category changes
+    private CategoryChangeListener categoryChangeListener;
+
     public CategoryManagementDialog(JFrame parent, CategoryGateway categoryGateway,
                                     CategoryManagementViewModel viewModel) {
         super(parent, "Category Management", true);
@@ -78,15 +81,26 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel - Category list
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBorder(BorderFactory.createTitledBorder("Existing Categories"));
+        // Center - Category table
+        setupTable();
+        JScrollPane scrollPane = new JScrollPane(categoryTable);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Existing Categories"));
+        add(scrollPane, BorderLayout.CENTER);
 
+        // Bottom - Close button
+        JPanel bottomPanel = new JPanel();
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> dispose());
+        bottomPanel.add(closeButton);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void setupTable() {
         String[] columnNames = {"Name", "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == 1; // Only actions column is editable
             }
         };
 
@@ -95,23 +109,25 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         categoryTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         categoryTable.getColumnModel().getColumn(1).setCellRenderer(new ButtonRenderer());
         categoryTable.getColumnModel().getColumn(1).setCellEditor(new ButtonEditor());
+    }
 
-        JScrollPane scrollPane = new JScrollPane(categoryTable);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+    private void createCategory() {
+        String name = nameField.getText().trim();
+        if (name.isEmpty()) {
+            showMessage("Please enter a category name", true);
+            return;
+        }
 
-        add(centerPanel, BorderLayout.CENTER);
+        if (createController != null) {
+            createController.execute(name);
+        }
+    }
 
-        // Bottom panel - Dialog buttons
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> saveAndClose());
-        cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(e -> dispose());
-
-        bottomPanel.add(saveButton);
-        bottomPanel.add(cancelButton);
-
-        add(bottomPanel, BorderLayout.SOUTH);
+    private void loadCategories() {
+        tableModel.setRowCount(0);
+        for (Category category : categoryGateway.getAllCategories()) {
+            tableModel.addRow(new Object[]{category.getName(), category});
+        }
     }
 
     public void setControllers(CreateCategoryController createController,
@@ -122,42 +138,36 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         this.editController = editController;
     }
 
-    private void createCategory() {
-        if (createController != null) {
-            createController.execute(nameField.getText());
-        }
+    public void setCategoryChangeListener(CategoryChangeListener listener) {
+        this.categoryChangeListener = listener;
     }
 
-    private void loadCategories() {
-        tableModel.setRowCount(0);
-        List<Category> categories = categoryGateway.getAllCategories();
+    private void showMessage(String message, boolean isError) {
+        messageLabel.setText(message);
+        messageLabel.setForeground(isError ? Color.RED : Color.GREEN);
 
-        for (Category category : categories) {
-            tableModel.addRow(new Object[]{category.getName(), category});
-        }
-    }
-
-    private void saveAndClose() {
-        // Refresh parent components that use categories
-        dispose();
+        // Clear message after 3 seconds
+        Timer timer = new Timer(3000, e -> messageLabel.setText(" "));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        CategoryManagementState state = (CategoryManagementState) evt.getNewValue();
+        if ("state".equals(evt.getPropertyName())) {
+            CategoryManagementState state = (CategoryManagementState) evt.getNewValue();
 
-        if (state.getError() != null) {
-            messageLabel.setForeground(Color.RED);
-            messageLabel.setText(state.getError());
-        } else if (state.getMessage() != null) {
-            messageLabel.setForeground(new Color(0, 128, 0));
-            messageLabel.setText(state.getMessage());
-            nameField.setText("");
-
-            if (state.isRefreshNeeded()) {
+            if (state.getError() != null) {
+                showMessage(state.getError(), true);
+            } else if (state.getMessage() != null) {
+                showMessage(state.getMessage(), false);
+                nameField.setText("");
                 loadCategories();
-                // Notify parent to refresh category dropdowns
-                firePropertyChange("categoriesUpdated", null, null);
+
+                // Notify listeners of category changes
+                if (categoryChangeListener != null) {
+                    categoryChangeListener.onCategoryChanged();
+                }
             }
         }
     }
@@ -170,7 +180,8 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+                                                       boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
             removeAll();
 
             JButton editBtn = new JButton("Edit");
@@ -257,5 +268,10 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
                 deleteController.execute(category.getId());
             }
         }
+    }
+
+    // Interface for listening to category changes
+    public interface CategoryChangeListener {
+        void onCategoryChanged();
     }
 }

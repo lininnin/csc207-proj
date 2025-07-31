@@ -33,6 +33,17 @@ public class InMemoryTaskGateway implements TaskGateway {
     }
 
     @Override
+    public boolean taskExistsWithNameAndCategory(String name, String category) {
+        return availableTasks.values().stream()
+                .anyMatch(info -> {
+                    boolean nameMatches = info.getName().equalsIgnoreCase(name);
+                    String taskCategory = info.getCategory() != null ? info.getCategory() : "";
+                    boolean categoryMatches = taskCategory.equalsIgnoreCase(category);
+                    return nameMatches && categoryMatches;
+                });
+    }
+
+    @Override
     public boolean updateAvailableTask(Info info) {
         if (availableTasks.containsKey(info.getId())) {
             availableTasks.put(info.getId(), info);

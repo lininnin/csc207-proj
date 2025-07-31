@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class InMemoryCategoryGateway implements CategoryGateway {
     private final Map<String, Category> categories = new HashMap<>();
-    private int nextId = 1;
+    private int nextId = 4; // Start at 4 since we have 3 default categories
 
     public InMemoryCategoryGateway() {
         // Add some default categories for demo
@@ -21,6 +21,16 @@ public class InMemoryCategoryGateway implements CategoryGateway {
     @Override
     public void saveCategory(Category category) {
         categories.put(category.getId(), category);
+
+        // Update nextId if we're saving a category with a numeric ID
+        try {
+            int id = Integer.parseInt(category.getId());
+            if (id >= nextId) {
+                nextId = id + 1;
+            }
+        } catch (NumberFormatException e) {
+            // Ignore non-numeric IDs
+        }
     }
 
     @Override

@@ -36,12 +36,6 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Check for duplicate names (case-insensitive)
-        if (taskGateway.availableTaskNameExists(taskName)) {
-            outputBoundary.presentError("The Task name already exists");
-            return;
-        }
-
         // Validate description length
         String description = inputData.getDescription();
         if (description != null && description.length() > 100) {
@@ -49,7 +43,7 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Validate category if provided
+        // Validate category if provided and get category name
         String categoryName = "";
         if (inputData.getCategoryId() != null && !inputData.getCategoryId().isEmpty()) {
             var category = categoryGateway.getCategoryById(inputData.getCategoryId());
@@ -58,6 +52,12 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
                 return;
             }
             categoryName = category.getName();
+        }
+
+        // Check for duplicate names with same category (case-insensitive)
+        if (taskGateway.taskExistsWithNameAndCategory(taskName, categoryName)) {
+            outputBoundary.presentError("A task with this name and category already exists");
+            return;
         }
 
         // Create task info (no begin date - that's only for Today's tasks)
