@@ -20,7 +20,6 @@ public class FeedbackHistoryPanelManualTest {
             FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
             FeedbackEntry entry1 = new FeedbackEntry(LocalDate.of(2024, 7, 22), "Analysis 1", "Corr 1", "Rec 1");
             FeedbackEntry entry2 = new FeedbackEntry(LocalDate.of(2024, 7, 15), "Analysis 2", "Corr 2", "Rec 2");
-            FeedbackEntry entry3 = new FeedbackEntry(LocalDate.of(2024, 7, 15), "Analysis 3", "Corr 3", "Rec 3");
             viewModel.setEntries(List.of(entry1, entry2));
 
             FeedbackHistoryPanel panel = new FeedbackHistoryPanel(new StubController(), viewModel);
