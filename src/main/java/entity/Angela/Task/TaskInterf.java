@@ -2,11 +2,11 @@ package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
-
 import java.time.LocalDateTime;
 
 /**
  * Interface defining the contract for Task entities.
+ * Follows Clean Architecture principles by defining what a Task must provide.
  */
 public interface TaskInterf {
     /**

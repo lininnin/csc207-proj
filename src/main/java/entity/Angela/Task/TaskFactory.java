@@ -2,96 +2,89 @@ package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * Factory class for creating Task instances.
- * Implements the TaskFactoryInterf with various creation methods.
+ * Factory class for creating Task instances (Today's tasks).
+ * Implements the Factory pattern following Clean Architecture principles.
  */
-public class TaskFactory implements TaskFactoryInterf {
+public class TaskFactory {
 
     /**
-     * Creates a basic task without priority (for Available tasks).
+     * Creates a new Today's task from a template.
+     * Begin date is set to today automatically.
      *
+     * @param template The source TaskAvailable
+     * @return A new Task instance for Today
+     * @throws IllegalArgumentException if template is null
+     */
+    public Task createFromTemplate(TaskAvailable template) {
+        if (template == null) {
+            throw new IllegalArgumentException("Template cannot be null");
+        }
+
+        // Create dates with today as begin date
+        BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null);
+
+        return new Task(template.getId(), template.getInfo(), dates, template.isOneTime());
+    }
+
+    /**
+     * Creates a new Today's task from a template with specific dates.
+     *
+     * @param template The source TaskAvailable
+     * @param dueDate Optional due date (must be >= today if set)
+     * @return A new Task instance for Today
+     * @throws IllegalArgumentException if parameters are invalid
+     */
+    public Task createFromTemplate(TaskAvailable template, LocalDate dueDate) {
+        if (template == null) {
+            throw new IllegalArgumentException("Template cannot be null");
+        }
+
+        // Validate due date if provided
+        if (dueDate != null && dueDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Due date cannot be in the past");
+        }
+
+        // Create dates with today as begin date
+        BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), dueDate);
+
+        return new Task(template.getId(), template.getInfo(), dates, template.isOneTime());
+    }
+
+    /**
+     * Creates a new Today's task with all basic fields.
+     *
+     * @param templateTaskId ID of the source template
      * @param info Task information
-     * @param beginAndDueDates Date range (can have nulls initially)
+     * @param dates Begin and due dates
+     * @param isOneTime Whether this is a one-time task
      * @return A new Task instance
-     * @throws IllegalArgumentException if required parameters are null
+     * @throws IllegalArgumentException if parameters are invalid
      */
-    @Override
-    public Task createTask(Info info, BeginAndDueDates beginAndDueDates) {
-        if (info == null) {
-            throw new IllegalArgumentException("Info cannot be null");
-        }
-        if (beginAndDueDates == null) {
-            throw new IllegalArgumentException("BeginAndDueDates cannot be null");
-        }
-
-        return new Task(info, beginAndDueDates);
+    public Task create(String templateTaskId, Info info, BeginAndDueDates dates, boolean isOneTime) {
+        return new Task(templateTaskId, info, dates, isOneTime);
     }
 
     /**
-     * Creates a task with priority (for Today's tasks).
+     * Creates a Today's task with all fields (for loading from storage).
      *
+     * @param id The task instance ID
+     * @param templateTaskId ID of the source template
      * @param info Task information
-     * @param beginAndDueDates Date range with actual dates
-     * @param priority Task priority level
-     * @return A new Task instance with priority set
-     * @throws IllegalArgumentException if required parameters are null
+     * @param priority Optional priority
+     * @param dates Begin and due dates
+     * @param isCompleted Completion status
+     * @param completedDateTime Optional completion timestamp
+     * @param isOneTime Whether this is a one-time task
+     * @return A new Task instance
+     * @throws IllegalArgumentException if parameters are invalid
      */
-    @Override
-    public Task createTask(Info info, BeginAndDueDates beginAndDueDates, Task.Priority priority) {
-        Task task = createTask(info, beginAndDueDates);
-
-        if (priority == null) {
-            throw new IllegalArgumentException("Priority cannot be null when creating a task for today");
-        }
-
-        task.setPriority(priority);
-        return task;
-    }
-
-    /**
-     * Creates a one-time task.
-     *
-     * @param info Task information
-     * @param beginAndDueDates Date range
-     * @param oneTime Whether this is a one-time task
-     * @return A new Task instance with one-time flag set
-     * @throws IllegalArgumentException if required parameters are null
-     */
-    @Override
-    public Task createTask(Info info, BeginAndDueDates beginAndDueDates, boolean oneTime) {
-        Task task = createTask(info, beginAndDueDates);
-        task.setOneTime(oneTime);
-        return task;
-    }
-
-    /**
-     * Creates a task from an existing task (copy for today).
-     * This is useful when adding an available task to today's tasks.
-     *
-     * @param existingTask The task to copy
-     * @param priority The priority for today
-     * @param beginDate The begin date (usually today)
-     * @param dueDate The optional due date
-     * @return A new Task instance configured for today
-     */
-    public Task createTaskForToday(Task existingTask, Task.Priority priority,
-                                   java.time.LocalDate beginDate, java.time.LocalDate dueDate) {
-        if (existingTask == null) {
-            throw new IllegalArgumentException("Existing task cannot be null");
-        }
-
-        // Create new BeginAndDueDates with the specified dates
-        BeginAndDueDates newDates = new BeginAndDueDates(beginDate, dueDate);
-
-        // Create new task with same info but new dates
-        Task todayTask = new Task(existingTask.getInfo(), newDates);
-
-        // Set priority and preserve one-time flag
-        todayTask.setPriority(priority);
-        todayTask.setOneTime(existingTask.isOneTime());
-
-        return todayTask;
+    public Task create(String id, String templateTaskId, Info info, Task.Priority priority,
+                       BeginAndDueDates dates, boolean isCompleted, LocalDateTime completedDateTime,
+                       boolean isOneTime) {
+        return new Task(id, templateTaskId, info, priority, dates, isCompleted, completedDateTime, isOneTime);
     }
 }

@@ -4,19 +4,31 @@ import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
- * Represents a task entity with all required fields per design.
- * Tasks are created with basic info, then enhanced with priority/dates when added to Today.
+ * Represents a task instance in Today's list.
+ * Created from an Available task template when added to Today.
+ *
+ * Business Rules:
+ * - Links back to template via templateTaskId
+ * - Priority is optional even for Today's tasks
+ * - Begin date is auto-set to today when created
+ * - Due date must be >= today if set
+ * - Tracks completion status with timestamp
+ * - Original position is session-only (transient)
  */
-public class Task implements TaskInterf {
-    private final Info info;
-    private Priority priority;
+public class Task {
+    private final String id;
+    private final String templateTaskId;
+    private Info info; // Made non-final for compatibility
+    private Priority priority; // Optional, can be null
+    private final BeginAndDueDates dates;
     private boolean isCompleted;
     private LocalDateTime completedDateTime;
-    private final BeginAndDueDates beginAndDueDates;
-    private boolean overDue;
-    private boolean oneTime; // Added per design requirement
+    private boolean isOneTime; // Track here for Today's instance
+    private transient Integer originalPosition; // Session-only, not persisted
 
     /**
      * Priority levels for tasks.
@@ -26,45 +38,101 @@ public class Task implements TaskInterf {
     }
 
     /**
-     * Creates a new task with basic information.
-     * Priority is not set at creation per design.
+     * Creates a new Today's task from a template.
      *
-     * @param info Basic task information
-     * @param beginAndDueDates Task date range (set when added to Today)
+     * @param templateTaskId ID of the source TaskAvailable
+     * @param info Task information (copied from template)
+     * @param dates Begin and due dates (begin should be today)
+     * @param isOneTime Whether this is a one-time task (copied from template)
+     * @throws IllegalArgumentException if required parameters are null
      */
-    public Task(Info info, BeginAndDueDates beginAndDueDates) {
+    public Task(String templateTaskId, Info info, BeginAndDueDates dates, boolean isOneTime) {
+        if (templateTaskId == null || templateTaskId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Template task ID cannot be null or empty");
+        }
         if (info == null) {
             throw new IllegalArgumentException("Task info cannot be null");
         }
-        if (beginAndDueDates == null) {
-            throw new IllegalArgumentException("BeginAndDueDates cannot be null");
+        if (dates == null) {
+            throw new IllegalArgumentException("Dates cannot be null");
         }
 
+        this.id = UUID.randomUUID().toString();
+        this.templateTaskId = templateTaskId;
         this.info = info;
-        this.beginAndDueDates = beginAndDueDates;
+        this.dates = dates;
+        this.priority = null; // Optional, set separately if needed
         this.isCompleted = false;
         this.completedDateTime = null;
-        this.priority = null; // Not set until added to Today
-        this.overDue = false;
-        this.oneTime = false; // Default to regular (not one-time)
-
-        updateOverdueStatus();
+        this.isOneTime = isOneTime;
+        this.originalPosition = null;
     }
 
     /**
-     * Creates a new task with priority (for Today's tasks).
-     *
-     * @param info Basic task information
-     * @param beginAndDueDates Task date range
-     * @param priority Task priority
+     * Creates a Today's task with all fields (for loading from storage).
      */
-    public Task(Info info, BeginAndDueDates beginAndDueDates, Priority priority) {
-        this(info, beginAndDueDates);
-        this.priority = priority;
+    public Task(String id, String templateTaskId, Info info, Priority priority,
+                BeginAndDueDates dates, boolean isCompleted, LocalDateTime completedDateTime,
+                boolean isOneTime) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("Task ID cannot be null or empty");
+        }
+        if (templateTaskId == null || templateTaskId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Template task ID cannot be null or empty");
+        }
+        if (info == null) {
+            throw new IllegalArgumentException("Task info cannot be null");
+        }
+        if (dates == null) {
+            throw new IllegalArgumentException("Dates cannot be null");
+        }
+
+        this.id = id;
+        this.templateTaskId = templateTaskId;
+        this.info = info;
+        this.priority = priority; // Can be null
+        this.dates = dates;
+        this.isCompleted = isCompleted;
+        this.completedDateTime = completedDateTime;
+        this.isOneTime = isOneTime;
+        this.originalPosition = null;
+
+        // Validate state consistency
+        validateStateConsistency();
     }
 
     /**
-     * Gets the task's basic information.
+     * Validates that the task's state is internally consistent.
+     */
+    private void validateStateConsistency() {
+        if (isCompleted && completedDateTime == null) {
+            throw new IllegalStateException("Completed task must have completion timestamp");
+        }
+        if (!isCompleted && completedDateTime != null) {
+            throw new IllegalStateException("Incomplete task cannot have completion timestamp");
+        }
+    }
+
+    /**
+     * Gets the unique task instance ID.
+     *
+     * @return The task ID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Gets the template task ID this was created from.
+     *
+     * @return The template task ID
+     */
+    public String getTemplateTaskId() {
+        return templateTaskId;
+    }
+
+    /**
+     * Gets the task's information.
      *
      * @return The task info
      */
@@ -75,79 +143,38 @@ public class Task implements TaskInterf {
     /**
      * Gets the task's priority.
      *
-     * @return The priority, or null if not in Today's tasks
+     * @return The priority, or null if not set
      */
     public Priority getPriority() {
         return priority;
     }
 
     /**
-     * Sets the task's priority (only when added to Today).
+     * Sets the task's priority.
+     * Priority is optional for Today's tasks.
      *
-     * @param priority The priority level
+     * @param priority The priority level, or null to clear
      */
     public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
     /**
-     * Gets the task's priority (alias for getPriority).
-     * @return Task priority
+     * Gets the task's date range.
+     *
+     * @return The begin and due dates
      */
-    public Priority getTaskPriority() {
-        return priority;
-    }
-
-    /**
-     * Unmarks this task as complete by creating a new incomplete instance.
-     * @return A new Task instance that is not complete
-     */
-    public Task unmarkComplete() {
-        Task newTask = new Task(this.info, this.beginAndDueDates, this.priority);
-        newTask.setOneTime(this.oneTime);
-        return newTask;
+    public BeginAndDueDates getDates() {
+        return dates;
     }
 
     /**
      * Checks if the task is completed.
      *
-     * @return true if completed, false otherwise
+     * @return true if completed
      */
-    public boolean isComplete() {
+    public boolean isCompleted() {
         return isCompleted;
-    }
-
-    /**
-     * Gets the task's completion status.
-     *
-     * @return true if completed, false otherwise
-     */
-    public boolean getStatus() {
-        return isCompleted;
-    }
-
-    /**
-     * Updates the task's completion status.
-     *
-     * @param status The new completion status
-     */
-    public void editStatus(boolean status) {
-        this.isCompleted = status;
-        if (!status) {
-            this.completedDateTime = null;
-        }
-        updateOverdueStatus();
-    }
-
-    /**
-     * Marks the task as completed with timestamp.
-     *
-     * @param completionTime The time of completion
-     */
-    public void completeTask(LocalDateTime completionTime) {
-        this.isCompleted = true;
-        this.completedDateTime = completionTime;
-        this.overDue = false; // Completed tasks are not overdue
     }
 
     /**
@@ -160,111 +187,109 @@ public class Task implements TaskInterf {
     }
 
     /**
-     * Sets the completion timestamp (for loading from storage).
-     *
-     * @param completedDateTime The completion time
+     * Marks the task as completed with the current timestamp.
      */
-    public void setCompletedDateTime(LocalDateTime completedDateTime) {
-        this.completedDateTime = completedDateTime;
+    public void markComplete() {
+        markComplete(LocalDateTime.now());
     }
 
     /**
-     * Gets the task's date range.
+     * Marks the task as completed with a specific timestamp.
      *
-     * @return The begin and due dates
+     * @param completionTime The completion timestamp
+     * @throws IllegalArgumentException if completionTime is null
      */
-    public BeginAndDueDates getBeginAndDueDates() {
-        return beginAndDueDates;
+    public void markComplete(LocalDateTime completionTime) {
+        if (completionTime == null) {
+            throw new IllegalArgumentException("Completion time cannot be null");
+        }
+        this.isCompleted = true;
+        this.completedDateTime = completionTime;
+    }
+
+    /**
+     * Unmarks the task as complete.
+     * Clears the completion timestamp.
+     */
+    public void unmarkComplete() {
+        this.isCompleted = false;
+        this.completedDateTime = null;
+    }
+
+    /**
+     * Gets the original position for order restoration.
+     * This is session-only and not persisted.
+     *
+     * @return The original position, or null if not set
+     */
+    public Integer getOriginalPosition() {
+        return originalPosition;
+    }
+
+    /**
+     * Sets the original position for order restoration.
+     * This is session-only and not persisted.
+     *
+     * @param originalPosition The position in the list
+     */
+    public void setOriginalPosition(Integer originalPosition) {
+        this.originalPosition = originalPosition;
     }
 
     /**
      * Checks if the task is overdue.
      * A task is overdue if it has a due date that's passed and is not completed.
      *
-     * @return true if overdue, false otherwise
+     * @return true if overdue
      */
     public boolean isOverdue() {
-        updateOverdueStatus();
-        return overDue;
-    }
-
-    /**
-     * Checks if the task is overdue (alternate method name).
-     *
-     * @return true if overdue, false otherwise
-     */
-    public boolean isOverDue() {
-        return isOverdue();
-    }
-
-    /**
-     * Updates the overdue status based on current date.
-     */
-    private void updateOverdueStatus() {
         if (isCompleted) {
-            overDue = false;
-            return;
+            return false;
         }
 
-        LocalDate dueDate = beginAndDueDates.getDueDate();
-        if (dueDate != null) {
-            overDue = LocalDate.now().isAfter(dueDate);
-        } else {
-            overDue = false;
+        LocalDate dueDate = dates.getDueDate();
+        if (dueDate == null) {
+            return false;
         }
+
+        return dueDate.isBefore(LocalDate.now());
     }
 
     /**
      * Checks if this is a one-time task.
-     * One-time tasks are removed from Available after the day ends.
      *
-     * @return true if one-time task, false if regular
+     * @return true if one-time task
      */
     public boolean isOneTime() {
-        return oneTime;
+        return isOneTime;
     }
 
     /**
      * Sets whether this is a one-time task.
      *
-     * @param oneTime true for one-time task, false for regular
+     * @param oneTime true for one-time task
      */
     public void setOneTime(boolean oneTime) {
-        this.oneTime = oneTime;
-    }
-
-    /**
-     * Creates a copy of this task for today with priority and dates.
-     * Used when adding from Available to Today.
-     *
-     * @param priority The priority for today
-     * @param beginDate The begin date (usually today)
-     * @param dueDate The optional due date
-     * @return A new task instance configured for today
-     */
-    public Task copyForToday(Priority priority, LocalDate beginDate, LocalDate dueDate) {
-        BeginAndDueDates newDates = new BeginAndDueDates(beginDate, dueDate);
-        Task todayTask = new Task(this.info, newDates);
-        todayTask.setPriority(priority);
-        todayTask.setOneTime(this.oneTime);
-        return todayTask;
+        this.isOneTime = oneTime;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Task{");
-        sb.append("name='").append(info.getName()).append("'");
+        sb.append("id='").append(id).append("'");
+        sb.append(", templateTaskId='").append(templateTaskId).append("'");
+        sb.append(", name='").append(info.getName()).append("'");
         sb.append(", category='").append(info.getCategory()).append("'");
         if (priority != null) {
             sb.append(", priority=").append(priority);
         }
         sb.append(", completed=").append(isCompleted);
-        if (beginAndDueDates.getDueDate() != null) {
-            sb.append(", dueDate=").append(beginAndDueDates.getDueDate());
+        if (dates.getDueDate() != null) {
+            sb.append(", dueDate=").append(dates.getDueDate());
         }
-        sb.append(", oneTime=").append(oneTime);
-        sb.append(", overdue=").append(overDue);
+        sb.append(", oneTime=").append(isOneTime);
+        sb.append(", overdue=").append(isOverdue());
         sb.append("}");
         return sb.toString();
     }
@@ -275,11 +300,11 @@ public class Task implements TaskInterf {
         if (o == null || getClass() != o.getClass()) return false;
 
         Task task = (Task) o;
-        return info.getId().equals(task.info.getId());
+        return Objects.equals(id, task.id);
     }
 
     @Override
     public int hashCode() {
-        return info.getId().hashCode();
+        return Objects.hash(id);
     }
 }

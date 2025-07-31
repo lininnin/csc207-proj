@@ -21,7 +21,7 @@ public class Info implements InfoInterf {
      *
      * @param builder Builder instance containing the fields.
      */
-    public Info(Builder builder) {
+    private Info(Builder builder) {
         this.id = UUID.randomUUID().toString();
         this.name = builder.name;
         this.description = builder.description;
@@ -71,11 +71,14 @@ public class Info implements InfoInterf {
 
         /**
          * Builds and returns a new Info object.
+         * @return new Info instance
          */
         public Info build() {
             return new Info(this);
         }
     }
+
+    // Getters
 
     /** @return The unique ID of this Info */
     public String getId() {
@@ -87,10 +90,7 @@ public class Info implements InfoInterf {
         return name;
     }
 
-    /** @return The description, if available
-     *
-     * TODO: Will be used in task detail views and tooltips
-     */
+    /** @return The description, if available */
     public String getDescription() {
         return description;
     }
@@ -100,29 +100,29 @@ public class Info implements InfoInterf {
         return category;
     }
 
-    /** @return The date this Info was created
-     *
-     * TODO: Will be used for audit logs and sorting tasks by creation date
-     */
+    /** @return The date this Info was created */
+    /** @return The date this Info was created */
     public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCategory(String category) {
-        // ✅ 允许 category 为 null 或空，统一设为 ""
-        this.category = (category == null || category.trim().isEmpty()) ? "" : category.trim();
-    }
-
-    public void setDescription(String description) {
-        // ✅ 允许 description 为 null 或空，统一设为 ""
-        this.description = (description == null || description.trim().isEmpty()) ? "" : description.trim();
-    }
+    // Setters (mutable for compatibility)
 
     public void setName(String name) {
-        // ❗ name 保持必填，不能为空
+        // Name remains required, cannot be empty
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         this.name = name.trim();
+    }
+
+    public void setDescription(String description) {
+        // Allow description to be null or empty, normalize to empty string
+        this.description = (description == null || description.trim().isEmpty()) ? "" : description.trim();
+    }
+
+    public void setCategory(String category) {
+        // Allow category to be null or empty, normalize to empty string
+        this.category = (category == null || category.trim().isEmpty()) ? "" : category.trim();
     }
 }

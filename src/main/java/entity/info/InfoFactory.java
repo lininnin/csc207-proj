@@ -1,5 +1,9 @@
 package entity.info;
 
+/**
+ * Factory class for creating Info instances using Builder pattern.
+ * Matches the existing InfoFactory implementation.
+ */
 public class InfoFactory implements InfoFactoryInterf {
 
     /**
@@ -22,4 +26,3 @@ public class InfoFactory implements InfoFactoryInterf {
         return builder.build();
     }
 }
-

@@ -6,10 +6,19 @@ import entity.info.Info;
 /**
  * Factory interface for creating Task objects.
  * Provides multiple creation methods for different scenarios.
+ * Similar to UserFactory in the template repository.
  */
 public interface TaskFactoryInterf {
     /**
-     * Creates a task without priority (for Available tasks).
+     * Creates a basic task with today as begin date (for new Available tasks).
+     *
+     * @param info Task information
+     * @return A new Task instance
+     */
+    Task createTask(Info info);
+
+    /**
+     * Creates a task with specific dates (for Available tasks).
      *
      * @param info Task information
      * @param beginAndDueDates Date range (can have nulls initially)
