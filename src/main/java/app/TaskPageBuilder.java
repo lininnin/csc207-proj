@@ -47,9 +47,6 @@ public class TaskPageBuilder {
     private AvailableTasksView availableTasksView;
     private CategoryManagementDialog categoryDialog;
 
-    // Frame reference for dialog parent
-    private JFrame parentFrame;
-
     public JPanel build() {
         // Create Views
         createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
@@ -85,38 +82,6 @@ public class TaskPageBuilder {
         DeleteTaskController deleteTaskController = new DeleteTaskController(deleteTaskInteractor);
         availableTasksView.setDeleteTaskController(deleteTaskController);
 
-        // Wire up Category Management Use Cases
-        CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
-                categoryManagementViewModel
-        );
-
-        // Create Category
-        CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
-                categoryGateway,
-                categoryPresenter
-        );
-        CreateCategoryController createCategoryController = new CreateCategoryController(
-                createCategoryInteractor
-        );
-
-        // Delete Category
-        DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                categoryGateway,
-                categoryPresenter
-        );
-        DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
-                deleteCategoryInteractor
-        );
-
-        // Edit Category
-        EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
-                categoryGateway,
-                categoryPresenter
-        );
-        EditCategoryController editCategoryController = new EditCategoryController(
-                editCategoryInteractor
-        );
-
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -133,21 +98,15 @@ public class TaskPageBuilder {
         return buildLayout();
     }
 
-    public void setParentFrame(JFrame frame) {
-        this.parentFrame = frame;
-    }
-
     private void openCategoryDialog() {
-        if (parentFrame == null) {
-            // Find the parent frame
-            Container parent = createTaskView.getParent();
-            while (parent != null && !(parent instanceof JFrame)) {
-                parent = parent.getParent();
-            }
-            parentFrame = (JFrame) parent;
+        // Find the parent frame
+        Container parent = createTaskView.getParent();
+        while (parent != null && !(parent instanceof JFrame)) {
+            parent = parent.getParent();
         }
+        JFrame parentFrame = (JFrame) parent;
 
-        if (categoryDialog == null) {
+        if (categoryDialog == null && parentFrame != null) {
             categoryDialog = new CategoryManagementDialog(
                     parentFrame,
                     categoryGateway,
@@ -200,7 +159,9 @@ public class TaskPageBuilder {
             });
         }
 
-        categoryDialog.setVisible(true);
+        if (categoryDialog != null) {
+            categoryDialog.setVisible(true);
+        }
     }
 
     private JPanel buildLayout() {
@@ -272,7 +233,7 @@ public class TaskPageBuilder {
                 btn.setBackground(new Color(60, 63, 65));
             }
 
-            sidebar.add(btn);
+            sidebarPanel.add(btn);
         }
 
         return sidebarPanel;
