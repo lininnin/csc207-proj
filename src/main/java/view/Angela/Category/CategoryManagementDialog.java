@@ -63,9 +63,9 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createTitledBorder("New Category"));
 
-        JPanel inputPanel = new JPanel(new FlowLayout());
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(new JLabel("Name:"));
-        nameField = new JTextField(15);
+        nameField = new JTextField(20);
         inputPanel.add(nameField);
 
         createButton = new JButton("Create");
@@ -81,26 +81,15 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Center - Category table
-        setupTable();
-        JScrollPane scrollPane = new JScrollPane(categoryTable);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Existing Categories"));
-        add(scrollPane, BorderLayout.CENTER);
+        // Center panel - Category table
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBorder(BorderFactory.createTitledBorder("Existing Categories"));
 
-        // Bottom - Close button
-        JPanel bottomPanel = new JPanel();
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> dispose());
-        bottomPanel.add(closeButton);
-        add(bottomPanel, BorderLayout.SOUTH);
-    }
-
-    private void setupTable() {
-        String[] columnNames = {"Name", "Actions"};
+        String[] columnNames = {"Category Name", "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 1; // Only actions column is editable
+                return column == 1; // Only Actions column is editable
             }
         };
 
@@ -109,6 +98,19 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         categoryTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         categoryTable.getColumnModel().getColumn(1).setCellRenderer(new ButtonRenderer());
         categoryTable.getColumnModel().getColumn(1).setCellEditor(new ButtonEditor());
+
+        JScrollPane scrollPane = new JScrollPane(categoryTable);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(centerPanel, BorderLayout.CENTER);
+
+        // Bottom panel - Close button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> dispose());
+        bottomPanel.add(closeButton);
+
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void createCategory() {
@@ -199,14 +201,18 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         }
     }
 
-    // Button editor
+    // Button editor - FIXED version
     private class ButtonEditor extends DefaultCellEditor {
         private JPanel panel;
         private Category currentCategory;
+        private JButton editBtn;
+        private JButton deleteBtn;
+        private boolean isPushed = false;
 
         public ButtonEditor() {
             super(new JCheckBox());
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            setClickCountToStart(1);
         }
 
         @Override
@@ -215,20 +221,26 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
             panel.removeAll();
             currentCategory = (Category) value;
 
-            JButton editBtn = new JButton("Edit");
-            JButton deleteBtn = new JButton("Delete");
+            editBtn = new JButton("Edit");
+            deleteBtn = new JButton("Delete");
 
             editBtn.setMargin(new Insets(2, 5, 2, 5));
             deleteBtn.setMargin(new Insets(2, 5, 2, 5));
 
             editBtn.addActionListener(e -> {
-                editCategory(currentCategory);
-                fireEditingStopped();
+                isPushed = true;
+                SwingUtilities.invokeLater(() -> {
+                    stopCellEditing();
+                    editCategory(currentCategory);
+                });
             });
 
             deleteBtn.addActionListener(e -> {
-                deleteCategory(currentCategory);
-                fireEditingStopped();
+                isPushed = true;
+                SwingUtilities.invokeLater(() -> {
+                    stopCellEditing();
+                    deleteCategory(currentCategory);
+                });
             });
 
             panel.add(editBtn);
@@ -240,6 +252,12 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         @Override
         public Object getCellEditorValue() {
             return currentCategory;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            isPushed = false;
+            return super.stopCellEditing();
         }
 
         private void editCategory(Category category) {

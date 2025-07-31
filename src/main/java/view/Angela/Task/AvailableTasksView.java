@@ -173,7 +173,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         }
     }
 
-    // Button editor for Edit and Delete columns
+    // Button editor for Edit and Delete columns - FIXED version
     private class ButtonEditor extends DefaultCellEditor {
         private JButton button;
         private String label;
@@ -185,8 +185,16 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             button = new JButton();
             button.setOpaque(true);
             label = text;
+            isPushed = false;
+            setClickCountToStart(1);
 
-            button.addActionListener(e -> fireEditingStopped());
+            button.addActionListener(e -> {
+                isPushed = true;
+                // Use SwingUtilities.invokeLater to ensure proper event handling
+                SwingUtilities.invokeLater(() -> {
+                    fireEditingStopped();
+                });
+            });
         }
 
         @Override
@@ -194,7 +202,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
                                                      boolean isSelected, int row, int column) {
             taskId = (String) value;
             button.setText(label);
-            isPushed = true;
             return button;
         }
 
@@ -202,47 +209,51 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         public Object getCellEditorValue() {
             if (isPushed) {
                 if ("Delete".equals(label) && deleteTaskController != null) {
-                    deleteTaskController.execute(taskId, true);
+                    SwingUtilities.invokeLater(() -> {
+                        deleteTaskController.execute(taskId, true);
+                    });
                 } else if ("Edit".equals(label)) {
-                    // Get task details from the row
-                    int row = taskTable.getSelectedRow();
-                    if (row >= 0) {
-                        String name = (String) tableModel.getValueAt(row, 0);
-                        String category = (String) tableModel.getValueAt(row, 1);
-                        String description = (String) tableModel.getValueAt(row, 2);
+                    SwingUtilities.invokeLater(() -> {
+                        // Get task details from the row
+                        int row = taskTable.getSelectedRow();
+                        if (row >= 0) {
+                            String name = (String) tableModel.getValueAt(row, 0);
+                            String category = (String) tableModel.getValueAt(row, 1);
+                            String description = (String) tableModel.getValueAt(row, 2);
 
-                        // Show edit dialog
-                        JPanel editPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-                        JTextField nameField = new JTextField(name);
-                        JTextField categoryField = new JTextField(category);
-                        JTextArea descriptionArea = new JTextArea(description);
-                        descriptionArea.setRows(3);
+                            // Show edit dialog
+                            JPanel editPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+                            JTextField nameField = new JTextField(name);
+                            JTextField categoryField = new JTextField(category);
+                            JTextArea descriptionArea = new JTextArea(description);
+                            descriptionArea.setRows(3);
 
-                        editPanel.add(new JLabel("Name:"));
-                        editPanel.add(nameField);
-                        editPanel.add(new JLabel("Category:"));
-                        editPanel.add(categoryField);
-                        editPanel.add(new JLabel("Description:"));
-                        editPanel.add(new JScrollPane(descriptionArea));
+                            editPanel.add(new JLabel("Name:"));
+                            editPanel.add(nameField);
+                            editPanel.add(new JLabel("Category:"));
+                            editPanel.add(categoryField);
+                            editPanel.add(new JLabel("Description:"));
+                            editPanel.add(new JScrollPane(descriptionArea));
 
-                        int result = JOptionPane.showConfirmDialog(
-                                AvailableTasksView.this,
-                                editPanel,
-                                "Edit Task",
-                                JOptionPane.OK_CANCEL_OPTION,
-                                JOptionPane.PLAIN_MESSAGE
-                        );
-
-                        if (result == JOptionPane.OK_OPTION) {
-                            // TODO: Implement edit functionality with controller
-                            JOptionPane.showMessageDialog(
+                            int result = JOptionPane.showConfirmDialog(
                                     AvailableTasksView.this,
-                                    "Edit functionality coming soon - will be implemented with edit_available_task use case completion",
-                                    "Info",
-                                    JOptionPane.INFORMATION_MESSAGE
+                                    editPanel,
+                                    "Edit Task",
+                                    JOptionPane.OK_CANCEL_OPTION,
+                                    JOptionPane.PLAIN_MESSAGE
                             );
+
+                            if (result == JOptionPane.OK_OPTION) {
+                                // TODO: Implement edit functionality with controller
+                                JOptionPane.showMessageDialog(
+                                        AvailableTasksView.this,
+                                        "Edit functionality coming soon - will be implemented with edit_available_task use case completion",
+                                        "Info",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
+                            }
                         }
-                    }
+                    });
                 }
             }
             isPushed = false;
