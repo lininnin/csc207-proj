@@ -25,7 +25,9 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
 
     @Override
     public void presentSuccess(CreateTaskOutputData outputData) {
-        // Update create task view model to clear form
+        System.out.println("DEBUG: CreateTaskPresenter.presentSuccess called");
+
+        // Update create task view model to show success and clear form
         CreateTaskState createState = createTaskViewModel.getState();
         createState.setTaskName("");
         createState.setDescription("");
@@ -34,17 +36,17 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
         createState.setError(null);
         createState.setSuccessMessage(outputData.getMessage());
         createTaskViewModel.setState(createState);
-        createTaskViewModel.firePropertyChanged();
+        createTaskViewModel.firePropertyChanged(CreateTaskViewModel.CREATE_TASK_STATE_PROPERTY);
+        System.out.println("DEBUG: Fired property change for CreateTaskViewModel");
 
         // Update available tasks view model to trigger refresh
         AvailableTasksState availableState = availableTasksViewModel.getState();
         availableState.setRefreshNeeded(true);
         availableTasksViewModel.setState(availableState);
-        availableTasksViewModel.firePropertyChanged();
+        availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+        System.out.println("DEBUG: Fired property change for AvailableTasksViewModel with refreshNeeded=true");
 
-        // Switch back to available tasks view
-        viewManagerModel.setActiveView(availableTasksViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
+        // Note: Removed viewManagerModel.setActiveView() as we want to stay on the same page
     }
 
     @Override
@@ -53,6 +55,6 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
         state.setError(error);
         state.setSuccessMessage(null);
         createTaskViewModel.setState(state);
-        createTaskViewModel.firePropertyChanged();
+        createTaskViewModel.firePropertyChanged(CreateTaskViewModel.CREATE_TASK_STATE_PROPERTY);
     }
 }

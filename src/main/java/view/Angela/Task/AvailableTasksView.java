@@ -89,8 +89,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("DEBUG: AvailableTasksView received property change: " + evt.getPropertyName());
         if (AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY.equals(evt.getPropertyName())) {
             AvailableTasksState state = (AvailableTasksState) evt.getNewValue();
+            System.out.println("DEBUG: Refresh needed: " + state.isRefreshNeeded());
             if (state.isRefreshNeeded()) {
                 refreshTasks();
                 // Reset the refresh flag

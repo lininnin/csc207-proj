@@ -77,11 +77,13 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
         // Note: isOneTime flag is not stored yet - this will be handled when
         // you implement the full TaskRepository that saves TaskAvailable entities
         String taskId = taskGateway.saveAvailableTask(taskInfo);
+        System.out.println("DEBUG: Task saved with ID: " + taskId);
 
         // Present success
         CreateTaskOutputData outputData = new CreateTaskOutputData(
                 taskId, taskName, "Task created successfully"
         );
+        System.out.println("DEBUG: Calling outputBoundary.presentSuccess");
         outputBoundary.presentSuccess(outputData);
     }
 }

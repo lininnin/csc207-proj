@@ -4,7 +4,6 @@ import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
 import use_case.Angela.task.delete.DeleteTaskOutputBoundary;
 import use_case.Angela.task.delete.DeleteTaskOutputData;
-import javax.swing.JOptionPane;
 
 /**
  * Presenter for the delete task use case.
@@ -26,13 +25,13 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         state.setLastDeletedTaskId(outputData.getTaskId());
         state.setSuccessMessage(outputData.getMessage());
         deleteTaskViewModel.setState(state);
-        deleteTaskViewModel.firePropertyChanged();
+        deleteTaskViewModel.firePropertyChanged(DeleteTaskViewModel.DELETE_TASK_STATE_PROPERTY);
 
         // Trigger refresh of available tasks
         AvailableTasksState availableState = availableTasksViewModel.getState();
         availableState.setRefreshNeeded(true);
         availableTasksViewModel.setState(availableState);
-        availableTasksViewModel.firePropertyChanged();
+        availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         DeleteTaskState state = new DeleteTaskState();
         state.setError(error);
         deleteTaskViewModel.setState(state);
-        deleteTaskViewModel.firePropertyChanged();
+        deleteTaskViewModel.firePropertyChanged(DeleteTaskViewModel.DELETE_TASK_STATE_PROPERTY);
     }
 
     @Override
@@ -52,6 +51,6 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         state.setPendingDeleteTaskName(taskName);
         state.setShowWarningDialog(true);
         deleteTaskViewModel.setState(state);
-        deleteTaskViewModel.firePropertyChanged();
+        deleteTaskViewModel.firePropertyChanged(DeleteTaskViewModel.DELETE_TASK_STATE_PROPERTY);
     }
 }

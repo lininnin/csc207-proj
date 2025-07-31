@@ -57,39 +57,29 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         // Task Name
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(new JLabel("Task Name:"), gbc);
-
-        gbc.gridx = 1; gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
         formPanel.add(taskNameField, gbc);
 
-        // Description
+        // Category with manage button
         gbc.gridx = 0; gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        formPanel.add(new JLabel("Description:"), gbc);
-
-        gbc.gridx = 1; gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        scrollPane.setPreferredSize(new Dimension(300, 60));
-        formPanel.add(scrollPane, gbc);
-
-        // Category row with manage button
-        gbc.gridx = 0; gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.NONE;
         formPanel.add(new JLabel("Category:"), gbc);
-
-        gbc.gridx = 1; gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        JPanel categoryPanel = new JPanel(new BorderLayout());
-        categoryPanel.add(categoryComboBox, BorderLayout.CENTER);
-
+        gbc.gridx = 1;
+        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        categoryPanel.add(categoryComboBox);
         manageCategoriesButton = new JButton("Manage");
         manageCategoriesButton.addActionListener(e -> openCategoryManagement());
-        categoryPanel.add(manageCategoriesButton, BorderLayout.EAST);
-
+        categoryPanel.add(manageCategoriesButton);
         formPanel.add(categoryPanel, gbc);
 
-        // One-Time Task
+        // Description
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Description:"), gbc);
+        gbc.gridx = 1;
+        JScrollPane scrollPane = new JScrollPane(descriptionArea);
+        scrollPane.setPreferredSize(new Dimension(200, 60));
+        formPanel.add(scrollPane, gbc);
+
+        // One-time checkbox
         gbc.gridx = 1; gbc.gridy = 3;
         formPanel.add(oneTimeCheckBox, gbc);
 
@@ -117,7 +107,6 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
     }
 
     private void openCategoryManagement() {
-        // This will be wired up in TaskPageBuilder
         firePropertyChange("openCategoryManagement", null, null);
     }
 
@@ -140,10 +129,12 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void actionPerformed(ActionEvent evt) {
+        System.out.println("DEBUG: Create button clicked");
         if (evt.getSource() == createButton && createTaskController != null) {
             CategoryItem selectedCategory = (CategoryItem) categoryComboBox.getSelectedItem();
             String categoryId = selectedCategory != null ? selectedCategory.getId() : "";
 
+            System.out.println("DEBUG: Executing create task with name: " + taskNameField.getText());
             createTaskController.execute(
                     taskNameField.getText(),
                     descriptionArea.getText(),
@@ -155,15 +146,20 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        CreateTaskState state = (CreateTaskState) evt.getNewValue();
+        System.out.println("DEBUG: CreateTaskView received property change: " + evt.getPropertyName());
+        if (CreateTaskViewModel.CREATE_TASK_STATE_PROPERTY.equals(evt.getPropertyName())) {
+            CreateTaskState state = (CreateTaskState) evt.getNewValue();
 
-        if (state.getError() != null) {
-            errorLabel.setText(state.getError());
-            errorLabel.setForeground(Color.RED);
-        } else if (state.getSuccessMessage() != null) {
-            errorLabel.setText(state.getSuccessMessage());
-            errorLabel.setForeground(new Color(0, 128, 0));
-            clearForm();
+            if (state.getError() != null) {
+                System.out.println("DEBUG: Showing error: " + state.getError());
+                errorLabel.setText(state.getError());
+                errorLabel.setForeground(Color.RED);
+            } else if (state.getSuccessMessage() != null) {
+                System.out.println("DEBUG: Showing success: " + state.getSuccessMessage());
+                errorLabel.setText(state.getSuccessMessage());
+                errorLabel.setForeground(new Color(0, 128, 0));
+                clearForm();
+            }
         }
     }
 
