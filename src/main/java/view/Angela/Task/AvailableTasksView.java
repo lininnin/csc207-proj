@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
- * View for displaying available tasks with delete functionality.
+ * View for displaying available tasks with edit and delete functionality.
  */
 public class AvailableTasksView extends JPanel implements PropertyChangeListener {
     private final String viewName = "available tasks";
@@ -46,32 +46,36 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         add(messageLabel, BorderLayout.NORTH);
 
         // Create table
-        String[] columnNames = {"Task Name", "Description", "Category", "Actions"};
+        String[] columnNames = {"Name", "Category", "Description", "Edit", "Delete"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Make table non-editable
+                // Make Edit and Delete columns editable so buttons work
+                return column == 3 || column == 4;
             }
         };
 
         taskTable = new JTable(tableModel);
         taskTable.setRowHeight(30);
 
-        // Custom renderer for the Actions column
-        taskTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-        taskTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox()));
+        // Set column widths
+        taskTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Name
+        taskTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Category
+        taskTable.getColumnModel().getColumn(2).setPreferredWidth(200); // Description
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Edit
+        taskTable.getColumnModel().getColumn(4).setPreferredWidth(60);  // Delete
+
+        // Custom renderer and editor for Edit column
+        taskTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer("Edit"));
+        taskTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor("Edit"));
+
+        // Custom renderer and editor for Delete column
+        taskTable.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer("Delete"));
+        taskTable.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor("Delete"));
 
         // Add scroll pane
         JScrollPane scrollPane = new JScrollPane(taskTable);
         add(scrollPane, BorderLayout.CENTER);
-
-        // Refresh button
-        JButton refreshButton = new JButton("Refresh");
-        refreshButton.addActionListener(e -> refreshTasks());
-
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        bottomPanel.add(refreshButton);
-        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public void setDeleteTaskController(DeleteTaskController controller) {
@@ -89,6 +93,9 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             AvailableTasksState state = (AvailableTasksState) evt.getNewValue();
             if (state.isRefreshNeeded()) {
                 refreshTasks();
+                // Reset the refresh flag
+                state.setRefreshNeeded(false);
+                availableTasksViewModel.setState(state);
             }
         } else if (DeleteTaskViewModel.DELETE_TASK_STATE_PROPERTY.equals(evt.getPropertyName())) {
             DeleteTaskState state = (DeleteTaskState) evt.getNewValue();
@@ -117,6 +124,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             Timer timer = new Timer(3000, e -> messageLabel.setText(" "));
             timer.setRepeats(false);
             timer.start();
+            refreshTasks();
         } else if (state.getError() != null) {
             messageLabel.setForeground(Color.RED);
             messageLabel.setText(state.getError());
@@ -131,9 +139,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             for (Info task : tasks) {
                 tableModel.addRow(new Object[]{
                         task.getName(),
-                        task.getDescription(),
                         task.getCategory() != null ? task.getCategory() : "",
-                        task.getId() // Store ID in actions column for button handling
+                        task.getDescription() != null ? task.getDescription() : "",
+                        task.getId(), // Store ID for edit button
+                        task.getId()  // Store ID for delete button
                 });
             }
         }
@@ -141,82 +150,107 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         messageLabel.setText(" ");
     }
 
-    // Button renderer for Actions column
-    private class ButtonRenderer extends JPanel implements TableCellRenderer {
-        public ButtonRenderer() {
-            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+    // Button renderer for Edit and Delete columns
+    private class ButtonRenderer extends JButton implements TableCellRenderer {
+        public ButtonRenderer(String text) {
+            setText(text);
+            setOpaque(true);
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
-            removeAll();
-
-            JButton editButton = new JButton("Edit");
-            JButton deleteButton = new JButton("Delete");
-
-            editButton.setMargin(new Insets(2, 5, 2, 5));
-            deleteButton.setMargin(new Insets(2, 5, 2, 5));
-
-            add(editButton);
-            add(deleteButton);
-
             if (isSelected) {
+                setForeground(table.getSelectionForeground());
                 setBackground(table.getSelectionBackground());
             } else {
-                setBackground(table.getBackground());
+                setForeground(table.getForeground());
+                setBackground(UIManager.getColor("Button.background"));
             }
-
             return this;
         }
     }
 
-    // Button editor for Actions column
+    // Button editor for Edit and Delete columns
     private class ButtonEditor extends DefaultCellEditor {
-        private JPanel panel;
-        private String currentTaskId;
+        private JButton button;
+        private String label;
+        private String taskId;
+        private boolean isPushed;
 
-        public ButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        public ButtonEditor(String text) {
+            super(new JCheckBox());
+            button = new JButton();
+            button.setOpaque(true);
+            label = text;
+
+            button.addActionListener(e -> fireEditingStopped());
         }
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
-            panel.removeAll();
-
-            currentTaskId = (String) value;
-
-            JButton editButton = new JButton("Edit");
-            JButton deleteButton = new JButton("Delete");
-
-            editButton.setMargin(new Insets(2, 5, 2, 5));
-            deleteButton.setMargin(new Insets(2, 5, 2, 5));
-
-            editButton.addActionListener(e -> {
-                // TODO: Implement edit functionality
-                JOptionPane.showMessageDialog(panel, "Edit feature coming soon!");
-                fireEditingStopped();
-            });
-
-            deleteButton.addActionListener(e -> {
-                if (deleteTaskController != null) {
-                    deleteTaskController.execute(currentTaskId, true);
-                }
-                fireEditingStopped();
-            });
-
-            panel.add(editButton);
-            panel.add(deleteButton);
-            panel.setBackground(table.getBackground());
-
-            return panel;
+            taskId = (String) value;
+            button.setText(label);
+            isPushed = true;
+            return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return currentTaskId;
+            if (isPushed) {
+                if ("Delete".equals(label) && deleteTaskController != null) {
+                    deleteTaskController.execute(taskId, true);
+                } else if ("Edit".equals(label)) {
+                    // Get task details from the row
+                    int row = taskTable.getSelectedRow();
+                    if (row >= 0) {
+                        String name = (String) tableModel.getValueAt(row, 0);
+                        String category = (String) tableModel.getValueAt(row, 1);
+                        String description = (String) tableModel.getValueAt(row, 2);
+
+                        // Show edit dialog
+                        JPanel editPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+                        JTextField nameField = new JTextField(name);
+                        JTextField categoryField = new JTextField(category);
+                        JTextArea descriptionArea = new JTextArea(description);
+                        descriptionArea.setRows(3);
+
+                        editPanel.add(new JLabel("Name:"));
+                        editPanel.add(nameField);
+                        editPanel.add(new JLabel("Category:"));
+                        editPanel.add(categoryField);
+                        editPanel.add(new JLabel("Description:"));
+                        editPanel.add(new JScrollPane(descriptionArea));
+
+                        int result = JOptionPane.showConfirmDialog(
+                                AvailableTasksView.this,
+                                editPanel,
+                                "Edit Task",
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.PLAIN_MESSAGE
+                        );
+
+                        if (result == JOptionPane.OK_OPTION) {
+                            // TODO: Implement edit functionality with controller
+                            JOptionPane.showMessageDialog(
+                                    AvailableTasksView.this,
+                                    "Edit functionality coming soon - will be implemented with edit_available_task use case completion",
+                                    "Info",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                        }
+                    }
+                }
+            }
+            isPushed = false;
+            return taskId;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            isPushed = false;
+            return super.stopCellEditing();
         }
     }
 

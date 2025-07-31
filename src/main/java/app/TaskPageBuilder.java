@@ -27,7 +27,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
- * Builder for the Task page with category management.
+ * Builder for the Task page following the MindTrack GUI template.
  */
 public class TaskPageBuilder {
 
@@ -45,12 +45,16 @@ public class TaskPageBuilder {
     // Views
     private CreateTaskView createTaskView;
     private AvailableTasksView availableTasksView;
+    private AddToTodayView addToTodayView;
+    private TodaysTasksView todaysTasksView;
     private CategoryManagementDialog categoryDialog;
 
     public JPanel build() {
         // Create Views
         createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
         availableTasksView = new AvailableTasksView(availableTasksViewModel, deleteTaskViewModel);
+        addToTodayView = new AddToTodayView();
+        todaysTasksView = new TodaysTasksView();
 
         // Wire up Create Task Use Case
         CreateTaskOutputBoundary createTaskPresenter = new CreateTaskPresenter(
@@ -92,123 +96,128 @@ public class TaskPageBuilder {
             }
         });
 
-        // Set the task gateway so the view can fetch tasks
+        // Set the task gateway so the views can fetch tasks
         availableTasksView.setTaskGateway(taskGateway);
+        addToTodayView.setTaskGateway(taskGateway);
 
         return buildLayout();
     }
 
     private void openCategoryDialog() {
-        // Find the parent frame
         Container parent = createTaskView.getParent();
         while (parent != null && !(parent instanceof JFrame)) {
             parent = parent.getParent();
         }
         JFrame parentFrame = (JFrame) parent;
 
-        if (categoryDialog == null && parentFrame != null) {
-            categoryDialog = new CategoryManagementDialog(
-                    parentFrame,
-                    categoryGateway,
-                    categoryManagementViewModel
-            );
+        if (parentFrame != null) {
+            if (categoryDialog == null) {
+                categoryDialog = new CategoryManagementDialog(
+                        parentFrame,
+                        categoryGateway,
+                        categoryManagementViewModel
+                );
 
-            // Wire up controllers
-            CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
-                    categoryManagementViewModel
-            );
+                // Wire up controllers
+                CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
+                        categoryManagementViewModel
+                );
 
-            CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
-                    categoryGateway,
-                    categoryPresenter
-            );
-            CreateCategoryController createCategoryController = new CreateCategoryController(
-                    createCategoryInteractor
-            );
+                CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                CreateCategoryController createCategoryController = new CreateCategoryController(
+                        createCategoryInteractor
+                );
 
-            DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                    categoryGateway,
-                    categoryPresenter
-            );
-            DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
-                    deleteCategoryInteractor
-            );
+                DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
+                        deleteCategoryInteractor
+                );
 
-            EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
-                    categoryGateway,
-                    categoryPresenter
-            );
-            EditCategoryController editCategoryController = new EditCategoryController(
-                    editCategoryInteractor
-            );
+                EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                EditCategoryController editCategoryController = new EditCategoryController(
+                        editCategoryInteractor
+                );
 
-            categoryDialog.setControllers(
-                    createCategoryController,
-                    deleteCategoryController,
-                    editCategoryController
-            );
+                categoryDialog.setControllers(
+                        createCategoryController,
+                        deleteCategoryController,
+                        editCategoryController
+                );
 
-            // Listen for category updates
-            categoryDialog.addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if ("categoriesUpdated".equals(evt.getPropertyName())) {
+                categoryDialog.setCategoryChangeListener(new CategoryManagementDialog.CategoryChangeListener() {
+                    @Override
+                    public void onCategoryChanged() {
                         createTaskView.refreshCategories();
                     }
-                }
-            });
-        }
+                });
+            }
 
-        if (categoryDialog != null) {
             categoryDialog.setVisible(true);
         }
     }
 
     private JPanel buildLayout() {
-        // Top section with create task form
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(createTaskView, BorderLayout.CENTER);
-        topPanel.setPreferredSize(new Dimension(800, 300));
+        // --- Left side: Vertically stacked Create Task and Add to Today ---
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setPreferredSize(new Dimension(450, 450)); // Wider panel
 
-        // Middle section for today's tasks (placeholder for now)
-        JPanel todaysTasksPanel = new JPanel();
-        todaysTasksPanel.setBorder(BorderFactory.createTitledBorder("Today's Tasks"));
-        todaysTasksPanel.setPreferredSize(new Dimension(800, 150));
-        todaysTasksPanel.add(new JLabel("Today's tasks will appear here"));
+        // Top: New Available Task
+        createTaskView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+        createTaskView.setPreferredSize(new Dimension(450, 250));
+        leftPanel.add(createTaskView);
 
-        // Bottom section for available tasks
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(availableTasksView, BorderLayout.CENTER);
-        bottomPanel.setPreferredSize(new Dimension(800, 250));
+        leftPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing
 
-        // Combine all sections
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(topPanel);
-        centerPanel.add(todaysTasksPanel);
-        centerPanel.add(bottomPanel);
+        // Bottom: Add Today's Task
+        addToTodayView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        addToTodayView.setPreferredSize(new Dimension(450, 200));
+        leftPanel.add(addToTodayView);
 
-        // Sidebar
-        JPanel sidebarPanel = createSidebar();
+        // --- Right side: Today's Tasks panel ---
+        JPanel todaysPanel = new JPanel(new BorderLayout());
+        todaysPanel.add(todaysTasksView, BorderLayout.CENTER);
+        todaysPanel.setPreferredSize(new Dimension(550, 450));
 
-        // Wrap with collapsible sidebar
-        CollapsibleSidebarView collapsibleView = new CollapsibleSidebarView(sidebarPanel, centerPanel);
+        // --- Top section: Left and Right panels side by side ---
+        JPanel topSection = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
 
-        // Right panel for details
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(300, 0));
-        rightPanel.setBackground(Color.WHITE);
-        rightPanel.add(new JLabel("Task Details", SwingConstants.CENTER), BorderLayout.NORTH);
+        // Left panel takes 45% of width
+        gbc.gridx = 0;
+        gbc.weightx = 0.45;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        topSection.add(leftPanel, gbc);
 
-        // Final layout
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleView, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        // Today's panel takes 55% of width
+        gbc.gridx = 1;
+        gbc.weightx = 0.55;
+        topSection.add(todaysPanel, gbc);
 
-        return mainPanel;
-    }
+        topSection.setPreferredSize(new Dimension(900, 450));
 
-    private JPanel createSidebar() {
+        // --- Bottom section: Available Tasks ---
+        JPanel bottomSection = new JPanel(new BorderLayout());
+        bottomSection.add(availableTasksView, BorderLayout.CENTER);
+        bottomSection.setPreferredSize(new Dimension(900, 300));
+
+        // --- Center Panel: Combine top and bottom ---
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(topSection, BorderLayout.NORTH);
+        centerPanel.add(bottomSection, BorderLayout.CENTER);
+
+        // --- Sidebar Panel ---
         JPanel sidebarPanel = new JPanel();
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBackground(new Color(60, 63, 65));
@@ -216,7 +225,8 @@ public class TaskPageBuilder {
 
         String[] menuItems = {
                 "📋 Tasks", "📆 Events", "🎯 Goals",
-                "🧠 Wellness Log", "📊 Charts", "🤖 AI-Feedback & Analysis", "⚙️ Settings"
+                "🧠 Wellness Log", "📊 Charts",
+                "🤖 AI-Feedback & Analysis", "⚙️ Settings"
         };
 
         for (String item : menuItems) {
@@ -228,7 +238,7 @@ public class TaskPageBuilder {
             btn.setBorderPainted(false);
 
             if (item.contains("Tasks")) {
-                btn.setBackground(new Color(45, 47, 49));
+                btn.setBackground(new Color(45, 47, 49)); // Highlight current page
             } else {
                 btn.setBackground(new Color(60, 63, 65));
             }
@@ -236,6 +246,64 @@ public class TaskPageBuilder {
             sidebarPanel.add(btn);
         }
 
-        return sidebarPanel;
+        // --- Wrap sidebar + centerPanel ---
+        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
+
+        // --- Right Panel (Details) ---
+        JPanel taskDetailsPanel = new JPanel(new BorderLayout());
+        taskDetailsPanel.setPreferredSize(new Dimension(300, 0));
+        taskDetailsPanel.setBackground(Color.WHITE);
+
+        // Task details section
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
+        detailsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel detailsTitle = new JLabel("Today so far");
+        detailsTitle.setFont(new Font("SansSerif", Font.BOLD, 16));
+        detailsPanel.add(detailsTitle);
+        detailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Goals section
+        JPanel goalsPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        goalsPanel.add(new JLabel("Goals"));
+        goalsPanel.add(new JLabel("period"));
+        goalsPanel.add(new JLabel("Go to gym"));
+        goalsPanel.add(new JLabel("weekly"));
+        goalsPanel.add(new JLabel("Read books"));
+        goalsPanel.add(new JLabel("monthly"));
+        detailsPanel.add(goalsPanel);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        // Task Completion Rate
+        JLabel completionLabel = new JLabel("Task Completion rate:");
+        detailsPanel.add(completionLabel);
+
+        JPanel progressPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        progressPanel.add(new JLabel("Progress"));
+        progressPanel.add(new JLabel("0%"));
+        progressPanel.add(new JLabel(""));
+        progressPanel.add(new JLabel(""));
+        detailsPanel.add(progressPanel);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        // Task Overdue section
+        JLabel overdueTitle = new JLabel("Task Overdue");
+        overdueTitle.setFont(new Font("SansSerif", Font.BOLD, 14));
+        detailsPanel.add(overdueTitle);
+
+        JLabel overdueName = new JLabel("Name    due date");
+        detailsPanel.add(overdueName);
+
+        taskDetailsPanel.add(detailsPanel, BorderLayout.NORTH);
+
+        // --- Final Frame Layout ---
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(taskDetailsPanel, BorderLayout.EAST);
+
+        return mainPanel;
     }
 }
