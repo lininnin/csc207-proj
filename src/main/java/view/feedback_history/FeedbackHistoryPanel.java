@@ -25,7 +25,7 @@ public class FeedbackHistoryPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
-        listContainer.setBorder(new EmptyBorder(8, 8, 8, 8));
+        listContainer.setBorder(new EmptyBorder(4, 4, 4, 4));
         JScrollPane scroll = new JScrollPane(listContainer);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         add(scroll, BorderLayout.CENTER);
@@ -60,6 +60,9 @@ public class FeedbackHistoryPanel extends JPanel {
         JButton viewButton = new JButton("View");
         // TODO: Show details panel here
         row.add(viewButton, BorderLayout.EAST);
+
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // 40px tall rows
+
         return row;
     }
 }

@@ -21,7 +21,7 @@ public class OpenAIAPIAdapter implements GPTService {
     private final String API_KEY;
 
     public OpenAIAPIAdapter() {
-        this.API_KEY = Objects.requireNonNull(System.getenv("OPENAI_API_KEY"), "OPENAI_API_KEY env variable not set.");
+        this.API_KEY = Objects.requireNonNull(System.getProperty("OPENAI_API_KEY"), "OPENAI_API_KEY env variable not set.");
 
         this.client = new OkHttpClient.Builder()
                 .callTimeout(Duration.ofSeconds(30))

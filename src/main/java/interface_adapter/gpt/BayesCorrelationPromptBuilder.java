@@ -17,13 +17,14 @@ import java.util.stream.Collectors;
  *      { ... fatigue ... }
  *    ],
  *    "notes":"one short sentence"
+*    }
  */
 public final class BayesCorrelationPromptBuilder {
 
     private BayesCorrelationPromptBuilder() {}
 
     /**
-     * @param weekLogs exactly 7 DailyLog objects (newest last is fine)
+     * @param weekLogs daily log objects from the last 7 days
      * @return prompt string
      */
     public static String buildPrompt(List<DailyLog> weekLogs) {
@@ -66,9 +67,9 @@ public final class BayesCorrelationPromptBuilder {
                     ? Double.NaN : dl.getDailyTaskSummary().getCompletionRate();
 
             // average wellness levels for the day
-            double stress = avg(dl, WellnessLogEntry::getStressLevel);
-            double energy = avg(dl, WellnessLogEntry::getEnergyLevel);
-            double fatigue = avg(dl, WellnessLogEntry::getFatigueLevel);
+            double stress = avg(dl, w -> w.getStressLevel().getValue());
+            double energy = avg(dl, w -> w.getEnergyLevel().getValue());
+            double fatigue = avg(dl, w -> w.getFatigueLevel().getValue());
 
             return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f," +
                             "\"stress\":%.2f,\"energy\":%.2f,\"fatigue\":%.2f}",

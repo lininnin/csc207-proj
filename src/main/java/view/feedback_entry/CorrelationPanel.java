@@ -4,51 +4,46 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class CorrelationPanel extends JPanel {
-
     public CorrelationPanel(String correlationJson) {
         setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(8, 8, 8, 8));
 
-        JSONObject json = new JSONObject(correlationJson);
-
-        // Bayesian
-        String[] columnNames = {
-                "Wellness Factor",
-                "Mean Corr.",
-                "95% CI Lower",
-                "95% CI Upper",
-                "P(Effect>0)"
-        };
-        JSONArray factors = json.getJSONArray("factors");
-        Object[][] data = new Object[factors.length()][5];
-
-        for (int i = 0; i < factors.length(); i++) {
-            JSONObject f = factors.getJSONObject(i);
-            String name = f.getString("name");
-            double corr = f.getDouble("correlation");
-            double lower = f.optDouble("lower", Double.NaN);
-            double upper = f.optDouble("upper", Double.NaN);
-            double probGtZero = f.optDouble("prob_gt_zero", Double.NaN);
-
-            data[i][0] = name;
-            data[i][1] = String.format("%.2f", corr);
-            data[i][2] = Double.isNaN(lower) ? "—" : String.format("%.2f", lower);
-            data[i][3] = Double.isNaN(upper) ? "—" : String.format("%.2f", upper);
-            data[i][4] = Double.isNaN(probGtZero) ? "—" : String.format("%.2f", probGtZero);
+        if (correlationJson == null || correlationJson.isBlank()) {
+            add(new JLabel("No correlation data available."), BorderLayout.CENTER);
+            return;
         }
 
-        JTable table = new JTable(data, columnNames);
-        table.setEnabled(false);
+        try {
+            JSONObject obj = new JSONObject(correlationJson);
 
-        add(new JLabel("Bayesian Analysis of Wellness Factors vs. Completion Rate:"), BorderLayout.NORTH);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+            // --- Parse effect_summary ---
+            String[] columns = {"Variable", "Direction", "Confidence"};
+            JSONArray effects = obj.getJSONArray("effect_summary");
+            Object[][] data = new Object[effects.length()][3];
+            for (int i = 0; i < effects.length(); i++) {
+                JSONObject eff = effects.getJSONObject(i);
+                data[i][0] = eff.getString("variable");
+                data[i][1] = eff.getString("direction");
+                data[i][2] = String.format("%.0f%%", eff.getDouble("confidence") * 100);
+            }
+            JTable table = new JTable(data, columns);
+            table.setEnabled(false);
+            JScrollPane scrollPane = new JScrollPane(table);
+            add(scrollPane, BorderLayout.CENTER);
 
-        if (json.has("note")) {
-            JLabel note = new JLabel(json.getString("note"));
-            note.setFont(note.getFont().deriveFont(Font.ITALIC, 11f));
-            add(note, BorderLayout.SOUTH);
+            // --- Parse notes (optional) ---
+            String notes = obj.optString("notes", "");
+            if (!notes.isEmpty()) {
+                JLabel notesLabel = new JLabel("Notes: " + notes);
+                notesLabel.setBorder(new EmptyBorder(8, 0, 0, 0));
+                add(notesLabel, BorderLayout.SOUTH);
+            }
+        } catch (Exception e) {
+            add(new JLabel("Invalid correlation data."), BorderLayout.CENTER);
         }
     }
 }
