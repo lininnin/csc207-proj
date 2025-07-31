@@ -24,8 +24,8 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
     private final CategoryGateway categoryGateway;
 
     // UI Components
-    private final JTextField taskNameField = new JTextField(20);
-    private final JTextArea descriptionArea = new JTextArea(3, 20);
+    private final JTextField taskNameField = new JTextField();
+    private final JTextArea descriptionArea = new JTextArea();
     private final JComboBox<CategoryItem> categoryComboBox = new JComboBox<>();
     private final JCheckBox oneTimeCheckBox = new JCheckBox("One-Time Task");
     private final JButton createButton = new JButton("Create Task");
@@ -53,34 +53,56 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Task Name
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Task Name:"), gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        taskNameField.setPreferredSize(new Dimension(250, 25));
         formPanel.add(taskNameField, gbc);
 
         // Category with manage button
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0;
         formPanel.add(new JLabel("Category:"), gbc);
+
         gbc.gridx = 1;
-        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        categoryPanel.add(categoryComboBox);
+        gbc.weightx = 1.0;
+        JPanel categoryPanel = new JPanel(new BorderLayout(5, 0));
+        categoryComboBox.setPreferredSize(new Dimension(180, 25));
+        categoryPanel.add(categoryComboBox, BorderLayout.CENTER);
         manageCategoriesButton = new JButton("Manage");
         manageCategoriesButton.addActionListener(e -> openCategoryManagement());
-        categoryPanel.add(manageCategoriesButton);
+        categoryPanel.add(manageCategoriesButton, BorderLayout.EAST);
         formPanel.add(categoryPanel, gbc);
 
         // Description
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         formPanel.add(new JLabel("Description:"), gbc);
+
         gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        descriptionArea.setRows(3);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        scrollPane.setPreferredSize(new Dimension(200, 60));
+        scrollPane.setPreferredSize(new Dimension(250, 60));
         formPanel.add(scrollPane, gbc);
 
         // One-time checkbox
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
         formPanel.add(oneTimeCheckBox, gbc);
 
         // Buttons
@@ -88,13 +110,18 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         buttonPanel.add(createButton);
         buttonPanel.add(clearButton);
 
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
         formPanel.add(buttonPanel, gbc);
 
         // Error label
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         errorLabel.setForeground(Color.RED);
         formPanel.add(errorLabel, gbc);
 
