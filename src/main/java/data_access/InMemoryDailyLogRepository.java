@@ -21,4 +21,18 @@
 //    public DailyLog findByDate(LocalDate date) {
 //        return dailyLogs.get(date);
 //    }
+//
+//    @Override
+//    public List<DailyLog> loadBetween(LocalDate from, LocalDate to) {
+//        List<DailyLog> result = new ArrayList<>();
+//        for (Map.Entry<LocalDate, DailyLog> entry : logMap.entrySet()) {
+//            LocalDate date = entry.getKey();
+//            if ((date.isEqual(from) || date.isAfter(from)) &&
+//                (date.isEqual(to) || date.isBefore(to))) {
+//                result.add(entry.getValue());
+//            }
+//        }
+//        result.sort(Comparator.comparing(DailyLog::getDate));
+//        return result;
+//    }
 //}
