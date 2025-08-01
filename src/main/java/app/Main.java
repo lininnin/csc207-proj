@@ -3,9 +3,9 @@ package app;
 class MainApp {
     public static void main(String[] args) {
         // 切换运行不同模块的页面：
-        //new EventPageRunner().run();
+        new EventPageRunner().run();
         //new WellnessLogPageRunner().run();
-        new SettingsPageRunner().run();
+        //new SettingsPageRunner().run();
     }
 }
 
