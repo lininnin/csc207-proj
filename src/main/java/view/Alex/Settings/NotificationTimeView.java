@@ -77,6 +77,8 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
         });
 
         saveButton.addActionListener(e -> {
+            System.out.println("✅ [View] Save clicked with values: "
+                    + getReminder1Text() + ", " + getReminder2Text() + ", " + getReminder3Text());
             controller.execute(
                     getReminder1Text(),
                     getReminder2Text(),
@@ -104,13 +106,14 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
         }
 
         // 监听编辑状态与错误
-        if (evt.getPropertyName().equals(EditNotificationTimeViewModel.EDIT_NOTIFICATION_TIME_STATE_PROPERTY)) {
+        if (evt.getPropertyName().equals(editViewModel.getViewName())) {
             EditNotificationTimeState state = (EditNotificationTimeState) evt.getNewValue();
 
             // 更新字段（可选）
             reminder1Field.setText(state.getReminder1());
             reminder2Field.setText(state.getReminder2());
             reminder3Field.setText(state.getReminder3());
+            toggleEditing(state.isEditing());
 
             // 错误弹窗
             if (state.getErrorMessage() != null) {

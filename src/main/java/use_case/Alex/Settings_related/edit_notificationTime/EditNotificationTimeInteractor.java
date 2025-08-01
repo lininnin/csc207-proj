@@ -24,6 +24,7 @@ public class EditNotificationTimeInteractor implements EditNotificationTimeInput
         String r2Str = inputData.getReminder2();
         String r3Str = inputData.getReminder3();
 
+        System.out.println("🟡 [Interactor] execute() triggered");
         try {
             // ✅ Step 1: parse strings to LocalTime
             LocalTime reminder1, reminder2, reminder3;
@@ -31,12 +32,17 @@ public class EditNotificationTimeInteractor implements EditNotificationTimeInput
                 reminder1 = LocalTime.parse(r1Str);
                 reminder2 = LocalTime.parse(r2Str);
                 reminder3 = LocalTime.parse(r3Str);
+                System.out.println("✅ [Interactor] Parsed times: " + reminder1 + ", " + reminder2 + ", " + reminder3);
+
             } catch (DateTimeParseException e) {
+                System.out.println("❌ [Interactor] Failed to parse time: " + r1Str + ", " + r2Str + ", " + r3Str);
+
                 presenter.prepareFailView("Invalid time format. Please use HH:mm.");
                 return;
             }
 
             // ✅ Step 2: update data access layer
+            System.out.println("🟢 [Interactor] Calling presenter...");
             dataAccess.updateNotificationTimes(reminder1, reminder2, reminder3);
 
             // ✅ Step 3: prepare success output

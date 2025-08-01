@@ -1,6 +1,7 @@
 package data_access;
 
 import entity.Alex.NotificationTime.NotificationTime;
+import use_case.Alex.Notification_related.NotificationDataAccessObjectInterf;
 import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
 
 import java.time.LocalTime;
@@ -9,7 +10,8 @@ import java.time.LocalTime;
  * In-memory implementation of EditNotificationTimeDataAccessInterf.
  * Stores and updates a single NotificationTime instance.
  */
-public class NotificationTimeDataAccessObject implements EditNotificationTimeDataAccessInterf {
+public class NotificationTimeDataAccessObject implements EditNotificationTimeDataAccessInterf,
+        NotificationDataAccessObjectInterf {
 
     private final NotificationTime notificationTime;
 
@@ -42,6 +44,21 @@ public class NotificationTimeDataAccessObject implements EditNotificationTimeDat
      */
     public NotificationTime getNotificationTime() {
         return notificationTime;
+    }
+
+    @Override
+    public LocalTime getReminder1() {
+        return notificationTime.getReminder1();
+    }
+
+    @Override
+    public LocalTime getReminder2() {
+        return notificationTime.getReminder2();
+    }
+
+    @Override
+    public LocalTime getReminder3() {
+        return notificationTime.getReminder3();
     }
 }
 

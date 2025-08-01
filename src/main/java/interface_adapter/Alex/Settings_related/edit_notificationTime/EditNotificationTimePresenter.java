@@ -17,6 +17,8 @@ public class EditNotificationTimePresenter implements EditNotificationTimeOutput
 
     @Override
     public void prepareSuccessView(EditNotificationTimeOutputData outputData) {
+        System.out.println("🟢 [Presenter] Success with times: "
+                + outputData.getReminder1() + ", " + outputData.getReminder2() + ", " + outputData.getReminder3());
         EditNotificationTimeState newState = new EditNotificationTimeState();
 
         newState.setReminder1(outputData.getReminder1());
