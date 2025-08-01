@@ -7,22 +7,22 @@ import use_case.feedback_history.FeedbackHistoryInputBoundary;
 import use_case.feedback_history.FeedbackHistoryInteractor;
 import use_case.feedback_history.FeedbackHistoryOutputBoundary;
 import use_case.repository.FeedbackRepository;
-import view.feedback_history.FeedbackHistoryDialog;
+import view.feedback_history.FeedbackHistoryPanel;
 
-import java.awt.*;
+import javax.swing.*;
 
 public class FeedbackHistoryBuilder {
-    public static FeedbackHistoryDialog build(Frame owner, FeedbackRepository feedbackRepo) {
-        // ViewModel
+    /**
+     * Returns a FeedbackHistoryPanel, wired up with controller and view model.
+     * Use in your main window with CardLayout, not as a dialog!
+     */
+    public static JPanel build(FeedbackRepository feedbackRepo) {
         FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
-        // Presenter
         FeedbackHistoryOutputBoundary presenter = new FeedbackHistoryPresenter(viewModel);
-        // Interactor
-        FeedbackHistoryInputBoundary interactor =
-                new FeedbackHistoryInteractor(feedbackRepo, presenter);
-        // Controller
+        FeedbackHistoryInputBoundary interactor = new FeedbackHistoryInteractor(feedbackRepo, presenter);
         FeedbackHistoryController controller = new FeedbackHistoryController(interactor);
-        // Dialog
-        return new FeedbackHistoryDialog(owner, controller, viewModel);
+
+        // Return the main panel for use in your sidebar/card layout
+        return new FeedbackHistoryPanel(controller, viewModel);
     }
 }
