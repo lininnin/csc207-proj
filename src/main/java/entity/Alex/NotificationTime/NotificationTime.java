@@ -6,7 +6,7 @@ import java.time.LocalTime;
  * Represents a set of daily notification reminder times.
  * By default, the reminders are set at 08:00, 12:00, and 20:00.
  */
-public class NotificationTime {
+public class NotificationTime implements NotificationTimeInterf {
     private LocalTime reminder1;
     private LocalTime reminder2;
     private LocalTime reminder3;
