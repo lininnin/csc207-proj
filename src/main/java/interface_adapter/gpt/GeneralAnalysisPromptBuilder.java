@@ -25,12 +25,13 @@ public class GeneralAnalysisPromptBuilder {
         StringBuilder prompt = new StringBuilder();
 
         prompt.append("You are an analyst and coach. Analyse the 7-day report below, " +
-                        "summarize productivity patterns (trends, correlations, effects of missing data across the week: ")
+                        "summarize productivity patterns trends, correlations between amount of completed tasks, average wellness changes: \n " +
+                        "Give one sentence discussing missing data across the week")
                 .append("Rules for missing data: If any day's data (tasks, wellness, or events) is missing or partial, explicitly flag it as MISSING.\n")
                 .append("Discuss how that gap could relate to productivity or wellness trends seen on other days, " +
                         "but clearly mark such points as assumptions or possibilities (e.g., 'it is possible', 'may indicate'). " +
                         "Do NOT invent exact numbers.\n")
-                .append("Focus on trends, correlations, and data gaps across different days. NO advice verbs there.\n");
+                .append("Focus on trends, correlations, and data gaps across different days. Analyze trends across remaining days if there is missing data. NO advice verbs there.\n");
 
         for (DailyLog log: logs) {
             prompt.append("=== Date: ").append(log.getDate()).append(" ===\n");
