@@ -13,8 +13,8 @@ import javax.swing.*;
 
 public class FeedbackHistoryBuilder {
     /**
-     * Returns a FeedbackHistoryPanel, wired up with controller and view model.
-     * Use in your main window with CardLayout, not as a dialog!
+     * Returns FeedbackHistoryPanel
+     * Used in main window with CardLayout
      */
     public static JPanel build(FeedbackRepository feedbackRepo) {
         FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
@@ -22,7 +22,6 @@ public class FeedbackHistoryBuilder {
         FeedbackHistoryInputBoundary interactor = new FeedbackHistoryInteractor(feedbackRepo, presenter);
         FeedbackHistoryController controller = new FeedbackHistoryController(interactor);
 
-        // Return the main panel for use in your sidebar/card layout
         return new FeedbackHistoryPanel(controller, viewModel);
     }
 }
