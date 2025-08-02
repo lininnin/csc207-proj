@@ -1,4 +1,12 @@
 package use_case.Alex.Notification_related;
 
-public class NotificationOutputBoundary {
+public interface NotificationOutputBoundary {
+
+    /**
+     * Prepares the view for a successful reminder trigger.
+     *
+     * @param outputData the output data containing reminder message
+     */
+    void prepareReminderView(NotificationOutputData outputData);
 }
+
