@@ -4,6 +4,8 @@ import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 
+import entity.BeginAndDueDates.BeginAndDueDates;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
  * TODO: Will be implemented in Sophia's story #1 for weekly/monthly goal tracking
  */
 public class Goal {
-    private final Info info;
+    private final Info2 info;
     private final BeginAndDueDates beginAndDueDates;
     private final Task targetTask;
     private final TimePeriod timePeriod;
@@ -40,7 +42,7 @@ public class Goal {
      * @param frequency      The required number of task completions within the time period
      * @throws IllegalArgumentException if any required parameter is null or frequency is negative
      */
-    public Goal(Info info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
+    public Goal(Info2 info, BeginAndDueDates dates, Task targetTask, TimePeriod timePeriod, int frequency) {
         if (info == null || dates == null || targetTask == null || timePeriod == null) {
             throw new IllegalArgumentException("Goal parameters cannot be null");
         }
@@ -70,17 +72,6 @@ public class Goal {
         }
     }
 
-    /**
-     * Calculates the current progress based on completions within the goal's date range.
-     *
-     * @return The number of completions within the active period
-     */
-    public int getCurrentProgress() {
-        return (int) completionDates.stream()
-                .filter(date -> !date.isBefore(beginAndDueDates.getBeginDate()) &&
-                        (beginAndDueDates.getDueDate() == null || !date.isAfter(beginAndDueDates.getDueDate())))
-                .count();
-    }
 
     /**
      * Checks whether the goal has been achieved based on current progress and required frequency.
