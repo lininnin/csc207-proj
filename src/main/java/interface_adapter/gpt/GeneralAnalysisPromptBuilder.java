@@ -26,7 +26,7 @@ public class GeneralAnalysisPromptBuilder {
 
         prompt.append("You are an analyst and coach. Analyse the 7-day report below, " +
                         "summarize productivity patterns trends, correlations between amount of completed tasks, average wellness changes: \n " +
-                        "Give one sentence discussing missing data across the week")
+                        "Only give one sentence discussing missing data across the week if there are. Must focus on productivity trend and wellness")
                 .append("Rules for missing data: If any day's data (tasks, wellness, or events) is missing or partial, explicitly flag it as MISSING.\n")
                 .append("Discuss how that gap could relate to productivity or wellness trends seen on other days, " +
                         "but clearly mark such points as assumptions or possibilities (e.g., 'it is possible', 'may indicate'). " +

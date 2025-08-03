@@ -54,7 +54,9 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             }
 
             LocalDate from = monday.minusWeeks(1);
+            System.out.println(from);
             LocalDate to   = monday.minusDays(1);
+            System.out.println(to);
             List<DailyLog> weekLogs = dailyRepo.loadBetween(from, to);
 
             String promptAnalysis  = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
@@ -76,9 +78,8 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             FeedbackEntry entry = new FeedbackEntry(
                     monday,
                     combinedAnalysis,
-                    recText,
-                    correlationJson
-            );
+                    correlationJson,
+                    recText);
             feedbackRepo.save(entry);
 
             outputBoundary.present(new GenerateFeedbackOutputData(entry));

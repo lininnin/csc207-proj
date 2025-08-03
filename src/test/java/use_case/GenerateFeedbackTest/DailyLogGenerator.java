@@ -10,6 +10,7 @@ import entity.Alex.Event.Event;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,8 +21,9 @@ public class DailyLogGenerator {
     public static List<DailyLog> generateFakeLogs() {
         List<DailyLog> logs = new ArrayList<>();
         LocalDate today = LocalDate.now();
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
         for (int i = 0; i < 7; i++) {
-            LocalDate date = today.minusDays(i);
+            LocalDate date = monday.minusDays(i);
             DailyLog log = new DailyLog(date);
 
             // Fake Task 1
@@ -42,6 +44,16 @@ public class DailyLogGenerator {
             Task task2 = new Task("template-" + i, taskInfo2, date2, true);
             log.addTask(task2);
             log.markTaskCompleted(task2, LocalDateTime.now());
+
+            //Fake task 2
+            Info taskInfo3 = new Info.Builder("Task 2" + (i+1))
+                    .description("Learning " + (i+1))
+                    .category("Academics")
+                    .build();
+            BeginAndDueDates date3 = new BeginAndDueDates(date, date.plusDays(1));
+            Task task3 = new Task("template-" + i, taskInfo3, date3, true);
+            log.addTask(task3);
+            log.markTaskCompleted(task3, LocalDateTime.now());
 
             // Fake Event
             Info eventInfo = new Info.Builder("Event " + (i+1))
@@ -75,61 +87,6 @@ public class DailyLogGenerator {
 
             logs.add(log);
         }
-
-        // Manual test for july 27
-
-        LocalDate date1 = LocalDate.of(2025, 7, 27);
-        DailyLog lg = new DailyLog(date1);
-
-        // Fake Task 1
-        Info taskInfo = new Info.Builder("Task " + (1))
-                .description("Exercising")
-                .category("General")
-                .build();
-        BeginAndDueDates dates = new BeginAndDueDates(date1, date1.plusDays(1));
-        Task task = new Task("template-" + 111, taskInfo, dates, true);
-        lg.addTask(task);
-
-        //Fake task 2
-        Info taskInfo2 = new Info.Builder("Task 2" + (1))
-                .description("Learning " + (1))
-                .category("Academics")
-                .build();
-        BeginAndDueDates date2 = new BeginAndDueDates(date1, date1.plusDays(1));
-        Task task2 = new Task("template-" + 111, taskInfo2, date2, true);
-        lg.addTask(task2);
-        lg.markTaskCompleted(task2, LocalDateTime.now());
-
-        // Fake Event
-        Info eventInfo = new Info.Builder("Event " + (1))
-                .category("Life")
-                .build();
-        Event event = new Event.Builder(eventInfo)
-                .beginAndDueDates(new BeginAndDueDates(date1, date1.plusDays(1)))
-                .oneTime(true)
-                .build();
-        lg.getDailyEventLog().addEntry(event);
-
-
-        // Fake Wellness Log Entry
-        MoodLabel mood = new MoodLabel.Builder("Happy")
-                .type(Type.Positive)
-                .build();
-
-        Levels[] lvls = Levels.values();
-        Random random = new Random();
-        Levels randomWellnessLvl =  lvls[random.nextInt(lvls.length)];
-        WellnessLogEntry entry = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.of(date1, LocalDateTime.now().toLocalTime()))
-                .moodLabel(mood)
-                .energyLevel(randomWellnessLvl)
-                .stressLevel(randomWellnessLvl)
-                .fatigueLevel(randomWellnessLvl)
-                .userNote("Feeling " + ("okay"))
-                .build();
-        lg.getDailyWellnessLog().addEntry(entry);
-        logs.add(lg);
-
         return logs;
     }
 

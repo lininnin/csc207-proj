@@ -11,14 +11,16 @@ import use_case.repository.*;
 import entity.Ina.FeedbackEntry;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class TestGenerateFeedback {
     public static void main(String[] args) {
         // 1. Fake logs for the week
         InMemoryDailyLogRepo dailyRepo = new InMemoryDailyLogRepo();
         LocalDate today = LocalDate.now();
-        for (int i = 0; i < 7; i++) {
-            dailyRepo.save(new DailyLog(today.minusDays(i)));
+        List<DailyLog> logs = DailyLogGenerator.generateFakeLogs();
+        for (DailyLog log: logs) {
+            dailyRepo.save(log);
         }
 
         // 2. Feedback repo
