@@ -1,9 +1,9 @@
 package interface_adapter.Category_related.presenter;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.view_model.CategoryViewModel;
-import use_case.Angela.category.create.CreateCategoryOutputBoundary;
-import use_case.Angela.category.create.CreateCategoryOutputData;
+import interface_adapter.Category_related.CategoryViewModel;
+import use_case.Category_related.create.CreateCategoryOutputBoundary;
+import use_case.Category_related.create.CreateCategoryOutputData;
 
 /**
  * Presenter for the create category use case.

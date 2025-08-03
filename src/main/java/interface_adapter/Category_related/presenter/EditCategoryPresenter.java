@@ -1,8 +1,8 @@
 package interface_adapter.Category_related.presenter;
 
-import interface_adapter.view_model.CategoryViewModel;
-import use_case.Angela.category.edit.EditCategoryOutputBoundary;
-import use_case.Angela.category.edit.EditCategoryOutputData;
+import interface_adapter.Category_related.CategoryViewModel;
+import use_case.Category_related.edit.EditCategoryOutputBoundary;
+import use_case.Category_related.edit.EditCategoryOutputData;
 
 /**
  * Presenter for the edit category use case.

@@ -1,8 +1,8 @@
 package interface_adapter.Category_related.presenter;
 
-import interface_adapter.view_model.CategoryViewModel;
-import use_case.Angela.category.delete.DeleteCategoryOutputBoundary;
-import use_case.Angela.category.delete.DeleteCategoryOutputData;
+import interface_adapter.Category_related.CategoryViewModel;
+import use_case.Category_related.delete.DeleteCategoryOutputBoundary;
+import use_case.Category_related.delete.DeleteCategoryOutputData;
 
 /**
  * Presenter for the delete category use case.

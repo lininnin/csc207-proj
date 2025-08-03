@@ -1,5 +1,7 @@
 package app;
 
+import data_access.CategoryRepository;
+import data_access.InMemoryCategoryGateway;
 import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventController;
 import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventPresenter;
 import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeletedEventViewModel;
@@ -36,6 +38,11 @@ import entity.Info.InfoFactory;
 import view.Alex.Event.*;
 import view.CollapsibleSidebarView;
 
+import use_case.Category_related.CategoryGateway;
+import interface_adapter.Category_related.CategoryViewModel;
+import view.CategoryDialogView;
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -57,6 +64,11 @@ public class EventPageBuilder {
         EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject();
         TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject();
         InfoFactory infoFactory = new InfoFactory();
+
+        // ----------------------
+        CategoryGateway categoryGateway = new InMemoryCategoryGateway(); // 你可以换成真正的 CategoryDAO
+        CategoryViewModel categoryViewModel = new CategoryViewModel();
+
 
         // --- Use Case Wiring ---
         CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(createdEventViewModel, availableEventViewModel, commonDao);
@@ -96,8 +108,24 @@ public class EventPageBuilder {
         state.setAvailableNames(names);
         addEventViewModel.setState(state);
 
-        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao);
+        CreateEventView createEventView = new CreateEventView(
+                createdEventViewModel,
+                addEventViewModel,
+                commonDao,
+                categoryGateway
+        );
         createEventView.setCreateEventController(createEventController);
+        createEventView.addPropertyChangeListener("openCategoryManagement", e -> {
+            JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(createEventView), "Manage Categories", true);
+            dialog.setContentPane(new CategoryDialogView(categoryViewModel));
+            dialog.pack();
+            dialog.setLocationRelativeTo(createEventView);
+            dialog.setVisible(true);
+
+            // 刷新 category 下拉框
+            createEventView.refreshCategories();
+        });
+
 
         AvailableEventView availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,

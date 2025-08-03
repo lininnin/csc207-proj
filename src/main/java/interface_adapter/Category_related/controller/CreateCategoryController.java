@@ -1,7 +1,7 @@
 package interface_adapter.Category_related.controller;
 
-import use_case.Angela.category.create.CreateCategoryInputBoundary;
-import use_case.Angela.category.create.CreateCategoryInputData;
+import use_case.Category_related.create.CreateCategoryInputBoundary;
+import use_case.Category_related.create.CreateCategoryInputData;
 
 /**
  * Controller for creating categories.

@@ -1,7 +1,7 @@
 package data_access;
 
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
+import use_case.Category_related.CategoryGateway;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

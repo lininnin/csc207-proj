@@ -171,19 +171,19 @@ public class CategoryViewModel extends ViewModel<CategoryViewModel.CategoryState
     }
 
     // Controller references
-    private interface_adapter.controller.CreateCategoryController createController;
-    private interface_adapter.controller.DeleteCategoryController deleteController;
-    private interface_adapter.controller.EditCategoryController editController;
+    private interface_adapter.Category_related.controller.CreateCategoryController createController;
+    private interface_adapter.Category_related.controller.DeleteCategoryController deleteController;
+    private interface_adapter.Category_related.controller.EditCategoryController editController;
 
-    public void setCreateController(interface_adapter.controller.CreateCategoryController controller) {
+    public void setCreateController(interface_adapter.Category_related.controller.CreateCategoryController controller) {
         this.createController = controller;
     }
 
-    public void setDeleteController(interface_adapter.controller.DeleteCategoryController controller) {
+    public void setDeleteController(interface_adapter.Category_related.controller.DeleteCategoryController controller) {
         this.deleteController = controller;
     }
 
-    public void setEditController(interface_adapter.controller.EditCategoryController controller) {
+    public void setEditController(interface_adapter.Category_related.controller.EditCategoryController controller) {
         this.editController = controller;
     }
 }

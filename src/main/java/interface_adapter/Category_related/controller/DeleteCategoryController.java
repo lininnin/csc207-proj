@@ -1,7 +1,7 @@
 package interface_adapter.Category_related.controller;
 
-import use_case.Angela.category.delete.DeleteCategoryInputBoundary;
-import use_case.Angela.category.delete.DeleteCategoryInputData;
+import use_case.Category_related.delete.DeleteCategoryInputBoundary;
+import use_case.Category_related.delete.DeleteCategoryInputData;
 
 /**
  * Controller for deleting categories.

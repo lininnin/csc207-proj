@@ -1,7 +1,7 @@
 package interface_adapter.Category_related.controller;
 
-import use_case.Angela.category.edit.EditCategoryInputBoundary;
-import use_case.Angela.category.edit.EditCategoryInputData;
+import use_case.Category_related.edit.EditCategoryInputBoundary;
+import use_case.Category_related.edit.EditCategoryInputData;
 
 /**
  * Controller for editing categories.
