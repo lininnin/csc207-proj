@@ -24,7 +24,7 @@ public class GeneralAnalysisPromptBuilder {
 
         StringBuilder prompt = new StringBuilder();
 
-        prompt.append("You are an analyst and coach. Analyse the 7-day report below, " +
+        prompt.append("You are an analyst and coach. Analyse the 7-day report below, DO NOT ANALYZE ANY OTHER DAYS OUTSIDE OF THE 7 DAYS" +
                         "summarize productivity patterns trends, correlations between amount of completed tasks, average wellness changes: \n " +
                         "Only give one sentence discussing missing data across the week if there are. Must focus on productivity trend and wellness")
                 .append("Rules for missing data: If any day's data (tasks, wellness, or events) is missing or partial, explicitly flag it as MISSING.\n")
