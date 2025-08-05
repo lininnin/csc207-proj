@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import view.Angela.FontUtil;
+import view.FontUtil;
 
 /**
  * View for creating a new task.

@@ -1,4 +1,4 @@
-package view.Angela;
+package view;
 
 import java.awt.Font;
 

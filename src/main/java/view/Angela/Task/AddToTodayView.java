@@ -6,7 +6,7 @@ import entity.info.Info;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import view.Angela.FontUtil;
+import view.FontUtil;
 
 /**
  * Placeholder view for Add to Today functionality.

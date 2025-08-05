@@ -6,6 +6,7 @@ import entity.info.Info;
 import use_case.Angela.task.TaskGateway;
 import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
+import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -17,7 +18,8 @@ import java.util.*;
 public class InMemoryTaskGateway implements 
         TaskGateway,
         CreateTaskDataAccessInterface,
-        DeleteTaskDataAccessInterface {
+        DeleteTaskDataAccessInterface,
+        EditAvailableTaskDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -26,12 +28,6 @@ public class InMemoryTaskGateway implements
     public String saveAvailableTask(Info info) {
         String taskId = info.getId(); // Info already has an ID
         availableTasks.put(taskId, info);
-        
-        // DEBUG: Log what we're saving
-        System.out.println("DEBUG: InMemoryTaskGateway.saveAvailableTask - Saving Info with ID: " + taskId);
-        System.out.println("DEBUG: availableTasks size after save: " + availableTasks.size());
-        System.out.println("DEBUG: availableTaskTemplates size: " + availableTaskTemplates.size());
-        
         return taskId;
     }
 
@@ -318,5 +314,107 @@ public class InMemoryTaskGateway implements
         }
         
         return deletedFromAvailable || deletedFromToday;
+    }
+
+    // ===== EditAvailableTaskDataAccessInterface methods =====
+
+    @Override
+    public boolean updateAvailableTask(String taskId, String newName, String newDescription, 
+                                       String newCategoryId, boolean isOneTime) {
+        // Get the existing task
+        TaskAvailable existingTask = availableTaskTemplates.get(taskId);
+        if (existingTask == null) {
+            // Try legacy storage
+            Info existingInfo = availableTasks.get(taskId);
+            if (existingInfo == null) {
+                return false;
+            }
+            // Convert legacy to TaskAvailable
+            existingTask = new TaskAvailable(existingInfo);
+            availableTaskTemplates.put(taskId, existingTask);
+        }
+
+        // Update the existing Info object using setters
+        Info info = existingTask.getInfo();
+        info.setName(newName);
+        info.setDescription(newDescription != null ? newDescription : "");
+        info.setCategory(newCategoryId != null ? newCategoryId : "");
+
+        // Update the isOneTime flag
+        existingTask.setOneTime(isOneTime);
+
+        // Update legacy storage for backward compatibility
+        availableTasks.put(taskId, info);
+
+        return true;
+    }
+
+    @Override
+    public boolean taskExistsWithNameAndCategoryExcluding(String name, String categoryId, String excludeTaskId) {
+        if (name == null) {
+            return false;
+        }
+        
+        // Normalize category for comparison
+        String normalizedCategory = (categoryId == null || categoryId.trim().isEmpty()) ? "" : categoryId.trim();
+        
+        // Check in TaskAvailable storage
+        for (Map.Entry<String, TaskAvailable> entry : availableTaskTemplates.entrySet()) {
+            // Skip the task being edited
+            if (entry.getKey().equals(excludeTaskId)) {
+                continue;
+            }
+            
+            TaskAvailable taskAvailable = entry.getValue();
+            if (taskAvailable != null && taskAvailable.getInfo() != null) {
+                Info info = taskAvailable.getInfo();
+                if (info.getName() != null && info.getName().equalsIgnoreCase(name)) {
+                    String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
+                        ? "" : info.getCategory().trim();
+                    if (taskCategory.equalsIgnoreCase(normalizedCategory)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        // Also check legacy storage
+        for (Map.Entry<String, Info> entry : availableTasks.entrySet()) {
+            // Skip the task being edited
+            if (entry.getKey().equals(excludeTaskId)) {
+                continue;
+            }
+            
+            Info info = entry.getValue();
+            if (info != null && info.getName() != null && info.getName().equalsIgnoreCase(name)) {
+                String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
+                    ? "" : info.getCategory().trim();
+                if (taskCategory.equalsIgnoreCase(normalizedCategory)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public List<TaskAvailable> getAllAvailableTasksWithDetails() {
+        List<TaskAvailable> allTasks = new ArrayList<>();
+        
+        // Add all tasks from the new storage
+        allTasks.addAll(availableTaskTemplates.values());
+        
+        // Add any tasks that only exist in legacy storage
+        for (Map.Entry<String, Info> entry : availableTasks.entrySet()) {
+            String taskId = entry.getKey();
+            if (!availableTaskTemplates.containsKey(taskId)) {
+                // Create TaskAvailable from legacy Info
+                TaskAvailable legacyTask = new TaskAvailable(entry.getValue());
+                allTasks.add(legacyTask);
+            }
+        }
+        
+        return allTasks;
     }
 }

@@ -3,6 +3,7 @@ package app;
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
+import interface_adapter.Angela.task.edit_available.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
@@ -10,6 +11,7 @@ import interface_adapter.Angela.category.edit.*;
 import interface_adapter.ViewManagerModel;
 import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
+import use_case.Angela.task.edit_available.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -18,7 +20,7 @@ import data_access.InMemoryCategoryGateway;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.CollapsibleSidebarView;
-import view.Angela.FontUtil;
+import view.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +40,7 @@ public class TaskPageBuilder {
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
     private final AvailableTasksViewModel availableTasksViewModel = new AvailableTasksViewModel();
     private final DeleteTaskViewModel deleteTaskViewModel = new DeleteTaskViewModel();
+    private final EditAvailableTaskViewModel editAvailableTaskViewModel = new EditAvailableTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
@@ -87,6 +90,26 @@ public class TaskPageBuilder {
 
         DeleteTaskController deleteTaskController = new DeleteTaskController(deleteTaskInteractor);
         availableTasksView.setDeleteTaskController(deleteTaskController);
+
+        // Wire up Edit Available Task Use Case
+        EditAvailableTaskOutputBoundary editAvailableTaskPresenter = new EditAvailableTaskPresenter(
+                editAvailableTaskViewModel,
+                availableTasksViewModel
+        );
+
+        EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
+                taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
+                categoryGateway,
+                editAvailableTaskPresenter
+        );
+
+        EditAvailableTaskController editAvailableTaskController = new EditAvailableTaskController(
+                editAvailableTaskInteractor
+        );
+        
+        availableTasksView.setEditAvailableTaskController(editAvailableTaskController);
+        availableTasksView.setEditAvailableTaskViewModel(editAvailableTaskViewModel);
+        availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {

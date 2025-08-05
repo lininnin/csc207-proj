@@ -13,7 +13,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import view.Angela.FontUtil;
+import view.FontUtil;
 
 /**
  * Popup dialog for managing categories.

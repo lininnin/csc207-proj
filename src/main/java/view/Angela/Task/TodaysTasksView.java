@@ -3,7 +3,7 @@ package view.Angela.Task;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import view.Angela.FontUtil;
+import view.FontUtil;
 
 /**
  * Placeholder view for Today's Tasks.
