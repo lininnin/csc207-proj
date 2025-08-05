@@ -1,7 +1,7 @@
 package use_case.goalManage.today_goal;
 
 import entity.Sophia.Goal;
-import use_case.repository.GoalRepository;
+import use_case.goalManage.GoalRepository;
 import use_case.goalManage.today_goal.TodayGoalsOutputBoundary.OperationType;
 
 /**
