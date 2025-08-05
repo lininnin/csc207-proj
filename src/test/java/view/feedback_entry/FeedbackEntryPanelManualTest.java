@@ -1,13 +1,13 @@
 package view.feedback_entry;
 
 import entity.Ina.FeedbackEntry;
+import view.feedback_panel.FeedbackEntryPanel;
 
 import javax.swing.*;
 import java.time.LocalDate;
 
 public class FeedbackEntryPanelManualTest {
     public static void main(String[] args) {
-        // JSON matches your documented expected structure!
         String correlationJson =
                 "{ \"effect_summary\": [" +
                         " { \"variable\": \"stress\", \"direction\": \"negative\", \"confidence\": 0.78 }," +
@@ -28,7 +28,9 @@ public class FeedbackEntryPanelManualTest {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Manual Test: Feedback Entry Panel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new FeedbackEntryPanel(entry));
+            FeedbackEntryPanel panel = new FeedbackEntryPanel();
+            frame.setContentPane(panel);
+            panel.displayEntry(entry);
             frame.setSize(600, 400);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
