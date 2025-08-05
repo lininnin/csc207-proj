@@ -32,7 +32,8 @@ public class TaskAvailable {
             throw new IllegalArgumentException("Task info cannot be null");
         }
 
-        this.id = UUID.randomUUID().toString();
+        // CRITICAL: Use the existing Info's ID, don't generate a new one!
+        this.id = info.getId();
         this.info = info;
         this.plannedDueDate = null;
         this.isOneTime = false; // Default to regular task

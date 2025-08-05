@@ -12,7 +12,8 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
+
+import view.Angela.FontUtil;
 
 /**
  * Popup dialog for managing categories.
@@ -66,9 +67,11 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(new JLabel("Name:"));
         nameField = new JTextField(20);
+        nameField.setFont(FontUtil.getStandardFont()); // Fix font
         inputPanel.add(nameField);
 
         createButton = new JButton("Create");
+        createButton.setFont(FontUtil.getStandardFont()); // Fix font
         createButton.addActionListener(e -> createCategory());
         inputPanel.add(createButton);
 
@@ -107,6 +110,7 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         // Bottom panel - Close button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton closeButton = new JButton("Close");
+        closeButton.setFont(FontUtil.getStandardFont()); // Fix font
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
 
@@ -188,6 +192,10 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
             JButton editBtn = new JButton("Edit");
             JButton deleteBtn = new JButton("Delete");
+            
+            // Fix font for buttons
+            editBtn.setFont(FontUtil.getStandardFont());
+            deleteBtn.setFont(FontUtil.getStandardFont());
 
             editBtn.setMargin(new Insets(2, 5, 2, 5));
             deleteBtn.setMargin(new Insets(2, 5, 2, 5));
@@ -195,7 +203,8 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
             add(editBtn);
             add(deleteBtn);
 
-            setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            // Don't change panel background based on selection to prevent button issues
+            setBackground(table.getBackground());
 
             return this;
         }
@@ -223,6 +232,10 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
             editBtn = new JButton("Edit");
             deleteBtn = new JButton("Delete");
+            
+            // Fix font for buttons
+            editBtn.setFont(FontUtil.getStandardFont());
+            deleteBtn.setFont(FontUtil.getStandardFont());
 
             editBtn.setMargin(new Insets(2, 5, 2, 5));
             deleteBtn.setMargin(new Insets(2, 5, 2, 5));

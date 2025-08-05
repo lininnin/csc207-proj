@@ -3,6 +3,7 @@ package view.Angela.Task;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import view.Angela.FontUtil;
 
 /**
  * Placeholder view for Today's Tasks.
@@ -27,6 +28,8 @@ public class TodaysTasksView extends JPanel {
         };
 
         taskTable = new JTable(tableModel);
+        taskTable.setFont(FontUtil.getStandardFont());
+        taskTable.getTableHeader().setFont(FontUtil.getBoldFont());
         taskTable.setRowHeight(25);
 
         // No sample data - start with empty table
@@ -37,11 +40,17 @@ public class TodaysTasksView extends JPanel {
 
         // Bottom stats panel
         JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        statsPanel.add(new JLabel("Completed: 0/0"));
+        JLabel completedLabel = new JLabel("Completed: 0/0");
+        completedLabel.setFont(FontUtil.getStandardFont());
+        statsPanel.add(completedLabel);
         statsPanel.add(Box.createHorizontalStrut(20));
-        statsPanel.add(new JLabel("In Progress: 0"));
+        JLabel inProgressLabel = new JLabel("In Progress: 0");
+        inProgressLabel.setFont(FontUtil.getStandardFont());
+        statsPanel.add(inProgressLabel);
         statsPanel.add(Box.createHorizontalStrut(20));
-        statsPanel.add(new JLabel("Not Started: 0"));
+        JLabel notStartedLabel = new JLabel("Not Started: 0");
+        notStartedLabel.setFont(FontUtil.getStandardFont());
+        statsPanel.add(notStartedLabel);
         add(statsPanel, BorderLayout.SOUTH);
     }
 }

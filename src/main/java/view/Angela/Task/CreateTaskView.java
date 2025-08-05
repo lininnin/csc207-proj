@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import view.Angela.FontUtil;
 
 /**
  * View for creating a new task.
@@ -45,6 +46,11 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
         initializeUI();
         loadCategories();
+        
+        // Fix font for buttons to prevent missing W, E, L, F
+        createButton.setFont(FontUtil.getStandardFont());
+        clearButton.setFont(FontUtil.getStandardFont());
+        oneTimeCheckBox.setFont(FontUtil.getStandardFont());
     }
 
     private void initializeUI() {
@@ -64,6 +70,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         taskNameField.setPreferredSize(new Dimension(250, 25));
+        taskNameField.setFont(FontUtil.getStandardFont()); // Fix font for input fields
         formPanel.add(taskNameField, gbc);
 
         // Category with manage button
@@ -75,9 +82,31 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         JPanel categoryPanel = new JPanel(new BorderLayout(5, 0));
-        categoryComboBox.setPreferredSize(new Dimension(180, 25));
+        categoryComboBox.setPreferredSize(new Dimension(200, 25)); // Increased width
+        categoryComboBox.setFont(FontUtil.getStandardFont()); // Fix font for selected value display
+        // Fix rendering issue - ensure ALL items display with black text
+        categoryComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof CategoryItem) {
+                    String text = ((CategoryItem) value).toString();
+                    setText(text);
+                }
+                
+                setFont(FontUtil.getStandardFont());
+                // CRITICAL: Force black text for ALL items to fix white text bug
+                if (!isSelected) {
+                    setForeground(Color.BLACK);
+                    setBackground(Color.WHITE);
+                }
+                return this;
+            }
+        });
         categoryPanel.add(categoryComboBox, BorderLayout.CENTER);
         manageCategoriesButton = new JButton("Manage");
+        manageCategoriesButton.setFont(FontUtil.getStandardFont()); // Fix font
         manageCategoriesButton.addActionListener(e -> openCategoryManagement());
         categoryPanel.add(manageCategoriesButton, BorderLayout.EAST);
         formPanel.add(categoryPanel, gbc);
@@ -95,6 +124,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         descriptionArea.setRows(3);
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
+        descriptionArea.setFont(FontUtil.getStandardFont()); // Fix font for text area
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
         scrollPane.setPreferredSize(new Dimension(250, 60));
         formPanel.add(scrollPane, gbc);

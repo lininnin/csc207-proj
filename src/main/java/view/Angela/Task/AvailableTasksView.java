@@ -6,7 +6,9 @@ import interface_adapter.Angela.task.delete.DeleteTaskController;
 import interface_adapter.Angela.task.delete.DeleteTaskState;
 import interface_adapter.Angela.task.delete.DeleteTaskViewModel;
 import use_case.Angela.task.TaskGateway;
+import use_case.Angela.category.CategoryGateway;
 import entity.info.Info;
+import entity.Category;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import view.Angela.FontUtil;
 
 /**
  * View for displaying available tasks with edit and delete functionality.
@@ -29,6 +32,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     private DeleteTaskController deleteTaskController;
     private TaskGateway taskGateway;
+    private CategoryGateway categoryGateway;
 
     public AvailableTasksView(AvailableTasksViewModel availableTasksViewModel,
                               DeleteTaskViewModel deleteTaskViewModel) {
@@ -58,12 +62,12 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         taskTable = new JTable(tableModel);
         taskTable.setRowHeight(30);
 
-        // Set column widths
+        // Set column widths - ensure Edit/Delete columns are wide enough
         taskTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Name
         taskTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Category
         taskTable.getColumnModel().getColumn(2).setPreferredWidth(200); // Description
-        taskTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Edit
-        taskTable.getColumnModel().getColumn(4).setPreferredWidth(60);  // Delete
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(80);  // Edit - increased width
+        taskTable.getColumnModel().getColumn(4).setPreferredWidth(80);  // Delete - increased width
 
         // Custom renderer and editor for Edit column
         taskTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer("Edit"));
@@ -85,6 +89,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
     public void setTaskGateway(TaskGateway taskGateway) {
         this.taskGateway = taskGateway;
         refreshTasks(); // Initial load
+    }
+    
+    public void setCategoryGateway(CategoryGateway categoryGateway) {
+        this.categoryGateway = categoryGateway;
     }
 
     @Override
@@ -139,9 +147,16 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         if (taskGateway != null) {
             List<Info> tasks = taskGateway.getAllAvailableTasks();
             for (Info task : tasks) {
+                // Convert category ID to name for display
+                String categoryDisplay = "";
+                if (task.getCategory() != null && !task.getCategory().isEmpty() && categoryGateway != null) {
+                    Category category = categoryGateway.getCategoryById(task.getCategory());
+                    categoryDisplay = (category != null) ? category.getName() : "";
+                }
+                
                 tableModel.addRow(new Object[]{
                         task.getName(),
-                        task.getCategory() != null ? task.getCategory() : "",
+                        categoryDisplay,
                         task.getDescription() != null ? task.getDescription() : "",
                         task.getId(), // Store ID for edit button
                         task.getId()  // Store ID for delete button
@@ -154,21 +169,34 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     // Button renderer for Edit and Delete columns
     private class ButtonRenderer extends JButton implements TableCellRenderer {
+        private final String text;
+        
         public ButtonRenderer(String text) {
+            this.text = text;
             setText(text);
             setOpaque(true);
+            setFont(FontUtil.getStandardFont());
+            // Ensure proper margins to prevent text cutoff
+            setMargin(new Insets(2, 10, 2, 10));
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                setBackground(UIManager.getColor("Button.background"));
-            }
+            // Ensure text is set on each render
+            setText(this.text);
+            
+            // Use FontUtil to fix missing W, E, L, F uppercase letters
+            setFont(FontUtil.getStandardFont());
+            
+            // Always use button colors, ignore selection state to prevent text disappearing
+            setForeground(UIManager.getColor("Button.foreground"));
+            setBackground(UIManager.getColor("Button.background"));
+            
+            // Ensure button looks clickable
+            setBorderPainted(true);
+            setContentAreaFilled(true);
+            
             return this;
         }
     }
@@ -184,6 +212,8 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             super(new JCheckBox());
             button = new JButton();
             button.setOpaque(true);
+            button.setMargin(new Insets(2, 10, 2, 10)); // Ensure proper margins
+            button.setFont(FontUtil.getStandardFont()); // Fix font
             label = text;
             isPushed = false;
             setClickCountToStart(1);

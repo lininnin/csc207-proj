@@ -43,10 +43,11 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Validate category if provided and get category name
+        // Validate category if provided
+        String categoryId = inputData.getCategoryId();
         String categoryName = "";
-        if (inputData.getCategoryId() != null && !inputData.getCategoryId().isEmpty()) {
-            var category = categoryGateway.getCategoryById(inputData.getCategoryId());
+        if (categoryId != null && !categoryId.isEmpty()) {
+            var category = categoryGateway.getCategoryById(categoryId);
             if (category == null) {
                 outputBoundary.presentError("Invalid category selected");
                 return;
@@ -55,7 +56,8 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
         }
 
         // Check for duplicate names with same category (case-insensitive)
-        if (taskGateway.taskExistsWithNameAndCategory(taskName, categoryName)) {
+        // Use category ID for duplicate check
+        if (taskGateway.taskExistsWithNameAndCategory(taskName, categoryId)) {
             outputBoundary.presentError("A task with this name and category already exists");
             return;
         }
@@ -67,8 +69,9 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             builder.description(description);
         }
 
-        if (!categoryName.isEmpty()) {
-            builder.category(categoryName);
+        // CRITICAL: Store category ID, not category name!
+        if (categoryId != null && !categoryId.isEmpty()) {
+            builder.category(categoryId);
         }
 
         Info taskInfo = builder.build();

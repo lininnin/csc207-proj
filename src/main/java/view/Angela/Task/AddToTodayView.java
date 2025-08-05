@@ -6,6 +6,7 @@ import entity.info.Info;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import view.Angela.FontUtil;
 
 /**
  * Placeholder view for Add to Today functionality.
@@ -34,7 +35,25 @@ public class AddToTodayView extends JPanel {
         formPanel.add(new JLabel("Select Task Name:"), gbc);
         gbc.gridx = 1;
         taskDropdown = new JComboBox<>();
-        taskDropdown.setPreferredSize(new Dimension(150, 25));
+        taskDropdown.setPreferredSize(new Dimension(200, 25)); // Increased width
+        taskDropdown.setFont(FontUtil.getStandardFont()); // Fix font for selected value
+        // Fix rendering issue - ensure ALL items display with black text
+        taskDropdown.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof TaskItem) {
+                    setText(((TaskItem) value).toString());
+                }
+                // CRITICAL: Force black text for ALL items to fix white text bug
+                if (!isSelected) {
+                    setForeground(Color.BLACK);
+                    setBackground(Color.WHITE);
+                }
+                return this;
+            }
+        });
         formPanel.add(taskDropdown, gbc);
 
         // Priority
@@ -42,7 +61,32 @@ public class AddToTodayView extends JPanel {
         formPanel.add(new JLabel("Priority:"), gbc);
         gbc.gridx = 1;
         priorityDropdown = new JComboBox<>(new String[]{"", "Low", "Medium", "High"});
-        priorityDropdown.setPreferredSize(new Dimension(150, 25));
+        priorityDropdown.setPreferredSize(new Dimension(200, 25)); // Increased width
+        priorityDropdown.setFont(FontUtil.getStandardFont()); // Fix font for selected value
+        // Fix rendering issue - ensure ALL items display with black text
+        priorityDropdown.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                // Ensure text is set properly
+                String text = value != null ? value.toString() : "";
+                setText(text);
+                // DEBUG: Check for missing uppercase letters
+                if (text.contains("L")) {
+                    System.out.println("DEBUG: Priority renderer text: '" + text + "' chars: " + 
+                        java.util.Arrays.toString(text.toCharArray()));
+                }
+                // Use FontUtil to fix missing W, E, L, F uppercase letters
+                setFont(FontUtil.getStandardFont());
+                // CRITICAL: Force black text for ALL items to fix white text bug
+                if (!isSelected) {
+                    setForeground(Color.BLACK);
+                    setBackground(Color.WHITE);
+                }
+                return this;
+            }
+        });
         formPanel.add(priorityDropdown, gbc);
 
         // Due Date
@@ -50,6 +94,7 @@ public class AddToTodayView extends JPanel {
         formPanel.add(new JLabel("Due Date:"), gbc);
         gbc.gridx = 1;
         dueDateField = new JTextField(12);
+        dueDateField.setFont(FontUtil.getStandardFont()); // Fix font for input field
         formPanel.add(dueDateField, gbc);
 
         // Add button

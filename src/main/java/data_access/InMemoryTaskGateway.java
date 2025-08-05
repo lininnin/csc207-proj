@@ -1,23 +1,37 @@
 package data_access;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
 import use_case.Angela.task.TaskGateway;
+import use_case.Angela.task.create.CreateTaskDataAccessInterface;
+import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
 /**
- * In-memory implementation of TaskGateway for quick demos.
+ * In-memory implementation of TaskGateway and DataAccessInterfaces for quick demos.
  * Replace with TaskRepository (JSON-based) for production.
+ * Following Alex's pattern: one concrete implementation implements multiple interfaces.
  */
-public class InMemoryTaskGateway implements TaskGateway {
-    private final Map<String, Info> availableTasks = new HashMap<>();
-    private final Map<String, Task> todaysTasks = new HashMap<>();
+public class InMemoryTaskGateway implements 
+        TaskGateway,
+        CreateTaskDataAccessInterface,
+        DeleteTaskDataAccessInterface {
+    private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
+    private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
+    private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public String saveAvailableTask(Info info) {
         String taskId = info.getId(); // Info already has an ID
         availableTasks.put(taskId, info);
+        
+        // DEBUG: Log what we're saving
+        System.out.println("DEBUG: InMemoryTaskGateway.saveAvailableTask - Saving Info with ID: " + taskId);
+        System.out.println("DEBUG: availableTasks size after save: " + availableTasks.size());
+        System.out.println("DEBUG: availableTaskTemplates size: " + availableTaskTemplates.size());
+        
         return taskId;
     }
 
@@ -30,17 +44,6 @@ public class InMemoryTaskGateway implements TaskGateway {
     public boolean availableTaskNameExists(String name) {
         return availableTasks.values().stream()
                 .anyMatch(info -> info.getName().equalsIgnoreCase(name));
-    }
-
-    @Override
-    public boolean taskExistsWithNameAndCategory(String name, String category) {
-        return availableTasks.values().stream()
-                .anyMatch(info -> {
-                    boolean nameMatches = info.getName().equalsIgnoreCase(name);
-                    String taskCategory = info.getCategory() != null ? info.getCategory() : "";
-                    boolean categoryMatches = taskCategory.equalsIgnoreCase(category);
-                    return nameMatches && categoryMatches;
-                });
     }
 
     @Override
@@ -115,13 +118,6 @@ public class InMemoryTaskGateway implements TaskGateway {
     }
 
     @Override
-    public boolean deleteTaskCompletely(String taskId) {
-        boolean deletedFromAvailable = availableTasks.remove(taskId) != null;
-        boolean deletedFromToday = todaysTasks.remove(taskId) != null;
-        return deletedFromAvailable || deletedFromToday;
-    }
-
-    @Override
     public List<Task> getTasksWithDueDates() {
         // For demo purposes, return empty list
         return new ArrayList<>();
@@ -149,5 +145,178 @@ public class InMemoryTaskGateway implements TaskGateway {
                 .filter(Task::isCompleted)
                 .count();
         return (double) completed / todaysTasks.size() * 100;
+    }
+
+    // ===== CreateTaskDataAccessInterface methods =====
+
+    @Override
+    public String saveTaskAvailable(TaskAvailable taskAvailable) {
+        String taskId = taskAvailable.getId();
+        availableTaskTemplates.put(taskId, taskAvailable);
+        // Also save to legacy storage for backward compatibility
+        availableTasks.put(taskId, taskAvailable.getInfo());
+        return taskId;
+    }
+
+    @Override
+    public boolean taskExistsWithNameAndCategory(String name, String categoryId) {
+        if (name == null) {
+            return false;
+        }
+        
+        // Normalize category for comparison (null/empty both treated as "no category")
+        String normalizedCategory = (categoryId == null || categoryId.trim().isEmpty()) ? "" : categoryId.trim();
+        
+        // Check in TaskAvailable storage
+        for (TaskAvailable taskAvailable : availableTaskTemplates.values()) {
+            if (taskAvailable != null && taskAvailable.getInfo() != null) {
+                Info info = taskAvailable.getInfo();
+                if (info.getName() != null && info.getName().equalsIgnoreCase(name)) {
+                    String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
+                        ? "" : info.getCategory().trim();
+                    if (taskCategory.equalsIgnoreCase(normalizedCategory)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        // Also check legacy storage for backward compatibility
+        for (Info info : availableTasks.values()) {
+            if (info != null && info.getName() != null && info.getName().equalsIgnoreCase(name)) {
+                String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
+                    ? "" : info.getCategory().trim();
+                if (taskCategory.equalsIgnoreCase(normalizedCategory)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public List<TaskAvailable> getAllAvailableTaskTemplates() {
+        return new ArrayList<>(availableTaskTemplates.values());
+    }
+
+    @Override
+    public TaskAvailable getTaskAvailableById(String taskId) {
+        // First check the new storage
+        TaskAvailable taskAvailable = availableTaskTemplates.get(taskId);
+        if (taskAvailable != null) {
+            return taskAvailable;
+        }
+        
+        // Fallback: Check legacy storage and convert Info to TaskAvailable
+        Info info = availableTasks.get(taskId);
+        if (info != null) {
+            // Create a temporary TaskAvailable from the Info for backward compatibility
+            TaskAvailable temp = new TaskAvailable(info);
+            return temp;
+        }
+        
+        return null;
+    }
+
+    @Override
+    public int getAvailableTaskCount() {
+        return availableTaskTemplates.size();
+    }
+
+    @Override
+    public boolean exists(TaskAvailable taskAvailable) {
+        return availableTaskTemplates.containsKey(taskAvailable.getId());
+    }
+
+    // ===== DeleteTaskDataAccessInterface methods =====
+
+    @Override
+    public Task getTodaysTaskById(String taskId) {
+        return todaysTasks.get(taskId);
+    }
+
+    @Override
+    public boolean existsInAvailable(TaskAvailable taskAvailable) {
+        return availableTaskTemplates.containsKey(taskAvailable.getId());
+    }
+
+    @Override
+    public boolean existsInToday(Task task) {
+        return todaysTasks.containsKey(task.getInfo().getId());
+    }
+
+    @Override
+    public boolean templateExistsInToday(String templateTaskId) {
+        return todaysTasks.values().stream()
+                .anyMatch(task -> templateTaskId.equals(task.getTemplateTaskId()));
+    }
+
+    @Override
+    public boolean deleteFromAvailable(TaskAvailable taskAvailable) {
+        boolean removedFromNew = availableTaskTemplates.remove(taskAvailable.getId()) != null;
+        boolean removedFromLegacy = availableTasks.remove(taskAvailable.getId()) != null;
+        return removedFromNew || removedFromLegacy;
+    }
+
+    @Override
+    public boolean deleteAllTodaysTasksWithTemplate(String templateTaskId) {
+        List<String> tasksToRemove = todaysTasks.entrySet().stream()
+                .filter(entry -> templateTaskId.equals(entry.getValue().getTemplateTaskId()))
+                .map(Map.Entry::getKey)
+                .collect(java.util.stream.Collectors.toList());
+        
+        for (String taskId : tasksToRemove) {
+            todaysTasks.remove(taskId);
+        }
+        
+        return !tasksToRemove.isEmpty();
+    }
+
+    @Override
+    public List<Task> getTodaysTasksByTemplate(String templateTaskId) {
+        return todaysTasks.values().stream()
+                .filter(task -> templateTaskId.equals(task.getTemplateTaskId()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public List<Task> getAllTodaysTasks() {
+        return new ArrayList<>(todaysTasks.values());
+    }
+
+    @Override
+    public boolean deleteTaskCompletely(String templateTaskId) {
+        boolean deletedFromAvailable = false;
+        boolean deletedFromToday = false;
+        
+        // Remove from available task templates
+        TaskAvailable template = availableTaskTemplates.remove(templateTaskId);
+        if (template != null) {
+            deletedFromAvailable = true;
+        }
+        
+        // ALSO check and remove from legacy storage
+        Info legacyInfo = availableTasks.remove(templateTaskId);
+        if (legacyInfo != null) {
+            deletedFromAvailable = true;
+        }
+        
+        // Remove all today's tasks that reference this template
+        List<String> todaysTaskIdsToRemove = new ArrayList<>();
+        for (Map.Entry<String, Task> entry : todaysTasks.entrySet()) {
+            Task task = entry.getValue();
+            if (task != null && templateTaskId.equals(task.getTemplateTaskId())) {
+                todaysTaskIdsToRemove.add(entry.getKey());
+            }
+        }
+        
+        // Remove the found today's tasks
+        for (String taskId : todaysTaskIdsToRemove) {
+            todaysTasks.remove(taskId);
+            deletedFromToday = true;
+        }
+        
+        return deletedFromAvailable || deletedFromToday;
     }
 }

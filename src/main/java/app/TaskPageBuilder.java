@@ -8,8 +8,6 @@ import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
 import interface_adapter.Angela.category.edit.*;
 import interface_adapter.ViewManagerModel;
-import use_case.Angela.task.TaskGateway;
-import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
 import use_case.Angela.category.create.*;
@@ -20,6 +18,7 @@ import data_access.InMemoryCategoryGateway;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.CollapsibleSidebarView;
+import view.Angela.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +31,8 @@ import java.beans.PropertyChangeListener;
 public class TaskPageBuilder {
 
     // Data Access
-    private final TaskGateway taskGateway = new InMemoryTaskGateway();
-    private final CategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    private final InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
+    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
 
     // View Models
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
@@ -50,6 +49,9 @@ public class TaskPageBuilder {
     private CategoryManagementDialog categoryDialog;
 
     public JPanel build() {
+        // CRITICAL: Connect the gateways so category deletion can update tasks
+        categoryGateway.setTaskGateway(taskGateway);
+        
         // Create Views
         createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
         availableTasksView = new AvailableTasksView(availableTasksViewModel, deleteTaskViewModel);
@@ -96,8 +98,9 @@ public class TaskPageBuilder {
             }
         });
 
-        // Set the task gateway so the views can fetch tasks
+        // Set the gateways so the views can fetch data
         availableTasksView.setTaskGateway(taskGateway);
+        availableTasksView.setCategoryGateway(categoryGateway);
         addToTodayView.setTaskGateway(taskGateway);
 
         return buildLayout();
@@ -122,6 +125,7 @@ public class TaskPageBuilder {
                 CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
                         categoryManagementViewModel
                 );
+                categoryPresenter.setAvailableTasksViewModel(availableTasksViewModel);
 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -132,7 +136,7 @@ public class TaskPageBuilder {
                 );
 
                 DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        categoryGateway,
+                        categoryGateway, // InMemoryCategoryGateway implements DeleteCategoryDataAccessInterface
                         categoryPresenter
                 );
                 DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
@@ -236,6 +240,7 @@ public class TaskPageBuilder {
             btn.setForeground(Color.WHITE);
             btn.setOpaque(true);
             btn.setBorderPainted(false);
+            btn.setFont(FontUtil.getStandardFont());
 
             if (item.contains("Tasks")) {
                 btn.setBackground(new Color(45, 47, 49)); // Highlight current page
@@ -266,23 +271,40 @@ public class TaskPageBuilder {
 
         // Goals section
         JPanel goalsPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-        goalsPanel.add(new JLabel("Goals"));
-        goalsPanel.add(new JLabel("period"));
-        goalsPanel.add(new JLabel("Go to gym"));
-        goalsPanel.add(new JLabel("weekly"));
-        goalsPanel.add(new JLabel("Read books"));
-        goalsPanel.add(new JLabel("monthly"));
+        JLabel goalsLabel = new JLabel("Goals");
+        goalsLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(goalsLabel);
+        JLabel periodLabel = new JLabel("period");
+        periodLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(periodLabel);
+        JLabel gymLabel = new JLabel("Go to gym");
+        gymLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(gymLabel);
+        JLabel weeklyLabel = new JLabel("weekly");
+        weeklyLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(weeklyLabel);
+        JLabel readLabel = new JLabel("Read books");
+        readLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(readLabel);
+        JLabel monthlyLabel = new JLabel("monthly");
+        monthlyLabel.setFont(FontUtil.getStandardFont());
+        goalsPanel.add(monthlyLabel);
         detailsPanel.add(goalsPanel);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Task Completion Rate
         JLabel completionLabel = new JLabel("Task Completion rate:");
+        completionLabel.setFont(FontUtil.getStandardFont());
         detailsPanel.add(completionLabel);
 
         JPanel progressPanel = new JPanel(new GridLayout(2, 2, 5, 5));
-        progressPanel.add(new JLabel("Progress"));
-        progressPanel.add(new JLabel("0%"));
+        JLabel progressLabel = new JLabel("Progress");
+        progressLabel.setFont(FontUtil.getStandardFont());
+        progressPanel.add(progressLabel);
+        JLabel percentLabel = new JLabel("0%");
+        percentLabel.setFont(FontUtil.getStandardFont());
+        progressPanel.add(percentLabel);
         progressPanel.add(new JLabel(""));
         progressPanel.add(new JLabel(""));
         detailsPanel.add(progressPanel);
@@ -291,10 +313,11 @@ public class TaskPageBuilder {
 
         // Task Overdue section
         JLabel overdueTitle = new JLabel("Task Overdue");
-        overdueTitle.setFont(new Font("SansSerif", Font.BOLD, 14));
+        overdueTitle.setFont(FontUtil.getLargeFont());
         detailsPanel.add(overdueTitle);
 
         JLabel overdueName = new JLabel("Name    due date");
+        overdueName.setFont(FontUtil.getStandardFont());
         detailsPanel.add(overdueName);
 
         taskDetailsPanel.add(detailsPanel, BorderLayout.NORTH);

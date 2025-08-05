@@ -2,6 +2,8 @@ package interface_adapter.Angela.category;
 
 import interface_adapter.Angela.category.CategoryManagementViewModel;
 import interface_adapter.Angela.category.CategoryManagementState;
+import interface_adapter.Angela.task.available.AvailableTasksViewModel;
+import interface_adapter.Angela.task.available.AvailableTasksState;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -15,9 +17,14 @@ public class CategoryManagementPresenter implements
         EditCategoryOutputBoundary {
 
     private final CategoryManagementViewModel viewModel;
+    private AvailableTasksViewModel availableTasksViewModel;
 
     public CategoryManagementPresenter(CategoryManagementViewModel viewModel) {
         this.viewModel = viewModel;
+    }
+    
+    public void setAvailableTasksViewModel(AvailableTasksViewModel availableTasksViewModel) {
+        this.availableTasksViewModel = availableTasksViewModel;
     }
 
     // Create Category
@@ -40,6 +47,15 @@ public class CategoryManagementPresenter implements
         state.setRefreshNeeded(true);
         viewModel.setState(state);
         viewModel.firePropertyChanged();
+        
+        // CRITICAL: Also trigger refresh of available tasks view since tasks were updated
+        if (availableTasksViewModel != null) {
+            AvailableTasksState tasksState = availableTasksViewModel.getState();
+            tasksState.setRefreshNeeded(true);
+            availableTasksViewModel.setState(tasksState);
+            // Must use the correct property name that the view is listening for
+            availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+        }
     }
 
     // Edit Category
@@ -52,6 +68,14 @@ public class CategoryManagementPresenter implements
         state.setRefreshNeeded(true);
         viewModel.setState(state);
         viewModel.firePropertyChanged();
+        
+        // CRITICAL: Also trigger refresh of available tasks view since category names changed
+        if (availableTasksViewModel != null) {
+            AvailableTasksState tasksState = availableTasksViewModel.getState();
+            tasksState.setRefreshNeeded(true);
+            availableTasksViewModel.setState(tasksState);
+            availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+        }
     }
 
     @Override
