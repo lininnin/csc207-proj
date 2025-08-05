@@ -1,4 +1,4 @@
-package app.feedback_entry;
+package app.FeedbackPanel;
 
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import entity.Angela.DailyLog;
