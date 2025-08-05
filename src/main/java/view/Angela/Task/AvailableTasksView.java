@@ -125,13 +125,13 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         taskTable = new JTable(tableModel);
         taskTable.setRowHeight(30);
 
-        // Set column widths
-        taskTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Name
-        taskTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Category
-        taskTable.getColumnModel().getColumn(2).setPreferredWidth(200); // Description
-        taskTable.getColumnModel().getColumn(3).setPreferredWidth(70);  // One Time
-        taskTable.getColumnModel().getColumn(4).setPreferredWidth(80);  // Edit
-        taskTable.getColumnModel().getColumn(5).setPreferredWidth(80);  // Delete
+        // Set column widths for wider layout (1100px total)
+        taskTable.getColumnModel().getColumn(0).setPreferredWidth(200); // Name - more space
+        taskTable.getColumnModel().getColumn(1).setPreferredWidth(150); // Category - more space
+        taskTable.getColumnModel().getColumn(2).setPreferredWidth(350); // Description - much more space
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(80);  // One Time
+        taskTable.getColumnModel().getColumn(4).setPreferredWidth(90);  // Edit
+        taskTable.getColumnModel().getColumn(5).setPreferredWidth(90);  // Delete
 
         // Custom renderer for One Time column to show checkmark
         taskTable.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {

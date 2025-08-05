@@ -270,53 +270,72 @@ public class TaskPageBuilder {
         // --- Left side: Vertically stacked Create Task and Add to Today ---
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        leftPanel.setPreferredSize(new Dimension(450, 450)); // Wider panel
+        leftPanel.setPreferredSize(new Dimension(380, 450)); // Balanced width
+        leftPanel.setMinimumSize(new Dimension(280, 450)); // Reasonable minimum
 
         // Top: New Available Task
         createTaskView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
-        createTaskView.setPreferredSize(new Dimension(450, 250));
+        createTaskView.setPreferredSize(new Dimension(380, 250));
         leftPanel.add(createTaskView);
 
         leftPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing
 
         // Bottom: Add Today's Task
         addToTodayView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-        addToTodayView.setPreferredSize(new Dimension(450, 200));
+        addToTodayView.setPreferredSize(new Dimension(380, 200));
         leftPanel.add(addToTodayView);
 
         // --- Right side: Today's Tasks panel ---
         JPanel todaysPanel = new JPanel(new BorderLayout());
         todaysPanel.add(todaysTasksView, BorderLayout.CENTER);
-        todaysPanel.setPreferredSize(new Dimension(550, 450));
+        todaysPanel.setPreferredSize(new Dimension(720, 450)); // Balanced width
+        todaysPanel.setMinimumSize(new Dimension(600, 450)); // Keep minimum to ensure visibility
 
-        // --- Top section: Left and Right panels side by side ---
-        JPanel topSection = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weighty = 1.0;
-
-        // Left panel takes 45% of width
-        gbc.gridx = 0;
-        gbc.weightx = 0.45;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        topSection.add(leftPanel, gbc);
-
-        // Today's panel takes 55% of width
-        gbc.gridx = 1;
-        gbc.weightx = 0.55;
-        topSection.add(todaysPanel, gbc);
-
-        topSection.setPreferredSize(new Dimension(900, 450));
+        // --- Top section: Use JSplitPane for user-adjustable layout ---
+        JSplitPane topSection = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        topSection.setLeftComponent(leftPanel);
+        topSection.setRightComponent(todaysPanel);
+        
+        // Set initial divider location (380px for left panel)
+        topSection.setDividerLocation(380);
+        
+        // Allow continuous layout updates while dragging
+        topSection.setContinuousLayout(true);
+        
+        // Add expand/collapse buttons
+        topSection.setOneTouchExpandable(true);
+        
+        // Set divider size
+        topSection.setDividerSize(8);
+        
+        topSection.setPreferredSize(new Dimension(1100, 450)); // Total width
 
         // --- Bottom section: Available Tasks ---
         JPanel bottomSection = new JPanel(new BorderLayout());
         bottomSection.add(availableTasksView, BorderLayout.CENTER);
-        bottomSection.setPreferredSize(new Dimension(900, 300));
+        bottomSection.setPreferredSize(new Dimension(1100, 300)); // Match top section width
+        bottomSection.setMinimumSize(new Dimension(800, 200)); // Ensure minimum size
 
-        // --- Center Panel: Combine top and bottom ---
+        // --- Center Panel: Use vertical split pane for top and bottom ---
+        JSplitPane centerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        centerSplitPane.setTopComponent(topSection);
+        centerSplitPane.setBottomComponent(bottomSection);
+        
+        // Set initial divider location (450px for top section)
+        centerSplitPane.setDividerLocation(450);
+        
+        // Allow continuous layout updates
+        centerSplitPane.setContinuousLayout(true);
+        
+        // Add expand/collapse buttons
+        centerSplitPane.setOneTouchExpandable(true);
+        
+        // Set divider size
+        centerSplitPane.setDividerSize(8);
+        
+        // Wrap in JPanel for CollapsibleSidebarView
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(topSection, BorderLayout.NORTH);
-        centerPanel.add(bottomSection, BorderLayout.CENTER);
+        centerPanel.add(centerSplitPane, BorderLayout.CENTER);
 
         // --- Sidebar Panel ---
         JPanel sidebarPanel = new JPanel();
@@ -353,7 +372,8 @@ public class TaskPageBuilder {
 
         // --- Right Panel (Details) ---
         JPanel taskDetailsPanel = new JPanel(new BorderLayout());
-        taskDetailsPanel.setPreferredSize(new Dimension(300, 0));
+        taskDetailsPanel.setPreferredSize(new Dimension(250, 0)); // Reduced width to compensate
+        taskDetailsPanel.setMinimumSize(new Dimension(200, 0)); // Minimum width
         taskDetailsPanel.setBackground(Color.WHITE);
 
         // Task details section

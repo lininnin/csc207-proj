@@ -57,7 +57,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         // Main form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(3, 3, 3, 3); // Reduced spacing
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -69,7 +69,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
         gbc.gridx = 1;
         gbc.weightx = 1.0;
-        taskNameField.setPreferredSize(new Dimension(250, 25));
+        taskNameField.setPreferredSize(new Dimension(200, 25)); // Restored width
         taskNameField.setFont(FontUtil.getStandardFont()); // Fix font for input fields
         formPanel.add(taskNameField, gbc);
 
@@ -82,7 +82,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         JPanel categoryPanel = new JPanel(new BorderLayout(5, 0));
-        categoryComboBox.setPreferredSize(new Dimension(200, 25)); // Increased width
+        categoryComboBox.setPreferredSize(new Dimension(180, 25)); // Restored width
         categoryComboBox.setFont(FontUtil.getStandardFont()); // Fix font for selected value display
         // Fix rendering issue - ensure ALL items display with black text
         categoryComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -126,7 +126,7 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
         descriptionArea.setWrapStyleWord(true);
         descriptionArea.setFont(FontUtil.getStandardFont()); // Fix font for text area
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        scrollPane.setPreferredSize(new Dimension(250, 60));
+        scrollPane.setPreferredSize(new Dimension(200, 60)); // Restored size
         formPanel.add(scrollPane, gbc);
 
         // One-time checkbox

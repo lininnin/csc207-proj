@@ -27,7 +27,6 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     private final JComboBox<String> priorityDropdown;
     private final DueDatePickerPanel dueDatePicker;
     private final JButton addButton;
-    private final JButton refreshButton; // DEBUG: Manual refresh button
     private final JLabel messageLabel;
 
     private AddTaskToTodayController controller;
@@ -51,7 +50,7 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         // Main form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(3, 3, 3, 3); // Reduced spacing
         gbc.anchor = GridBagConstraints.WEST;
 
         // Select Task Name
@@ -59,7 +58,7 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         formPanel.add(new JLabel("Select Task Name:"), gbc);
         gbc.gridx = 1;
         taskDropdown = new JComboBox<>();
-        taskDropdown.setPreferredSize(new Dimension(200, 25)); // Increased width
+        taskDropdown.setPreferredSize(new Dimension(200, 25)); // Restored width
         taskDropdown.setFont(FontUtil.getStandardFont()); // Fix font for selected value
         // Fix rendering issue - ensure ALL items display with black text
         taskDropdown.setRenderer(new DefaultListCellRenderer() {
@@ -85,7 +84,7 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         formPanel.add(new JLabel("Priority:"), gbc);
         gbc.gridx = 1;
         priorityDropdown = new JComboBox<>(new String[]{"None", "HIGH", "MEDIUM", "LOW"});
-        priorityDropdown.setPreferredSize(new Dimension(200, 25)); // Increased width
+        priorityDropdown.setPreferredSize(new Dimension(200, 25)); // Restored width
         priorityDropdown.setFont(FontUtil.getStandardFont()); // Fix font for selected value
         // Fix rendering issue - ensure ALL items display with black text
         priorityDropdown.setRenderer(new DefaultListCellRenderer() {
@@ -127,16 +126,6 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         addButton = new JButton("Add to Today");
         addButton.addActionListener(e -> handleAddToToday());
         formPanel.add(addButton, gbc);
-        
-        // DEBUG: Manual refresh button
-        gbc.gridx = 0; gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        refreshButton = new JButton("Refresh Task List (DEBUG)");
-        refreshButton.addActionListener(e -> {
-            System.out.println("DEBUG: Manual refresh button clicked");
-            refreshTasks();
-        });
-        formPanel.add(refreshButton, gbc);
 
         add(formPanel, BorderLayout.CENTER);
     }
