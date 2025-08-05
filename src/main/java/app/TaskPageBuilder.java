@@ -6,6 +6,7 @@ import interface_adapter.Angela.task.available.*;
 import interface_adapter.Angela.task.edit_available.*;
 import interface_adapter.Angela.task.add_to_today.*;
 import interface_adapter.Angela.task.mark_complete.*;
+import interface_adapter.Angela.task.edit_today.*;
 import interface_adapter.Angela.task.today.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
@@ -17,6 +18,7 @@ import use_case.Angela.task.delete.*;
 import use_case.Angela.task.edit_available.*;
 import use_case.Angela.task.add_to_today.*;
 import use_case.Angela.task.mark_complete.*;
+import use_case.Angela.task.edit_today.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -48,6 +50,7 @@ public class TaskPageBuilder {
     private final EditAvailableTaskViewModel editAvailableTaskViewModel = new EditAvailableTaskViewModel();
     private final AddTaskToTodayViewModel addTaskToTodayViewModel = new AddTaskToTodayViewModel();
     private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
+    private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
@@ -160,6 +163,25 @@ public class TaskPageBuilder {
         // Set the controller on the today's tasks view
         todaysTasksView.setMarkTaskCompleteController(markCompleteController);
 
+        // Wire up Edit Today Task Use Case
+        EditTodayTaskOutputBoundary editTodayPresenter = new EditTodayTaskPresenter(
+                editTodayTaskViewModel,
+                todayTasksViewModel
+        );
+
+        EditTodayTaskInputBoundary editTodayInteractor = new EditTodayTaskInteractor(
+                taskGateway, // InMemoryTaskGateway implements EditTodayTaskDataAccessInterface
+                editTodayPresenter
+        );
+
+        EditTodayTaskController editTodayController = new EditTodayTaskController(
+                editTodayInteractor
+        );
+
+        // Set the controller and view model on the today's tasks view
+        todaysTasksView.setEditTodayTaskController(editTodayController);
+        todaysTasksView.setEditTodayTaskViewModel(editTodayTaskViewModel);
+
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -199,6 +221,7 @@ public class TaskPageBuilder {
                         categoryManagementViewModel
                 );
                 categoryPresenter.setAvailableTasksViewModel(availableTasksViewModel);
+                categoryPresenter.setTodayTasksViewModel(todayTasksViewModel);
 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -217,7 +240,8 @@ public class TaskPageBuilder {
                 );
 
                 EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
-                        categoryGateway,
+                        categoryGateway,  // InMemoryCategoryGateway implements EditCategoryDataAccessInterface
+                        taskGateway,      // InMemoryTaskGateway implements EditCategoryTaskDataAccessInterface
                         categoryPresenter
                 );
                 EditCategoryController editCategoryController = new EditCategoryController(

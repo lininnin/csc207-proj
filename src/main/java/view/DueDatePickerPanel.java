@@ -33,6 +33,10 @@ public class DueDatePickerPanel extends JPanel {
     public void clear() {
         datePicker.clear();
     }
+    
+    public void setSelectedDate(LocalDate date) {
+        datePicker.setDate(date);
+    }
 }
 
 

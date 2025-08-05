@@ -9,6 +9,8 @@ import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteDataAccessInterface;
+import use_case.Angela.task.edit_today.EditTodayTaskDataAccessInterface;
+import use_case.Angela.category.edit.EditCategoryTaskDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -23,7 +25,9 @@ public class InMemoryTaskGateway implements
         DeleteTaskDataAccessInterface,
         EditAvailableTaskDataAccessInterface,
         AddToTodayDataAccessInterface,
-        MarkTaskCompleteDataAccessInterface {
+        MarkTaskCompleteDataAccessInterface,
+        EditTodayTaskDataAccessInterface,
+        EditCategoryTaskDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -532,6 +536,115 @@ public class InMemoryTaskGateway implements
         }
         
         return true;
+    }
+
+    // ===== EditTodayTaskDataAccessInterface methods =====
+
+    @Override
+    public boolean updateTodayTaskPriorityAndDueDate(String taskId, Task.Priority priority, LocalDate dueDate) {
+        // Validate due date if provided
+        if (dueDate != null && !isValidDueDate(dueDate)) {
+            throw new IllegalArgumentException("Due date cannot be before today");
+        }
+        
+        Task task = todaysTasks.get(taskId);
+        if (task == null) {
+            return false;
+        }
+        
+        // Update priority (can be null to clear)
+        task.setPriority(priority);
+        
+        // Update due date directly on the existing BeginAndDueDates object
+        if (task.getDates() != null) {
+            task.getDates().setDueDate(dueDate);  // Can be null to clear due date
+        }
+        
+        System.out.println("DEBUG: Updated today's task - ID: " + taskId + 
+                          ", Priority: " + (priority != null ? priority : "none") + 
+                          ", Due Date: " + (dueDate != null ? dueDate : "none"));
+        
+        return true;
+    }
+
+    @Override
+    public boolean isValidDueDate(LocalDate dueDate) {
+        if (dueDate == null) {
+            return true;  // null due date is valid (means no due date)
+        }
+        return !dueDate.isBefore(LocalDate.now());
+    }
+
+    // ===== EditCategoryTaskDataAccessInterface methods =====
+
+    @Override
+    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+        List<TaskAvailable> result = new ArrayList<>();
+        
+        // Check in availableTaskTemplates
+        for (TaskAvailable task : availableTaskTemplates.values()) {
+            if (task.getInfo().getCategory() != null && 
+                task.getInfo().getCategory().equals(categoryId)) {
+                result.add(task);
+            }
+        }
+        
+        // Also check legacy storage for completeness
+        for (Map.Entry<String, Info> entry : availableTasks.entrySet()) {
+            String taskId = entry.getKey();
+            Info info = entry.getValue();
+            // Only add if not already in result from availableTaskTemplates
+            if (!availableTaskTemplates.containsKey(taskId) &&
+                info.getCategory() != null && 
+                info.getCategory().equals(categoryId)) {
+                // Create TaskAvailable wrapper for legacy Info
+                result.add(new TaskAvailable(info));
+            }
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Task> findTodaysTasksByCategory(String categoryId) {
+        List<Task> result = new ArrayList<>();
+        
+        for (Task task : todaysTasks.values()) {
+            if (task.getInfo().getCategory() != null && 
+                task.getInfo().getCategory().equals(categoryId)) {
+                result.add(task);
+            }
+        }
+        
+        return result;
+    }
+
+    @Override
+    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+        // Update in availableTaskTemplates
+        TaskAvailable taskAvailable = availableTaskTemplates.get(taskId);
+        if (taskAvailable != null) {
+            taskAvailable.getInfo().setCategory(newCategoryId);
+        }
+        
+        // Also update in legacy storage
+        Info info = availableTasks.get(taskId);
+        if (info != null) {
+            info.setCategory(newCategoryId);
+            return true;
+        }
+        
+        return taskAvailable != null;
+    }
+
+    @Override
+    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+        Task task = todaysTasks.get(taskId);
+        if (task != null) {
+            task.getInfo().setCategory(newCategoryId);
+            return true;
+        }
+        return false;
     }
 
 }

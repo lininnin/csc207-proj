@@ -84,7 +84,7 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         gbc.gridx = 0; gbc.gridy = 1;
         formPanel.add(new JLabel("Priority:"), gbc);
         gbc.gridx = 1;
-        priorityDropdown = new JComboBox<>(new String[]{"", "Low", "Medium", "High"});
+        priorityDropdown = new JComboBox<>(new String[]{"None", "HIGH", "MEDIUM", "LOW"});
         priorityDropdown.setPreferredSize(new Dimension(200, 25)); // Increased width
         priorityDropdown.setFont(FontUtil.getStandardFont()); // Fix font for selected value
         // Fix rendering issue - ensure ALL items display with black text
@@ -183,8 +183,8 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         // Parse priority
         String priorityStr = (String) priorityDropdown.getSelectedItem();
         Task.Priority priority = null;
-        if (priorityStr != null && !priorityStr.isEmpty()) {
-            priority = Task.Priority.valueOf(priorityStr.toUpperCase());
+        if (priorityStr != null && !"None".equals(priorityStr)) {
+            priority = Task.Priority.valueOf(priorityStr);
         }
 
         // Get due date from picker

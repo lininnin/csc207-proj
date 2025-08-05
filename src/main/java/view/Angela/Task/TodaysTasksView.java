@@ -3,6 +3,8 @@ package view.Angela.Task;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.mark_complete.MarkTaskCompleteController;
+import interface_adapter.Angela.task.edit_today.EditTodayTaskController;
+import interface_adapter.Angela.task.edit_today.EditTodayTaskViewModel;
 import entity.Angela.Task.Task;
 import entity.Category;
 import use_case.Angela.task.TaskGateway;
@@ -33,6 +35,9 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     private TaskGateway taskGateway;
     private CategoryGateway categoryGateway;
     private MarkTaskCompleteController markTaskCompleteController;
+    private EditTodayTaskController editTodayTaskController;
+    private EditTodayTaskViewModel editTodayTaskViewModel;
+    private EditTodayTaskDialog editDialog;
 
     public TodaysTasksView(TodayTasksViewModel viewModel) {
         this.viewModel = viewModel;
@@ -137,6 +142,14 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         this.markTaskCompleteController = controller;
     }
 
+    public void setEditTodayTaskController(EditTodayTaskController controller) {
+        this.editTodayTaskController = controller;
+    }
+
+    public void setEditTodayTaskViewModel(EditTodayTaskViewModel viewModel) {
+        this.editTodayTaskViewModel = viewModel;
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (TodayTasksViewModel.TODAY_TASKS_STATE_PROPERTY.equals(evt.getPropertyName())) {
@@ -224,6 +237,50 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         timer.start();
     }
     
+    private void handleEditTask(String taskId) {
+        if (editTodayTaskController == null || editTodayTaskViewModel == null) {
+            showMessage("Edit functionality not configured", true);
+            return;
+        }
+        
+        // Get the task details
+        if (taskGateway != null) {
+            Task task = taskGateway.getTodaysTasks().stream()
+                .filter(t -> t.getInfo().getId().equals(taskId))
+                .findFirst()
+                .orElse(null);
+                
+            if (task != null) {
+                // Create dialog if not exists
+                if (editDialog == null) {
+                    // Find parent frame
+                    Container parent = getParent();
+                    while (parent != null && !(parent instanceof JFrame)) {
+                        parent = parent.getParent();
+                    }
+                    
+                    if (parent instanceof JFrame) {
+                        editDialog = new EditTodayTaskDialog((JFrame) parent, editTodayTaskViewModel);
+                        editDialog.setController(editTodayTaskController);
+                    } else {
+                        showMessage("Cannot find parent frame for dialog", true);
+                        return;
+                    }
+                }
+                
+                // Show dialog with current task data
+                editDialog.showEditDialog(
+                    taskId,
+                    task.getInfo().getName(),
+                    task.getPriority(),
+                    task.getDates() != null ? task.getDates().getDueDate() : null
+                );
+            } else {
+                showMessage("Task not found", true);
+            }
+        }
+    }
+    
     // Button renderer for Edit and Delete columns
     private class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer(String text) {
@@ -278,9 +335,9 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         public Object getCellEditorValue() {
             if (isPushed) {
                 System.out.println("DEBUG: " + label + " button clicked for task ID: " + taskId);
-                // TODO: Call appropriate controller based on label
+                // Call appropriate controller based on label
                 if ("Edit".equals(label)) {
-                    // TODO: Call EditTodaysTaskController
+                    handleEditTask(taskId);
                 } else if ("Delete".equals(label)) {
                     // TODO: Call RemoveTaskFromTodayController
                 }
