@@ -19,7 +19,11 @@ public class DueDatePickerPanel extends JPanel {
 
         // ✅ 必须先构造 datePicker 再调用 setDateRangeLimits
         this.datePicker = new DatePicker(settings);
-        settings.setDateRangeLimits(LocalDate.now(), null);  // 设置只能选择今天以后的日期
+        
+        // TEMPORARY: Allow past dates for testing overdue functionality
+        // Original: settings.setDateRangeLimits(LocalDate.now(), null);
+        // Modified to allow dates up to 30 days in the past for testing
+        settings.setDateRangeLimits(LocalDate.now().minusDays(30), null);
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.add(new JLabel("Due Date:"));

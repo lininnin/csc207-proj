@@ -126,6 +126,16 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         addButton = new JButton("Add to Today");
         addButton.addActionListener(e -> handleAddToToday());
         formPanel.add(addButton, gbc);
+        
+        // TEMPORARY: Test button for overdue functionality
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JButton testOverdueButton = new JButton("Test: Add with Yesterday");
+        testOverdueButton.setForeground(Color.RED);
+        testOverdueButton.setToolTipText("Adds selected task with yesterday's date for testing overdue");
+        testOverdueButton.addActionListener(e -> handleAddWithYesterday());
+        formPanel.add(testOverdueButton, gbc);
 
         add(formPanel, BorderLayout.CENTER);
     }
@@ -220,6 +230,33 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         Timer timer = new Timer(3000, e -> messageLabel.setText(" "));
         timer.setRepeats(false);
         timer.start();
+    }
+    
+    /**
+     * TEMPORARY: Test method to add a task with yesterday's date for testing overdue functionality.
+     */
+    private void handleAddWithYesterday() {
+        TaskItem selectedTask = (TaskItem) taskDropdown.getSelectedItem();
+        if (selectedTask == null || selectedTask.getId().isEmpty()) {
+            showMessage("Please select a task", true);
+            return;
+        }
+
+        // Parse priority
+        String priorityStr = (String) priorityDropdown.getSelectedItem();
+        Task.Priority priority = null;
+        if (priorityStr != null && !"None".equals(priorityStr)) {
+            priority = Task.Priority.valueOf(priorityStr);
+        }
+
+        // Set due date to yesterday for testing overdue functionality
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        // Call controller with yesterday's date
+        if (controller != null) {
+            controller.execute(selectedTask.getId(), priority, yesterday);
+            showMessage("Task added with yesterday's date for testing", false);
+        }
     }
 
     // Helper class for ComboBox items

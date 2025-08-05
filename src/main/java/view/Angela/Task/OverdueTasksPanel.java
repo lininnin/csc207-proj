@@ -32,11 +32,27 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Title
+        // Create title panel for centered title
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setBackground(Color.WHITE);
+        
+        // Title - centered
         titleLabel = new JLabel("Task Overdue (Last 7 Days)");
         titleLabel.setFont(FontUtil.getLargeFont());
         titleLabel.setForeground(Color.RED.darker());
-        add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titlePanel.add(titleLabel);
+        titlePanel.add(Box.createVerticalStrut(5));
+        
+        // Separator
+        JSeparator separator = new JSeparator();
+        separator.setForeground(new Color(229, 231, 235)); // Light grey
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        titlePanel.add(separator);
+        titlePanel.add(Box.createVerticalStrut(10));
+        
+        add(titlePanel, BorderLayout.NORTH);
         
         // Table
         String[] columnNames = {"Task Name", "Category", "Due Date", "Days Overdue"};

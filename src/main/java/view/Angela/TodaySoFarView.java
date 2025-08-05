@@ -17,6 +17,11 @@ public class TodaySoFarView extends JPanel {
     private final OverdueTasksPanel overdueTasksPanel;
     private OverdueTasksController overdueTasksController;
     
+    // Section heading colors
+    private static final Color GOALS_COLOR = new Color(30, 58, 138);       // Dark blue
+    private static final Color COMPLETED_COLOR = new Color(5, 150, 105);   // Green
+    private static final Color WELLNESS_COLOR = new Color(124, 58, 237);   // Purple
+    
     public TodaySoFarView(OverdueTasksViewModel overdueTasksViewModel) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
@@ -27,39 +32,27 @@ public class TodaySoFarView extends JPanel {
         // Title
         JLabel titleLabel = new JLabel("Today so far");
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(titleLabel);
-        add(Box.createRigidArea(new Dimension(0, 15)));
+        add(Box.createVerticalStrut(15));
         
-        // TODO: Goals Progress Section
-        add(createPlaceholderSection("Goals", 
-            "TODO: Implement goals progress\n" +
-            "- Show current goals with period\n" +
-            "- Display progress (e.g., 2/3)"));
-        add(Box.createRigidArea(new Dimension(0, 20)));
+        // Goals Progress Section
+        add(createSection("Goals", GOALS_COLOR, "No goals yet"));
+        add(Box.createVerticalStrut(15));
         
-        // TODO: Task Summary Section
-        add(createPlaceholderSection("Task Completion rate:",
-            "TODO: Calculate completion percentage\n" +
-            "Progress: 0%"));
-        add(Box.createRigidArea(new Dimension(0, 20)));
+        // Completed Tasks Section (includes completion rate)
+        add(createCompletedTasksSection());
+        add(Box.createVerticalStrut(15));
         
-        // TODO: Completed Tasks Section
-        add(createPlaceholderSection("Completed Tasks",
-            "TODO: List completed tasks\n" +
-            "with name and category"));
-        add(Box.createRigidArea(new Dimension(0, 20)));
-        
-        // TODO: Wellness Log Section
-        add(createPlaceholderSection("Wellness Log",
-            "TODO: Show mood, stress,\n" +
-            "energy, fatigue levels"));
-        add(Box.createRigidArea(new Dimension(0, 20)));
+        // Wellness Log Section
+        add(createSection("Wellness Log", WELLNESS_COLOR, "No wellness entries yet"));
+        add(Box.createVerticalStrut(15));
         
         // Overdue Tasks Section (Implemented)
         overdueTasksPanel = new OverdueTasksPanel(overdueTasksViewModel);
         overdueTasksPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         overdueTasksPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+        overdueTasksPanel.setBackground(Color.WHITE);
         add(overdueTasksPanel);
         
         // Add vertical glue to push content to top
@@ -67,29 +60,79 @@ public class TodaySoFarView extends JPanel {
     }
     
     /**
-     * Creates a placeholder section for team integration.
+     * Creates a consistent section with centered title and content.
      */
-    private JPanel createPlaceholderSection(String title, String content) {
+    private JPanel createSection(String title, Color titleColor, String placeholderText) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(new Color(245, 245, 245));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        panel.setBackground(Color.WHITE);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         
+        // Section title - centered
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(FontUtil.getBoldFont());
+        titleLabel.setFont(FontUtil.getLargeFont());
+        titleLabel.setForeground(titleColor);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(titleLabel);
+        panel.add(Box.createVerticalStrut(5));
         
-        JTextArea contentArea = new JTextArea(content);
-        contentArea.setFont(FontUtil.getSmallFont());
-        contentArea.setForeground(Color.GRAY);
-        contentArea.setEditable(false);
-        contentArea.setBackground(new Color(245, 245, 245));
-        panel.add(contentArea);
+        // Separator
+        JSeparator separator = new JSeparator();
+        separator.setForeground(new Color(229, 231, 235)); // Light grey
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        panel.add(separator);
+        panel.add(Box.createVerticalStrut(10));
+        
+        // Placeholder content
+        JLabel contentLabel = new JLabel(placeholderText);
+        contentLabel.setFont(FontUtil.getStandardFont());
+        contentLabel.setForeground(Color.LIGHT_GRAY);
+        contentLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(contentLabel);
+        
+        return panel;
+    }
+    
+    /**
+     * Creates the Completed Tasks section with completion rate.
+     */
+    private JPanel createCompletedTasksSection() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        
+        // Section title - centered
+        JLabel titleLabel = new JLabel("Completed Tasks");
+        titleLabel.setFont(FontUtil.getLargeFont());
+        titleLabel.setForeground(COMPLETED_COLOR);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(titleLabel);
+        panel.add(Box.createVerticalStrut(5));
+        
+        // Separator
+        JSeparator separator = new JSeparator();
+        separator.setForeground(new Color(229, 231, 235)); // Light grey
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        panel.add(separator);
+        panel.add(Box.createVerticalStrut(10));
+        
+        // Task Completion Rate
+        JLabel completionRateLabel = new JLabel("Task Completion Rate: 0%");
+        completionRateLabel.setFont(FontUtil.getStandardFont());
+        completionRateLabel.setForeground(Color.DARK_GRAY);
+        completionRateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(completionRateLabel);
+        panel.add(Box.createVerticalStrut(5));
+        
+        // Placeholder for completed tasks list
+        JLabel contentLabel = new JLabel("No completed tasks yet");
+        contentLabel.setFont(FontUtil.getStandardFont());
+        contentLabel.setForeground(Color.LIGHT_GRAY);
+        contentLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(contentLabel);
         
         return panel;
     }
