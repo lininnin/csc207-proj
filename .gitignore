@@ -3,3 +3,7 @@ target/
 .idea/
 .DS_Store
 homework-5-group/
+.DS_Store
+homework-5-group/
+.idea/
+*.iml
