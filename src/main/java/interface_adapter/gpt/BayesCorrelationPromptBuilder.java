@@ -52,9 +52,9 @@ public final class BayesCorrelationPromptBuilder {
                 .append("OUTPUT JSON SCHEMA:\n")
                 .append("{\n")
                 .append("  \"effect_summary\": [\n")
-                .append("    {\"variable\":\"stress\",\"direction\":\"positive|negative|none\",\"confidence\":0.0‑1.0},\n")
-                .append("    {\"variable\":\"energy\", ...},\n")
-                .append("    {\"variable\":\"fatigue\", ...}\n")
+                .append("    {\"variable\":\"Stress\",\"direction\":\"Positive|Negative|None\",\"confidence\":0.0‑1.0},\n")
+                .append("    {\"variable\":\"Energy\", ...},\n")
+                .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
                 .append("  \"notes\": \"one short sentence, if data is missing specify which data, including metrics\"\n")
                 .append("}\n");
@@ -73,7 +73,7 @@ public final class BayesCorrelationPromptBuilder {
             double fatigue = avg(dl, w -> w.getFatigueLevel().getValue());
 
             return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f," +
-                            "\"stress\":%.2f,\"energy\":%.2f,\"fatigue\":%.2f}",
+                            "\"Stress\":%.2f,\"Energy\":%.2f,\"Fatigue\":%.2f}",
                     dl.getDate(), completion, stress, energy, fatigue);
         }).collect(Collectors.joining(",\n", "[\n", "\n]"));
     }
