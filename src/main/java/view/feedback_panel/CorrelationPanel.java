@@ -1,4 +1,4 @@
-package view.feedback_entry;
+package view.feedback_panel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
