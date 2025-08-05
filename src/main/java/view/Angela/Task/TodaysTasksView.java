@@ -2,6 +2,7 @@ package view.Angela.Task;
 
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.mark_complete.MarkTaskCompleteController;
 import entity.Angela.Task.Task;
 import entity.Category;
 import use_case.Angela.task.TaskGateway;
@@ -31,6 +32,7 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     private TodayTasksViewModel viewModel;
     private TaskGateway taskGateway;
     private CategoryGateway categoryGateway;
+    private MarkTaskCompleteController markTaskCompleteController;
 
     public TodaysTasksView(TodayTasksViewModel viewModel) {
         this.viewModel = viewModel;
@@ -88,12 +90,15 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
 
         // Add checkbox listener for status column
         taskTable.getModel().addTableModelListener(e -> {
-            if (e.getColumn() == 0) { // Status checkbox column
+            if (e.getColumn() == 0 && markTaskCompleteController != null) { // Status checkbox column
                 int row = e.getFirstRow();
                 Boolean isCompleted = (Boolean) tableModel.getValueAt(row, 0);
                 String taskId = (String) tableModel.getValueAt(row, 6); // Get task ID from delete column
                 System.out.println("DEBUG: Task " + taskId + " completion status changed to: " + isCompleted);
-                // TODO: Call controller to update task completion status
+                // Call controller to update task completion status
+                if (taskId != null && isCompleted != null) {
+                    markTaskCompleteController.execute(taskId, isCompleted);
+                }
             }
         });
 
@@ -128,15 +133,29 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         this.categoryGateway = categoryGateway;
     }
 
+    public void setMarkTaskCompleteController(MarkTaskCompleteController controller) {
+        this.markTaskCompleteController = controller;
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (TodayTasksViewModel.TODAY_TASKS_STATE_PROPERTY.equals(evt.getPropertyName())) {
             TodayTasksState state = (TodayTasksState) evt.getNewValue();
-            if (state != null && state.isRefreshNeeded()) {
-                refreshTasks();
-                // Reset refresh flag
-                state.setRefreshNeeded(false);
-                viewModel.setState(state);
+            if (state != null) {
+                // Display any messages
+                if (state.getSuccessMessage() != null) {
+                    showMessage(state.getSuccessMessage(), false);
+                } else if (state.getError() != null) {
+                    showMessage(state.getError(), true);
+                }
+                
+                // Refresh if needed
+                if (state.isRefreshNeeded()) {
+                    refreshTasks();
+                    // Reset refresh flag
+                    state.setRefreshNeeded(false);
+                    viewModel.setState(state);
+                }
             }
         }
     }

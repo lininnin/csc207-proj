@@ -2,6 +2,8 @@ package interface_adapter.Angela.task.delete;
 
 import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
+import interface_adapter.Angela.task.today.TodayTasksViewModel;
+import interface_adapter.Angela.task.today.TodayTasksState;
 import use_case.Angela.task.delete.DeleteTaskOutputBoundary;
 import use_case.Angela.task.delete.DeleteTaskOutputData;
 
@@ -11,11 +13,17 @@ import use_case.Angela.task.delete.DeleteTaskOutputData;
 public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     private final AvailableTasksViewModel availableTasksViewModel;
     private final DeleteTaskViewModel deleteTaskViewModel;
+    private TodayTasksViewModel todayTasksViewModel;
 
     public DeleteTaskPresenter(AvailableTasksViewModel availableTasksViewModel,
                                DeleteTaskViewModel deleteTaskViewModel) {
         this.availableTasksViewModel = availableTasksViewModel;
         this.deleteTaskViewModel = deleteTaskViewModel;
+    }
+
+    public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
+        this.todayTasksViewModel = todayTasksViewModel;
+        System.out.println("DEBUG: DeleteTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
     }
 
     @Override
@@ -32,6 +40,18 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         availableState.setRefreshNeeded(true);
         availableTasksViewModel.setState(availableState);
         availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+
+        // Also trigger refresh of Today's Tasks if todayTasksViewModel is available
+        if (todayTasksViewModel != null) {
+            TodayTasksState todayState = todayTasksViewModel.getState();
+            if (todayState == null) {
+                todayState = new TodayTasksState();
+            }
+            todayState.setRefreshNeeded(true);
+            todayTasksViewModel.setState(todayState);
+            todayTasksViewModel.firePropertyChanged();
+            System.out.println("DEBUG: Triggered Today's Tasks refresh after delete");
+        }
     }
 
     @Override

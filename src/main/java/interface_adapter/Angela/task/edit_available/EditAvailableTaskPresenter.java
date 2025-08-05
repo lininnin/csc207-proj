@@ -2,6 +2,8 @@ package interface_adapter.Angela.task.edit_available;
 
 import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
+import interface_adapter.Angela.task.today.TodayTasksViewModel;
+import interface_adapter.Angela.task.today.TodayTasksState;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputBoundary;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputData;
 
@@ -12,11 +14,17 @@ import use_case.Angela.task.edit_available.EditAvailableTaskOutputData;
 public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBoundary {
     private final EditAvailableTaskViewModel editAvailableTaskViewModel;
     private final AvailableTasksViewModel availableTasksViewModel;
+    private TodayTasksViewModel todayTasksViewModel;
 
     public EditAvailableTaskPresenter(EditAvailableTaskViewModel editAvailableTaskViewModel,
                                       AvailableTasksViewModel availableTasksViewModel) {
         this.editAvailableTaskViewModel = editAvailableTaskViewModel;
         this.availableTasksViewModel = availableTasksViewModel;
+    }
+
+    public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
+        this.todayTasksViewModel = todayTasksViewModel;
+        System.out.println("DEBUG: EditAvailableTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
     }
 
     @Override
@@ -39,6 +47,18 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
         tasksState.setRefreshNeeded(true);
         availableTasksViewModel.setState(tasksState);
         availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+
+        // Also trigger refresh of Today's Tasks if todayTasksViewModel is available
+        if (todayTasksViewModel != null) {
+            TodayTasksState todayState = todayTasksViewModel.getState();
+            if (todayState == null) {
+                todayState = new TodayTasksState();
+            }
+            todayState.setRefreshNeeded(true);
+            todayTasksViewModel.setState(todayState);
+            todayTasksViewModel.firePropertyChanged();
+            System.out.println("DEBUG: Triggered Today's Tasks refresh after edit");
+        }
     }
 
     @Override

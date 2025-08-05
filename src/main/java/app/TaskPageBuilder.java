@@ -5,6 +5,7 @@ import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
 import interface_adapter.Angela.task.edit_available.*;
 import interface_adapter.Angela.task.add_to_today.*;
+import interface_adapter.Angela.task.mark_complete.*;
 import interface_adapter.Angela.task.today.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
@@ -15,6 +16,7 @@ import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
 import use_case.Angela.task.edit_available.*;
 import use_case.Angela.task.add_to_today.*;
+import use_case.Angela.task.mark_complete.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -85,10 +87,12 @@ public class TaskPageBuilder {
         createTaskView.setCreateTaskController(createTaskController);
 
         // Wire up Delete Task Use Case
-        DeleteTaskOutputBoundary deleteTaskPresenter = new DeleteTaskPresenter(
+        DeleteTaskPresenter deleteTaskPresenter = new DeleteTaskPresenter(
                 availableTasksViewModel,
                 deleteTaskViewModel
         );
+        // Set the TodayTasksViewModel so deletes trigger refresh
+        deleteTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
 
         DeleteTaskInputBoundary deleteTaskInteractor = new DeleteTaskInteractor(
                 taskGateway,
@@ -99,10 +103,12 @@ public class TaskPageBuilder {
         availableTasksView.setDeleteTaskController(deleteTaskController);
 
         // Wire up Edit Available Task Use Case
-        EditAvailableTaskOutputBoundary editAvailableTaskPresenter = new EditAvailableTaskPresenter(
+        EditAvailableTaskPresenter editAvailableTaskPresenter = new EditAvailableTaskPresenter(
                 editAvailableTaskViewModel,
                 availableTasksViewModel
         );
+        // Set the TodayTasksViewModel so edits trigger refresh
+        editAvailableTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
 
         EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
                 taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
@@ -136,6 +142,23 @@ public class TaskPageBuilder {
         addToTodayView.setAddTaskToTodayController(addToTodayController);
         System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
         addToTodayView.setDataAccess(taskGateway);
+
+        // Wire up Mark Task Complete Use Case
+        MarkTaskCompleteOutputBoundary markCompletePresenter = new MarkTaskCompletePresenter(
+                todayTasksViewModel
+        );
+
+        MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
+                taskGateway, // InMemoryTaskGateway implements MarkTaskCompleteDataAccessInterface
+                markCompletePresenter
+        );
+
+        MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(
+                markCompleteInteractor
+        );
+
+        // Set the controller on the today's tasks view
+        todaysTasksView.setMarkTaskCompleteController(markCompleteController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {

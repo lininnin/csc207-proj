@@ -8,6 +8,7 @@ import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
+import use_case.Angela.task.mark_complete.MarkTaskCompleteDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -21,7 +22,8 @@ public class InMemoryTaskGateway implements
         CreateTaskDataAccessInterface,
         DeleteTaskDataAccessInterface,
         EditAvailableTaskDataAccessInterface,
-        AddToTodayDataAccessInterface {
+        AddToTodayDataAccessInterface,
+        MarkTaskCompleteDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -359,6 +361,22 @@ public class InMemoryTaskGateway implements
         // Update legacy storage for backward compatibility
         availableTasks.put(taskId, info);
 
+        // Propagate ALL changes to Today's tasks
+        for (Task todayTask : todaysTasks.values()) {
+            if (taskId.equals(todayTask.getTemplateTaskId())) {
+                // Update ALL properties in today's task
+                Info todayInfo = todayTask.getInfo();
+                todayInfo.setName(newName);
+                todayInfo.setDescription(newDescription != null ? newDescription : "");
+                todayInfo.setCategory(newCategoryId != null ? newCategoryId : "");
+                
+                // Also update the one-time flag if it changed
+                todayTask.setOneTime(isOneTime);
+                
+                System.out.println("DEBUG: Updated all properties in Today's task for template: " + taskId);
+            }
+        }
+
         return true;
     }
 
@@ -488,4 +506,32 @@ public class InMemoryTaskGateway implements
     public boolean isTaskInTodaysList(String templateTaskId) {
         return templateExistsInToday(templateTaskId); // Reuse existing method
     }
+
+    // ===== MarkTaskCompleteDataAccessInterface methods =====
+
+    @Override
+    public Task getTodayTaskById(String taskId) {
+        return todaysTasks.get(taskId);
+    }
+
+    @Override
+    public boolean updateTaskCompletionStatus(String taskId, boolean isCompleted) {
+        Task task = todaysTasks.get(taskId);
+        if (task == null) {
+            return false;
+        }
+        
+        if (isCompleted) {
+            task.markComplete();
+            // In a full implementation, we would move this task to the end of the display order
+            System.out.println("DEBUG: Task marked complete - would move to bottom in full implementation");
+        } else {
+            task.unmarkComplete();
+            // In a full implementation, we would restore original position
+            System.out.println("DEBUG: Task unmarked - would restore position in full implementation");
+        }
+        
+        return true;
+    }
+
 }
