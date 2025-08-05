@@ -2,6 +2,7 @@ package interface_adapter.Angela.task.mark_complete;
 
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputBoundary;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
 
@@ -11,9 +12,14 @@ import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
  */
 public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary {
     private final TodayTasksViewModel todayTasksViewModel;
+    private OverdueTasksController overdueTasksController;
 
     public MarkTaskCompletePresenter(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
+    }
+    
+    public void setOverdueTasksController(OverdueTasksController controller) {
+        this.overdueTasksController = controller;
     }
 
     @Override
@@ -33,6 +39,11 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
         
         todayTasksViewModel.setState(currentState);
         todayTasksViewModel.firePropertyChanged();
+        
+        // Also refresh overdue tasks if the controller is set
+        if (overdueTasksController != null) {
+            overdueTasksController.execute(7); // Last 7 days
+        }
         
         System.out.println("DEBUG: MarkTaskCompletePresenter - Success: " + message);
     }

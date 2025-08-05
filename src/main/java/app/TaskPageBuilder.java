@@ -9,6 +9,7 @@ import interface_adapter.Angela.task.mark_complete.*;
 import interface_adapter.Angela.task.edit_today.*;
 import interface_adapter.Angela.task.today.*;
 import interface_adapter.Angela.task.remove_from_today.*;
+import interface_adapter.Angela.task.overdue.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
@@ -21,6 +22,7 @@ import use_case.Angela.task.add_to_today.*;
 import use_case.Angela.task.mark_complete.*;
 import use_case.Angela.task.edit_today.*;
 import use_case.Angela.task.remove_from_today.*;
+import use_case.Angela.task.overdue.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -28,6 +30,7 @@ import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
+import view.Angela.TodaySoFarView;
 import view.CollapsibleSidebarView;
 import view.FontUtil;
 
@@ -54,6 +57,7 @@ public class TaskPageBuilder {
     private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
     private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
+    private final OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     // Views
@@ -61,6 +65,7 @@ public class TaskPageBuilder {
     private AvailableTasksView availableTasksView;
     private AddToTodayView addToTodayView;
     private TodaysTasksView todaysTasksView;
+    private TodaySoFarView todaySoFarView;
     private CategoryManagementDialog categoryDialog;
 
     public JPanel build() {
@@ -149,7 +154,7 @@ public class TaskPageBuilder {
         addToTodayView.setDataAccess(taskGateway);
 
         // Wire up Mark Task Complete Use Case
-        MarkTaskCompleteOutputBoundary markCompletePresenter = new MarkTaskCompletePresenter(
+        MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(
                 todayTasksViewModel
         );
 
@@ -166,7 +171,7 @@ public class TaskPageBuilder {
         todaysTasksView.setMarkTaskCompleteController(markCompleteController);
 
         // Wire up Edit Today Task Use Case
-        EditTodayTaskOutputBoundary editTodayPresenter = new EditTodayTaskPresenter(
+        EditTodayTaskPresenter editTodayPresenter = new EditTodayTaskPresenter(
                 editTodayTaskViewModel,
                 todayTasksViewModel
         );
@@ -199,6 +204,29 @@ public class TaskPageBuilder {
 
         // Set the controller on the today's tasks view
         todaysTasksView.setRemoveFromTodayController(removeFromTodayController);
+
+        // Wire up Overdue Tasks Use Case
+        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(
+                overdueTasksViewModel
+        );
+
+        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
+                taskGateway, // InMemoryTaskGateway implements OverdueTasksDataAccessInterface
+                categoryGateway,
+                overdueTasksPresenter
+        );
+
+        OverdueTasksController overdueTasksController = new OverdueTasksController(
+                overdueTasksInteractor
+        );
+
+        // Create Today So Far view
+        todaySoFarView = new TodaySoFarView(overdueTasksViewModel);
+        todaySoFarView.setOverdueTasksController(overdueTasksController);
+        
+        // Set overdue controller on presenters that need to refresh overdue tasks
+        markCompletePresenter.setOverdueTasksController(overdueTasksController);
+        editTodayPresenter.setOverdueTasksController(overdueTasksController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
@@ -388,79 +416,15 @@ public class TaskPageBuilder {
         // --- Wrap sidebar + centerPanel ---
         CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
 
-        // --- Right Panel (Details) ---
-        JPanel taskDetailsPanel = new JPanel(new BorderLayout());
-        taskDetailsPanel.setPreferredSize(new Dimension(250, 0)); // Reduced width to compensate
-        taskDetailsPanel.setMinimumSize(new Dimension(200, 0)); // Minimum width
-        taskDetailsPanel.setBackground(Color.WHITE);
-
-        // Task details section
-        JPanel detailsPanel = new JPanel();
-        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
-        detailsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel detailsTitle = new JLabel("Today so far");
-        detailsTitle.setFont(new Font("SansSerif", Font.BOLD, 16));
-        detailsPanel.add(detailsTitle);
-        detailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Goals section
-        JPanel goalsPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-        JLabel goalsLabel = new JLabel("Goals");
-        goalsLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(goalsLabel);
-        JLabel periodLabel = new JLabel("period");
-        periodLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(periodLabel);
-        JLabel gymLabel = new JLabel("Go to gym");
-        gymLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(gymLabel);
-        JLabel weeklyLabel = new JLabel("weekly");
-        weeklyLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(weeklyLabel);
-        JLabel readLabel = new JLabel("Read books");
-        readLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(readLabel);
-        JLabel monthlyLabel = new JLabel("monthly");
-        monthlyLabel.setFont(FontUtil.getStandardFont());
-        goalsPanel.add(monthlyLabel);
-        detailsPanel.add(goalsPanel);
-
-        detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        // Task Completion Rate
-        JLabel completionLabel = new JLabel("Task Completion rate:");
-        completionLabel.setFont(FontUtil.getStandardFont());
-        detailsPanel.add(completionLabel);
-
-        JPanel progressPanel = new JPanel(new GridLayout(2, 2, 5, 5));
-        JLabel progressLabel = new JLabel("Progress");
-        progressLabel.setFont(FontUtil.getStandardFont());
-        progressPanel.add(progressLabel);
-        JLabel percentLabel = new JLabel("0%");
-        percentLabel.setFont(FontUtil.getStandardFont());
-        progressPanel.add(percentLabel);
-        progressPanel.add(new JLabel(""));
-        progressPanel.add(new JLabel(""));
-        detailsPanel.add(progressPanel);
-
-        detailsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        // Task Overdue section
-        JLabel overdueTitle = new JLabel("Task Overdue");
-        overdueTitle.setFont(FontUtil.getLargeFont());
-        detailsPanel.add(overdueTitle);
-
-        JLabel overdueName = new JLabel("Name    due date");
-        overdueName.setFont(FontUtil.getStandardFont());
-        detailsPanel.add(overdueName);
-
-        taskDetailsPanel.add(detailsPanel, BorderLayout.NORTH);
+        // --- Right Panel (Today So Far) ---
+        // Use the new TodaySoFarView instead of static content
+        // Initial refresh of overdue tasks
+        todaySoFarView.refreshOverdueTasks();
 
         // --- Final Frame Layout ---
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
-        mainPanel.add(taskDetailsPanel, BorderLayout.EAST);
+        mainPanel.add(todaySoFarView, BorderLayout.EAST);
 
         return mainPanel;
     }

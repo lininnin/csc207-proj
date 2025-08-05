@@ -12,8 +12,11 @@ import use_case.Angela.task.mark_complete.MarkTaskCompleteDataAccessInterface;
 import use_case.Angela.task.edit_today.EditTodayTaskDataAccessInterface;
 import use_case.Angela.category.edit.EditCategoryTaskDataAccessInterface;
 import use_case.Angela.task.remove_from_today.RemoveFromTodayDataAccessInterface;
+import use_case.Angela.task.overdue.OverdueTasksDataAccessInterface;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * In-memory implementation of TaskGateway and DataAccessInterfaces for quick demos.
@@ -29,7 +32,8 @@ public class InMemoryTaskGateway implements
         MarkTaskCompleteDataAccessInterface,
         EditTodayTaskDataAccessInterface,
         EditCategoryTaskDataAccessInterface,
-        RemoveFromTodayDataAccessInterface {
+        RemoveFromTodayDataAccessInterface,
+        OverdueTasksDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -664,5 +668,53 @@ public class InMemoryTaskGateway implements
     }
 
     // Note: getTodayTaskById is already implemented for MarkTaskCompleteDataAccessInterface
+
+    // ===== OverdueTasksDataAccessInterface methods =====
+
+    @Override
+    public List<Task> getOverdueTasks(int daysBack) {
+        LocalDate cutoffDate = LocalDate.now().minusDays(daysBack);
+        
+        List<Task> overdueTasks = todaysTasks.values().stream()
+            .filter(task -> {
+                if (task.isCompleted()) {
+                    return false;
+                }
+                LocalDate dueDate = task.getDates().getDueDate();
+                if (dueDate == null) {
+                    return false;
+                }
+                // Task is overdue if due date is before today
+                // and due date is not before our cutoff (within range)
+                return dueDate.isBefore(LocalDate.now()) && !dueDate.isBefore(cutoffDate);
+            })
+            .sorted((t1, t2) -> {
+                // Sort by due date - most overdue first (earliest date first)
+                LocalDate date1 = t1.getDates().getDueDate();
+                LocalDate date2 = t2.getDates().getDueDate();
+                return date1.compareTo(date2);
+            })
+            .collect(Collectors.toList());
+            
+        return overdueTasks;
+    }
+
+    @Override
+    public List<Task> getAllOverdueTasks() {
+        List<Task> overdueTasks = todaysTasks.values().stream()
+            .filter(task -> task.isOverdue())
+            .sorted((t1, t2) -> {
+                // Sort by due date - most overdue first (earliest date first)
+                LocalDate date1 = t1.getDates().getDueDate();
+                LocalDate date2 = t2.getDates().getDueDate();
+                if (date1 == null || date2 == null) {
+                    return 0;
+                }
+                return date1.compareTo(date2);
+            })
+            .collect(Collectors.toList());
+            
+        return overdueTasks;
+    }
 
 }
