@@ -5,6 +5,7 @@ import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.mark_complete.MarkTaskCompleteController;
 import interface_adapter.Angela.task.edit_today.EditTodayTaskController;
 import interface_adapter.Angela.task.edit_today.EditTodayTaskViewModel;
+import interface_adapter.Angela.task.remove_from_today.RemoveFromTodayController;
 import entity.Angela.Task.Task;
 import entity.Category;
 import use_case.Angela.task.TaskGateway;
@@ -42,8 +43,7 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     private CategoryGateway categoryGateway;
     private MarkTaskCompleteController markTaskCompleteController;
     private EditTodayTaskController editTodayTaskController;
-    private EditTodayTaskViewModel editTodayTaskViewModel;
-    private EditTodayTaskDialog editDialog;
+    private RemoveFromTodayController removeFromTodayController;
     
     // Inline editing state
     private String editingTaskId = null;
@@ -199,8 +199,8 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         this.editTodayTaskController = controller;
     }
 
-    public void setEditTodayTaskViewModel(EditTodayTaskViewModel viewModel) {
-        this.editTodayTaskViewModel = viewModel;
+    public void setRemoveFromTodayController(RemoveFromTodayController controller) {
+        this.removeFromTodayController = controller;
     }
 
     @Override
@@ -585,7 +585,23 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                     } else if ("Cancel".equals(buttonText)) {
                         exitEditMode(currentRow, false);
                     } else if ("Delete".equals(buttonText)) {
-                        // TODO: Handle delete
+                        if (removeFromTodayController != null && taskId != null) {
+                            // Show confirmation dialog
+                            int result = JOptionPane.showConfirmDialog(
+                                TodaysTasksView.this,
+                                "Remove this task from Today's list?",
+                                "Confirm Removal",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE
+                            );
+                            
+                            if (result == JOptionPane.YES_OPTION) {
+                                removeFromTodayController.execute(taskId);
+                            }
+                        } else {
+                            System.out.println("ERROR: removeFromTodayController is null or taskId is null!");
+                            showMessage("Error: Cannot remove task", true);
+                        }
                     }
                 });
             }

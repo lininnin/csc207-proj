@@ -11,6 +11,7 @@ import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteDataAccessInterface;
 import use_case.Angela.task.edit_today.EditTodayTaskDataAccessInterface;
 import use_case.Angela.category.edit.EditCategoryTaskDataAccessInterface;
+import use_case.Angela.task.remove_from_today.RemoveFromTodayDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -27,7 +28,8 @@ public class InMemoryTaskGateway implements
         AddToTodayDataAccessInterface,
         MarkTaskCompleteDataAccessInterface,
         EditTodayTaskDataAccessInterface,
-        EditCategoryTaskDataAccessInterface {
+        EditCategoryTaskDataAccessInterface,
+        RemoveFromTodayDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -646,5 +648,21 @@ public class InMemoryTaskGateway implements
         }
         return false;
     }
+
+    // ===== RemoveFromTodayDataAccessInterface methods =====
+
+    @Override
+    public boolean removeFromTodaysList(String taskId) {
+        // Only remove from today's tasks, NOT from available tasks
+        Task removed = todaysTasks.remove(taskId);
+        if (removed != null) {
+            System.out.println("DEBUG: Removed task from today's list - ID: " + taskId + 
+                              ", Name: " + removed.getInfo().getName());
+            return true;
+        }
+        return false;
+    }
+
+    // Note: getTodayTaskById is already implemented for MarkTaskCompleteDataAccessInterface
 
 }

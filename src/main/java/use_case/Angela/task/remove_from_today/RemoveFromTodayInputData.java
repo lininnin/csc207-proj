@@ -1,12 +1,12 @@
 package use_case.Angela.task.remove_from_today;
 
 /**
- * Input data for removing a task from today.
+ * Input data for the remove from today use case.
  */
-public class RemoveTaskFromTodayInputData {
+public class RemoveFromTodayInputData {
     private final String taskId;
 
-    public RemoveTaskFromTodayInputData(String taskId) {
+    public RemoveFromTodayInputData(String taskId) {
         this.taskId = taskId;
     }
 

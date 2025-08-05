@@ -8,6 +8,7 @@ import interface_adapter.Angela.task.add_to_today.*;
 import interface_adapter.Angela.task.mark_complete.*;
 import interface_adapter.Angela.task.edit_today.*;
 import interface_adapter.Angela.task.today.*;
+import interface_adapter.Angela.task.remove_from_today.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
@@ -19,6 +20,7 @@ import use_case.Angela.task.edit_available.*;
 import use_case.Angela.task.add_to_today.*;
 import use_case.Angela.task.mark_complete.*;
 import use_case.Angela.task.edit_today.*;
+import use_case.Angela.task.remove_from_today.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -180,7 +182,23 @@ public class TaskPageBuilder {
 
         // Set the controller and view model on the today's tasks view
         todaysTasksView.setEditTodayTaskController(editTodayController);
-        todaysTasksView.setEditTodayTaskViewModel(editTodayTaskViewModel);
+
+        // Wire up Remove from Today Use Case
+        RemoveFromTodayOutputBoundary removeFromTodayPresenter = new RemoveFromTodayPresenter(
+                todayTasksViewModel
+        );
+
+        RemoveFromTodayInputBoundary removeFromTodayInteractor = new RemoveFromTodayInteractor(
+                taskGateway, // InMemoryTaskGateway implements RemoveFromTodayDataAccessInterface
+                removeFromTodayPresenter
+        );
+
+        RemoveFromTodayController removeFromTodayController = new RemoveFromTodayController(
+                removeFromTodayInteractor
+        );
+
+        // Set the controller on the today's tasks view
+        todaysTasksView.setRemoveFromTodayController(removeFromTodayController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
