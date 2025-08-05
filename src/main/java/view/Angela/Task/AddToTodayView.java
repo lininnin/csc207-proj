@@ -1,28 +1,52 @@
 package view.Angela.Task;
 
-import use_case.Angela.task.TaskGateway;
-import entity.info.Info;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayController;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
+import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
+import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
+import view.DueDatePickerPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import view.FontUtil;
 
 /**
- * Placeholder view for Add to Today functionality.
- * This will be properly implemented when you work on the add_task_to_today use case.
+ * View for adding tasks to today's list.
+ * Allows selection of available tasks with optional priority and due date.
  */
-public class AddToTodayView extends JPanel {
+public class AddToTodayView extends JPanel implements PropertyChangeListener {
     private final JComboBox<TaskItem> taskDropdown;
     private final JComboBox<String> priorityDropdown;
-    private final JTextField dueDateField;
+    private final DueDatePickerPanel dueDatePicker;
     private final JButton addButton;
+    private final JButton refreshButton; // DEBUG: Manual refresh button
+    private final JLabel messageLabel;
 
-    private TaskGateway taskGateway;
+    private AddTaskToTodayController controller;
+    private AddTaskToTodayViewModel viewModel;
+    private AddToTodayDataAccessInterface dataAccess;
 
-    public AddToTodayView() {
+    public AddToTodayView(AddTaskToTodayViewModel viewModel) {
+        System.out.println("DEBUG: AddToTodayView constructor called");
+        this.viewModel = viewModel;
+        if (viewModel != null) {
+            viewModel.addPropertyChangeListener(this);
+        }
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Add Today's Task"));
+
+        // Message label for feedback
+        messageLabel = new JLabel(" ");
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(messageLabel, BorderLayout.NORTH);
 
         // Main form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -93,38 +117,120 @@ public class AddToTodayView extends JPanel {
         gbc.gridx = 0; gbc.gridy = 2;
         formPanel.add(new JLabel("Due Date:"), gbc);
         gbc.gridx = 1;
-        dueDateField = new JTextField(12);
-        dueDateField.setFont(FontUtil.getStandardFont()); // Fix font for input field
-        formPanel.add(dueDateField, gbc);
+        dueDatePicker = new DueDatePickerPanel();
+        formPanel.add(dueDatePicker, gbc);
 
         // Add button
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         addButton = new JButton("Add to Today");
-        addButton.addActionListener(e -> {
-            // Do nothing for now as requested
-        });
+        addButton.addActionListener(e -> handleAddToToday());
         formPanel.add(addButton, gbc);
+        
+        // DEBUG: Manual refresh button
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        refreshButton = new JButton("Refresh Task List (DEBUG)");
+        refreshButton.addActionListener(e -> {
+            System.out.println("DEBUG: Manual refresh button clicked");
+            refreshTasks();
+        });
+        formPanel.add(refreshButton, gbc);
 
         add(formPanel, BorderLayout.CENTER);
     }
 
-    public void setTaskGateway(TaskGateway taskGateway) {
-        this.taskGateway = taskGateway;
+    public void setAddTaskToTodayController(AddTaskToTodayController controller) {
+        this.controller = controller;
+    }
+
+    public void setDataAccess(AddToTodayDataAccessInterface dataAccess) {
+        System.out.println("DEBUG: AddToTodayView.setDataAccess() called with dataAccess: " + dataAccess);
+        this.dataAccess = dataAccess;
         refreshTasks();
     }
 
     private void refreshTasks() {
+        System.out.println("DEBUG: AddToTodayView.refreshTasks() called");
+        
         taskDropdown.removeAllItems();
         taskDropdown.addItem(new TaskItem("", "-- Select Task --"));
 
-        if (taskGateway != null) {
-            List<Info> tasks = taskGateway.getAllAvailableTasks();
-            for (Info task : tasks) {
-                taskDropdown.addItem(new TaskItem(task.getId(), task.getName()));
+        if (dataAccess != null) {
+            System.out.println("DEBUG: dataAccess is not null, fetching tasks");
+            List<TaskAvailable> tasks = dataAccess.getAllAvailableTasksWithDetails();
+            System.out.println("DEBUG: Number of tasks received: " + tasks.size());
+            
+            for (TaskAvailable task : tasks) {
+                System.out.println("DEBUG: Adding task to dropdown - ID: " + task.getId() + ", Name: " + task.getInfo().getName());
+                taskDropdown.addItem(new TaskItem(task.getId(), task.getInfo().getName()));
+            }
+        } else {
+            System.out.println("DEBUG: dataAccess is null!");
+        }
+        
+        System.out.println("DEBUG: Total items in dropdown: " + taskDropdown.getItemCount());
+    }
+
+    private void handleAddToToday() {
+        TaskItem selectedTask = (TaskItem) taskDropdown.getSelectedItem();
+        if (selectedTask == null || selectedTask.getId().isEmpty()) {
+            showMessage("Please select a task", true);
+            return;
+        }
+
+        // Parse priority
+        String priorityStr = (String) priorityDropdown.getSelectedItem();
+        Task.Priority priority = null;
+        if (priorityStr != null && !priorityStr.isEmpty()) {
+            priority = Task.Priority.valueOf(priorityStr.toUpperCase());
+        }
+
+        // Get due date from picker
+        LocalDate dueDate = dueDatePicker.getSelectedDate();
+
+        // Call controller
+        if (controller != null) {
+            controller.execute(selectedTask.getId(), priority, dueDate);
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (AddTaskToTodayViewModel.ADD_TO_TODAY_STATE_PROPERTY.equals(evt.getPropertyName())) {
+            AddTaskToTodayState state = (AddTaskToTodayState) evt.getNewValue();
+            if (state != null) {
+                // Check for refresh needed (e.g., when new tasks are created)
+                if (state.isRefreshNeeded()) {
+                    System.out.println("DEBUG: Refresh needed flag detected, refreshing task list");
+                    refreshTasks();
+                    // Reset the flag
+                    state.setRefreshNeeded(false);
+                    viewModel.setState(state);
+                }
+                
+                if (state.getSuccessMessage() != null) {
+                    showMessage(state.getSuccessMessage(), false);
+                    // Clear form on success
+                    taskDropdown.setSelectedIndex(0);
+                    priorityDropdown.setSelectedIndex(0);
+                    dueDatePicker.clear();
+                    // Refresh task list in case one-time tasks should be removed
+                    refreshTasks();
+                } else if (state.getError() != null) {
+                    showMessage(state.getError(), true);
+                }
             }
         }
+    }
+
+    private void showMessage(String message, boolean isError) {
+        messageLabel.setForeground(isError ? Color.RED : new Color(0, 128, 0));
+        messageLabel.setText(message);
+        Timer timer = new Timer(3000, e -> messageLabel.setText(" "));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     // Helper class for ComboBox items

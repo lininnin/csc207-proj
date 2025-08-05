@@ -7,6 +7,7 @@ import use_case.Angela.task.TaskGateway;
 import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
+import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,7 +20,8 @@ public class InMemoryTaskGateway implements
         TaskGateway,
         CreateTaskDataAccessInterface,
         DeleteTaskDataAccessInterface,
-        EditAvailableTaskDataAccessInterface {
+        EditAvailableTaskDataAccessInterface,
+        AddToTodayDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -27,7 +29,9 @@ public class InMemoryTaskGateway implements
     @Override
     public String saveAvailableTask(Info info) {
         String taskId = info.getId(); // Info already has an ID
+        System.out.println("DEBUG: saveAvailableTask (legacy) called - ID: " + taskId + ", Name: " + info.getName());
         availableTasks.put(taskId, info);
+        System.out.println("DEBUG: After legacy save - availableTasks size: " + availableTasks.size());
         return taskId;
     }
 
@@ -58,8 +62,11 @@ public class InMemoryTaskGateway implements
 
     @Override
     public Task addToToday(String taskId, Task.Priority priority, LocalDate dueDate) {
-        // Implementation for demo - you'll implement this in add_task_to_today use case
-        throw new UnsupportedOperationException("Not implemented yet");
+        TaskAvailable taskAvailable = getTaskAvailableById(taskId);
+        if (taskAvailable == null) {
+            throw new IllegalArgumentException("Task not found: " + taskId);
+        }
+        return addTaskToToday(taskAvailable, priority, dueDate);
     }
 
     @Override
@@ -148,9 +155,15 @@ public class InMemoryTaskGateway implements
     @Override
     public String saveTaskAvailable(TaskAvailable taskAvailable) {
         String taskId = taskAvailable.getId();
+        System.out.println("DEBUG: saveTaskAvailable called - ID: " + taskId + ", Name: " + taskAvailable.getInfo().getName());
+        
         availableTaskTemplates.put(taskId, taskAvailable);
         // Also save to legacy storage for backward compatibility
         availableTasks.put(taskId, taskAvailable.getInfo());
+        
+        System.out.println("DEBUG: After save - availableTaskTemplates size: " + availableTaskTemplates.size());
+        System.out.println("DEBUG: After save - availableTasks size: " + availableTasks.size());
+        
         return taskId;
     }
 
@@ -402,6 +415,10 @@ public class InMemoryTaskGateway implements
     public List<TaskAvailable> getAllAvailableTasksWithDetails() {
         List<TaskAvailable> allTasks = new ArrayList<>();
         
+        System.out.println("DEBUG: getAllAvailableTasksWithDetails called");
+        System.out.println("DEBUG: availableTaskTemplates size: " + availableTaskTemplates.size());
+        System.out.println("DEBUG: availableTasks size: " + availableTasks.size());
+        
         // Add all tasks from the new storage
         allTasks.addAll(availableTaskTemplates.values());
         
@@ -412,9 +429,63 @@ public class InMemoryTaskGateway implements
                 // Create TaskAvailable from legacy Info
                 TaskAvailable legacyTask = new TaskAvailable(entry.getValue());
                 allTasks.add(legacyTask);
+                System.out.println("DEBUG: Added legacy task: " + entry.getValue().getName());
             }
         }
         
+        System.out.println("DEBUG: Total tasks returned: " + allTasks.size());
+        for (TaskAvailable task : allTasks) {
+            System.out.println("DEBUG: Task - ID: " + task.getId() + ", Name: " + task.getInfo().getName());
+        }
+        
         return allTasks;
+    }
+
+    // ===== AddToTodayDataAccessInterface methods =====
+
+    @Override
+    public TaskAvailable getAvailableTaskById(String taskId) {
+        return getTaskAvailableById(taskId); // Reuse existing method
+    }
+
+    @Override
+    public Task addTaskToToday(TaskAvailable taskAvailable, Task.Priority priority, java.time.LocalDate dueDate) {
+        // Create a new Task instance from the TaskAvailable template
+        Info templateInfo = taskAvailable.getInfo();
+        
+        // Create a new Info instance for today's task (clone the template)
+        Info todayInfo = new Info.Builder(templateInfo.getName())
+                .description(templateInfo.getDescription())
+                .category(templateInfo.getCategory())
+                .build();
+        
+        // Create BeginAndDueDates
+        entity.BeginAndDueDates.BeginAndDueDates dates = new entity.BeginAndDueDates.BeginAndDueDates(
+                LocalDate.now(), // Begin date is always today
+                dueDate // Can be null
+        );
+        
+        // Create today's task with reference to template
+        Task todayTask = new Task(
+                taskAvailable.getId(), // templateTaskId - link back to template
+                todayInfo,
+                dates,
+                taskAvailable.isOneTime()
+        );
+        
+        // Set priority if provided
+        if (priority != null) {
+            todayTask.setPriority(priority);
+        }
+        
+        // Store in today's tasks map using the Info's generated ID
+        todaysTasks.put(todayTask.getInfo().getId(), todayTask);
+        
+        return todayTask;
+    }
+
+    @Override
+    public boolean isTaskInTodaysList(String templateTaskId) {
+        return templateExistsInToday(templateTaskId); // Reuse existing method
     }
 }

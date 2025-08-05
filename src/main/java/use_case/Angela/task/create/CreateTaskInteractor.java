@@ -1,6 +1,7 @@
 package use_case.Angela.task.create;
 
 import entity.info.Info;
+import entity.Angela.Task.TaskAvailable;
 import use_case.Angela.task.TaskGateway;
 import use_case.Angela.category.CategoryGateway;
 
@@ -9,14 +10,14 @@ import use_case.Angela.category.CategoryGateway;
  * Implements the business logic for creating a new task.
  */
 public class CreateTaskInteractor implements CreateTaskInputBoundary {
-    private final TaskGateway taskGateway;
+    private final CreateTaskDataAccessInterface dataAccess;
     private final CategoryGateway categoryGateway;
     private final CreateTaskOutputBoundary outputBoundary;
 
-    public CreateTaskInteractor(TaskGateway taskGateway,
+    public CreateTaskInteractor(CreateTaskDataAccessInterface dataAccess,
                                 CategoryGateway categoryGateway,
                                 CreateTaskOutputBoundary outputBoundary) {
-        this.taskGateway = taskGateway;
+        this.dataAccess = dataAccess;
         this.categoryGateway = categoryGateway;
         this.outputBoundary = outputBoundary;
     }
@@ -57,7 +58,7 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
 
         // Check for duplicate names with same category (case-insensitive)
         // Use category ID for duplicate check
-        if (taskGateway.taskExistsWithNameAndCategory(taskName, categoryId)) {
+        if (dataAccess.taskExistsWithNameAndCategory(taskName, categoryId)) {
             outputBoundary.presentError("A task with this name and category already exists");
             return;
         }
@@ -76,11 +77,14 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
 
         Info taskInfo = builder.build();
 
-        // Save the task (Info already has a unique ID)
-        // Note: isOneTime flag is not stored yet - this will be handled when
-        // you implement the full TaskRepository that saves TaskAvailable entities
-        String taskId = taskGateway.saveAvailableTask(taskInfo);
-        System.out.println("DEBUG: Task saved with ID: " + taskId);
+        // Create TaskAvailable and set isOneTime flag
+        TaskAvailable taskAvailable = new TaskAvailable(taskInfo);
+        taskAvailable.setOneTime(inputData.isOneTime());
+        System.out.println("DEBUG: Creating TaskAvailable with isOneTime: " + inputData.isOneTime());
+
+        // Save the task using the correct method that handles TaskAvailable
+        String taskId = dataAccess.saveTaskAvailable(taskAvailable);
+        System.out.println("DEBUG: Task saved with ID: " + taskId + ", isOneTime: " + taskAvailable.isOneTime());
 
         // Present success
         CreateTaskOutputData outputData = new CreateTaskOutputData(

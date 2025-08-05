@@ -4,6 +4,8 @@ import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
 import interface_adapter.Angela.task.edit_available.*;
+import interface_adapter.Angela.task.add_to_today.*;
+import interface_adapter.Angela.task.today.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
@@ -12,6 +14,7 @@ import interface_adapter.ViewManagerModel;
 import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
 import use_case.Angela.task.edit_available.*;
+import use_case.Angela.task.add_to_today.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -41,6 +44,8 @@ public class TaskPageBuilder {
     private final AvailableTasksViewModel availableTasksViewModel = new AvailableTasksViewModel();
     private final DeleteTaskViewModel deleteTaskViewModel = new DeleteTaskViewModel();
     private final EditAvailableTaskViewModel editAvailableTaskViewModel = new EditAvailableTaskViewModel();
+    private final AddTaskToTodayViewModel addTaskToTodayViewModel = new AddTaskToTodayViewModel();
+    private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
@@ -58,18 +63,20 @@ public class TaskPageBuilder {
         // Create Views
         createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
         availableTasksView = new AvailableTasksView(availableTasksViewModel, deleteTaskViewModel);
-        addToTodayView = new AddToTodayView();
-        todaysTasksView = new TodaysTasksView();
+        addToTodayView = new AddToTodayView(addTaskToTodayViewModel);
+        todaysTasksView = new TodaysTasksView(todayTasksViewModel);
 
         // Wire up Create Task Use Case
-        CreateTaskOutputBoundary createTaskPresenter = new CreateTaskPresenter(
+        CreateTaskPresenter createTaskPresenter = new CreateTaskPresenter(
                 createTaskViewModel,
                 availableTasksViewModel,
                 viewManagerModel
         );
+        // Connect AddTaskToTodayViewModel so dropdown refreshes when new tasks are created
+        createTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
-                taskGateway,
+                taskGateway, // InMemoryTaskGateway implements CreateTaskDataAccessInterface
                 categoryGateway,
                 createTaskPresenter
         );
@@ -111,6 +118,25 @@ public class TaskPageBuilder {
         availableTasksView.setEditAvailableTaskViewModel(editAvailableTaskViewModel);
         availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
 
+        // Wire up Add to Today Use Case
+        AddTaskToTodayOutputBoundary addToTodayPresenter = new AddTaskToTodayPresenter(
+                addTaskToTodayViewModel,
+                todayTasksViewModel
+        );
+
+        AddTaskToTodayInputBoundary addToTodayInteractor = new AddTaskToTodayInteractor(
+                taskGateway, // InMemoryTaskGateway implements AddToTodayDataAccessInterface
+                addToTodayPresenter
+        );
+
+        AddTaskToTodayController addToTodayController = new AddTaskToTodayController(
+                addToTodayInteractor
+        );
+
+        addToTodayView.setAddTaskToTodayController(addToTodayController);
+        System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
+        addToTodayView.setDataAccess(taskGateway);
+
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -124,7 +150,8 @@ public class TaskPageBuilder {
         // Set the gateways so the views can fetch data
         availableTasksView.setTaskGateway(taskGateway);
         availableTasksView.setCategoryGateway(categoryGateway);
-        addToTodayView.setTaskGateway(taskGateway);
+        todaysTasksView.setTaskGateway(taskGateway);
+        todaysTasksView.setCategoryGateway(categoryGateway);
 
         return buildLayout();
     }

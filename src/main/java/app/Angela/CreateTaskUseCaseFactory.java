@@ -6,7 +6,7 @@ import interface_adapter.Angela.task.create.CreateTaskViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.ViewManagerModel;
 import use_case.Angela.category.CategoryGateway;
-import use_case.Angela.task.TaskGateway;
+import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.create.CreateTaskInputBoundary;
 import use_case.Angela.task.create.CreateTaskInteractor;
 import use_case.Angela.task.create.CreateTaskOutputBoundary;
@@ -20,7 +20,7 @@ public class CreateTaskUseCaseFactory {
     /**
      * Creates a controller for the create task use case.
      *
-     * @param taskGateway The data access interface for tasks
+     * @param dataAccess The data access interface for creating tasks
      * @param categoryGateway The data access interface for categories
      * @param createTaskViewModel The view model for create task view
      * @param availableTasksViewModel The view model for available tasks view
@@ -28,7 +28,7 @@ public class CreateTaskUseCaseFactory {
      * @return A configured CreateTaskController
      */
     public static CreateTaskController create(
-            TaskGateway taskGateway,
+            CreateTaskDataAccessInterface dataAccess,
             CategoryGateway categoryGateway,
             CreateTaskViewModel createTaskViewModel,
             AvailableTasksViewModel availableTasksViewModel,
@@ -43,7 +43,7 @@ public class CreateTaskUseCaseFactory {
 
         // Create the input boundary (interactor)
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
-                taskGateway,
+                dataAccess,
                 categoryGateway,
                 createTaskPresenter
         );

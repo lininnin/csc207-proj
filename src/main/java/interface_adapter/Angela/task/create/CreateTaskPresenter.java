@@ -2,6 +2,8 @@ package interface_adapter.Angela.task.create;
 
 import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.ViewManagerModel;
 import use_case.Angela.task.create.CreateTaskOutputBoundary;
 import use_case.Angela.task.create.CreateTaskOutputData;
@@ -14,6 +16,7 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
     private final CreateTaskViewModel createTaskViewModel;
     private final AvailableTasksViewModel availableTasksViewModel;
     private final ViewManagerModel viewManagerModel;
+    private AddTaskToTodayViewModel addTaskToTodayViewModel;
 
     public CreateTaskPresenter(CreateTaskViewModel createTaskViewModel,
                                AvailableTasksViewModel availableTasksViewModel,
@@ -21,6 +24,10 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
         this.createTaskViewModel = createTaskViewModel;
         this.availableTasksViewModel = availableTasksViewModel;
         this.viewManagerModel = viewManagerModel;
+    }
+    
+    public void setAddTaskToTodayViewModel(AddTaskToTodayViewModel addTaskToTodayViewModel) {
+        this.addTaskToTodayViewModel = addTaskToTodayViewModel;
     }
 
     @Override
@@ -45,6 +52,18 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
         availableTasksViewModel.setState(availableState);
         availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
         System.out.println("DEBUG: Fired property change for AvailableTasksViewModel with refreshNeeded=true");
+
+        // Also notify AddTaskToToday view to refresh its dropdown
+        if (addTaskToTodayViewModel != null) {
+            AddTaskToTodayState addToTodayState = addTaskToTodayViewModel.getState();
+            if (addToTodayState == null) {
+                addToTodayState = new AddTaskToTodayState();
+            }
+            addToTodayState.setRefreshNeeded(true);
+            addTaskToTodayViewModel.setState(addToTodayState);
+            addTaskToTodayViewModel.firePropertyChanged();
+            System.out.println("DEBUG: Fired property change for AddTaskToTodayViewModel with refreshNeeded=true");
+        }
 
         // Note: Removed viewManagerModel.setActiveView() as we want to stay on the same page
     }
