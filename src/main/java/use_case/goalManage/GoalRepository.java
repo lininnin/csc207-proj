@@ -1,5 +1,6 @@
-package use_case.repository;
+package use_case.goalManage;
 
+//Todo: remove to repository later (idk whats wrong with repository folder right now)
 import entity.Sophia.Goal;
 import java.util.List;
 import java.util.Optional;
