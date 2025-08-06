@@ -1,7 +1,6 @@
 package use_case.Angela.task.edit_available;
 
-import entity.info.Info;
-import use_case.Angela.task.TaskGateway;
+import entity.Angela.Task.TaskAvailable;
 import use_case.Angela.category.CategoryGateway;
 
 /**
@@ -9,14 +8,14 @@ import use_case.Angela.category.CategoryGateway;
  * Implements the business logic for editing an available task.
  */
 public class EditAvailableTaskInteractor implements EditAvailableTaskInputBoundary {
-    private final TaskGateway taskGateway;
+    private final EditAvailableTaskDataAccessInterface dataAccess;
     private final CategoryGateway categoryGateway;
     private final EditAvailableTaskOutputBoundary outputBoundary;
 
-    public EditAvailableTaskInteractor(TaskGateway taskGateway,
+    public EditAvailableTaskInteractor(EditAvailableTaskDataAccessInterface dataAccess,
                                        CategoryGateway categoryGateway,
                                        EditAvailableTaskOutputBoundary outputBoundary) {
-        this.taskGateway = taskGateway;
+        this.dataAccess = dataAccess;
         this.categoryGateway = categoryGateway;
         this.outputBoundary = outputBoundary;
     }
@@ -27,6 +26,10 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
         String name = inputData.getName();
         String description = inputData.getDescription();
         String categoryId = inputData.getCategoryId();
+        boolean isOneTime = inputData.isOneTime();
+        
+        System.out.println("DEBUG: EditAvailableTaskInteractor.execute - taskId: " + taskId + 
+                         ", name: " + name + ", isOneTime: " + isOneTime);
 
         // Validate name
         if (name == null || name.trim().isEmpty()) {
@@ -46,53 +49,39 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
         }
 
         // Check if task exists
-        if (!taskGateway.existsInAvailable(taskId)) {
+        TaskAvailable existingTask = dataAccess.getTaskAvailableById(taskId);
+        if (existingTask == null) {
             outputBoundary.prepareFailView("Task not found in Available Tasks");
             return;
         }
 
-        // Get current task name for comparison
-        String currentName = taskGateway.getTaskName(taskId);
-
-        // Check if new name already exists (unless it's the same task)
-        if (!name.equals(currentName) && taskGateway.availableTaskNameExists(name)) {
-            outputBoundary.prepareFailView("The Task name already exists");
+        // Check for duplicate name in same category (excluding current task)
+        if (dataAccess.taskExistsWithNameAndCategoryExcluding(name, categoryId, taskId)) {
+            outputBoundary.prepareFailView("A task with this name already exists in the same category");
             return;
         }
 
         // Validate category if provided
-        String categoryName = "";
         if (categoryId != null && !categoryId.isEmpty()) {
             var category = categoryGateway.getCategoryById(categoryId);
             if (category == null) {
                 outputBoundary.prepareFailView("Invalid category selected");
                 return;
             }
-            categoryName = category.getName();
         }
-
-        // Create updated Info object
-        Info.Builder builder = new Info.Builder(name);
-        if (description != null && !description.trim().isEmpty()) {
-            builder.description(description);
-        }
-        if (!categoryName.isEmpty()) {
-            builder.category(categoryName);
-        }
-
-        Info updatedInfo = builder.build();
-        // Preserve the original ID
-        updatedInfo.setName(name); // Using setter to preserve ID
 
         // Update the task
-        boolean updated = taskGateway.updateAvailableTask(updatedInfo);
+        boolean updated = dataAccess.updateAvailableTask(taskId, name, description, categoryId, isOneTime);
+        System.out.println("DEBUG: Task update result: " + updated);
 
         if (updated) {
             EditAvailableTaskOutputData outputData = new EditAvailableTaskOutputData(
                     taskId, name, "Task updated successfully"
             );
+            System.out.println("DEBUG: Calling prepareSuccessView");
             outputBoundary.prepareSuccessView(outputData);
         } else {
+            System.out.println("DEBUG: Update failed, calling prepareFailView");
             outputBoundary.prepareFailView("Failed to update task");
         }
     }

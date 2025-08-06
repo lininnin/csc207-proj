@@ -1,7 +1,7 @@
 package use_case.Angela.category.edit;
 
 /**
- * Output boundary for the edit category use case.
+ * Output boundary for edit category use case.
  */
 public interface EditCategoryOutputBoundary {
     /**

@@ -1,17 +1,17 @@
 package use_case.Angela.category.create;
 
 /**
- * Output data for the create category use case.
+ * Output data for create category use case.
  */
 public class CreateCategoryOutputData {
     private final String categoryId;
     private final String categoryName;
-    private final boolean useCaseFailed;
+    private final boolean closeDialog;
 
-    public CreateCategoryOutputData(String categoryId, String categoryName, boolean useCaseFailed) {
+    public CreateCategoryOutputData(String categoryId, String categoryName, boolean closeDialog) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
-        this.useCaseFailed = useCaseFailed;
+        this.closeDialog = closeDialog;
     }
 
     public String getCategoryId() {
@@ -22,7 +22,7 @@ public class CreateCategoryOutputData {
         return categoryName;
     }
 
-    public boolean isUseCaseFailed() {
-        return useCaseFailed;
+    public boolean shouldCloseDialog() {
+        return closeDialog;
     }
 }

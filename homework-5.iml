@@ -2,24 +2,32 @@
 <module version="4">
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$" dumb="true">
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/entity/Sophia" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/controller" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/gpt" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/orderGoals" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/order_events" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/presenter" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/filter" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/generate_feedback" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goal" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goalFunctions" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goalFunctions/manageGoals" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/manageGoals" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/orderGoal" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/order_events" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/repository" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/view_analytics" />
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/view/Goal" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/view/Task" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/data_access/repository" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/entity/Ina" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/entity/Sophia" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/Sophia" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/feedback_history" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/orderGoals" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/order_events" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/interface_adapter/view_model" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/sampleGoalPage" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/create_goal" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/feedback_history" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/generate_feedback" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/goalManage" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/orderGoal" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/java/use_case/order_events" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/view/feedback_entry" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/java/view/feedback_history" />
+      <excludeFolder url="file://$MODULE_DIR$/src/test" />
     </content>
   </component>
   <component name="CheckStyle-IDEA-Module" serialisationVersion="2">

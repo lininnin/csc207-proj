@@ -8,13 +8,16 @@ public class EditAvailableTaskInputData {
     private final String name;
     private final String description;
     private final String categoryId;
+    private final boolean isOneTime;
 
     public EditAvailableTaskInputData(String taskId, String name,
-                                      String description, String categoryId) {
+                                      String description, String categoryId,
+                                      boolean isOneTime) {
         this.taskId = taskId;
         this.name = name;
         this.description = description;
         this.categoryId = categoryId;
+        this.isOneTime = isOneTime;
     }
 
     public String getTaskId() {
@@ -31,5 +34,9 @@ public class EditAvailableTaskInputData {
 
     public String getCategoryId() {
         return categoryId;
+    }
+    
+    public boolean isOneTime() {
+        return isOneTime;
     }
 }
