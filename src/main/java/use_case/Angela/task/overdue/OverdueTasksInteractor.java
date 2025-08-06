@@ -53,11 +53,19 @@ public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
                     daysOverdue = (int) ChronoUnit.DAYS.between(dueDate, today);
                 }
                 
+                // Get task priority as string
+                String priorityStr = "";
+                if (task.getPriority() != null) {
+                    priorityStr = task.getPriority().toString();
+                }
+                
                 OverdueTasksOutputData.OverdueTaskData taskData = 
                     new OverdueTasksOutputData.OverdueTaskData(
                         task.getId(),
                         task.getInfo().getName(),
+                        task.getInfo().getDescription() != null ? task.getInfo().getDescription() : "",
                         categoryName,
+                        priorityStr,
                         dueDate,
                         daysOverdue
                     );

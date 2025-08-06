@@ -44,15 +44,25 @@ public class OverdueTasksOutputData {
     public static class OverdueTaskData {
         private final String taskId;
         private final String taskName;
+        private final String taskDescription;
         private final String categoryName;
+        private final String taskPriority;
         private final LocalDate dueDate;
         private final int daysOverdue;
         
         public OverdueTaskData(String taskId, String taskName, String categoryName, 
                               LocalDate dueDate, int daysOverdue) {
+            this(taskId, taskName, "", categoryName, "", dueDate, daysOverdue);
+        }
+        
+        public OverdueTaskData(String taskId, String taskName, String taskDescription,
+                              String categoryName, String taskPriority,
+                              LocalDate dueDate, int daysOverdue) {
             this.taskId = taskId;
             this.taskName = taskName;
+            this.taskDescription = taskDescription;
             this.categoryName = categoryName;
+            this.taskPriority = taskPriority;
             this.dueDate = dueDate;
             this.daysOverdue = daysOverdue;
         }
@@ -65,8 +75,16 @@ public class OverdueTasksOutputData {
             return taskName;
         }
         
+        public String getTaskDescription() {
+            return taskDescription;
+        }
+        
         public String getCategoryName() {
             return categoryName;
+        }
+        
+        public String getTaskPriority() {
+            return taskPriority;
         }
         
         public LocalDate getDueDate() {
