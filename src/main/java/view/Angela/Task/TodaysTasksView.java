@@ -315,15 +315,21 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         
         // The taskId passed in is actually the task ID we need
         // Find the row for this task by comparing with tasks from gateway
+        // IMPORTANT: Skip overdue tasks since they're not shown in the table
         int row = -1;
         List<Task> todaysTasks = taskGateway.getTodaysTasks();
-        for (int i = 0; i < tableModel.getRowCount() && i < todaysTasks.size(); i++) {
-            Task task = todaysTasks.get(i);
+        int tableRow = 0;
+        for (Task task : todaysTasks) {
+            // Skip overdue tasks - they're not in the table
+            if (task.isOverdue()) {
+                continue;
+            }
             // Compare with Task's ID, not Info's ID
             if (task.getId().equals(taskId)) {
-                row = i;
+                row = tableRow;
                 break;
             }
+            tableRow++;
         }
         
         System.out.println("DEBUG: Found row " + row + " for taskId " + taskId);
@@ -336,14 +342,31 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     }
     
     private void enterEditMode(int row) {
-        // Get the task ID from the tasks list
+        // Get the task ID from the tasks list, skipping overdue tasks
         List<Task> todaysTasks = taskGateway.getTodaysTasks();
-        if (row >= todaysTasks.size()) {
+        
+        // Find the actual task at this row, skipping overdue tasks
+        int currentRow = 0;
+        Task targetTask = null;
+        for (Task task : todaysTasks) {
+            // Skip overdue tasks - they're not in the table
+            if (task.isOverdue()) {
+                continue;
+            }
+            if (currentRow == row) {
+                targetTask = task;
+                break;
+            }
+            currentRow++;
+        }
+        
+        if (targetTask == null) {
             showMessage("Invalid row selected", true);
             return;
         }
         
-        String taskId = todaysTasks.get(row).getInfo().getId();
+        // Use Task's ID, not Info's ID, for editing Today's tasks
+        String taskId = targetTask.getId();
         
         System.out.println("DEBUG: enterEditMode for row: " + row + ", taskId: " + taskId);
         
