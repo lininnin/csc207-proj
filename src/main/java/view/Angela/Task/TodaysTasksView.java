@@ -238,6 +238,12 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             int rowIndex = 0;
 
             for (Task task : todaysTasks) {
+                // Skip overdue tasks - they should only appear in the Overdue panel
+                if (task.isOverdue()) {
+                    System.out.println("DEBUG [TodaysTasksView]: Skipping overdue task: " + task.getInfo().getName());
+                    continue;
+                }
+                
                 // Get category name
                 String categoryDisplay = "";
                 String categoryId = task.getInfo().getCategory();
@@ -288,9 +294,9 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                 rowIndex++;
             }
 
-            // Update stats
-            int totalTasks = todaysTasks.size();
-            completedLabel.setText("Completed: " + completedCount + "/" + totalTasks);
+            // Update stats (only count non-overdue tasks)
+            int totalNonOverdueTasks = completedCount + inProgressCount + notStartedCount;
+            completedLabel.setText("Completed: " + completedCount + "/" + totalNonOverdueTasks);
             inProgressLabel.setText("In Progress: " + inProgressCount);
             notStartedLabel.setText("Not Started: " + notStartedCount);
         }

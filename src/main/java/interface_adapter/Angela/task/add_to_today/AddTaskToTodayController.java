@@ -25,6 +25,8 @@ public class AddTaskToTodayController {
      * @param dueDate the due date (can be null)
      */
     public void execute(String taskId, Task.Priority priority, LocalDate dueDate) {
+        System.out.println("DEBUG [AddTaskToTodayController]: execute() called - taskId: " + taskId + 
+                          ", priority: " + priority + ", dueDate: " + dueDate);
         AddTaskToTodayInputData inputData = new AddTaskToTodayInputData(taskId, priority, dueDate);
         inputBoundary.execute(inputData);
     }

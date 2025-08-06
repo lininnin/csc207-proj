@@ -236,11 +236,14 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
      * TEMPORARY: Test method to add a task with yesterday's date for testing overdue functionality.
      */
     private void handleAddWithYesterday() {
+        System.out.println("DEBUG [AddToTodayView]: handleAddWithYesterday() called");
         TaskItem selectedTask = (TaskItem) taskDropdown.getSelectedItem();
         if (selectedTask == null || selectedTask.getId().isEmpty()) {
+            System.out.println("DEBUG [AddToTodayView]: No task selected");
             showMessage("Please select a task", true);
             return;
         }
+        System.out.println("DEBUG [AddToTodayView]: Selected task: " + selectedTask.toString() + " (ID: " + selectedTask.getId() + ")");
 
         // Parse priority
         String priorityStr = (String) priorityDropdown.getSelectedItem();
@@ -248,14 +251,19 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         if (priorityStr != null && !"None".equals(priorityStr)) {
             priority = Task.Priority.valueOf(priorityStr);
         }
+        System.out.println("DEBUG [AddToTodayView]: Priority: " + priority);
 
         // Set due date to yesterday for testing overdue functionality
         LocalDate yesterday = LocalDate.now().minusDays(1);
+        System.out.println("DEBUG [AddToTodayView]: Yesterday's date: " + yesterday);
 
         // Call controller with yesterday's date
         if (controller != null) {
+            System.out.println("DEBUG [AddToTodayView]: Calling controller.execute() with yesterday's date");
             controller.execute(selectedTask.getId(), priority, yesterday);
             showMessage("Task added with yesterday's date for testing", false);
+        } else {
+            System.out.println("DEBUG [AddToTodayView]: Controller is null!");
         }
     }
 

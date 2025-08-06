@@ -4,6 +4,7 @@ import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputBoundary;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputData;
 
@@ -15,6 +16,7 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
     private final EditAvailableTaskViewModel editAvailableTaskViewModel;
     private final AvailableTasksViewModel availableTasksViewModel;
     private TodayTasksViewModel todayTasksViewModel;
+    private OverdueTasksController overdueTasksController;
 
     public EditAvailableTaskPresenter(EditAvailableTaskViewModel editAvailableTaskViewModel,
                                       AvailableTasksViewModel availableTasksViewModel) {
@@ -59,6 +61,12 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
             todayTasksViewModel.firePropertyChanged();
             System.out.println("DEBUG: Triggered Today's Tasks refresh after edit");
         }
+        
+        // Also refresh overdue tasks if controller is available
+        if (overdueTasksController != null) {
+            System.out.println("DEBUG [EditAvailableTaskPresenter]: Refreshing overdue tasks after edit");
+            overdueTasksController.execute(7); // Refresh with 7 days
+        }
     }
 
     @Override
@@ -74,5 +82,9 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
         
         // Don't trigger refresh on error - keep edit mode
         // The view should stay in edit mode so user can fix the error
+    }
+    
+    public void setOverdueTasksController(OverdueTasksController controller) {
+        this.overdueTasksController = controller;
     }
 }

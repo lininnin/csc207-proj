@@ -135,7 +135,7 @@ public class TaskPageBuilder {
         availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
 
         // Wire up Add to Today Use Case
-        AddTaskToTodayOutputBoundary addToTodayPresenter = new AddTaskToTodayPresenter(
+        AddTaskToTodayPresenter addToTodayPresenter = new AddTaskToTodayPresenter(
                 addTaskToTodayViewModel,
                 todayTasksViewModel
         );
@@ -227,6 +227,8 @@ public class TaskPageBuilder {
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);
         editTodayPresenter.setOverdueTasksController(overdueTasksController);
+        addToTodayPresenter.setOverdueTasksController(overdueTasksController);
+        editAvailableTaskPresenter.setOverdueTasksController(overdueTasksController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {

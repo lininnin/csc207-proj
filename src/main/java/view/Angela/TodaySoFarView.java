@@ -28,12 +28,34 @@ public class TodaySoFarView extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setPreferredSize(new Dimension(300, 0));
         setMinimumSize(new Dimension(250, 0));
-        
-        // Title
+
+        // Title and refresh button panel
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+        titlePanel.add(Box.createHorizontalGlue());
+
         JLabel titleLabel = new JLabel("Today so far");
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(titleLabel);
+        titlePanel.add(titleLabel);
+
+        titlePanel.add(Box.createHorizontalStrut(20));
+
+        // TEMPORARY: Manual refresh button for testing
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.setFont(FontUtil.getSmallFont());
+        refreshButton.addActionListener(e -> {
+            System.out.println("DEBUG: Manual refresh button clicked");
+            refreshOverdueTasks();
+        });
+        titlePanel.add(refreshButton);
+
+        titlePanel.add(Box.createHorizontalGlue());
+
+        add(titlePanel);
         add(Box.createVerticalStrut(15));
         
         // Goals Progress Section
@@ -139,12 +161,23 @@ public class TodaySoFarView extends JPanel {
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+        // Trigger initial refresh when controller is set
+        if (controller != null) {
+            System.out.println("DEBUG [TodaySoFarView]: Controller set, triggering initial refresh");
+            refreshOverdueTasks();
+        }
     }
     
     /**
      * Refreshes the overdue tasks. Should be called when tasks are updated.
      */
     public void refreshOverdueTasks() {
-        overdueTasksPanel.refreshOverdueTasks(overdueTasksController);
+        System.out.println("DEBUG [TodaySoFarView]: refreshOverdueTasks() called");
+        if (overdueTasksController != null) {
+            System.out.println("DEBUG [TodaySoFarView]: Controller is available, refreshing panel");
+            overdueTasksPanel.refreshOverdueTasks(overdueTasksController);
+        } else {
+            System.out.println("DEBUG [TodaySoFarView]: Controller is null, cannot refresh");
+        }
     }
 }

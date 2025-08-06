@@ -2,6 +2,7 @@ package interface_adapter.Angela.task.add_to_today;
 
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import use_case.Angela.task.add_to_today.AddTaskToTodayOutputBoundary;
 import use_case.Angela.task.add_to_today.AddTaskToTodayOutputData;
 
@@ -12,6 +13,7 @@ import use_case.Angela.task.add_to_today.AddTaskToTodayOutputData;
 public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
     private final AddTaskToTodayViewModel addTaskToTodayViewModel;
     private final TodayTasksViewModel todayTasksViewModel;
+    private OverdueTasksController overdueTasksController;
 
     public AddTaskToTodayPresenter(AddTaskToTodayViewModel addTaskToTodayViewModel,
                                    TodayTasksViewModel todayTasksViewModel) {
@@ -36,6 +38,12 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
         todayState.setRefreshNeeded(true);
         todayTasksViewModel.setState(todayState);
         todayTasksViewModel.firePropertyChanged();
+        
+        // Also refresh overdue tasks if controller is available
+        if (overdueTasksController != null) {
+            System.out.println("DEBUG [AddTaskToTodayPresenter]: Refreshing overdue tasks after adding task");
+            overdueTasksController.execute(7); // Refresh with 7 days
+        }
     }
 
     @Override
@@ -46,5 +54,9 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
         state.setSuccessMessage(null);
         addTaskToTodayViewModel.setState(state);
         addTaskToTodayViewModel.firePropertyChanged();
+    }
+    
+    public void setOverdueTasksController(OverdueTasksController controller) {
+        this.overdueTasksController = controller;
     }
 }
