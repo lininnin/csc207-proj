@@ -26,10 +26,14 @@ public class InMemoryCategoryGateway implements
     private InMemoryTaskGateway taskGateway;
 
     public InMemoryCategoryGateway() {
-        // Add some default categories for demo
-        saveCategory(new Category("1", "Work", null));
-        saveCategory(new Category("2", "Personal", null));
-        saveCategory(new Category("3", "Health", null));
+        // Don't add default categories - let tests control this
+    }
+    
+    /**
+     * Constructor with taskGateway for proper wiring.
+     */
+    public InMemoryCategoryGateway(InMemoryTaskGateway taskGateway) {
+        this.taskGateway = taskGateway;
     }
 
     @Override
@@ -59,6 +63,7 @@ public class InMemoryCategoryGateway implements
 
     @Override
     public Category getCategoryByName(String name) {
+        // Find category by exact name match (case-insensitive)
         return categories.values().stream()
                 .filter(c -> c.getName().equalsIgnoreCase(name))
                 .findFirst()
@@ -102,6 +107,10 @@ public class InMemoryCategoryGateway implements
 
     @Override
     public void save(Category category) {
+        // Validate category ID is not null or empty
+        if (category.getId() == null || category.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("Category ID is required");
+        }
         saveCategory(category); // Delegate to existing method
     }
 

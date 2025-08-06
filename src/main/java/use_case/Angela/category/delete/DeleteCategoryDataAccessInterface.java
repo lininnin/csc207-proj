@@ -74,4 +74,12 @@ public interface DeleteCategoryDataAccessInterface {
      * @return true if update succeeded, false otherwise
      */
     boolean updateTodaysTaskCategory(String taskId, String newCategoryId);
+    
+    /**
+     * Gets the total number of categories in the system.
+     * Used to enforce minimum category requirements.
+     *
+     * @return The total number of categories
+     */
+    int getCategoryCount();
 }

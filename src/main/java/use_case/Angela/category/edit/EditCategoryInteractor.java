@@ -26,6 +26,12 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
     public void execute(EditCategoryInputData inputData) {
         String categoryId = inputData.getCategoryId();
         String newName = inputData.getNewCategoryName();
+        
+        // Validate category ID first
+        if (categoryId == null || categoryId.trim().isEmpty()) {
+            outputBoundary.prepareFailView("Category ID is required");
+            return;
+        }
 
         // Validate input
         if (newName == null || newName.trim().isEmpty()) {
@@ -54,8 +60,8 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
             return;
         }
 
-        // Update category
-        category.setName(newName);
+        // Update category - DON'T trim the name
+        category.setName(newName);  // Keep spaces as-is
         boolean updated = categoryDataAccess.updateCategory(category);
 
         if (updated) {
