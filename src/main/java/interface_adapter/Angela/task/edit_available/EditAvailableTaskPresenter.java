@@ -64,7 +64,6 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
         
         // Also refresh overdue tasks if controller is available
         if (overdueTasksController != null) {
-            System.out.println("DEBUG [EditAvailableTaskPresenter]: Refreshing overdue tasks after edit");
             overdueTasksController.execute(7); // Refresh with 7 days
         }
     }

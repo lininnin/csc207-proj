@@ -240,7 +240,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             for (Task task : todaysTasks) {
                 // Skip overdue tasks - they should only appear in the Overdue panel
                 if (task.isOverdue()) {
-                    System.out.println("DEBUG [TodaysTasksView]: Skipping overdue task: " + task.getInfo().getName());
                     continue;
                 }
                 
@@ -274,8 +273,8 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                 // Check if this task is being edited (use row index, not task ID)
                 boolean isBeingEdited = (editingRow == rowIndex);
                 
-                // Store task ID for this row
-                rowToTaskIdMap.put(rowIndex, task.getInfo().getId());
+                // Store task ID for this row (use Task's ID, not Info's ID)
+                rowToTaskIdMap.put(rowIndex, task.getId());
                 
                 tableModel.addRow(new Object[]{
                     isCompleted, // Status checkbox
@@ -320,7 +319,8 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         List<Task> todaysTasks = taskGateway.getTodaysTasks();
         for (int i = 0; i < tableModel.getRowCount() && i < todaysTasks.size(); i++) {
             Task task = todaysTasks.get(i);
-            if (task.getInfo().getId().equals(taskId)) {
+            // Compare with Task's ID, not Info's ID
+            if (task.getId().equals(taskId)) {
                 row = i;
                 break;
             }

@@ -478,11 +478,6 @@ public class InMemoryTaskGateway implements
 
     @Override
     public Task addTaskToToday(TaskAvailable taskAvailable, Task.Priority priority, java.time.LocalDate dueDate) {
-        System.out.println("DEBUG [InMemoryTaskGateway]: addTaskToToday() called");
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Template: " + taskAvailable.getInfo().getName());
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Priority: " + priority);
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Due Date: " + dueDate);
-        
         // Create a new Task instance from the TaskAvailable template
         Info templateInfo = taskAvailable.getInfo();
         
@@ -498,7 +493,6 @@ public class InMemoryTaskGateway implements
         LocalDate beginDate = LocalDate.now();
         if (dueDate != null && dueDate.isBefore(LocalDate.now())) {
             beginDate = dueDate; // Set begin date to match past due date for testing
-            System.out.println("DEBUG [InMemoryTaskGateway]:   Adjusted begin date to " + beginDate + " for testing");
         }
         
         entity.BeginAndDueDates.BeginAndDueDates dates = new entity.BeginAndDueDates.BeginAndDueDates(
@@ -519,13 +513,9 @@ public class InMemoryTaskGateway implements
             todayTask.setPriority(priority);
         }
         
-        // Store in today's tasks map using the Task's ID (not Info's ID)
+        // Store in today's tasks map using the Task's ID
         String taskId = todayTask.getId();
         todaysTasks.put(taskId, todayTask);
-        
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Created task with ID: " + taskId);
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Task is overdue? " + todayTask.isOverdue());
-        System.out.println("DEBUG [InMemoryTaskGateway]:   Total tasks in today's list: " + todaysTasks.size());
         
         return todayTask;
     }
@@ -691,34 +681,21 @@ public class InMemoryTaskGateway implements
 
     @Override
     public List<Task> getOverdueTasks(int daysBack) {
-        System.out.println("DEBUG [InMemoryTaskGateway]: getOverdueTasks() called with daysBack = " + daysBack);
         LocalDate cutoffDate = LocalDate.now().minusDays(daysBack);
         LocalDate today = LocalDate.now();
-        System.out.println("DEBUG [InMemoryTaskGateway]: Cutoff date = " + cutoffDate + ", Today = " + today);
-        System.out.println("DEBUG [InMemoryTaskGateway]: Total tasks in today's list = " + todaysTasks.size());
         
         List<Task> overdueTasks = todaysTasks.values().stream()
             .filter(task -> {
-                System.out.println("DEBUG [InMemoryTaskGateway]: Evaluating task - ID: " + task.getId() + 
-                                  ", Name: " + task.getInfo().getName() + 
-                                  ", Completed: " + task.isCompleted());
                 if (task.isCompleted()) {
-                    System.out.println("DEBUG [InMemoryTaskGateway]:   -> Excluded (completed)");
                     return false;
                 }
                 LocalDate dueDate = task.getDates().getDueDate();
                 if (dueDate == null) {
-                    System.out.println("DEBUG [InMemoryTaskGateway]:   -> Excluded (no due date)");
                     return false;
                 }
-                System.out.println("DEBUG [InMemoryTaskGateway]:   -> Due date: " + dueDate);
                 // Task is overdue if due date is before today
                 // and due date is not before our cutoff (within range)
-                boolean isOverdue = dueDate.isBefore(LocalDate.now()) && !dueDate.isBefore(cutoffDate);
-                System.out.println("DEBUG [InMemoryTaskGateway]:   -> Is overdue? " + isOverdue + 
-                                  " (isBefore today: " + dueDate.isBefore(today) + 
-                                  ", !isBefore cutoff: " + !dueDate.isBefore(cutoffDate) + ")");
-                return isOverdue;
+                return dueDate.isBefore(today) && !dueDate.isBefore(cutoffDate);
             })
             .sorted((t1, t2) -> {
                 // Sort by due date - most overdue first (earliest date first)
@@ -728,7 +705,6 @@ public class InMemoryTaskGateway implements
             })
             .collect(Collectors.toList());
             
-        System.out.println("DEBUG [InMemoryTaskGateway]: Returning " + overdueTasks.size() + " overdue tasks");
         return overdueTasks;
     }
 

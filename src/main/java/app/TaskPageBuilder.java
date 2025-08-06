@@ -67,6 +67,9 @@ public class TaskPageBuilder {
     private TodaysTasksView todaysTasksView;
     private TodaySoFarView todaySoFarView;
     private CategoryManagementDialog categoryDialog;
+    
+    // Controllers
+    private OverdueTasksController overdueTasksController;
 
     public JPanel build() {
         // CRITICAL: Connect the gateways so category deletion can update tasks
@@ -189,7 +192,7 @@ public class TaskPageBuilder {
         todaysTasksView.setEditTodayTaskController(editTodayController);
 
         // Wire up Remove from Today Use Case
-        RemoveFromTodayOutputBoundary removeFromTodayPresenter = new RemoveFromTodayPresenter(
+        RemoveFromTodayPresenter removeFromTodayPresenter = new RemoveFromTodayPresenter(
                 todayTasksViewModel
         );
 
@@ -216,7 +219,7 @@ public class TaskPageBuilder {
                 overdueTasksPresenter
         );
 
-        OverdueTasksController overdueTasksController = new OverdueTasksController(
+        overdueTasksController = new OverdueTasksController(
                 overdueTasksInteractor
         );
 
@@ -229,6 +232,8 @@ public class TaskPageBuilder {
         editTodayPresenter.setOverdueTasksController(overdueTasksController);
         addToTodayPresenter.setOverdueTasksController(overdueTasksController);
         editAvailableTaskPresenter.setOverdueTasksController(overdueTasksController);
+        deleteTaskPresenter.setOverdueTasksController(overdueTasksController);
+        removeFromTodayPresenter.setOverdueTasksController(overdueTasksController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
@@ -270,6 +275,7 @@ public class TaskPageBuilder {
                 );
                 categoryPresenter.setAvailableTasksViewModel(availableTasksViewModel);
                 categoryPresenter.setTodayTasksViewModel(todayTasksViewModel);
+                categoryPresenter.setOverdueTasksController(overdueTasksController);
 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,

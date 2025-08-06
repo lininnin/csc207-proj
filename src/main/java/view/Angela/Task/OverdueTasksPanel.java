@@ -118,9 +118,6 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
     }
     
     private void updateOverdueTasks(OverdueTasksState state) {
-        System.out.println("DEBUG [OverdueTasksPanel]: updateOverdueTasks() called");
-        System.out.println("DEBUG [OverdueTasksPanel]: Number of overdue tasks received: " + state.getOverdueTasks().size());
-        
         // Clear existing rows
         tableModel.setRowCount(0);
         
@@ -171,12 +168,8 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
      * Should be called when tasks are updated elsewhere.
      */
     public void refreshOverdueTasks(OverdueTasksController controller) {
-        System.out.println("DEBUG [OverdueTasksPanel]: refreshOverdueTasks() called");
         if (controller != null) {
-            System.out.println("DEBUG [OverdueTasksPanel]: Controller is not null, executing with 7 days");
             controller.execute(7); // Last 7 days
-        } else {
-            System.out.println("DEBUG [OverdueTasksPanel]: Controller is null, cannot refresh");
         }
     }
 }

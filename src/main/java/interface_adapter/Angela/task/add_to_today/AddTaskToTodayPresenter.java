@@ -41,7 +41,6 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
         
         // Also refresh overdue tasks if controller is available
         if (overdueTasksController != null) {
-            System.out.println("DEBUG [AddTaskToTodayPresenter]: Refreshing overdue tasks after adding task");
             overdueTasksController.execute(7); // Refresh with 7 days
         }
     }

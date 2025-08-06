@@ -4,6 +4,7 @@ import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import use_case.Angela.task.delete.DeleteTaskOutputBoundary;
 import use_case.Angela.task.delete.DeleteTaskOutputData;
 
@@ -14,6 +15,7 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     private final AvailableTasksViewModel availableTasksViewModel;
     private final DeleteTaskViewModel deleteTaskViewModel;
     private TodayTasksViewModel todayTasksViewModel;
+    private OverdueTasksController overdueTasksController;
 
     public DeleteTaskPresenter(AvailableTasksViewModel availableTasksViewModel,
                                DeleteTaskViewModel deleteTaskViewModel) {
@@ -24,6 +26,10 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
         System.out.println("DEBUG: DeleteTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
+    }
+    
+    public void setOverdueTasksController(OverdueTasksController controller) {
+        this.overdueTasksController = controller;
     }
 
     @Override
@@ -51,6 +57,11 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
             todayTasksViewModel.setState(todayState);
             todayTasksViewModel.firePropertyChanged();
             System.out.println("DEBUG: Triggered Today's Tasks refresh after delete");
+        }
+        
+        // Also refresh overdue tasks if controller is available
+        if (overdueTasksController != null) {
+            overdueTasksController.execute(7); // Refresh with 7 days
         }
     }
 

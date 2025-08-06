@@ -6,6 +6,7 @@ import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -21,6 +22,7 @@ public class CategoryManagementPresenter implements
     private final CategoryManagementViewModel viewModel;
     private AvailableTasksViewModel availableTasksViewModel;
     private TodayTasksViewModel todayTasksViewModel;
+    private OverdueTasksController overdueTasksController;
 
     public CategoryManagementPresenter(CategoryManagementViewModel viewModel) {
         this.viewModel = viewModel;
@@ -32,6 +34,10 @@ public class CategoryManagementPresenter implements
     
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
+    }
+    
+    public void setOverdueTasksController(OverdueTasksController controller) {
+        this.overdueTasksController = controller;
     }
 
     // Create Category
@@ -75,6 +81,11 @@ public class CategoryManagementPresenter implements
             todayTasksViewModel.firePropertyChanged();
             System.out.println("DEBUG: Triggered Today's Tasks refresh after category delete");
         }
+        
+        // Also refresh overdue tasks if controller is available
+        if (overdueTasksController != null) {
+            overdueTasksController.execute(7); // Refresh with 7 days
+        }
     }
 
     // Edit Category
@@ -106,6 +117,11 @@ public class CategoryManagementPresenter implements
             todayTasksViewModel.setState(todayState);
             todayTasksViewModel.firePropertyChanged();
             System.out.println("DEBUG: Triggered Today's Tasks refresh after category edit");
+        }
+        
+        // Also refresh overdue tasks if controller is available  
+        if (overdueTasksController != null) {
+            overdueTasksController.execute(7); // Refresh with 7 days
         }
     }
 
