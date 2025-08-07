@@ -2,6 +2,7 @@ package use_case.Angela.task.create;
 
 /**
  * Output data for the create task use case.
+ * Contains the result of creating a new task.
  */
 public class CreateTaskOutputData {
     private final String taskId;

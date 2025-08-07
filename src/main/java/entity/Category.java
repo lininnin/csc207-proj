@@ -26,7 +26,7 @@ public class Category {
         }
 
         this.id = id;
-        this.name = name.trim();
+        this.name = name;  // Don't trim - keep spaces as-is
         this.color = color != null ? color : "#808080"; // Default gray
     }
 
@@ -61,7 +61,7 @@ public class Category {
         if (name.length() > 20) {
             throw new IllegalArgumentException("Category name cannot exceed 20 characters");
         }
-        this.name = name.trim();
+        this.name = name;  // Don't trim - keep spaces as-is
     }
 
     /**

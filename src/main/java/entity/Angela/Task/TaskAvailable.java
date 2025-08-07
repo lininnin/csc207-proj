@@ -32,7 +32,8 @@ public class TaskAvailable {
             throw new IllegalArgumentException("Task info cannot be null");
         }
 
-        this.id = UUID.randomUUID().toString();
+        // CRITICAL: Use the existing Info's ID, don't generate a new one!
+        this.id = info.getId();
         this.info = info;
         this.plannedDueDate = null;
         this.isOneTime = false; // Default to regular task
@@ -126,17 +127,35 @@ public class TaskAvailable {
     }
 
     /**
-     * Checks if this task is a duplicate of another based on name.
+     * Checks if this task is a duplicate of another based on name AND category.
+     * Same name with different categories is allowed.
      * Comparison is case-insensitive per business rules.
      *
      * @param other The other task to compare
-     * @return true if names match (case-insensitive)
+     * @return true if names AND categories match (case-insensitive)
      */
     public boolean isDuplicateOf(TaskAvailable other) {
         if (other == null) {
             return false;
         }
-        return this.info.getName().equalsIgnoreCase(other.info.getName());
+
+        // Check if names match (case-insensitive)
+        boolean namesMatch = this.info.getName().equalsIgnoreCase(other.info.getName());
+
+        // Check if categories match (including null handling)
+        String thisCategory = this.info.getCategory();
+        String otherCategory = other.info.getCategory();
+
+        boolean categoriesMatch;
+        if (thisCategory == null && otherCategory == null) {
+            categoriesMatch = true; // Both null
+        } else if (thisCategory == null || otherCategory == null) {
+            categoriesMatch = false; // One null, one not
+        } else {
+            categoriesMatch = thisCategory.equalsIgnoreCase(otherCategory);
+        }
+
+        return namesMatch && categoriesMatch;
     }
 
     @Override

@@ -1,19 +1,19 @@
 package use_case.Angela.task.add_to_today;
 
 import entity.Angela.Task.Task;
-import use_case.Angela.task.TaskGateway;
+import entity.Angela.Task.TaskAvailable;
 import java.time.LocalDate;
 
 /**
  * Interactor for adding a task to today.
  */
 public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
-    private final TaskGateway taskGateway;
+    private final AddToTodayDataAccessInterface dataAccess;
     private final AddTaskToTodayOutputBoundary outputBoundary;
 
-    public AddTaskToTodayInteractor(TaskGateway taskGateway,
+    public AddTaskToTodayInteractor(AddToTodayDataAccessInterface dataAccess,
                                     AddTaskToTodayOutputBoundary outputBoundary) {
-        this.taskGateway = taskGateway;
+        this.dataAccess = dataAccess;
         this.outputBoundary = outputBoundary;
     }
 
@@ -21,28 +21,33 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
     public void execute(AddTaskToTodayInputData inputData) {
         String taskId = inputData.getTaskId();
 
-        // Check if task exists in available
-        if (!taskGateway.existsInAvailable(taskId)) {
+        // Get the available task
+        TaskAvailable taskAvailable = dataAccess.getAvailableTaskById(taskId);
+        if (taskAvailable == null) {
             outputBoundary.presentError("Task not found in Available Tasks");
             return;
         }
 
-        // Check if already in today
-        if (taskGateway.existsInToday(taskId)) {
+        // Check if already in today (by template ID)
+        if (dataAccess.isTaskInTodaysList(taskId)) {
             outputBoundary.presentError("Task is already in Today's Tasks");
             return;
         }
 
         // Validate due date
         LocalDate dueDate = inputData.getDueDate();
+        // TEMPORARY: Modified for testing overdue functionality
+        // In production, overdue tasks should go directly to Overdue list, not Today's list
+        // But for testing, we allow past dates to demonstrate the overdue functionality
         if (dueDate != null && dueDate.isBefore(LocalDate.now())) {
-            outputBoundary.presentError("Due date cannot be a date earlier than today");
-            return;
+            // In production, this would be:
+            // outputBoundary.presentError("Tasks with past due dates cannot be added to Today's list");
+            // return;
         }
 
         // Add to today
-        Task task = taskGateway.addToToday(taskId, inputData.getPriority(), dueDate);
-        String taskName = taskGateway.getTaskName(taskId);
+        Task task = dataAccess.addTaskToToday(taskAvailable, inputData.getPriority(), dueDate);
+        String taskName = taskAvailable.getInfo().getName();
 
         AddTaskToTodayOutputData outputData = new AddTaskToTodayOutputData(task, taskName);
         outputBoundary.presentSuccess(outputData);

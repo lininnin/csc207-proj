@@ -1,7 +1,7 @@
 package use_case.Angela.category.create;
 
 /**
- * Output boundary for the create category use case.
+ * Output boundary for create category use case.
  */
 public interface CreateCategoryOutputBoundary {
     /**

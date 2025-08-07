@@ -1,6 +1,7 @@
 package use_case.Angela.task.create;
 
 import entity.info.Info;
+import entity.Angela.Task.TaskAvailable;
 import use_case.Angela.task.TaskGateway;
 import use_case.Angela.category.CategoryGateway;
 
@@ -9,14 +10,14 @@ import use_case.Angela.category.CategoryGateway;
  * Implements the business logic for creating a new task.
  */
 public class CreateTaskInteractor implements CreateTaskInputBoundary {
-    private final TaskGateway taskGateway;
+    private final CreateTaskDataAccessInterface dataAccess;
     private final CategoryGateway categoryGateway;
     private final CreateTaskOutputBoundary outputBoundary;
 
-    public CreateTaskInteractor(TaskGateway taskGateway,
+    public CreateTaskInteractor(CreateTaskDataAccessInterface dataAccess,
                                 CategoryGateway categoryGateway,
                                 CreateTaskOutputBoundary outputBoundary) {
-        this.taskGateway = taskGateway;
+        this.dataAccess = dataAccess;
         this.categoryGateway = categoryGateway;
         this.outputBoundary = outputBoundary;
     }
@@ -25,7 +26,7 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
     public void execute(CreateTaskInputData inputData) {
         String taskName = inputData.getTaskName();
 
-        // Validate input
+        // Validate task name
         if (taskName == null || taskName.trim().isEmpty()) {
             outputBoundary.presentError("Task name cannot be empty");
             return;
@@ -36,16 +37,18 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Check if task name already exists
-        if (taskGateway.availableTaskNameExists(taskName)) {
-            outputBoundary.presentError("The Task name already exists");
+        // Validate description length
+        String description = inputData.getDescription();
+        if (description != null && description.length() > 100) {
+            outputBoundary.presentError("Description cannot exceed 100 characters");
             return;
         }
 
         // Validate category if provided
+        String categoryId = inputData.getCategoryId();
         String categoryName = "";
-        if (inputData.getCategoryId() != null && !inputData.getCategoryId().isEmpty()) {
-            var category = categoryGateway.getCategoryById(inputData.getCategoryId());
+        if (categoryId != null && !categoryId.isEmpty()) {
+            var category = categoryGateway.getCategoryById(categoryId);
             if (category == null) {
                 outputBoundary.presentError("Invalid category selected");
                 return;
@@ -53,23 +56,41 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             categoryName = category.getName();
         }
 
-        // Create new task info
-        Info.Builder builder = new Info.Builder(taskName);
-        if (inputData.getDescription() != null && !inputData.getDescription().trim().isEmpty()) {
-            builder.description(inputData.getDescription());
+        // Check for duplicate names with same category (case-insensitive)
+        // Use category ID for duplicate check
+        if (dataAccess.taskExistsWithNameAndCategory(taskName, categoryId)) {
+            outputBoundary.presentError("A task with this name and category already exists");
+            return;
         }
-        if (!categoryName.isEmpty()) {
-            builder.category(categoryName);
+
+        // Create task info (no begin date - that's only for Today's tasks)
+        Info.Builder builder = new Info.Builder(taskName);
+
+        if (description != null && !description.trim().isEmpty()) {
+            builder.description(description);
+        }
+
+        // CRITICAL: Store category ID, not category name!
+        if (categoryId != null && !categoryId.isEmpty()) {
+            builder.category(categoryId);
         }
 
         Info taskInfo = builder.build();
 
-        // Save the task
-        String taskId = taskGateway.saveAvailableTask(taskInfo);
+        // Create TaskAvailable and set isOneTime flag
+        TaskAvailable taskAvailable = new TaskAvailable(taskInfo);
+        taskAvailable.setOneTime(inputData.isOneTime());
+        System.out.println("DEBUG: Creating TaskAvailable with isOneTime: " + inputData.isOneTime());
 
+        // Save the task using the correct method that handles TaskAvailable
+        String taskId = dataAccess.saveTaskAvailable(taskAvailable);
+        System.out.println("DEBUG: Task saved with ID: " + taskId + ", isOneTime: " + taskAvailable.isOneTime());
+
+        // Present success
         CreateTaskOutputData outputData = new CreateTaskOutputData(
                 taskId, taskName, "Task created successfully"
         );
+        System.out.println("DEBUG: Calling outputBoundary.presentSuccess");
         outputBoundary.presentSuccess(outputData);
     }
 }
