@@ -1,4 +1,4 @@
-package app.FeedbackPanel;
+package app.feedback_panel;
 
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Angela.DailyLog;

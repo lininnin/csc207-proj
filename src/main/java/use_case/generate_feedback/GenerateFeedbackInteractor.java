@@ -15,9 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Generates the weekly feedback entry. The scheduler triggers this use‑case **only on Mondays**,
+ * Generates the weekly feedback entry. The scheduler triggers this use‑case only during monday midnight,
  * so we no longer perform an explicit Day‑of‑Week check here—if the caller invokes it, generation proceeds.
- *
  * Workflow
  *  1. Determine this week’s Monday and see if it is already cached → return if yes.
  *  2. Load the last 7 days of DailyLogs (last Mon‑Sun inclusive).
@@ -54,20 +53,20 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             }
 
             LocalDate from = monday.minusWeeks(1);
-            System.out.println(from);
             LocalDate to   = monday.minusDays(1);
-            System.out.println(to);
             List<DailyLog> weekLogs = dailyRepo.loadBetween(from, to);
 
             String promptAnalysis  = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
             String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
             JSONObject analysisJson = new JSONObject(analysisJsonStr);
+
+            // Analysis
             String analysisText = analysisJson.optString("analysis", "(no analysis)");
             String extraNotes   = analysisJson.optString("extra_notes", "");
-
+            // Correlation
             String promptCorr   = BayesCorrelationPromptBuilder.buildPrompt(weekLogs);
             String correlationJson = gpt.callCorrelationBayes(promptCorr);
-
+            //
             String promptRec = RecommendationPromptBuilder.buildPrompt(analysisJsonStr);
             String recText   = gpt.callRecommendation(promptRec);
 

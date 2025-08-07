@@ -1,4 +1,4 @@
-package app;
+package app.WellnessPage;
 
 import data_access.TodaysWellnessLogDataAccessObject;
 import data_access.MoodAvailableDataAccessObject;
@@ -42,9 +42,7 @@ import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputBoun
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInteractor;
 import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogOutputBoundary;
 
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
 import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInteractor;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogOutputBoundary;
 
 import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInteractor;
 
@@ -185,26 +183,12 @@ public class WellnessLogPageBuilder {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(verticalSplit, BorderLayout.CENTER);
 
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(60, 63, 65));
-        sidebarPanel.setPreferredSize(new Dimension(200, 700));
-        sidebarPanel.add(new JButton("📋 Tasks"));
-        sidebarPanel.add(new JButton("📆 Events"));
-        sidebarPanel.add(new JButton("🎯 Goals"));
-        sidebarPanel.add(new JButton("🧠 Wellness Log"));
-        sidebarPanel.add(new JButton("📊 Charts"));
-        sidebarPanel.add(new JButton("🤖 AI-Feedback & Analysis"));
-        sidebarPanel.add(new JButton("⚙️ Settings"));
-
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
-
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(500, 0));
         rightPanel.setBackground(Color.WHITE);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
         return mainPanel;
