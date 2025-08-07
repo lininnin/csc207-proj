@@ -3,6 +3,7 @@ package app;
 import app.FeedbackPanel.CreateGenerateFeedback;
 import app.FeedbackPanel.FeedbackPageBuilder;
 import data_access.in_memory_repo.InMemoryFeedbackRepository;
+import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,20 +16,22 @@ public class BigMain {
             frame.setSize(1250, 800);
 
             // --- Navigation sidebar ---
-            JPanel navigator = new JPanel();
-            navigator.setLayout(new BoxLayout(navigator, BoxLayout.Y_AXIS));
+            JPanel sideBar = new JPanel();
+            sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
+            sideBar.setBackground(new Color(60, 63, 65));
+            sideBar.setPreferredSize(new Dimension(200, 700));
             JButton btnTasks = new JButton("📋 Tasks");
             JButton btnEvents = new JButton("📆 Events");
             JButton btnGoals = new JButton("🎯 Goals");
             JButton btnWellness = new JButton("🧠 Wellness Log");
             JButton btnAIAnalysis = new JButton("🤖 AI-Feedback & Analysis");
             JButton btnSettings = new JButton("⚙️ Settings");
-            navigator.add(btnTasks);
-            navigator.add(btnEvents);
-            navigator.add(btnGoals);
-            navigator.add(btnWellness);
-            navigator.add(btnAIAnalysis);
-            navigator.add(btnSettings);
+            sideBar.add(btnTasks);
+            sideBar.add(btnEvents);
+            sideBar.add(btnGoals);
+            sideBar.add(btnWellness);
+            sideBar.add(btnAIAnalysis);
+            sideBar.add(btnSettings);
 
             // --- Demo feedback Repo
             InMemoryFeedbackRepository repo = new InMemoryFeedbackRepository();
@@ -39,13 +42,14 @@ public class BigMain {
             JPanel eventPanel = new EventPageBuilder().build();
             JPanel wellnessPanel = new WellnessLogPageBuilder().build();
             JPanel feedbackPage = FeedbackPageBuilder.build(repo.loadAll());
+            JPanel settingPage = new SettingsPageBuilder().build();
 
             mainPanel.add(makePlaceholderPanel("Tasks"), "Tasks");
             mainPanel.add(eventPanel, "Events");
             mainPanel.add(makePlaceholderPanel("Goals"), "Goals");
             mainPanel.add(wellnessPanel, "WellnessLog");
             mainPanel.add(feedbackPage, "FeedbackPage"); // Renamed for clarity
-            mainPanel.add(makePlaceholderPanel("Settings"), "Settings");
+            mainPanel.add(settingPage, "Settings");
 
             // --- Navigation Button Logic ---
             btnTasks.addActionListener(e ->  ((CardLayout) mainPanel.getLayout()).show(mainPanel, "Tasks"));
@@ -55,9 +59,17 @@ public class BigMain {
             btnAIAnalysis.addActionListener(e -> ((CardLayout) mainPanel.getLayout()).show(mainPanel, "FeedbackPage"));
             btnSettings.addActionListener(e -> ((CardLayout) mainPanel.getLayout()).show(mainPanel, "Settings"));
 
+            // --- SplitPane for sidebar
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideBar, mainPanel);
+            splitPane.setDividerLocation(200);
+            splitPane.setDividerSize(3);
+            splitPane.setResizeWeight(0.0);
+
+            CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sideBar, mainPanel);
+
             // --- Layout All ---
             frame.setLayout(new BorderLayout());
-            frame.add(navigator, BorderLayout.WEST);
+            frame.add(collapsibleCenter, BorderLayout.WEST);
             frame.add(mainPanel, BorderLayout.CENTER);
 
             // Show main content by default

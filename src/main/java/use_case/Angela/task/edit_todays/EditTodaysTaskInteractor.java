@@ -53,39 +53,39 @@ public class EditTodaysTaskInteractor implements EditTodaysTaskInputBoundary {
 
         // Check if status is being changed
         boolean statusChanged = false;
-        boolean wasComplete = currentTask.isComplete();
+        boolean wasComplete = currentTask.isCompleted();
         Boolean newCompleteStatus = inputData.getIsComplete();
 
         if (newCompleteStatus != null && newCompleteStatus != wasComplete) {
             statusChanged = true;
             if (newCompleteStatus) {
-                currentTask.completeTask(LocalDateTime.now());
+                currentTask.markComplete(LocalDateTime.now());
             } else {
                 // Create new task instance to "uncomplete" it
-                BeginAndDueDates dates = currentTask.getBeginAndDueDates();
+                BeginAndDueDates dates = currentTask.getDates();
                 dates.setDueDate(dueDate != null ? dueDate : dates.getDueDate());
 
                 currentTask = new Task(
                         currentTask.getInfo(),
                         dates,
-                        inputData.getPriority() != null ? inputData.getPriority() : currentTask.getTaskPriority()
+                        inputData.getPriority() != null ? inputData.getPriority() : currentTask.getPriority()
                 );
             }
         } else {
             // Update priority and due date if changed
             if (inputData.getPriority() != null || dueDate != null) {
-                BeginAndDueDates dates = currentTask.getBeginAndDueDates();
+                BeginAndDueDates dates = currentTask.getDates();
                 dates.setDueDate(dueDate != null ? dueDate : dates.getDueDate());
 
                 currentTask = new Task(
                         currentTask.getInfo(),
                         dates,
-                        inputData.getPriority() != null ? inputData.getPriority() : currentTask.getTaskPriority()
+                        inputData.getPriority() != null ? inputData.getPriority() : currentTask.getPriority()
                 );
 
                 // Restore completion status if it was complete
                 if (wasComplete) {
-                    currentTask.completeTask(LocalDateTime.now());
+                    currentTask.markComplete(LocalDateTime.now());
                 }
             }
         }
@@ -98,7 +98,7 @@ public class EditTodaysTaskInteractor implements EditTodaysTaskInputBoundary {
                     taskId,
                     currentTask.getInfo().getName(),
                     statusChanged,
-                    currentTask.isComplete()
+                    currentTask.isCompleted()
             );
             outputBoundary.prepareSuccessView(outputData);
         } else {
