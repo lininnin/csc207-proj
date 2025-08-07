@@ -1,72 +1,50 @@
 package use_case.goalManage.today_goal;
 
+import data_access.GoalRepository;
 import entity.Sophia.Goal;
-import use_case.goalManage.GoalRepository;
-import use_case.goalManage.today_goal.TodayGoalsOutputBoundary.OperationType;
+import java.util.List;
 
-/**
- * Handles both adding to and removing from Today's Goals
- * Single Responsibility: Manages Today's Goals list operations
- */
-public class TodayGoalInteractor implements TodayGoalsInputBoundary {
+public class TodayGoalInteractor implements TodayGoalInputBoundary {
     private final GoalRepository goalRepository;
-    private final TodayGoalsOutputBoundary outputBoundary;
+    private final TodayGoalOutputBoundary presenter;
 
     public TodayGoalInteractor(GoalRepository goalRepository,
-                               TodayGoalsOutputBoundary outputBoundary) {
+                               TodayGoalOutputBoundary presenter) {
         this.goalRepository = goalRepository;
-        this.outputBoundary = outputBoundary;
+        this.presenter = presenter;
     }
 
     @Override
     public void addToToday(TodayGoalInputData inputData) {
         try {
-            Goal goal = goalRepository.findByName(inputData.getGoalName())
-                    .orElseThrow(() -> new IllegalArgumentException("Goal not found"));
-
-            if (goalRepository.isInCurrentGoals(goal)) {
-                outputBoundary.prepareFailView(
-                        OperationType.ADD,
-                        "Goal is already in Today's list"
-                );
-                return;
-            }
-
-            goalRepository.addToCurrentGoals(goal);
-            outputBoundary.prepareSuccessView(
-                    OperationType.ADD,
-                    new TodayGoalOutputData(goal.getInfo().getName())
-            );
-
+            goalRepository.addGoalToToday(inputData.getGoalName());
+            List<Goal> updatedGoals = goalRepository.getTodayGoals();
+            presenter.prepareSuccessView(new TodayGoalOutputData(updatedGoals));
         } catch (Exception e) {
-            outputBoundary.prepareFailView(OperationType.ADD, e.getMessage());
+            presenter.prepareFailView("Failed to add goal to today: " + e.getMessage());
         }
     }
 
     @Override
     public void removeFromToday(TodayGoalInputData inputData) {
         try {
-            Goal goal = goalRepository.findByName(inputData.getGoalName())
-                    .orElseThrow(() -> new IllegalArgumentException("Goal not found"));
-
-            if (!inputData.isConfirmed()) {
-                outputBoundary.prepareConfirmationView(
-                        new TodayGoalOutputData(
-                                goal.getInfo().getName(),
-                                "Delete action is not undoable, continue?"
-                        )
-                );
-                return;
+            if (inputData.isConfirmed()) {
+                goalRepository.removeGoalFromToday(inputData.getGoalName());
+                List<Goal> updatedGoals = goalRepository.getTodayGoals();
+                presenter.prepareSuccessView(new TodayGoalOutputData(updatedGoals));
             }
-
-            goalRepository.removeFromCurrentGoals(goal);
-            outputBoundary.prepareSuccessView(
-                    OperationType.REMOVE,
-                    new TodayGoalOutputData(goal.getInfo().getName())
-            );
-
         } catch (Exception e) {
-            outputBoundary.prepareFailView(OperationType.REMOVE, e.getMessage());
+            presenter.prepareFailView("Failed to remove goal from today: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void execute() {
+        try {
+            List<Goal> currentGoals = goalRepository.getTodayGoals();
+            presenter.prepareSuccessView(new TodayGoalOutputData(currentGoals));
+        } catch (Exception e) {
+            presenter.prepareFailView("Failed to load today's goals: " + e.getMessage());
         }
     }
 }

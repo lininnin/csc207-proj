@@ -1,19 +1,26 @@
 package use_case.goalManage.today_goal;
 
+import entity.Sophia.Goal;
+import java.util.List;
+
 public class TodayGoalOutputData {
-    private final String goalName;
+    private final List<Goal> todayGoals;
     private final String message;
 
-    public TodayGoalOutputData(String goalName) {
-        this(goalName, "");
+    public TodayGoalOutputData(List<Goal> todayGoals) {
+        this(todayGoals, "");
     }
 
-    public TodayGoalOutputData(String goalName, String message) {
-        this.goalName = goalName;
+    public TodayGoalOutputData(List<Goal> todayGoals, String message) {
+        this.todayGoals = todayGoals;
         this.message = message;
     }
 
-    // Getters
-    public String getGoalName() { return goalName; }
-    public String getMessage() { return message; }
+    public List<Goal> getTodayGoals() {
+        return todayGoals;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

@@ -1,4 +1,4 @@
-package use_case.orderGoal;
+package use_case.goalManage.order_goal;
 
 import entity.Sophia.Goal;
 import java.util.List;

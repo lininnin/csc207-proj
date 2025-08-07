@@ -9,7 +9,6 @@ public class TodayGoalInputData {
         this.confirmed = confirmed;
     }
 
-    // Getters
     public String getGoalName() { return goalName; }
     public boolean isConfirmed() { return confirmed; }
 }

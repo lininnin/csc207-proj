@@ -1,4 +1,4 @@
-package use_case.create_goal;
+package use_case.goalManage.create_goal;
 
 /**
  * Output data for goal creation, containing success/status information.

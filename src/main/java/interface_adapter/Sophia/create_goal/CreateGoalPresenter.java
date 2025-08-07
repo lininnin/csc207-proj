@@ -1,7 +1,7 @@
 package interface_adapter.Sophia.create_goal;
 
-import use_case.create_goal.CreateGoalOutputBoundary;
-import use_case.create_goal.CreateGoalOutputData;
+import use_case.goalManage.create_goal.CreateGoalOutputBoundary;
+import use_case.goalManage.create_goal.CreateGoalOutputData;
 
 public class CreateGoalPresenter implements CreateGoalOutputBoundary {
     @Override

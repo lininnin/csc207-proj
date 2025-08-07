@@ -1,10 +1,10 @@
-package interface_adapter.orderGoals;
+package interface_adapter.Sophia.order_goal;
 
 import entity.Sophia.Goal;
-import use_case.orderGoal.OrderGoalsOutputBoundary;
-import use_case.orderGoal.OrderGoalsOutputData;
+import use_case.goalManage.order_goal.OrderGoalsOutputBoundary;
+import use_case.goalManage.order_goal.OrderGoalsOutputData;
 
-public class OrderGoalsPresenter implements OrderGoalsOutputBoundary {
+public class OrderGoalPresenter implements OrderGoalsOutputBoundary {
     @Override
     public void present(OrderGoalsOutputData outputData) {
         for (Goal goal : outputData.getOrderedGoals()) {

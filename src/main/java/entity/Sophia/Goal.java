@@ -180,6 +180,25 @@ public class Goal implements goalInterface{
         this.completedDateTime = completedDateTime;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s - %s (Progress: %d/%d, %s to %s)",
+                goalInfo.getInfo().getName(),
+                timePeriod.toString(),
+                currentProgress,
+                frequency,
+                beginAndDueDates.getBeginDate(),
+                beginAndDueDates.getDueDate());
+    }
+
+    /**
+     * Returns the progress in simple "current/target" format
+     * @return String in "currentProgress/frequency" format (e.g., "2/200")
+     */
+    public String getSimpleProgress() {
+        return String.format("%d/%d", currentProgress, frequency);
+    }
+
 
 
 }

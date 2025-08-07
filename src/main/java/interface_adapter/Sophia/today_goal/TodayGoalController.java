@@ -1,27 +1,27 @@
 package interface_adapter.Sophia.today_goal;
 
-import use_case.goalManage.today_goal.TodayGoalsInputBoundary;
+import entity.Sophia.Goal;
+import use_case.goalManage.today_goal.TodayGoalInputBoundary;
 import use_case.goalManage.today_goal.TodayGoalInputData;
 
-/**
- * Receives UI events and delegates to the interactor
- */
 public class TodayGoalController {
-    private final TodayGoalsInputBoundary todayGoalsInteractor;
+    private final TodayGoalInputBoundary todayGoalsInteractor;
 
-    public TodayGoalController(TodayGoalsInputBoundary todayGoalsInteractor) {
+    public TodayGoalController(TodayGoalInputBoundary todayGoalsInteractor) {
         this.todayGoalsInteractor = todayGoalsInteractor;
     }
 
-    // For adding to Today's Goals (no confirmation needed)
     public void addToToday(String goalName) {
         TodayGoalInputData inputData = new TodayGoalInputData(goalName, false);
         todayGoalsInteractor.addToToday(inputData);
     }
 
-    // For removing from Today's Goals (with confirmation flow)
     public void removeFromToday(String goalName, boolean confirmed) {
         TodayGoalInputData inputData = new TodayGoalInputData(goalName, confirmed);
         todayGoalsInteractor.removeFromToday(inputData);
+    }
+
+    public void execute() {
+        todayGoalsInteractor.execute();  // Calls the new execute method
     }
 }

@@ -1,4 +1,4 @@
-package use_case.orderGoal;
+package use_case.goalManage.order_goal;
 
 public interface OrderGoalsInputBoundary {
     void execute(OrderGoalsInputData inputData);
