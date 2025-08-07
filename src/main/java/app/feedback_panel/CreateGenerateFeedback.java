@@ -1,12 +1,12 @@
-package app.FeedbackPanel;
+package app.feedback_panel;
 
+import data_access.files.FileFeedbackRepository;
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import entity.Angela.DailyLog;
 import interface_adapter.gpt.OpenAIAPIAdapter;
 import use_case.generate_feedback.GenerateFeedbackInputData;
 import use_case.generate_feedback.GenerateFeedbackInteractor;
 import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
-import use_case.repository.*;
 import entity.Ina.FeedbackEntry;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class CreateGenerateFeedback {
         }
 
         // 2. Feedback repo
-        InMemoryFeedbackRepository feedbackRepo = new InMemoryFeedbackRepository();
+        FileFeedbackRepository feedbackRepo = new FileFeedbackRepository();
 
         // 3. GPT service
         OpenAIAPIAdapter adapter = new OpenAIAPIAdapter();
