@@ -1,4 +1,4 @@
-package app;
+package app.settingsPage;
 
 import data_access.NotificationTimeDataAccessObject;
 
@@ -42,22 +42,6 @@ public class SettingsPageBuilder {
         centerPanel.setBorder(BorderFactory.createTitledBorder("Notification Time Settings"));
         centerPanel.add(notificationTimeView, BorderLayout.CENTER);
 
-        // -------------------- Sidebar --------------------
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(60, 63, 65));
-        sidebarPanel.setPreferredSize(new Dimension(200, 700));
-        sidebarPanel.add(new JButton("📋 Tasks"));
-        sidebarPanel.add(new JButton("📆 Events"));
-        sidebarPanel.add(new JButton("🎯 Goals"));
-        sidebarPanel.add(new JButton("🧠 Wellness Log"));
-        sidebarPanel.add(new JButton("📊 Charts"));
-        sidebarPanel.add(new JButton("🤖 AI-Feedback & Analysis"));
-        sidebarPanel.add(new JButton("⚙️ Settings"));
-
-        // -------------------- Collapsible Layout --------------------
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
-
         // -------------------- Right Panel (Details) --------------------
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(500, 0));
@@ -65,7 +49,7 @@ public class SettingsPageBuilder {
 
         // -------------------- Main Container --------------------
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
         return mainPanel;

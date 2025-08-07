@@ -1,4 +1,4 @@
-package app;
+package app.eventPage;
 
 import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventController;
 import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventPresenter;
@@ -127,26 +127,13 @@ public class EventPageBuilder {
         centerPanel.add(topCenterRow, BorderLayout.CENTER);
         centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(60, 63, 65));
-        sidebarPanel.setPreferredSize(new Dimension(200, 700));
-        sidebarPanel.add(new JButton("📋 Tasks"));
-        sidebarPanel.add(new JButton("📆 Events"));
-        sidebarPanel.add(new JButton("🎯 Goals"));
-        sidebarPanel.add(new JButton("🧠 Wellness Log"));
-        sidebarPanel.add(new JButton("📊 Charts"));
-        sidebarPanel.add(new JButton("🤖 AI-Feedback & Analysis"));
-        sidebarPanel.add(new JButton("⚙️ Settings"));
-
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
 
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(300, 0));
         rightPanel.setBackground(Color.WHITE);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
         return mainPanel;
