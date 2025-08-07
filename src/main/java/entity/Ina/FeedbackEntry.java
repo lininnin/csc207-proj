@@ -8,7 +8,6 @@ public class FeedbackEntry {
     private final String aiAnalysis;
     private final String correlationData;
     private final String recommendations;
-    // TODO: Check algorithm for generate feedback use case
 
     public FeedbackEntry(LocalDate date,
                          String aiAnalysis,

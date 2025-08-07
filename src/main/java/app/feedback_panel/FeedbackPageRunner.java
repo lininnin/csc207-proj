@@ -1,4 +1,4 @@
-package app.FeedbackPanel;
+package app.feedback_panel;
 
 public class FeedbackPageRunner {
 }

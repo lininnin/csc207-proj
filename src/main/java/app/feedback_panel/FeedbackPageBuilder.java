@@ -1,4 +1,4 @@
-package app.FeedbackPanel;
+package app.feedback_panel;
 
 import entity.Ina.FeedbackEntry;
 import view.feedback_panel.FeedbackCompositePanel;
