@@ -1,5 +1,6 @@
 package use_case.goalManage.create_goal;
 
+import entity.Angela.Task.Task;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
 import java.time.LocalDate;
@@ -16,11 +17,12 @@ public class CreateGoalInputData {
     private final LocalDate endDate;
     private final Goal.TimePeriod timePeriod;  // Kept from original
     private final int frequency;  // Kept from original
+    private final Task targetTask;
 
     public CreateGoalInputData(String goalName, String goalDescription,
                                double targetAmount, double currentAmount,
                                LocalDate startDate, LocalDate endDate,
-                               Goal.TimePeriod timePeriod, int frequency) {
+                               Goal.TimePeriod timePeriod, int frequency, Task targetTask) {
         this.goalName = goalName;
         this.goalDescription = goalDescription;
         this.targetAmount = targetAmount;
@@ -29,6 +31,7 @@ public class CreateGoalInputData {
         this.endDate = endDate;
         this.timePeriod = timePeriod;
         this.frequency = frequency;
+        this.targetTask = targetTask;
     }
 
     // Getters that match goalFactory.create() parameters
@@ -38,6 +41,9 @@ public class CreateGoalInputData {
     public double getCurrentAmount() { return currentAmount; }
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
+    public Task getTargetTask() {
+        return targetTask;
+    }
 
     // Additional getters from original
     public Goal.TimePeriod getTimePeriod() { return timePeriod; }

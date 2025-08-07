@@ -20,18 +20,23 @@ public class AvailableGoalsController {
     }
 
     public void execute(String command) {
+        if (command == null || command.isEmpty()) {
+            this.availableGoalsInteractor.execute();
+            return;
+        }
+
         if (command.startsWith("add_to_today:")) {
-            String goalName = command.substring("add_to_today:".length());
-            TodayGoalInputData inputData = new TodayGoalInputData(goalName, false);
+            String goalName = command.substring("add_to_today:".length()).trim();
+            // Default to 0 when adding to today's goals
+            TodayGoalInputData inputData = new TodayGoalInputData(goalName, 0.0);
             this.todayGoalInteractor.addToToday(inputData);
         }
         else if (command.startsWith("delete:")) {
-            String goalName = command.substring("delete:".length());
+            String goalName = command.substring("delete:".length()).trim();
             DeleteGoalInputData inputData = new DeleteGoalInputData(goalName, false);
             this.deleteGoalInteractor.execute(inputData);
         }
         else {
-            // Default refresh operation
             this.availableGoalsInteractor.execute();
         }
     }

@@ -1,88 +1,125 @@
 package views;
 
 import entity.Sophia.Goal;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
 import interface_adapter.Sophia.today_goal.TodayGoalController;
+import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.Sophia.today_goal.TodaysGoalsState;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public class TodayGoalView extends JPanel implements PropertyChangeListener {
-    private final JList<Goal> goalList;
-    private final TodayGoalController controller;
     private final TodayGoalsViewModel viewModel;
+    private final TodayGoalController todayGoalController;
+    private JList<Goal> goalsList;
 
-    public TodayGoalView(TodayGoalsViewModel viewModel, TodayGoalController controller) {
-        this.controller = controller;
+    public TodayGoalView(TodayGoalsViewModel viewModel, TodayGoalController todayGoalController) {
         this.viewModel = viewModel;
+        this.todayGoalController = todayGoalController;
         viewModel.addPropertyChangeListener(this);
 
-        this.setLayout(new BorderLayout());
-        this.setBorder(BorderFactory.createTitledBorder("Today's Goals"));
-
-        // Create the goal list with custom renderer
-        goalList = new JList<>();
-        goalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        goalList.setCellRenderer(new GoalListCellRenderer());
-
-        this.add(new JScrollPane(goalList), BorderLayout.CENTER);
-        this.add(createButtonPanel(), BorderLayout.SOUTH);
-
-        // Initial data load
-        refreshGoalsList();
+        setLayout(new BorderLayout());
+        initializeUI();
     }
 
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    private void initializeUI() {
+        goalsList = new JList<>();
+        goalsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        goalsList.setCellRenderer(new GoalListCellRenderer());
 
-        JButton removeButton = new JButton("Remove from Today");
-        removeButton.addActionListener(e -> removeSelectedGoal());
+        goalsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Goal selected = goalsList.getSelectedValue();
+                    if (selected != null) {
+                        showGoalOptions(selected);
+                    }
+                }
+            }
+        });
 
-        buttonPanel.add(removeButton);
-        return buttonPanel;
+        JScrollPane scrollPane = new JScrollPane(goalsList);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void showGoalOptions(Goal goal) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem editItem = new JMenuItem("Edit");
+        editItem.addActionListener(e -> showEditDialog(goal));
+        popupMenu.add(editItem);
+
+        JMenuItem deleteItem = new JMenuItem("Remove from Today");
+        deleteItem.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Remove '" + goal.getGoalInfo().getInfo().getName() + "' from today?",
+                    "Confirm Removal",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                todayGoalController.removeFromToday(goal.getGoalInfo().getInfo().getName(), 0);}
+        });
+        popupMenu.add(deleteItem);
+
+        popupMenu.show(goalsList,
+                MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x,
+                MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y
+        );
+    }
+
+    private void showEditDialog(Goal goal) {
+        JDialog editDialog = new JDialog();
+        editDialog.setTitle("Edit Goal");
+        editDialog.setLayout(new GridLayout(0, 2, 5, 5));
+        editDialog.setSize(400, 300);
+        editDialog.setModal(true);
+
+        editDialog.add(new JLabel("Current Progress:"));
+        JSpinner currentSpinner = new JSpinner(new SpinnerNumberModel(
+                goal.getCurrentProgress(), 0, goal.getFrequency(), 1
+        ));
+        editDialog.add(currentSpinner);
+
+        editDialog.add(new JLabel("Target:"));
+        JLabel targetLabel = new JLabel(String.valueOf(goal.getFrequency()));
+        editDialog.add(targetLabel);
+
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e -> {
+            int newProgress = (Integer) currentSpinner.getValue();
+            todayGoalController.updateProgress(
+                    goal.getGoalInfo().getInfo().getName(),
+                    newProgress
+            );
+            editDialog.dispose();
+        });
+        editDialog.add(saveButton);
+
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> editDialog.dispose());
+        editDialog.add(cancelButton);
+
+        editDialog.setLocationRelativeTo(this);
+        editDialog.setVisible(true);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
-            refreshGoalsList();
+            TodaysGoalsState state = (TodaysGoalsState) evt.getNewValue();
+            List<Goal> goals = state.getTodayGoals();
+            goalsList.setListData(goals.toArray(new Goal[0]));
+
         }
     }
 
-    private void refreshGoalsList() {
-        SwingUtilities.invokeLater(() -> {
-            List<Goal> goals = viewModel.getState().getTodaysGoals();
-            goalList.setListData(goals.toArray(new Goal[0]));
-        });
-    }
-
-    private void removeSelectedGoal() {
-        Goal selected = goalList.getSelectedValue();
-        if (selected != null) {
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Remove '" + selected.getGoalInfo().getInfo().getName() + "'?",
-                    "Confirm Removal",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                controller.removeFromToday(
-                        selected.getGoalInfo().getInfo().getName(),
-                        true
-                );
-            }
-        }
-    }
-
-    public Goal getSelectedGoal() {
-        return goalList.getSelectedValue();
-    }
-
-    // Custom cell renderer class
     private static class GoalListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(
@@ -96,9 +133,10 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
                         goal.getCurrentProgress(),
                         goal.getFrequency()));
 
-                // Visual feedback
                 if (goal.getCurrentProgress() >= goal.getFrequency()) {
-                    setBackground(new Color(200, 255, 200)); // Light green for completed
+                    setBackground(new Color(200, 255, 200));
+                } else {
+                    setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
                 }
             }
             return this;

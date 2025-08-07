@@ -21,7 +21,6 @@ public class Goal implements goalInterface{
     private int currentProgress; // Current number of task completions per period
     private boolean isCompleted; // Whether the goal is currently marked as done
     private LocalDateTime completedDateTime; // Optional completed datetime
-
     /**
      * Constructs a new Goal with the given information.
      *

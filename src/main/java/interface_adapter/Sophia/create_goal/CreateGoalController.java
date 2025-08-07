@@ -1,5 +1,6 @@
 package interface_adapter.Sophia.create_goal;
 
+import entity.Angela.Task.Task;
 import use_case.goalManage.create_goal.CreateGoalInputBoundary;
 import use_case.goalManage.create_goal.CreateGoalInputData;
 import entity.Sophia.Goal;
@@ -26,7 +27,7 @@ public class CreateGoalController {
     public void execute(String goalName, String goalDescription,
                         double targetAmount, double currentAmount,
                         LocalDate startDate, LocalDate endDate,
-                        Goal.TimePeriod timePeriod, int frequency) {
+                        Goal.TimePeriod timePeriod, int frequency, Task targetTask) {
         CreateGoalInputData inputData = new CreateGoalInputData(
                 goalName,
                 goalDescription,
@@ -35,19 +36,10 @@ public class CreateGoalController {
                 startDate,
                 endDate,
                 timePeriod,
-                frequency
+                frequency,
+                targetTask
         );
         createGoalUseCase.execute(inputData);
     }
 
-    /**
-     * Simplified version with default currentAmount (0.0)
-     */
-    public void execute(String goalName, String goalDescription,
-                        double targetAmount, LocalDate startDate,
-                        LocalDate endDate, Goal.TimePeriod timePeriod,
-                        int frequency) {
-        execute(goalName, goalDescription, targetAmount, 0.0,
-                startDate, endDate, timePeriod, frequency);
-    }
 }

@@ -69,7 +69,7 @@ public class EditTodayGoalView extends JPanel implements PropertyChangeListener 
                     );
 
                     boolean confirmed = (confirm == JOptionPane.YES_OPTION);
-                    deleteController.execute(selected, confirmed);
+                    deleteController.execute(selected);
                 }
             }
         }));
@@ -104,21 +104,39 @@ public class EditTodayGoalView extends JPanel implements PropertyChangeListener 
             }
         }));
 
-        // Add to Today button
+        // In EditTodayGoalView.java - inside initializeUI()
         buttonPanel.add(new JButton(new AbstractAction("Add to Today") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selected = goalList.getSelectedValue();
-                if (selected != null) {
-                    // Directly add without confirmation since controller doesn't need it
-                    todayController.addToToday(selected);
+                String selectedName = goalList.getSelectedValue();
+                if (selectedName != null) {
+                    try {
+                        // Add to today's goals
+                        todayController.addToToday(selectedName);
 
-                    // Optional: Show success feedback
+                        // Show success message
+                        JOptionPane.showMessageDialog(
+                                EditTodayGoalView.this,
+                                "'" + selectedName + "' was successfully added to Today's Goals!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(
+                                EditTodayGoalView.this,
+                                "Failed to add goal: " + ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                } else {
                     JOptionPane.showMessageDialog(
                             EditTodayGoalView.this,
-                            "'" + selected + "' was added to Today's Goals!",
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE
+                            "Please select a goal first",
+                            "No Selection",
+                            JOptionPane.WARNING_MESSAGE
                     );
                 }
             }

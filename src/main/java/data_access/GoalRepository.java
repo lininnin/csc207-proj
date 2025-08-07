@@ -28,7 +28,14 @@ public interface GoalRepository {
     void saveTodayGoal(Goal goal);
     void removeGoal(String goalName);
 
-    List<Goal> getTodayGoals();
+
     void addGoalToToday(String goalName);
     void removeGoalFromToday(String goalName);
+    void updateTodayGoalProgress(String goalName, int newProgress);
+    List<Goal> getTodayGoals();
+    List<Goal> loadGoals();
+    List<Goal> loadCurrentGoals();
+
+    void saveGoals();
+    void saveCurrentGoals();
 }

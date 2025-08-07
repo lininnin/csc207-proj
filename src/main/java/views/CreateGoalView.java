@@ -1,5 +1,8 @@
 package views;
 
+import entity.Angela.Task.Task;
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.Info;
 import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
 import interface_adapter.Sophia.create_goal.CreateGoalController;
 import entity.Sophia.Goal;
@@ -27,8 +30,22 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
     private final JSpinner frequencySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
     private final JButton createButton;
 
+    private final JComboBox<Task> taskComboBox;
+
+
     public CreateGoalView(CreatedGoalViewModel createdGoalViewModel,
                           CreateGoalController createGoalController) {
+
+        Info studyInfo = new Info.Builder("Study")
+                .description("Study algorithms")
+                .build();
+        BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), null); // or appropriate dates
+        Task studyTask = new Task("templateId1", studyInfo, dates, false);
+
+        Task[] tasks = new Task[] { studyTask };
+        taskComboBox = new JComboBox<>(tasks);
+
+
         this.createdGoalViewModel = createdGoalViewModel;
         this.createGoalController = createGoalController;
         createdGoalViewModel.addPropertyChangeListener(this);
@@ -54,6 +71,9 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
         fields.add(timePeriodCombo);
         fields.add(new JLabel("Frequency:"));
         fields.add(frequencySpinner);
+        fields.add(new JLabel("Target Task:"));
+        fields.add(taskComboBox);
+
 
         // Button panel
         JPanel buttons = new JPanel();
@@ -89,6 +109,8 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
                 LocalDate endDate = LocalDate.parse(endDateField.getText());
                 Goal.TimePeriod timePeriod = (Goal.TimePeriod) timePeriodCombo.getSelectedItem();
                 int frequency = (int) frequencySpinner.getValue();
+                Task selectedTask = (Task) taskComboBox.getSelectedItem();
+
 
                 createGoalController.execute(
                         goalName,
@@ -98,7 +120,9 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
                         startDate,
                         endDate,
                         timePeriod,
-                        frequency
+                        frequency,
+                        selectedTask
+
                 );
 
                 // Clear form after successful submission

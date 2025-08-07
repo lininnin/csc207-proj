@@ -1,27 +1,25 @@
 package interface_adapter.Sophia.today_goal;
 
 import entity.Sophia.Goal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodaysGoalsState {
-    private List<Goal> todaysGoals;
-    private String error = null;
+    private List<Goal> todayGoals;
 
-    // Getter and setter for todaysGoals
-    public List<Goal> getTodaysGoals() {
-        return todaysGoals;
+    public TodaysGoalsState() {
+        this.todayGoals = new ArrayList<>();
     }
 
-    public void setTodaysGoals(List<Goal> todaysGoals) {
-        this.todaysGoals = todaysGoals;
+    public TodaysGoalsState(List<Goal> goals) {
+        this.todayGoals = new ArrayList<>(goals);
     }
 
-    // Getter and setter for error
-    public String getError() {
-        return error;
+    public List<Goal> getTodayGoals() {
+        return todayGoals;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setTodayGoals(List<Goal> todayGoals) {
+        this.todayGoals = new ArrayList<>(todayGoals);
     }
 }

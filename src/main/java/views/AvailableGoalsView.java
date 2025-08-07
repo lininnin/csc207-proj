@@ -177,19 +177,27 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
 
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
-                    // Convert goal to command string
                     String deleteCommand = "delete:" + selected.getGoalInfo().getInfo().getName();
-
-                    // Execute through controller
                     controller.execute(deleteCommand);
+
+                    // Immediately remove from Available Goals ViewModel
+                    viewModel.removeGoalByName(selected.getGoalInfo().getInfo().getName());
+
+                    // Also remove from Today's Goals ViewModel (if you have access)
+                    // You might need to inject Today's Goals ViewModel here or notify its controller to update
+                    // For example, if you have todayGoalsViewModel:
+                    // todayGoalsViewModel.removeGoalByName(selected.getGoalInfo().getInfo().getName());
 
                     JOptionPane.showMessageDialog(this,
                             "Deleted: " + selected,
                             "Success",
                             JOptionPane.INFORMATION_MESSAGE);
 
-                    // Refresh the view
-                    controller.execute("refresh");
+                    // Refresh Available Goals list UI
+                    refreshView();
+
+                    // You should also refresh Today's Goals UI separately or notify that view model
+                    // If you can't access it here, notify its controller or use an observer pattern.
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,
@@ -200,4 +208,7 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
             }
         }
     }
+
+
+
 }

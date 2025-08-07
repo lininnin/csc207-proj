@@ -1,47 +1,33 @@
+// Updated DeleteGoalPresenter.java
 package interface_adapter.Sophia.delete_goal;
 
-import use_case.goalManage.delete_goal.DeleteGoalOutputBoundary ;
+import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
+import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
+import use_case.goalManage.delete_goal.DeleteGoalOutputBoundary;
 import use_case.goalManage.delete_goal.DeleteGoalOutputData;
 
 import javax.swing.*;
 
 public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
-    @Override
-    public void prepareConfirmationView(DeleteGoalOutputData outputData) {
-        // Show confirmation dialog in UI
-        System.out.println(outputData.getMessage()); // Replace with actual UI call
+    private final AvailableGoalsViewModel availableGoalsViewModel;
+    private final TodayGoalsViewModel todayGoalsViewModel;
+
+    public DeleteGoalPresenter(AvailableGoalsViewModel availableGoalsViewModel,
+                               TodayGoalsViewModel todayGoalsViewModel) {
+        this.availableGoalsViewModel = availableGoalsViewModel;
+        this.todayGoalsViewModel = todayGoalsViewModel;
     }
 
     @Override
     public void prepareSuccessView(DeleteGoalOutputData outputData) {
-        // Show success message in UI
-        System.out.println(outputData.getMessage()); // Replace with actual UI call
-    }
+        String goalName = outputData.getGoalName();
 
-    @Override
-    public void prepareFailView(String error) {
-        // Show error message in UI
-        System.err.println(error); // Replace with actual UI call
-    }
+        availableGoalsViewModel.removeGoalByName(goalName);
+        availableGoalsViewModel.firePropertyChanged();
 
-    public void showConfirmationDialog(String goalName, int currentProgress, int targetProgress) {
-        int option = JOptionPane.showConfirmDialog(
-                null,
-                "Are you sure you want to delete this goal?\n\n" +
-                        "Goal: " + goalName + "\n" +
-                        "Progress: " + currentProgress + "/" + targetProgress,
-                "Confirm Deletion",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
+        todayGoalsViewModel.removeGoalByName(goalName);
+        todayGoalsViewModel.firePropertyChanged();
 
-        if (option == JOptionPane.YES_OPTION) {
-            // This would trigger the actual deletion through your controller
-            onDeletionConfirmed(goalName);
-        }
-    }
-
-    public void showSuccessMessage(String goalName) {
         JOptionPane.showMessageDialog(
                 null,
                 "Successfully deleted goal: " + goalName,
@@ -50,7 +36,8 @@ public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
         );
     }
 
-    public void showErrorMessage(String error) {
+    @Override
+    public void prepareFailView(String error) {
         JOptionPane.showMessageDialog(
                 null,
                 "Failed to delete goal: " + error,
@@ -59,8 +46,14 @@ public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
         );
     }
 
-    private void onDeletionConfirmed(String goalName) {
-        // This would be connected to your controller
-        System.out.println("Deletion confirmed for: " + goalName);
+    @Override
+    public void prepareConfirmationView(DeleteGoalOutputData outputData) {
+        // Optional confirmation dialog (not used in automatic controller call)
+        JOptionPane.showConfirmDialog(
+                null,
+                outputData.getMessage(),
+                "Confirm Deletion",
+                JOptionPane.YES_NO_OPTION
+        );
     }
 }
