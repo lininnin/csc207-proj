@@ -42,7 +42,8 @@ public final class BayesCorrelationPromptBuilder {
                 .append(" 1. Compute the posterior mean *direction* (+ / – / ~0) for each variable.\n")
                 .append(" 2. Give a 0‑1 confidence score that the sign is correct.\n")
                 .append(" 3. Add one‑sentence methodological note.\n")
-                .append("Return STRICT JSON only, no extra keys.\n\n")
+                .append("If there is missing days then focus on analyzing the rest of the days.\n")
+                .append("Return STRICT JSON only, no extra keys. \n\n")
 
                 .append("INPUT:\n")
                 .append(toWeekVectorJson(weekLogs))
@@ -51,11 +52,11 @@ public final class BayesCorrelationPromptBuilder {
                 .append("OUTPUT JSON SCHEMA:\n")
                 .append("{\n")
                 .append("  \"effect_summary\": [\n")
-                .append("    {\"variable\":\"stress\",\"direction\":\"positive|negative|none\",\"confidence\":0.0‑1.0},\n")
-                .append("    {\"variable\":\"energy\", ...},\n")
-                .append("    {\"variable\":\"fatigue\", ...}\n")
+                .append("    {\"variable\":\"Stress\",\"direction\":\"Positive|Negative|None\",\"confidence\":0.0‑1.0},\n")
+                .append("    {\"variable\":\"Energy\", ...},\n")
+                .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
-                .append("  \"notes\": \"one short sentence\"\n")
+                .append("  \"notes\": \"one short sentence, if data is missing specify which data, including metrics\"\n")
                 .append("}\n");
 
         return sb.toString();
@@ -72,7 +73,7 @@ public final class BayesCorrelationPromptBuilder {
             double fatigue = avg(dl, w -> w.getFatigueLevel().getValue());
 
             return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f," +
-                            "\"stress\":%.2f,\"energy\":%.2f,\"fatigue\":%.2f}",
+                            "\"Stress\":%.2f,\"Energy\":%.2f,\"Fatigue\":%.2f}",
                     dl.getDate(), completion, stress, energy, fatigue);
         }).collect(Collectors.joining(",\n", "[\n", "\n]"));
     }

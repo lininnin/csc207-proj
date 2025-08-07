@@ -1,0 +1,117 @@
+Aug 2
+Test 1 - general test for functionality, yay it worked!
+Analysis: The week shows a significant gap in productivity data on 2025-07-27, with no tasks scheduled, completed, or overdue, indicating a potential lack of engagement or activity. This absence of data may correlate with lower productivity levels observed on adjacent days, suggesting a possible trend of reduced task completion or scheduling. The lack of wellness and events data further supports the notion of inactivity on this day, which may contribute to overall wellness decline if such patterns persist. The absence of data could imply a break in routine or external factors affecting productivity and wellness. However, without data from the other days, definitive correlations cannot be established.
+
+Notes: Data for 2025-07-27 is MISSING.
+Correlation: Schedule at least three tasks for each day next week to ensure consistent engagement and productivity. Incorporate wellness activities, such as a daily walk or mindfulness session, to enhance overall well-being. Review your calendar at the start of each day to prioritize tasks and maintain focus. Consider setting reminders for both work and wellness activities to prevent gaps in your routine. Reflect on any external factors that may have contributed to last week's inactivity and address them proactively.
+Recommendation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"none","confidence":0.0},
+    {"variable":"energy","direction":"none","confidence":0.0},
+    {"variable":"fatigue","direction":"none","confidence":0.0}
+  ],
+  "notes": "Insufficient data to determine effects due to NaN values."
+  \
+}
+
+Test 2 - figured out we didnt have enough tasks everyday to do bayesian analysis.
+Analysis: The report indicates a complete lack of task data, wellness logs, and events for both July 26 and July 27, 2025. This absence of data suggests a potential disruption in productivity and wellness tracking during this period. The consistent zero entries across both days may indicate a broader trend of inactivity or disengagement, possibly correlating with external factors not captured in the report. The missing data could imply a lack of scheduling or prioritization of tasks, which may affect overall productivity in the following days. However, without additional data points, these remain assumptions.
+
+Notes: Data for July 26 and July 27 is MISSING.
+Correlation: Prioritize scheduling at least three key tasks for each day next week to regain focus and productivity. Implement a daily wellness log to track your physical and mental health, aiming for at least one entry per day. Set aside time for reflection at the end of each day to evaluate your progress and adjust your plans as needed. Consider identifying potential external factors that may impact your engagement and address them proactively. Finally, commit to a consistent routine that includes breaks to maintain energy and motivation.
+Recommendation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"none","confidence":0.0},
+    {"variable":"energy","direction":"none","confidence":0.0},
+    {"variable":"fatigue","direction":"none","confidence":0.0}
+  ],
+  "notes": "Insufficient data to determine effects due to missing values."
+}
+
+Test 3 - prompt fix for analysis
+Analysis: Throughout the week, there appears to be a correlation between the number of completed tasks and average wellness changes, suggesting that higher task completion may be associated with improved wellness. However, the absence of data on 2025-07-27 disrupts the ability to fully assess these trends, as it may indicate a potential drop in productivity or wellness that could align with lower task completion on adjacent days.
+
+Test 4 - prompt fix for analysis
+Analysis: The week shows a pattern of fluctuating productivity, with some days exhibiting higher task completion rates correlated with increased wellness levels, while other days show a decline in both areas. The absence of data on 2025-07-27 may indicate a potential drop in productivity or wellness for that day, as it lacks any recorded tasks or wellness assessments, which could suggest a disconnect from routine or engagement.
+
+
+Test 5 - so why does it say 2 different days missing?
+Analysis: Throughout the week, the completion rate for tasks remained consistent at approximately 66.67%, indicating a stable level of productivity despite fluctuations in wellness metrics; higher stress and fatigue levels on days with a 'Stressed' mood correlate with lower energy levels, while 'Happy' moods align with lower stress and fatigue, suggesting a potential relationship between emotional state and productivity outcomes.
+
+Notes: Data for wellness levels on July 22 is MISSING, which may indicate a gap in understanding how the initial mood and wellness levels influenced productivity trends on subsequent days.
+Correlation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"negative","confidence":0.85},
+    {"variable":"energy","direction":"positive","confidence":0.75},
+    {"variable":"fatigue","direction":"negative","confidence":0.80}
+  ],
+  "notes": "Data for 2025-07-21 is missing, including metrics for stress, energy, and fatigue."
+}
+Recommendation: Prioritize self-care by scheduling at least 30 minutes daily for activities that boost your mood, such as exercise or mindfulness. Track your emotional state alongside your tasks to identify patterns and adjust your workload on days when stress levels are high. Set specific, achievable goals for each day to maintain focus and motivation. Consider implementing short breaks every hour to recharge your energy and reduce fatigue. Aim to reflect on your mood at the end of each day to better understand its impact on your productivity.
+
+Aug 3
+Test 6 - each day with 5 random wellness log + 1 extra task instance added
+Analysis: Throughout the week, the completion rate for tasks remained consistent at approximately 66.67%, indicating a stable productivity level despite fluctuations in wellness; a notable increase in stress levels was observed from July 24 to July 27, correlating with a decrease in mood quality, which may suggest that heightened stress negatively impacted productivity, although the task completion rate remained unchanged across these days.
+
+Notes: Data for July 22 to July 27 is complete, with no missing entries.
+Correlation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"positive","confidence":0.85},
+    {"variable":"energy","direction":"positive","confidence":0.80},
+    {"variable":"fatigue","direction":"positive","confidence":0.75}
+  ],
+  "notes": "Data is missing for one day, specifically the metrics for 'completion_rate' on 2025-07-21."
+}
+Recommendation: Focus on stress management techniques, such as mindfulness or deep breathing exercises, to mitigate the impact of stress on your mood and productivity. Schedule regular breaks throughout the day to recharge and maintain focus. Prioritize your tasks using the Eisenhower Matrix to distinguish between what's urgent and important, ensuring you tackle high-priority items first. Consider incorporating physical activity into your routine, as it can boost mood and reduce stress levels. Lastly, reflect on your week each Friday to identify patterns and adjust your strategies for the following week.
+
+Test 7 - added an extra task, and split into 2 different parts of week to see if there is change
+
+Analysis: Throughout the week, the productivity completion rate remained consistent at approximately 66.67%, with a slight increase to 75% on July 27; wellness levels varied significantly, showing a correlation between high stress and low energy on July 23, which may indicate that increased stress negatively impacted productivity, while lower stress levels on July 24 and 27 coincided with higher completion rates, suggesting a potential link between wellness and task completion.
+
+Notes: Data for July 22, 23, 24, 25, 26, and 27 is complete, with no missing or partial data.
+Correlation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"negative","confidence":0.85}, (As I wanted)
+    {"variable":"energy","direction":"positive","confidence":0.75},
+    {"variable":"fatigue","direction":"negative","confidence":0.80}
+  ],
+  "notes": "Data is missing for July 21, which may affect the robustness of the analysis."
+}
+Recommendation: Focus on stress management techniques, such as deep breathing or short breaks, especially on high-stress days to maintain energy levels. Prioritize tasks based on urgency and importance to boost your productivity completion rate. Schedule wellness activities, like exercise or mindfulness, on days when you anticipate high workloads to enhance your overall performance. Track your stress levels daily to identify patterns and adjust your workload accordingly. Aim for consistent reflection on your progress to stay motivated and make necessary adjustments.
+
+Test 8 - same condition as test 7
+
+Test note: why tf did this include jul 28 when expected to analyze betw 21-27??
+
+Throughout the week, the completion rate for tasks remained consistent at approximately 66.67%, with a slight increase to 75% on July 27; however, wellness levels fluctuated significantly, showing a marked increase in stress, energy, and fatigue levels, particularly on July 25 and 27, which may correlate with the decrease in overall mood and potential impact on productivity as stress levels peaked on those days.
+
+Notes: Data for July 22 to 24 is consistent, but July 25 and 27 show a significant increase in stress levels, indicating potential missing context or events that could explain the drop in wellness metrics.
+Correlation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"negative","confidence":0.85},
+    {"variable":"energy","direction":"positive","confidence":0.75},
+    {"variable":"fatigue","direction":"negative","confidence":0.80}
+  ],
+  "notes": "Data for 2025-07-22 to 2025-07-27 was analyzed; all metrics were present except for the missing day on 2025-07-28."
+}
+Recommendation: Prioritize stress management techniques, such as deep breathing or short walks, especially on days when stress levels peak. Schedule breaks throughout the day to recharge your energy and improve your overall mood. Set realistic daily goals to maintain a consistent task completion rate and avoid overwhelming yourself. Reflect on your wellness levels daily, and adjust your workload accordingly to prevent burnout. Consider incorporating mindfulness practices to enhance focus and reduce stress.
+
+Test 9 - modified bayes prompt
+
+Analysis: Throughout the week, a consistent completion rate of approximately 66.67% was observed for the first five days, with a slight increase to 75% on the last day, suggesting a potential upward trend in productivity. Wellness metrics showed a correlation between lower stress and higher energy levels on days with increased task completion, particularly on July 26 and 27, while higher stress levels were noted on July 22 to 24, which may have negatively impacted productivity as task completion remained constant despite lower wellness. The fluctuation in wellness levels, particularly the shift from high stress and fatigue to lower levels, aligns with the increased task completion observed on July 27, indicating a possible relationship between improved wellness and productivity.
+Correlation: {
+  "effect_summary": [
+    {"variable":"stress","direction":"negative","confidence":0.85},
+    {"variable":"energy","direction":"positive","confidence":0.75},
+    {"variable":"fatigue","direction":"negative","confidence":0.80}
+  ],
+  "notes": "Data for 2025-07-21 is missing, which may affect the robustness of the analysis."
+}
+Recommendation: 1. Prioritize wellness by incorporating daily stress-reduction techniques such as deep breathing or short walks to enhance productivity.
+2. Set specific, achievable goals for each day to maintain focus and increase task completion rates.
+3. Track your energy levels and adjust your workload accordingly, tackling more challenging tasks during peak energy times.
+4. Reflect on the days with higher stress and identify triggers to mitigate them in advance.
+5. Schedule regular breaks to recharge and maintain consistent energy levels throughout the week.
+
+Extra note for this test: i guess wellness logs are pretty fixed since completion rate is constant but we randomized the wellness levels
+

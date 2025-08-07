@@ -30,6 +30,14 @@ public class Task {
     private boolean isOneTime; // Track here for Today's instance
     private transient Integer originalPosition; // Session-only, not persisted
 
+    public void editStatus(boolean b) {
+        if (isCompleted) {
+            markComplete();
+        } else {
+            unmarkComplete();
+        }
+    }
+
     /**
      * Priority levels for tasks.
      */
