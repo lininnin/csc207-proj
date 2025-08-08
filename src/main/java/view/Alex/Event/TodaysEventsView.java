@@ -67,10 +67,12 @@ public class TodaysEventsView extends JPanel {
 
         // ViewModel监听器
         todaysEventsViewModel.addPropertyChangeListener(evt -> {
-            if (TodaysEventsViewModel.TODAYS_EVENTS_PROPERTY.equals(evt.getPropertyName())) {
+            System.out.println("TODAYS_EVENTS_VIEW received property change: " + evt.getPropertyName());
+            if ("state".equals(evt.getPropertyName())) {
                 refreshEventList((TodaysEventsState) evt.getNewValue());
             }
         });
+
 
         addedEventViewModel.addPropertyChangeListener(evt -> {
             if ("addedEvent".equals(evt.getPropertyName())) {
@@ -105,7 +107,7 @@ public class TodaysEventsView extends JPanel {
             emptyLabel.setPreferredSize(new Dimension(150, 250));
             todaysEventsListPanel.add(emptyLabel);
         }
-
+        System.out.println("todays event view,Refreshing event list, count: " + events.size());
         for (Event event : events) {
             JPanel row = new JPanel(new GridLayout(1, 5));
             row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -171,5 +173,3 @@ public class TodaysEventsView extends JPanel {
         todaysEventsListPanel.repaint();
     }
 }
-
-
