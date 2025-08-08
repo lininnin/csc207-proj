@@ -1,21 +1,35 @@
 package data_access;
 
-import entity.Alex.EventAvailable.EventAvailable;
+import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.Alex.EventAvailable.EventAvailableInterf;
 import entity.info.Info;
-import use_case.Alex.Event_related.add_event.ReadAvailableEventDataAccessInterf;
-import use_case.Alex.Event_related.create_event.CreateEventDataAccessInterface;
-import use_case.Alex.Event_related.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
-import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventDataAccessInterf;
+import use_case.alex.event_related.add_event.ReadAvailableEventDataAccessInterf;
+import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
+import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
+import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventDataAccessInterf;
 
 import java.util.List;
 
+/**
+ * DAO for managing available events using DIP.
+ * Depends on EventAvailableInterf and uses a factory to instantiate it.
+ */
 public class EventAvailableDataAccessObject implements
         CreateEventDataAccessInterface,
         DeleteEventDataAccessInterf,
         EditEventDataAccessInterf,
         ReadAvailableEventDataAccessInterf {
 
-    private final EventAvailable eventAvailable = new EventAvailable();
+    private final EventAvailableInterf eventAvailable;
+
+    /**
+     * Constructs the DAO with a factory that creates EventAvailableInterf.
+     *
+     * @param eventFactory Factory for creating EventAvailableInterf
+     */
+    public EventAvailableDataAccessObject(EventAvailableFactoryInterf eventFactory) {
+        this.eventAvailable = eventFactory.create();
+    }
 
     @Override
     public void save(Info eventInfo) {
@@ -57,7 +71,6 @@ public class EventAvailableDataAccessObject implements
         eventAvailable.clearAll();
     }
 
-    // ✅ 补充实现
     @Override
     public Info getEventById(String id) {
         for (Info info : eventAvailable.getEventAvailable()) {
@@ -72,14 +85,13 @@ public class EventAvailableDataAccessObject implements
     public boolean update(Info updatedInfo) {
         for (Info info : eventAvailable.getEventAvailable()) {
             if (info.getId().equals(updatedInfo.getId())) {
-                // ✅ 就地修改原 Info 的字段
                 info.setName(updatedInfo.getName());
                 info.setCategory(updatedInfo.getCategory());
                 info.setDescription(updatedInfo.getDescription());
                 return true;
             }
         }
-        return false; // 如果没找到
+        return false;
     }
 
     @Override
@@ -100,7 +112,4 @@ public class EventAvailableDataAccessObject implements
         }
         return null;
     }
-
 }
-
-

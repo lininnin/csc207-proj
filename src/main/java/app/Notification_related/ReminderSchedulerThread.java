@@ -1,6 +1,6 @@
 package app.Notification_related;
 
-import interface_adapter.Alex.Notification_related.NotificationController;
+import interface_adapter.alex.Notification_related.NotificationController;
 
 /**
  * A background thread that checks every minute whether a reminder should be triggered.

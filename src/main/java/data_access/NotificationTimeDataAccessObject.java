@@ -1,33 +1,33 @@
 package data_access;
 
-import entity.Alex.NotificationTime.NotificationTime;
-import use_case.Alex.Notification_related.NotificationDataAccessObjectInterf;
-import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
+import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
+import entity.Alex.NotificationTime.NotificationTimeInterf;
+import use_case.alex.Notification_related.NotificationDataAccessObjectInterf;
+import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
 
 import java.time.LocalTime;
 
 /**
  * In-memory implementation of EditNotificationTimeDataAccessInterf.
- * Stores and updates a single NotificationTime instance.
+ * Now decoupled from NotificationTime concrete class via DIP.
  */
-public class NotificationTimeDataAccessObject implements EditNotificationTimeDataAccessInterf,
+public class NotificationTimeDataAccessObject implements
+        EditNotificationTimeDataAccessInterf,
         NotificationDataAccessObjectInterf {
 
-    private final NotificationTime notificationTime;
+    private final NotificationTimeInterf notificationTime;
 
     /**
-     * Constructs the DAO with default notification times.
+     * Constructs the DAO using a factory to create NotificationTimeInterf.
+     *
+     * @param factory The factory used to create a NotificationTime entity
      */
-    public NotificationTimeDataAccessObject() {
-        this.notificationTime = new NotificationTime();  // 08:00, 12:00, 20:00 by default
+    public NotificationTimeDataAccessObject(NotificationTimeFactoryInterf factory) {
+        this.notificationTime = factory.createDefault(); // 08:00, 12:00, 20:00
     }
 
     /**
      * Updates all three reminder times in the NotificationTime entity.
-     *
-     * @param reminder1 LocalTime for the first reminder
-     * @param reminder2 LocalTime for the second reminder
-     * @param reminder3 LocalTime for the third reminder
      */
     @Override
     public void updateNotificationTimes(LocalTime reminder1, LocalTime reminder2, LocalTime reminder3) {
@@ -37,12 +37,9 @@ public class NotificationTimeDataAccessObject implements EditNotificationTimeDat
     }
 
     /**
-     * Returns the current NotificationTime object.
-     * Useful for reading the current values into the UI or other use cases.
-     *
-     * @return NotificationTime
+     * Returns the current NotificationTime entity (interface form).
      */
-    public NotificationTime getNotificationTime() {
+    public NotificationTimeInterf getNotificationTime() {
         return notificationTime;
     }
 
@@ -61,4 +58,3 @@ public class NotificationTimeDataAccessObject implements EditNotificationTimeDat
         return notificationTime.getReminder3();
     }
 }
-

@@ -1,10 +1,10 @@
 package view.Alex.Settings;
 
-import interface_adapter.Alex.Settings_related.notificationTime_module.NotificationTimeState;
-import interface_adapter.Alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeState;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
+import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeState;
+import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeState;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,10 +1,11 @@
 package data_access;
 
-import entity.Alex.DailyWellnessLog.DailyWellnessLog;
+import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
+import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
+import use_case.alex.WellnessLog_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
+import use_case.alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
+import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,17 +13,24 @@ import java.util.List;
 
 /**
  * In-memory DAO for a single day's wellness log.
- * Implements Add, Delete, and Edit use case interfaces.
+ * Now fully decoupled from concrete DailyWellnessLog using DIP and factory injection.
  */
 public class TodaysWellnessLogDataAccessObject implements
         AddWellnessLogDataAccessInterf,
         DeleteWellnessLogDataAccessInterf,
         EditWellnessLogDataAccessInterf {
 
-    private DailyWellnessLog dailyWellnessLog;
+    private DailyWellnessLogInterf dailyWellnessLog;
+    private final DailyWellnessLogFactoryInterf logFactory;
 
-    public TodaysWellnessLogDataAccessObject() {
-        this.dailyWellnessLog = new DailyWellnessLog(LocalDate.now());
+    /**
+     * Constructs the DAO using a provided DailyWellnessLogFactory.
+     *
+     * @param logFactory A factory that creates DailyWellnessLogInterf instances
+     */
+    public TodaysWellnessLogDataAccessObject(DailyWellnessLogFactoryInterf logFactory) {
+        this.logFactory = logFactory;
+        this.dailyWellnessLog = logFactory.create(LocalDate.now());
     }
 
     @Override
@@ -51,10 +59,8 @@ public class TodaysWellnessLogDataAccessObject implements
 
     @Override
     public List<WellnessLogEntry> getTodaysWellnessLogEntries() {
-        return new ArrayList<>(dailyWellnessLog.getEntries()); // ✅ copy list
+        return new ArrayList<>(dailyWellnessLog.getEntries()); // ✅ defensive copy
     }
-
-
 
     @Override
     public boolean contains(WellnessLogEntry entry) {
@@ -64,10 +70,8 @@ public class TodaysWellnessLogDataAccessObject implements
 
     @Override
     public void clearAll() {
-        this.dailyWellnessLog = new DailyWellnessLog(LocalDate.now());
+        this.dailyWellnessLog = logFactory.create(LocalDate.now());
     }
-
-    // ✅ 实现 Edit 接口所需方法：
 
     @Override
     public WellnessLogEntry getById(String logId) {
@@ -79,7 +83,6 @@ public class TodaysWellnessLogDataAccessObject implements
 
     @Override
     public boolean update(WellnessLogEntry updatedEntry) {
-        // 删除旧的，加入新的
         boolean removed = deleteById(updatedEntry.getId());
         if (removed) {
             save(updatedEntry);
@@ -87,8 +90,11 @@ public class TodaysWellnessLogDataAccessObject implements
         }
         return false;
     }
+
+    /**
+     * @return The current DailyWellnessLog (interface) for inspection or testing.
+     */
+    public DailyWellnessLogInterf getDailyLog() {
+        return this.dailyWellnessLog;
+    }
 }
-
-
-
-

@@ -2,20 +2,19 @@ package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.WellnessLogEntry.Levels;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogState;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogState;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Swing-based view for creating a new wellness log.
