@@ -11,7 +11,7 @@ public class CreatedEventViewModel extends ViewModel<CreatedEventState> {
 
     public static final String TITLE_LABEL = "New Available Event";
     public static final String NAME_LABEL = "Name:";
-    public static final String ONE_TIME_LABEL = "One-Time?";
+    //public static final String ONE_TIME_LABEL = "One-Time?";
     public static final String CATEGORY_LABEL = "Category:";
     public static final String DESCRIPTION_LABEL = "Description:";
     public static final String CREATE_EVENT_INFO_LABEL = "Create Event:";
