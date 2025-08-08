@@ -3,9 +3,9 @@ package data_access;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import use_case.alex.WellnessLog_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

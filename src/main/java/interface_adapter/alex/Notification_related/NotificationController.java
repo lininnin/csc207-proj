@@ -1,7 +1,7 @@
 package interface_adapter.alex.Notification_related;
 
-import use_case.alex.Notification_related.NotificationInputBoundary;
-import use_case.alex.Notification_related.NotificationInputData;
+import use_case.alex.notification_related.NotificationInputBoundary;
+import use_case.alex.notification_related.NotificationInputData;
 
 import java.time.LocalTime;
 

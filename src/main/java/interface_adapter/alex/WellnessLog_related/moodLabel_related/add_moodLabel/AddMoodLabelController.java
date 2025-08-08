@@ -1,7 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel;
 
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelInputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelInputData;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelInputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelInputData;
 
 /**
  * Controller for the AddMoodLabel use case.

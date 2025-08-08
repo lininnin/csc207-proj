@@ -1,7 +1,7 @@
 package interface_adapter.alex.Notification_related;
 
-import use_case.alex.Notification_related.NotificationOutputBoundary;
-import use_case.alex.Notification_related.NotificationOutputData;
+import use_case.alex.notification_related.NotificationOutputBoundary;
+import use_case.alex.notification_related.NotificationOutputData;
 
 /**
  * Presenter for the notification use case.

@@ -1,8 +1,8 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInputBoundary;
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInputData;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInputBoundary;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInputData;
 
 /**
  * Controller for the EditWellnessLog use case.

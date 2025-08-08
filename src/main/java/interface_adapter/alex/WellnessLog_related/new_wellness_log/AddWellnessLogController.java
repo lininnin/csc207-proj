@@ -2,8 +2,8 @@ package interface_adapter.alex.WellnessLog_related.new_wellness_log;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.WellnessLogEntry.Levels;
-import use_case.alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputData;
-import use_case.alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputBoundary;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputData;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputBoundary;
 
 import java.time.LocalDateTime;
 

@@ -2,9 +2,9 @@ package data_access;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
-import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
-import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,8 +3,8 @@ package interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLa
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
-import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelOutputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelOutputData;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelOutputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelOutputData;
 
 import java.util.ArrayList;
 import java.util.List;
