@@ -18,10 +18,9 @@ import java.util.List;
 import java.util.Random;
 
 public class DailyLogGenerator {
-    public static List<DailyLog> generateFakeLogs() {
+    public static List<DailyLog> generateFakeLogs(LocalDate date) {
         List<DailyLog> logs = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        LocalDate monday = today.with(DayOfWeek.MONDAY);
+        LocalDate monday = date.with(DayOfWeek.MONDAY);
         for (int i = 0; i < 3; i++) createTestDailyLog4Tasks(monday, i, logs);
         for (int j = 2; j < 7; j++)createTestDailyLog3Tasks(monday, j, logs);
         return logs;
@@ -168,7 +167,7 @@ public class DailyLogGenerator {
         logs.add(log);
     }
     public static void main(String[] args) {
-        List<DailyLog> logs = generateFakeLogs();
+        List<DailyLog> logs = generateFakeLogs(LocalDate.now());
         for (DailyLog log : logs) {
             System.out.println("Date: " + log.getDate());
             System.out.println("  Tasks: " + log.getDailyTaskSummary().getScheduledTasks().size());
