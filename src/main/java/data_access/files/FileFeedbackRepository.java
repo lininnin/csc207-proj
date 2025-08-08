@@ -31,8 +31,8 @@ public class FileFeedbackRepository implements FeedbackRepository {
 
             JSONObject obj = new JSONObject();
             obj.put("aiAnalysis", entry.getAiAnalysis());
-            obj.put("Recommendations", entry.getRecommendations()); // Consistent key
             obj.put("correlationData", entry.getCorrelationData());
+            obj.put("Recommendations", entry.getRecommendations()); // Consistent key
 
             root.put(entry.getDate().toString(), obj);
             Files.writeString(path, root.toString(2), StandardCharsets.UTF_8);
@@ -58,8 +58,8 @@ public class FileFeedbackRepository implements FeedbackRepository {
             return new FeedbackEntry(
                     date,
                     obj.optString("aiAnalysis", null),
-                    obj.optString("Recommendations", null), // Consistent key
-                    obj.optString("correlationData", null)
+                    obj.optString("correlationData", null),
+                    obj.optString("Recommendations", null)
             );
         } catch (IOException e) {
             throw new RuntimeException("Failed to load FeedbackEntry", e);
@@ -85,9 +85,9 @@ public class FileFeedbackRepository implements FeedbackRepository {
                 list.add(new FeedbackEntry(
                         date,
                         obj.optString("aiAnalysis", null),
-                        obj.optString("Recommendations", null),
-                        obj.optString("correlationData", null)
-                ));
+                        obj.optString("correlationData", null),
+                        obj.optString("Recommendations", null)
+                        ));
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load feedback entries", e);
