@@ -1,6 +1,6 @@
 package app;
 
-import app.feedback_panel.CreateGenerateFeedback;
+import app.feedback_panel.CreateGeneratedFeedback;
 import app.feedback_panel.FeedbackPageBuilder;
 import app.WellnessPage.WellnessLogPageBuilder;
 import app.eventPage.EventPageBuilder;
@@ -21,13 +21,14 @@ import view.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 
 public class BigMain {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Feedback generation every week
             FeedbackRepository feedbackRepository = new FileFeedbackRepository();
-            feedbackRepository.save(CreateGenerateFeedback.generateFeedbackEntry());
+            feedbackRepository.save(CreateGeneratedFeedback.generateFeedbackEntry());
             WeeklyFeedbackScheduler scheduler = getWeeklyFeedbackScheduler(feedbackRepository);
             scheduler.start();
 
