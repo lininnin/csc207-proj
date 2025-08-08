@@ -104,16 +104,17 @@ public class AvailableEventView extends JPanel {
 
         // 编辑成功提示
         editedEventViewModel.addPropertyChangeListener(evt -> {
-            EditedEventState state = editedEventViewModel.getState();
-
-            if (state.getEditError() != null && !state.getEditError().isEmpty()) {
-                // ✅ 弹出错误提示框
-                JOptionPane.showMessageDialog(this, state.getEditError(), "Edit Failed", JOptionPane.ERROR_MESSAGE);
-            } else if (state.getName() != null && !state.getName().isEmpty()) {
-                // ✅ 弹出成功提示
-                JOptionPane.showMessageDialog(this, "Event edited: " + state.getName());
+            if ("state".equals(evt.getPropertyName())) {
+                EditedEventState state = editedEventViewModel.getState();
+                if (state.getEditError() != null && !state.getEditError().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, state.getEditError(), "Edit Failed", JOptionPane.ERROR_MESSAGE);
+                    editedEventViewModel.clearError(); // ✅ 正确清空错误并通知 UI
+                } else if (state.getName() != null && !state.getName().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Event edited: " + state.getName());
+                }
             }
         });
+
 
 
         // 初始加载
@@ -155,9 +156,10 @@ public class AvailableEventView extends JPanel {
                 panel.add(new JLabel("Name:"));
                 panel.add(nameField);
                 panel.add(new JLabel("Category:"));
-                panel.add(categoryField);
-                panel.add(new JLabel("Description:"));
                 panel.add(descScroll);
+                panel.add(new JLabel("Description:"));
+                panel.add(categoryField);
+
 
                 int result = JOptionPane.showConfirmDialog(
                         this, panel, "Edit Event: " + event.getName(),
