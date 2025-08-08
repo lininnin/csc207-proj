@@ -60,9 +60,8 @@ public class EditEventPresenter implements EditEventOutputBoundary {
     public void prepareFailView(EditEventOutputData outputData) {
         EditedEventState newState = new EditedEventState();
         newState.setEventId(outputData.getId());
-        newState.setEditError("Edit failed: input may be invalid or event not found.");
-
-        // ✅ 触发弹窗提示错误
+        newState.setEditError(outputData.getErrorMessage()); // ✅ 使用精确错误信息
         editedEventViewModel.updateState(newState);
+        editedEventViewModel.firePropertyChanged("state");   // ✅ 通知视图
     }
 }
