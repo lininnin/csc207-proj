@@ -1,6 +1,5 @@
 package app.Notification_related;
 
-//import app.ReminderSchedulerThread;
 import data_access.NotificationTimeDataAccessObject;
 import interface_adapter.Alex.Notification_related.*;
 import use_case.Alex.Notification_related.*;
