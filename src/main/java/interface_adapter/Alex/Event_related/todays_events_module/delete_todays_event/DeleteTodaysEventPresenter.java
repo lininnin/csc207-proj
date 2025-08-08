@@ -39,7 +39,9 @@ public class DeleteTodaysEventPresenter implements DeleteTodaysEventOutputBounda
         updatedList.removeIf(event -> event.getInfo().getId().equals(outputData.getEventId()));
         currentState.setTodaysEvents(updatedList);
         todaysEventViewModel.setState(currentState);
-        todaysEventViewModel.firePropertyChanged(TodaysEventsViewModel.TODAYS_EVENTS_PROPERTY);
+        // ✅ 修改这行：
+        todaysEventViewModel.firePropertyChanged("state");
+
 
         // ✅ 已删除错误下拉框更新逻辑
     }

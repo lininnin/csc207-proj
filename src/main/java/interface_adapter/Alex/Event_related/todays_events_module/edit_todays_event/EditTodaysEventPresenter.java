@@ -30,7 +30,10 @@ public class EditTodaysEventPresenter implements EditTodaysEventOutputBoundary {
         EditTodaysEventState newState = new EditTodaysEventState();
         newState.setEventId(outputData.getId());
         newState.setDueDate(outputData.getDueDate());
-        editTodaysEventViewModel.setState(newState);
+// ❌ 原本使用 setState(...)：editTodaysEventViewModel.setState(newState);
+// ✅ 改成调用 updateState 才会触发监听器
+        editTodaysEventViewModel.updateState(newState);
+
 
         // 2. 查找对应的 Event 并更新 dueDate
         TodaysEventsState oldState = todaysEventsViewModel.getState();
@@ -55,7 +58,8 @@ public class EditTodaysEventPresenter implements EditTodaysEventOutputBoundary {
         EditTodaysEventState newState = new EditTodaysEventState();
         newState.setEventId(outputData.getId());
         newState.setEditError("Edit failed: invalid due date or event not found.");
-        editTodaysEventViewModel.setState(newState);
+        editTodaysEventViewModel.updateState(newState); // ✅ 使用 updateState
+
     }
 }
 

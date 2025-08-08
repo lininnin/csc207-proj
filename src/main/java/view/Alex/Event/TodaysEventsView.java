@@ -51,19 +51,27 @@ public class TodaysEventsView extends JPanel {
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         add(title, BorderLayout.NORTH);
 
-        // 表头
+        // ✅ 创建一个容器 panel 包含表头和滚动列表
+        JPanel listContainer = new JPanel();
+        listContainer.setLayout(new BorderLayout());
+
+// 表头
         JPanel header = new JPanel(new GridLayout(1, 5));
         header.add(new JLabel("Name", SwingConstants.CENTER));
         header.add(new JLabel("Category", SwingConstants.CENTER));
         header.add(new JLabel("Due Date", SwingConstants.CENTER));
         header.add(new JLabel("Edit", SwingConstants.CENTER));
         header.add(new JLabel("Delete", SwingConstants.CENTER));
-        add(header, BorderLayout.CENTER);
+        listContainer.add(header, BorderLayout.NORTH);
 
-        // 列表区域
+// 列表区域
         todaysEventsListPanel.setLayout(new BoxLayout(todaysEventsListPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(todaysEventsListPanel);
-        add(scrollPane, BorderLayout.CENTER);
+        listContainer.add(scrollPane, BorderLayout.CENTER);
+
+// ✅ 一次性添加整个列表模块
+        add(listContainer, BorderLayout.CENTER);
+
 
         // ViewModel监听器
         todaysEventsViewModel.addPropertyChangeListener(evt -> {
@@ -87,9 +95,9 @@ public class TodaysEventsView extends JPanel {
             EditTodaysEventState state = editTodaysEventViewModel.getState();
             if (state.getEditError() != null) {
                 JOptionPane.showMessageDialog(this, "Edit failed: " + state.getEditError(), "Edit Error", JOptionPane.ERROR_MESSAGE);
-            } else if (state.getDueDate() != null) {
-                JOptionPane.showMessageDialog(this, "Due date updated to " + state.getDueDate(), "Edit Success", JOptionPane.INFORMATION_MESSAGE);
-            }
+            }// else if (state.getDueDate() != null) {
+                //JOptionPane.showMessageDialog(this, "Due date updated to " + state.getDueDate(), "Edit Success", JOptionPane.INFORMATION_MESSAGE);
+            //}
         });
 
 

@@ -1,5 +1,7 @@
 package app;
 
+import app.settingsPage.SettingsPageBuilder;
+
 import javax.swing.*;
 
 public class SettingsPageRunner {

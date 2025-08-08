@@ -119,7 +119,7 @@ public class EventPageBuilder {
         topCenterRow.add(upperRightPanel);
 
         JPanel bottomBox = new JPanel(new BorderLayout());
-        bottomBox.add(availableEventView, BorderLayout.NORTH);
+        bottomBox.add(availableEventView, BorderLayout.CENTER);
         bottomBox.setPreferredSize(new Dimension(800, 300));
         bottomBox.setBackground(Color.GRAY);
 

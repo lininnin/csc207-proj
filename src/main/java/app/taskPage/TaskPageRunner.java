@@ -1,4 +1,4 @@
-package app;
+package app.taskPage;
 
 import javax.swing.*;
 
