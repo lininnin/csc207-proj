@@ -1,4 +1,4 @@
-package app;
+package app.taskPage;
 
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
