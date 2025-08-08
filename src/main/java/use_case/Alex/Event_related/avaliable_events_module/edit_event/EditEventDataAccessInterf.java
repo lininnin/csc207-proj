@@ -2,6 +2,8 @@ package use_case.Alex.Event_related.avaliable_events_module.edit_event;
 
 import entity.info.Info;
 
+import java.util.List;
+
 /**
  * Interface for data access operations related to editing available events.
  * This interface is used only by the EditAvailableEvent use case.
@@ -32,5 +34,12 @@ public interface EditEventDataAccessInterf {
      * @return true if the event exists, false otherwise.
      */
     boolean existsById(String id);
+
+    /**
+     * Retrieves all available Info events.
+     *
+     * @return a list of all Info objects
+     */
+    List<Info> getAllEvents();
 }
 
