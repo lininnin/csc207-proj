@@ -1,7 +1,7 @@
 package view.Alex;
 
-import interface_adapter.Alex.Notification_related.NotificationState;
-import interface_adapter.Alex.Notification_related.NotificationViewModel;
+import interface_adapter.alex.Notification_related.NotificationState;
+import interface_adapter.alex.Notification_related.NotificationViewModel;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;

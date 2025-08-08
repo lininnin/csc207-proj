@@ -1,6 +1,6 @@
 
-import interface_adapter.Alex.Notification_related.*;
-import use_case.Alex.Notification_related.*;
+import interface_adapter.alex.Notification_related.*;
+import use_case.alex.notification_related.*;
 import view.Alex.NotificationView;
 
 import javax.swing.*;

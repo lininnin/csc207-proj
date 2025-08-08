@@ -1,40 +1,43 @@
 package app.eventPage;
 
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventController;
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventPresenter;
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeletedEventViewModel;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditEventController;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditEventPresenter;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditedEventViewModel;
-import interface_adapter.Alex.Event_related.add_event.AddEventController;
-import interface_adapter.Alex.Event_related.add_event.AddEventPresenter;
-import interface_adapter.Alex.Event_related.add_event.AddedEventState;
-import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
-import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
-import interface_adapter.Alex.Event_related.create_event.CreateEventController;
-import interface_adapter.Alex.Event_related.create_event.CreateEventPresenter;
-import interface_adapter.Alex.Event_related.create_event.CreatedEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
-import interface_adapter.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventPresenter;
-import interface_adapter.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventPresenter;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import entity.Alex.DailyEventLog.DailyEventLogFactory;
+import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.Alex.EventAvailable.EventAvailableFactory;
+import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventPresenter;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditEventController;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditEventPresenter;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventViewModel;
+import interface_adapter.alex.event_related.add_event.AddEventController;
+import interface_adapter.alex.event_related.add_event.AddEventPresenter;
+import interface_adapter.alex.event_related.add_event.AddedEventState;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.alex.event_related.create_event.CreateEventController;
+import interface_adapter.alex.event_related.create_event.CreateEventPresenter;
+import interface_adapter.alex.event_related.create_event.CreatedEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
+import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventPresenter;
+import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventPresenter;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 
-import use_case.Alex.Event_related.add_event.*;
-import use_case.Alex.Event_related.create_event.*;
-import use_case.Alex.Event_related.avaliable_events_module.delete_event.*;
-import use_case.Alex.Event_related.avaliable_events_module.edit_event.*;
-import use_case.Alex.Event_related.todays_events_module.delete_todays_event.*;
-import use_case.Alex.Event_related.todays_events_module.edit_todays_event.*;
+import use_case.alex.event_related.add_event.*;
+import use_case.alex.event_related.create_event.*;
+import use_case.alex.event_related.avaliable_events_module.delete_event.*;
+import use_case.alex.event_related.avaliable_events_module.edit_event.*;
+import use_case.alex.event_related.todays_events_module.delete_todays_event.*;
+import use_case.alex.event_related.todays_events_module.edit_todays_event.*;
 
 import data_access.EventAvailableDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 import entity.info.InfoFactory;
 
 import view.Alex.Event.*;
-import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,8 +57,11 @@ public class EventPageBuilder {
         EditTodaysEventViewModel editTodaysEventViewModel = new EditTodaysEventViewModel();
 
         // --- Data Access & Factory ---
-        EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject();
-        TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject();
+        EventAvailableFactoryInterf eventAvailableFactory = new EventAvailableFactory();
+        EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject(eventAvailableFactory);
+        DailyEventLogFactoryInterf dailyEventLogFactory = new DailyEventLogFactory(); // 假设你实现了这个类
+        TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject(dailyEventLogFactory);
+
         InfoFactory infoFactory = new InfoFactory();
 
         // --- Use Case Wiring ---
@@ -119,7 +125,7 @@ public class EventPageBuilder {
         topCenterRow.add(upperRightPanel);
 
         JPanel bottomBox = new JPanel(new BorderLayout());
-        bottomBox.add(availableEventView, BorderLayout.NORTH);
+        bottomBox.add(availableEventView, BorderLayout.CENTER);
         bottomBox.setPreferredSize(new Dimension(800, 300));
         bottomBox.setBackground(Color.GRAY);
 

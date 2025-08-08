@@ -28,7 +28,7 @@ public class WeeklyFeedbackScheduler {
     }
 
     private void runFeedbackGeneration() {
-        feedbackUseCase.execute(new GenerateFeedbackInputData(/*...*/));
+        feedbackUseCase.execute(new GenerateFeedbackInputData());
     }
 
     private long computeInitialDelay() {
