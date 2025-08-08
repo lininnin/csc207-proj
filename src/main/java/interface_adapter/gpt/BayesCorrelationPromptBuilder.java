@@ -57,7 +57,6 @@ public final class BayesCorrelationPromptBuilder {
                 .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
                 .append("  \"notes\": \"Give 1 brief paragraph explaining the data in the JSON,")
-                .append("then in one short sentence, if data is missing specify which date, including metrics")
                 .append("}\n");
 
         return sb.toString();
