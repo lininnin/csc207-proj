@@ -62,33 +62,7 @@ public class BigMain {
             };
 
             for (String item : menuItems) {
-                JButton btn = new JButton(item);
-                btn.setMaximumSize(new Dimension(200, 40));
-                btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-                btn.setForeground(Color.WHITE);
-                btn.setOpaque(true);
-                btn.setBorderPainted(false);
-                btn.setFont(FontUtil.getStandardFont());
-
-                if (item.contains("Tasks")) {
-                    btn.setBackground(new Color(45, 47, 49)); // Highlight current page
-                } else {
-                    btn.setBackground(new Color(60, 63, 65));
-                }
-
-                // ActionListener for navigation
-                btn.addActionListener(e -> {
-                    CardLayout cl = (CardLayout) centrePanel.getLayout();
-                    // Map menu text to Card name
-                    switch (item) {
-                        case "📋 Tasks" -> cl.show(centrePanel, "Tasks");
-                        case "📆 Events" -> cl.show(centrePanel, "Events");
-                        case "🎯 Goals" -> cl.show(centrePanel, "Goals");
-                        case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
-                        case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");
-                        case "⚙️ Settings" -> cl.show(centrePanel, "Settings");
-                    }
-                });
+                JButton btn = configureButton(item, centrePanel);
 
                 sideBar.add(btn);
             }
@@ -105,6 +79,38 @@ public class BigMain {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+    }
+
+    @NotNull
+    private static JButton configureButton(String item, JPanel centrePanel) {
+        JButton btn = new JButton(item);
+        btn.setMaximumSize(new Dimension(200, 40));
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn.setForeground(Color.WHITE);
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+        btn.setFont(FontUtil.getStandardFont());
+
+        if (item.contains("Tasks")) {
+            btn.setBackground(new Color(45, 47, 49)); // Highlight current page
+        } else {
+            btn.setBackground(new Color(60, 63, 65));
+        }
+
+        // ActionListener for navigation
+        btn.addActionListener(e -> {
+            CardLayout cl = (CardLayout) centrePanel.getLayout();
+            // Map menu text to Card name
+            switch (item) {
+                case "📋 Tasks" -> cl.show(centrePanel, "Tasks");
+                case "📆 Events" -> cl.show(centrePanel, "Events");
+                case "🎯 Goals" -> cl.show(centrePanel, "Goals");
+                case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
+                case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");
+                case "⚙️ Settings" -> cl.show(centrePanel, "Settings");
+            }
+        });
+        return btn;
     }
 
     @NotNull
