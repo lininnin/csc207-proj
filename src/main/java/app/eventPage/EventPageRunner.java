@@ -1,4 +1,4 @@
-package app;
+package app.eventPage;
 
 import javax.swing.*;
 

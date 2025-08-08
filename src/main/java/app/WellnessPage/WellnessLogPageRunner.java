@@ -1,21 +1,18 @@
-package app;
+package app.WellnessPage;
 
 import javax.swing.*;
 
-/**
- * Runner for the Task page following the same pattern as EventPageRunner.
- */
-public class TaskPageRunner {
+public class WellnessLogPageRunner {
     /**
-     * Call this method from your main program to launch the Task page.
+     * Call this method from your main program to launch the Wellness Log page.
      */
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MindTrack - Task Manager");
+            JFrame frame = new JFrame("MindTrack - Wellness Log");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 700);
 
-            TaskPageBuilder builder = new TaskPageBuilder();
+            WellnessLogPageBuilder builder = new WellnessLogPageBuilder();
             JPanel mainPanel = builder.build();
 
             frame.setContentPane(mainPanel);
@@ -24,3 +21,4 @@ public class TaskPageRunner {
         });
     }
 }
+

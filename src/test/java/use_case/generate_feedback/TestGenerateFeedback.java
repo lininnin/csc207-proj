@@ -1,13 +1,10 @@
-package use_case.GenerateFeedbackTest;
+package use_case.generate_feedback;
 
 import data_access.in_memory_repo.InMemoryDailyLogRepo;
+import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
 import interface_adapter.gpt.OpenAIAPIAdapter;
-import use_case.generate_feedback.GenerateFeedbackInputData;
-import use_case.generate_feedback.GenerateFeedbackInteractor;
-import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
-import use_case.repository.*;
 import entity.Ina.FeedbackEntry;
 
 import java.time.LocalDate;

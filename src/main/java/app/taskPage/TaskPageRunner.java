@@ -1,18 +1,21 @@
-package app;
+package app.taskPage;
 
 import javax.swing.*;
 
-public class SettingsPageRunner {
+/**
+ * Runner for the Task page following the same pattern as EventPageRunner.
+ */
+public class TaskPageRunner {
     /**
-     * Call this method from your main program to launch the Settings page.
+     * Call this method from your main program to launch the Task page.
      */
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MindTrack - Settings Page");
+            JFrame frame = new JFrame("MindTrack - Task Manager");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 700);
 
-            SettingsPageBuilder builder = new SettingsPageBuilder();  // ✅ 修改名称
+            TaskPageBuilder builder = new TaskPageBuilder();
             JPanel mainPanel = builder.build();
 
             frame.setContentPane(mainPanel);
@@ -21,4 +24,3 @@ public class SettingsPageRunner {
         });
     }
 }
-

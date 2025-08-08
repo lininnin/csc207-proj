@@ -1,4 +1,4 @@
-package app;
+package app.taskPage;
 
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
@@ -31,8 +31,6 @@ import data_access.InMemoryCategoryGateway;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
-import view.CollapsibleSidebarView;
-import view.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -397,32 +395,32 @@ public class TaskPageBuilder {
         sidebarPanel.setBackground(new Color(60, 63, 65));
         sidebarPanel.setPreferredSize(new Dimension(200, 700));
 
-        String[] menuItems = {
-                "📋 Tasks", "📆 Events", "🎯 Goals",
-                "🧠 Wellness Log", "📊 Charts",
-                "🤖 AI-Feedback & Analysis", "⚙️ Settings"
-        };
+//        String[] menuItems = {
+//                "📋 Tasks", "📆 Events", "🎯 Goals",
+//                "🧠 Wellness Log", "📊 Charts",
+//                "🤖 AI-Feedback & Analysis", "⚙️ Settings"
+//        };
+//
+//        for (String item : menuItems) {
+//            JButton btn = new JButton(item);
+//            btn.setMaximumSize(new Dimension(200, 40));
+//            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+//            btn.setForeground(Color.WHITE);
+//            btn.setOpaque(true);
+//            btn.setBorderPainted(false);
+//            btn.setFont(FontUtil.getStandardFont());
+//
+//            if (item.contains("Tasks")) {
+//                btn.setBackground(new Color(45, 47, 49)); // Highlight current page
+//            } else {
+//                btn.setBackground(new Color(60, 63, 65));
+//            }
 
-        for (String item : menuItems) {
-            JButton btn = new JButton(item);
-            btn.setMaximumSize(new Dimension(200, 40));
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setForeground(Color.WHITE);
-            btn.setOpaque(true);
-            btn.setBorderPainted(false);
-            btn.setFont(FontUtil.getStandardFont());
-
-            if (item.contains("Tasks")) {
-                btn.setBackground(new Color(45, 47, 49)); // Highlight current page
-            } else {
-                btn.setBackground(new Color(60, 63, 65));
-            }
-
-            sidebarPanel.add(btn);
-        }
+//            sidebarPanel.add(btn);
+//        }
 
         // --- Wrap sidebar + centerPanel ---
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
+//        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
 
         // --- Right Panel (Today So Far) ---
         // Use the new TodaySoFarView instead of static content
@@ -431,7 +429,7 @@ public class TaskPageBuilder {
 
         // --- Final Frame Layout ---
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(todaySoFarView, BorderLayout.EAST);
 
         return mainPanel;
