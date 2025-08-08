@@ -26,7 +26,9 @@ public class NotificationTimeFactory implements NotificationTimeFactoryInterf {
      * @return a new NotificationTime instance with specified times
      */
     @Override
-    public NotificationTimeInterf create(LocalTime reminder1, LocalTime reminder2, LocalTime reminder3) {
+    public NotificationTimeInterf create(final LocalTime reminder1,
+                                         final LocalTime reminder2,
+                                         final LocalTime reminder3) {
         NotificationTime notificationTime = new NotificationTime();
         notificationTime.setReminder1(reminder1);
         notificationTime.setReminder2(reminder2);
