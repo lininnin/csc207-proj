@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class FileFeedbackRepository implements FeedbackRepository {
@@ -92,6 +93,8 @@ public class FileFeedbackRepository implements FeedbackRepository {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load feedback entries", e);
         }
-        return list;
+
+        list.sort(Comparator.comparing(FeedbackEntry::getDate).reversed());
+        return List.copyOf(list);
     }
 }

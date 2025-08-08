@@ -26,13 +26,15 @@ public class FeedbackHistoryPanel extends JPanel {
         if (entries == null) entries = List.of();
 
         for (FeedbackEntry entry : entries) {
-            JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 4));
+            JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
             row.setAlignmentX(Component.LEFT_ALIGNMENT);
+            row.setMaximumSize(new Dimension(550, 40));
 
             JLabel dateLabel = new JLabel(entry.getDate().toString());
             dateLabel.setPreferredSize(new Dimension(100, 22));
 
             JButton viewBtn = new JButton("View");
+            viewBtn.setBackground(new Color(255, 255, 255));
             viewBtn.addActionListener(e -> onViewEntry.accept(entry));
 
             row.add(dateLabel);
