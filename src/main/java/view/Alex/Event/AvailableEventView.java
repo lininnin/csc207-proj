@@ -1,15 +1,15 @@
 package view.Alex.Event;
 
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeletedEventState;
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeletedEventViewModel;
-import interface_adapter.Alex.Event_related.available_event_module.delete_event.DeleteEventController;
-import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventState;
-import interface_adapter.Alex.Event_related.available_event_module.available_event.AvailableEventViewModel;
-import interface_adapter.Alex.Event_related.create_event.CreatedEventViewModel;
-import interface_adapter.Alex.Event_related.create_event.CreatedEventState;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditEventController;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditedEventViewModel;
-import interface_adapter.Alex.Event_related.available_event_module.edit_event.EditedEventState;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventState;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
+import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
+import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
+import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.alex.event_related.create_event.CreatedEventViewModel;
+import interface_adapter.alex.event_related.create_event.CreatedEventState;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditEventController;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventViewModel;
+import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventState;
 
 import entity.info.Info;
 

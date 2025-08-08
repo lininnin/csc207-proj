@@ -1,8 +1,10 @@
 package app.Notification_related;
 
 import data_access.NotificationTimeDataAccessObject;
-import interface_adapter.Alex.Notification_related.*;
-import use_case.Alex.Notification_related.*;
+import entity.Alex.NotificationTime.NotificationTimeFactory;
+import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
+import interface_adapter.alex.Notification_related.*;
+import use_case.alex.Notification_related.*;
 import view.Alex.NotificationView;
 
 /**
@@ -22,7 +24,8 @@ public class NotificationSystemRunner {
         NotificationOutputBoundary presenter = new NotificationPresenter(viewModel);
 
         // --- DAO (shared with Settings) ---
-        NotificationDataAccessObjectInterf dao = new NotificationTimeDataAccessObject();
+        NotificationTimeFactoryInterf factory = new NotificationTimeFactory();
+        NotificationDataAccessObjectInterf dao = new NotificationTimeDataAccessObject(factory);
 
         // --- Interactor ---
         NotificationInputBoundary interactor = new NotificationInteractor(dao, presenter);

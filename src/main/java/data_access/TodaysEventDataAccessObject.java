@@ -1,34 +1,35 @@
 package data_access;
 
-import entity.Alex.DailyEventLog.DailyEventLog;
+import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.Alex.DailyEventLog.DailyEventLogInterf;
 import entity.Alex.Event.Event;
-import use_case.Alex.Event_related.add_event.AddEventDataAccessInterf;
-import use_case.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
-import use_case.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventDataAccessInterf;
+import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
+import use_case.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
+import use_case.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventDataAccessInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO for today's events using a single DailyEventLog as the internal data store.
+ * DAO for today's events using a DailyEventLogInterf as the internal data store.
+ * Now decoupled from the concrete DailyEventLog class using DIP.
  */
 public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         DeleteTodaysEventDataAccessInterf,
         EditTodaysEventDataAccessInterf {
 
-    private final DailyEventLog todayLog;
+    private final DailyEventLogInterf todayLog;
 
     /**
-     * Constructs a new TodaysEventDataAccessObject using today's date.
+     * Constructs a new TodaysEventDataAccessObject using the provided factory.
+     *
+     * @param factory Factory to create the DailyEventLogInterf for today
      */
-    public TodaysEventDataAccessObject() {
-        this.todayLog = new DailyEventLog(LocalDate.now());
+    public TodaysEventDataAccessObject(DailyEventLogFactoryInterf factory) {
+        this.todayLog = factory.create(LocalDate.now());
     }
 
-    /**
-     * Saves an event to today's log.
-     */
     @Override
     public void save(Event todaysEvent) {
         if (todaysEvent == null) {
@@ -37,9 +38,6 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         todayLog.addEntry(todaysEvent);
     }
 
-    /**
-     * Removes the event from today's log by ID match.
-     */
     @Override
     public boolean remove(Event todaysEvent) {
         if (todaysEvent == null || todaysEvent.getInfo() == null) {
@@ -53,7 +51,7 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
 
     @Override
     public List<Event> getTodaysEvents() {
-        return todayLog.getActualEvents();  // already returns a copy
+        return todayLog.getActualEvents();
     }
 
     @Override
@@ -134,10 +132,11 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     /**
-     * @return The internal DailyEventLog instance.
+     * @return The internal DailyEventLogInterf instance.
      */
-    public DailyEventLog getDailyEventLog() {
+    public DailyEventLogInterf getDailyEventLog() {
         return todayLog;
     }
 }
+
 

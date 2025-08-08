@@ -1,11 +1,11 @@
 package view.Alex.Event;
 
-import interface_adapter.Alex.Event_related.add_event.AddedEventState;
-import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
-import interface_adapter.Alex.Event_related.create_event.CreateEventController;
-import interface_adapter.Alex.Event_related.create_event.CreatedEventViewModel;
-import interface_adapter.Alex.Event_related.create_event.CreatedEventState;
-import interface_adapter.Alex.Event_related.create_event.CreateEventViewModelUpdateListener;
+import interface_adapter.alex.event_related.add_event.AddedEventState;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.create_event.CreateEventController;
+import interface_adapter.alex.event_related.create_event.CreatedEventViewModel;
+import interface_adapter.alex.event_related.create_event.CreatedEventState;
+import interface_adapter.alex.event_related.create_event.CreateEventViewModelUpdateListener;
 import view.LabelComponentPanel;
 
 import javax.swing.*;

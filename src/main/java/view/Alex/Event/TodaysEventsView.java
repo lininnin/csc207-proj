@@ -1,15 +1,15 @@
 package view.Alex.Event;
 
 import entity.Alex.Event.Event;
-import interface_adapter.Alex.Event_related.add_event.AddEventController;
-import interface_adapter.Alex.Event_related.add_event.AddedEventState;
-import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventState;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.todays_events.TodaysEventsState;
-import interface_adapter.Alex.Event_related.todays_events_module.todays_events.TodaysEventsViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
+import interface_adapter.alex.event_related.add_event.AddEventController;
+import interface_adapter.alex.event_related.add_event.AddedEventState;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventState;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
 import view.DueDatePickerPanel;
 
 import javax.swing.*;

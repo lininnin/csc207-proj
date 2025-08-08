@@ -1,6 +1,7 @@
 package use_case.GenerateFeedbackTest;
 
 import data_access.in_memory_repo.InMemoryDailyLogRepo;
+import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
 import interface_adapter.gpt.OpenAIAPIAdapter;
