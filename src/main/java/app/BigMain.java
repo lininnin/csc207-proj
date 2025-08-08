@@ -4,9 +4,16 @@ import app.feedback_panel.CreateGenerateFeedback;
 import app.feedback_panel.FeedbackPageBuilder;
 import app.WellnessPage.WellnessLogPageBuilder;
 import app.eventPage.EventPageBuilder;
+import app.scheduler.WeeklyFeedbackScheduler;
 import app.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
 import data_access.files.FileFeedbackRepository;
+import data_access.in_memory_repo.InMemoryDailyLogRepository;
+import interface_adapter.feedback_history.FeedbackHistoryViewModel;
+import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
+import interface_adapter.gpt.OpenAIAPIAdapter;
+import use_case.generate_feedback.*;
+import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 import view.CollapsibleSidebarView;
 import view.FontUtil;
@@ -17,8 +24,22 @@ import java.awt.*;
 public class BigMain {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            // Feedback generation every week
             FeedbackRepository feedbackRepository = new FileFeedbackRepository();
             feedbackRepository.save(CreateGenerateFeedback.generateFeedbackEntry());
+            DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
+            GPTService analyzer = new OpenAIAPIAdapter();
+            FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
+            GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
+
+            GenerateFeedbackInputBoundary feedbackInputBoundary = new GenerateFeedbackInteractor(
+                    dailyLogRepository,
+                    feedbackRepository,
+                    analyzer,
+                    presenter
+            );
+            WeeklyFeedbackScheduler scheduler = new WeeklyFeedbackScheduler(feedbackInputBoundary);
+            scheduler.start();
 
             JFrame frame = new JFrame("MindTrack");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
