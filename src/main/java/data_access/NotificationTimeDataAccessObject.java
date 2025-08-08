@@ -2,7 +2,7 @@ package data_access;
 
 import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
 import entity.Alex.NotificationTime.NotificationTimeInterf;
-import use_case.alex.Notification_related.NotificationDataAccessObjectInterf;
+import use_case.alex.notification_related.NotificationDataAccessObjectInterf;
 import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
 
 import java.time.LocalTime;

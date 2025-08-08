@@ -3,8 +3,8 @@ package interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_mood
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
-import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelOutputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelOutputData;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelOutputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelOutputData;
 
 import java.util.ArrayList;
 import java.util.List;

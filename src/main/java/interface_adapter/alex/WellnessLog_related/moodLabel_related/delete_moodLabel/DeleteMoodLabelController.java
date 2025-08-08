@@ -1,7 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel;
 
-import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelInputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelInputData;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelInputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelInputData;
 
 /**
  * Controller for the DeleteMoodLabel use case.

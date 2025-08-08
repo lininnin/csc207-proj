@@ -3,9 +3,9 @@ package interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLab
 import entity.Alex.MoodLabel.MoodLabel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelOutputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelOutputData;
-import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelOutputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelOutputData;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
 
 import java.util.List;
 import java.util.stream.Collectors;

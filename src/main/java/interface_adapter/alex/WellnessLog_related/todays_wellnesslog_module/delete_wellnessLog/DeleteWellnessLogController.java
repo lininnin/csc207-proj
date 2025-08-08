@@ -1,7 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog;
 
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
-import use_case.alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInputData;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogInputBoundary;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogInputData;
 
 /**
  * Controller for the DeleteWellnessLog use case.

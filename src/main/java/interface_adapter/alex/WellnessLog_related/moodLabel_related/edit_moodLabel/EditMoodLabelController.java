@@ -1,7 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel;
 
-import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelInputBoundary;
-import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelInputData;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelInputBoundary;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelInputData;
 
 /**
  * Controller for handling edit mood label requests from the UI.
