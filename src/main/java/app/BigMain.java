@@ -12,6 +12,7 @@ import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
 import interface_adapter.gpt.OpenAIAPIAdapter;
+import org.jetbrains.annotations.NotNull;
 import use_case.generate_feedback.*;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
@@ -27,18 +28,7 @@ public class BigMain {
             // Feedback generation every week
             FeedbackRepository feedbackRepository = new FileFeedbackRepository();
             feedbackRepository.save(CreateGenerateFeedback.generateFeedbackEntry());
-            DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
-            GPTService analyzer = new OpenAIAPIAdapter();
-            FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
-            GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
-
-            GenerateFeedbackInputBoundary feedbackInputBoundary = new GenerateFeedbackInteractor(
-                    dailyLogRepository,
-                    feedbackRepository,
-                    analyzer,
-                    presenter
-            );
-            WeeklyFeedbackScheduler scheduler = new WeeklyFeedbackScheduler(feedbackInputBoundary);
+            WeeklyFeedbackScheduler scheduler = getWeeklyFeedbackScheduler(feedbackRepository);
             scheduler.start();
 
             JFrame frame = new JFrame("MindTrack");
@@ -60,24 +50,11 @@ public class BigMain {
             centrePanel.add(feedbackPage, "FeedbackPage");
             centrePanel.add(settingPage, "Settings");
 
-//            // --- Navigation sidebar ---
+            // --- Navigation sidebar ---
             JPanel sideBar = new JPanel();
             sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
             sideBar.setBackground(new Color(60, 63, 65));
             sideBar.setPreferredSize(new Dimension(200, 700));
-
-//            JButton btnTasks = new JButton("📋 Tasks");
-//            JButton btnEvents = new JButton("📆 Events");
-//            JButton btnGoals = new JButton("🎯 Goals");
-//            JButton btnWellness = new JButton("🧠 Wellness Log");
-//            JButton btnAIAnalysis = new JButton("🤖 AI-Feedback & Analysis");
-//            JButton btnSettings = new JButton("⚙️ Settings");
-//            sideBar.add(btnTasks);
-//            sideBar.add(btnEvents);
-//            sideBar.add(btnGoals);
-//            sideBar.add(btnWellness);
-//            sideBar.add(btnAIAnalysis);
-//            sideBar.add(btnSettings);
 
             String[] menuItems = {
                     "📋 Tasks", "📆 Events", "🎯 Goals",
@@ -116,28 +93,11 @@ public class BigMain {
                 sideBar.add(btn);
             }
 
-
             CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sideBar, centrePanel);
-
-//            // --- Navigation Button Logic ---
-//            btnTasks.addActionListener(e ->  ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Tasks"));
-//            btnEvents.addActionListener(e -> ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Events"));
-//            btnGoals.addActionListener(e -> ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Goals"));
-//            btnWellness.addActionListener(e -> ((CardLayout) centrePanel.getLayout()).show(centrePanel, "WellnessLog"));
-//            btnAIAnalysis.addActionListener(e -> ((CardLayout) centrePanel.getLayout()).show(centrePanel, "FeedbackPage"));
-//            btnSettings.addActionListener(e -> ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Settings"));
-
-//            // --- SplitPane for sidebar
-//            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideBar, centrePanel);
-//            splitPane.setDividerLocation(200);
-//            splitPane.setDividerSize(3);
-//            splitPane.setResizeWeight(0.0);
-
 
             // --- Layout All ---
             frame.setLayout(new BorderLayout());
             frame.add(collapsibleCenter, BorderLayout.CENTER);
-//            frame.add(centrePanel, BorderLayout.CENTER);
 
             // Main content by default
             ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Tasks");
@@ -145,6 +105,23 @@ public class BigMain {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+    }
+
+    @NotNull
+    private static WeeklyFeedbackScheduler getWeeklyFeedbackScheduler(FeedbackRepository feedbackRepository) {
+        DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
+        GPTService analyzer = new OpenAIAPIAdapter();
+        FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
+        GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
+
+        GenerateFeedbackInputBoundary feedbackInputBoundary = new GenerateFeedbackInteractor(
+                dailyLogRepository,
+                feedbackRepository,
+                analyzer,
+                presenter
+        );
+        WeeklyFeedbackScheduler scheduler = new WeeklyFeedbackScheduler(feedbackInputBoundary);
+        return scheduler;
     }
 
     private static JPanel makePlaceholderPanel(String title) {
