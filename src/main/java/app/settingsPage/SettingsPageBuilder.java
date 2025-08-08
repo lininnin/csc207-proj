@@ -2,18 +2,19 @@ package app.settingsPage;
 
 import data_access.NotificationTimeDataAccessObject;
 
-import interface_adapter.Alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimePresenter;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
+import entity.Alex.NotificationTime.NotificationTimeFactory;
+import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
+import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimePresenter;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
 
-import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeInputBoundary;
-import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
-import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeInteractor;
-import use_case.Alex.Settings_related.edit_notificationTime.EditNotificationTimeOutputBoundary;
+import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeInputBoundary;
+import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeDataAccessInterf;
+import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeInteractor;
+import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeOutputBoundary;
 
 import view.Alex.Settings.NotificationTimeView;
-import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,8 @@ public class SettingsPageBuilder {
         EditNotificationTimeViewModel editNotificationTimeViewModel = new EditNotificationTimeViewModel();
 
         // -------------------- DAO + Use Case --------------------
-        EditNotificationTimeDataAccessInterf dao = new NotificationTimeDataAccessObject();
+        NotificationTimeFactoryInterf notificationTimeFactory = new NotificationTimeFactory();
+        EditNotificationTimeDataAccessInterf dao = new NotificationTimeDataAccessObject(notificationTimeFactory);
         EditNotificationTimeOutputBoundary presenter = new EditNotificationTimePresenter(editNotificationTimeViewModel);
         EditNotificationTimeInputBoundary interactor = new EditNotificationTimeInteractor(dao, presenter);
         EditNotificationTimeController controller = new EditNotificationTimeController(interactor);

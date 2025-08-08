@@ -1,14 +1,13 @@
 package view.Alex.Settings;
 
-import interface_adapter.Alex.Settings_related.notificationTime_module.NotificationTimeState;
-import interface_adapter.Alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeState;
-import interface_adapter.Alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
+import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeState;
+import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeViewModel;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeState;
+import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -68,12 +67,12 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
         // --------------------- Action Listeners ---------------------
         editButton.addActionListener(e -> {
             viewModel.getState().setEditing(true);
-            viewModel.firePropertyChanged(NotificationTimeViewModel.NOTIFICATION_TIME_STATE_PROPERTY);
+            viewModel.firePropertyChanged("state");
         });
 
         cancelButton.addActionListener(e -> {
             viewModel.getState().setEditing(false);
-            viewModel.firePropertyChanged(NotificationTimeViewModel.NOTIFICATION_TIME_STATE_PROPERTY);
+            viewModel.firePropertyChanged("state");
         });
 
         saveButton.addActionListener(e -> {
@@ -99,14 +98,14 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        // 监听主展示状态
-        if (evt.getPropertyName().equals(NotificationTimeViewModel.NOTIFICATION_TIME_STATE_PROPERTY)) {
+        if (!"state".equals(evt.getPropertyName())) return;
+
+        if (evt.getSource() == viewModel) {
             NotificationTimeState state = (NotificationTimeState) evt.getNewValue();
             refresh(state);
         }
 
-        // 监听编辑状态与错误
-        if (evt.getPropertyName().equals(editViewModel.getViewName())) {
+        if (evt.getSource() == editViewModel) {
             EditNotificationTimeState state = (EditNotificationTimeState) evt.getNewValue();
 
             // 更新字段（可选）
@@ -147,5 +146,3 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
         return reminder3Field.getText().trim();
     }
 }
-
-

@@ -1,15 +1,15 @@
 package view.Alex.Event;
 
 import entity.Alex.Event.Event;
-import interface_adapter.Alex.Event_related.add_event.AddEventController;
-import interface_adapter.Alex.Event_related.add_event.AddedEventState;
-import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventState;
-import interface_adapter.Alex.Event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.todays_events.TodaysEventsState;
-import interface_adapter.Alex.Event_related.todays_events_module.todays_events.TodaysEventsViewModel;
-import interface_adapter.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
+import interface_adapter.alex.event_related.add_event.AddEventController;
+import interface_adapter.alex.event_related.add_event.AddedEventState;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventController;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventState;
+import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
 import view.DueDatePickerPanel;
 
 import javax.swing.*;
@@ -51,26 +51,36 @@ public class TodaysEventsView extends JPanel {
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         add(title, BorderLayout.NORTH);
 
-        // 表头
+        // ✅ 创建一个容器 panel 包含表头和滚动列表
+        JPanel listContainer = new JPanel();
+        listContainer.setLayout(new BorderLayout());
+
+// 表头
         JPanel header = new JPanel(new GridLayout(1, 5));
         header.add(new JLabel("Name", SwingConstants.CENTER));
         header.add(new JLabel("Category", SwingConstants.CENTER));
         header.add(new JLabel("Due Date", SwingConstants.CENTER));
         header.add(new JLabel("Edit", SwingConstants.CENTER));
         header.add(new JLabel("Delete", SwingConstants.CENTER));
-        add(header, BorderLayout.CENTER);
+        listContainer.add(header, BorderLayout.NORTH);
 
-        // 列表区域
+// 列表区域
         todaysEventsListPanel.setLayout(new BoxLayout(todaysEventsListPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(todaysEventsListPanel);
-        add(scrollPane, BorderLayout.CENTER);
+        listContainer.add(scrollPane, BorderLayout.CENTER);
+
+// ✅ 一次性添加整个列表模块
+        add(listContainer, BorderLayout.CENTER);
+
 
         // ViewModel监听器
         todaysEventsViewModel.addPropertyChangeListener(evt -> {
-            if (TodaysEventsViewModel.TODAYS_EVENTS_PROPERTY.equals(evt.getPropertyName())) {
+            System.out.println("TODAYS_EVENTS_VIEW received property change: " + evt.getPropertyName());
+            if ("state".equals(evt.getPropertyName())) {
                 refreshEventList((TodaysEventsState) evt.getNewValue());
             }
         });
+
 
         addedEventViewModel.addPropertyChangeListener(evt -> {
             if ("addedEvent".equals(evt.getPropertyName())) {
@@ -85,9 +95,9 @@ public class TodaysEventsView extends JPanel {
             EditTodaysEventState state = editTodaysEventViewModel.getState();
             if (state.getEditError() != null) {
                 JOptionPane.showMessageDialog(this, "Edit failed: " + state.getEditError(), "Edit Error", JOptionPane.ERROR_MESSAGE);
-            } else if (state.getDueDate() != null) {
-                JOptionPane.showMessageDialog(this, "Due date updated to " + state.getDueDate(), "Edit Success", JOptionPane.INFORMATION_MESSAGE);
-            }
+            }// else if (state.getDueDate() != null) {
+                //JOptionPane.showMessageDialog(this, "Due date updated to " + state.getDueDate(), "Edit Success", JOptionPane.INFORMATION_MESSAGE);
+            //}
         });
 
 
@@ -105,7 +115,7 @@ public class TodaysEventsView extends JPanel {
             emptyLabel.setPreferredSize(new Dimension(150, 250));
             todaysEventsListPanel.add(emptyLabel);
         }
-
+        System.out.println("todays event view,Refreshing event list, count: " + events.size());
         for (Event event : events) {
             JPanel row = new JPanel(new GridLayout(1, 5));
             row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -171,5 +181,3 @@ public class TodaysEventsView extends JPanel {
         todaysEventsListPanel.repaint();
     }
 }
-
-

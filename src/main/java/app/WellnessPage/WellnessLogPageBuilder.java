@@ -2,53 +2,56 @@ package app.WellnessPage;
 
 import data_access.TodaysWellnessLogDataAccessObject;
 import data_access.MoodAvailableDataAccessObject;
+import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelFactory;
+import entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
+import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
+import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogPresenter;
-import interface_adapter.Alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogController;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogPresenter;
+import interface_adapter.alex.WellnessLog_related.new_wellness_log.AddWellnessLogViewModel;
 
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelPresenter;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelPresenter;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelPresenter;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelPresenter;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelPresenter;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelPresenter;
 
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogController;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogPresenter;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogViewModel;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogController;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogPresenter;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.delete_wellnessLog.DeleteWellnessLogViewModel;
 
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogPresenter;
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogViewModel;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogController;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogPresenter;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog.EditWellnessLogViewModel;
 
-import interface_adapter.Alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
+import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
 
 //import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.MoodAvailableDataAccessObject;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelInteractor;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelInteractor;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelInteractor;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelInteractor;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelInteractor;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelInteractor;
 
-import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInputBoundary;
-import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogInteractor;
-import use_case.Alex.WellnessLog_related.add_wellnessLog.AddWellnessLogOutputBoundary;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputBoundary;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInteractor;
+import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogOutputBoundary;
 
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogInteractor;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogInteractor;
 
-import use_case.Alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInteractor;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInteractor;
 
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
-import view.CollapsibleSidebarView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,18 +67,20 @@ public class WellnessLogPageBuilder {
         TodaysWellnessLogViewModel todaysLogViewModel = new TodaysWellnessLogViewModel();
 
         // --- DAO + Factory ---
-        TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject();
-        WellnessLogEntryFactoryInterf factory = new WellnessLogEntryFactory();
+        DailyWellnessLogFactoryInterf factory = new DailyWellnessLogFactory();
+        TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject(factory);
+        WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
 
         // --- Add Log Controller ---
         AddWellnessLogOutputBoundary presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
-        AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, factory, presenter);
+        AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, wellnessLogEntryFactory, presenter);
         AddWellnessLogController addLogController = new AddWellnessLogController(interactor);
 
         // --- MoodLabel Controllers ---
         AvailableMoodLabelViewModel availableMoodLabelViewModel = new AvailableMoodLabelViewModel();
         AddMoodLabelViewModel addMoodLabelViewModel = new AddMoodLabelViewModel();
-        MoodAvailableDataAccessObject moodDAO = new MoodAvailableDataAccessObject();
+        AvaliableMoodlabelFactoryInterf availableMoodFactory = new AvaliableMoodLabelFactory();
+        MoodAvailableDataAccessObject moodDAO = new MoodAvailableDataAccessObject(availableMoodFactory);
 
         AddMoodLabelPresenter addLabelPresenter = new AddMoodLabelPresenter(addMoodLabelViewModel, availableMoodLabelViewModel, moodDAO);
         AddMoodLabelInteractor addLabelInteractor = new AddMoodLabelInteractor(moodDAO, addLabelPresenter, new MoodLabelFactory());

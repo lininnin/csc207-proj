@@ -1,25 +1,31 @@
 package data_access;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabel;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
-import use_case.Alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
+import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
+import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Data Access Object for managing available mood labels.
+ * Now decoupled from concrete implementation using DIP.
+ */
 public class MoodAvailableDataAccessObject implements
         AddMoodLabelDataAccessInterf,
         DeleteMoodLabelDataAccessInterf,
         EditMoodLabelDataAccessInterface {
 
-    private final AvaliableMoodLabel availableLabels;
+    private final AvaliableMoodLabelInterf availableLabels;
 
-    public MoodAvailableDataAccessObject() {
-        this.availableLabels = new AvaliableMoodLabel();
+    /**
+     * Constructs the DAO using a factory to obtain the label storage implementation.
+     */
+    public MoodAvailableDataAccessObject(entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf factory) {
+        this.availableLabels = factory.create();
+        // 默认标签初始化
         availableLabels.addLabel(new MoodLabel.Builder("Happy").type(MoodLabel.Type.Positive).build());
         availableLabels.addLabel(new MoodLabel.Builder("Calm").type(MoodLabel.Type.Positive).build());
         availableLabels.addLabel(new MoodLabel.Builder("Anxious").type(MoodLabel.Type.Negative).build());
@@ -95,7 +101,7 @@ public class MoodAvailableDataAccessObject implements
                 availableLabels.getNegativeLabelObjects().stream().anyMatch(l -> l.getName().equals(name));
     }
 
-    public AvaliableMoodLabel getCategorized() {
+    public AvaliableMoodLabelInterf getCategorized() {
         return availableLabels;
     }
 

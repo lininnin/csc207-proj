@@ -1,5 +1,7 @@
 package app.eventPage;
 
+import app.eventPage.EventPageBuilder;
+
 import javax.swing.*;
 
 public class EventPageRunner {

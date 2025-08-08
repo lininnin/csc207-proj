@@ -1,7 +1,7 @@
 package view.Alex;
 
-import interface_adapter.Alex.Notification_related.NotificationState;
-import interface_adapter.Alex.Notification_related.NotificationViewModel;
+import interface_adapter.alex.Notification_related.NotificationState;
+import interface_adapter.alex.Notification_related.NotificationViewModel;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -22,7 +22,7 @@ public class NotificationView implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(viewModel.getViewName())) {
+        if ("state".equals(evt.getPropertyName()) && evt.getSource() == viewModel) {
             NotificationState state = (NotificationState) evt.getNewValue();
 
             if (state.shouldShowReminder()) {
@@ -36,4 +36,5 @@ public class NotificationView implements PropertyChangeListener {
         }
     }
 }
+
 

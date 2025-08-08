@@ -1,8 +1,8 @@
 package view.Alex.Event;
 
-import interface_adapter.Alex.Event_related.add_event.AddEventController;
-import interface_adapter.Alex.Event_related.add_event.AddedEventViewModel;
-import interface_adapter.Alex.Event_related.add_event.AddedEventState;
+import interface_adapter.alex.event_related.add_event.AddEventController;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.add_event.AddedEventState;
 import view.DueDatePickerPanel;
 
 import javax.swing.*;

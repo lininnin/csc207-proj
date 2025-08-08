@@ -1,5 +1,7 @@
 package app.WellnessPage;
 
+import app.WellnessPage.WellnessLogPageBuilder;
+
 import javax.swing.*;
 
 public class WellnessLogPageRunner {
