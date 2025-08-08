@@ -63,8 +63,8 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         LabelComponentPanel nameInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.NAME_LABEL), nameInputField);
-        LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
-                new JLabel(CreatedEventViewModel.ONE_TIME_LABEL), oneTimeCheckbox);
+//        LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
+//                new JLabel(CreatedEventViewModel.ONE_TIME_LABEL), oneTimeCheckbox);
         LabelComponentPanel categoryInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.CATEGORY_LABEL), categoryInputField);
         LabelComponentPanel descriptionInfo = new LabelComponentPanel(
@@ -73,7 +73,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         JPanel row1 = new JPanel(new GridLayout(1, 2, 5, 1));
         row1.add(nameInfo);
-        row1.add(oneTimeInfo);
+        //row1.add(oneTimeInfo);
 
         JPanel row2 = new JPanel(new GridLayout(1, 2, 5, 1));
         row2.add(categoryInfo);
@@ -131,11 +131,11 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
             }
         });
 
-        oneTimeCheckbox.addItemListener(e -> {
-            CreatedEventState state = createdEventViewModel.getState();
-            state.setOneTime(oneTimeCheckbox.isSelected());
-            createdEventViewModel.setState(state);
-        });
+//        oneTimeCheckbox.addItemListener(e -> {
+//            CreatedEventState state = createdEventViewModel.getState();
+//            state.setOneTime(oneTimeCheckbox.isSelected());
+//            createdEventViewModel.setState(state);
+//        });
     }
 
     @Override
@@ -150,9 +150,9 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         if (!descriptionInputArea.getText().equals(state.getDescription())) {
             descriptionInputArea.setText(state.getDescription());
         }
-        if (oneTimeCheckbox.isSelected() != state.isOneTime()) {
-            oneTimeCheckbox.setSelected(state.isOneTime());
-        }
+//        if (oneTimeCheckbox.isSelected() != state.isOneTime()) {
+//            oneTimeCheckbox.setSelected(state.isOneTime());
+//        }
     }
 
     @Override
