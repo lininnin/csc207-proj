@@ -18,5 +18,15 @@ public class EditedEventViewModel extends ViewModel<EditedEventState> {
         this.setState(newState);
         this.firePropertyChanged(EDITED_EVENT_STATE_PROPERTY);
     }
+
+    public void clearError() {
+        EditedEventState cleared = new EditedEventState();
+        // 保留当前 id，如果需要
+        cleared.setEventId(this.getState().getEventId());
+        cleared.setEditError(null); // 清空错误
+        this.setState(cleared);
+        this.firePropertyChanged("state"); // ✅ 通知视图更新
+    }
+
 }
 
