@@ -1,4 +1,4 @@
-package entityTest;
+package entityTest.alex.mood_label;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabel.Type;

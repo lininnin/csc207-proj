@@ -1,4 +1,4 @@
-package entityTest;
+package entityTest.alex.user_settings;
 
 import entity.Alex.UserSettings.UserSettings;
 import entity.Alex.NotificationTime.NotificationTime;

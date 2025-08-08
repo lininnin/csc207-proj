@@ -1,4 +1,4 @@
-package entityTest;
+package entityTest.alex.notification_time;
 
 import entity.Alex.NotificationTime.NotificationTime;
 import org.junit.jupiter.api.BeforeEach;
