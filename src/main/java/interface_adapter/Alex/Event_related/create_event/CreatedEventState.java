@@ -15,7 +15,7 @@ public class CreatedEventState {
     private String category = "";
     private String categoryError = "";
 
-    private boolean oneTime = false;
+    //private boolean oneTime = false;
 
     // ---------------- Getters ----------------
 
@@ -43,9 +43,9 @@ public class CreatedEventState {
         return categoryError;
     }
 
-    public boolean isOneTime() {
-        return oneTime;
-    }
+//    public boolean isOneTime() {
+//        return oneTime;
+//    }
 
     // ---------------- Setters ----------------
 
@@ -73,9 +73,9 @@ public class CreatedEventState {
         this.categoryError = categoryError != null ? categoryError.trim() : "";
     }
 
-    public void setOneTime(boolean oneTime) {
-        this.oneTime = oneTime;
-    }
+//    public void setOneTime(boolean oneTime) {
+//        this.oneTime = oneTime;
+//    }
 
     // ---------------- Debug Output ----------------
 
@@ -84,8 +84,8 @@ public class CreatedEventState {
         return "CreatedEventState{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
-                ", oneTime=" + oneTime +
-                '}';
+                ", category='" + category + '\'';
+                //", oneTime=" + oneTime +
+                //'}';
     }
 }
