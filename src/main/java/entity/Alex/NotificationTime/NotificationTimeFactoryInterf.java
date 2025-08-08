@@ -8,7 +8,7 @@ import java.time.LocalTime;
 public interface NotificationTimeFactoryInterf {
 
     /**
-     * Creates a NotificationTime object with default reminder times:
+     * Creates a NotificationTime object with default reminder times.
      * - 08:00, 12:00, 20:00
      *
      * @return a new NotificationTime instance with default values
@@ -23,6 +23,8 @@ public interface NotificationTimeFactoryInterf {
      * @param reminder3 LocalTime for the third reminder
      * @return a new NotificationTime instance with specified times
      */
-    NotificationTimeInterf create(LocalTime reminder1, LocalTime reminder2, LocalTime reminder3);
+    NotificationTimeInterf create(LocalTime reminder1,
+                                  LocalTime reminder2,
+                                  LocalTime reminder3);
 }
 

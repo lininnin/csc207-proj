@@ -9,9 +9,13 @@ import java.util.List;
  * Represents the collection of events available to be added to a specific day.
  * This serves as a pool of events that users can choose from when planning their day.
  *
- * TODO: Will be used in Sophia's story #2 for filtering and organizing events by category/priority
+ * <p>Used in Sophia's story #2 for filtering and organizing events by category/priority.</p>
  */
 public class EventAvailable implements EventAvailableInterf {
+
+    /**
+     * The list of available event info objects.
+     */
     private final List<Info> eventInfoAvailable;
 
     /**
@@ -24,12 +28,12 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Adds an event to the available events pool.
      *
-     * @param info The Info to add
+     * @param info the Info to add
      * @throws IllegalArgumentException if info is null
      */
-    public void addEvent(Info info) {
+    public void addEvent(final Info info) {
         if (info == null) {
-            throw new IllegalArgumentException("Info cannot be null");
+            throw new IllegalArgumentException("Info cannot be null.");
         }
         eventInfoAvailable.add(info);
     }
@@ -37,17 +41,17 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Removes an event from the available events pool.
      *
-     * @param info The Info to remove
+     * @param info the Info to remove
      * @return true if the Info was removed, false if it wasn't in the list
      */
-    public boolean removeEvent(Info info) {
+    public boolean removeEvent(final Info info) {
         return eventInfoAvailable.remove(info);
     }
 
     /**
      * Returns all available events.
      *
-     * @return A copy of the list of available Info
+     * @return a copy of the list of available Info
      */
     public List<Info> getEventAvailable() {
         return new ArrayList<>(eventInfoAvailable);
@@ -56,10 +60,10 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Returns events filtered by category.
      *
-     * @param category The category to filter by
-     * @return List of Info in the specified category
+     * @param category the category to filter by
+     * @return list of Info in the specified category
      */
-    public List<Info> getEventsByCategory(String category) {
+    public List<Info> getEventsByCategory(final String category) {
         List<Info> filtered = new ArrayList<>();
         for (Info info : eventInfoAvailable) {
             if (category.equals(info.getCategory())) {
@@ -72,10 +76,10 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Returns events filtered by name.
      *
-     * @param name The name to filter by
-     * @return List of Info with the specified name
+     * @param name the name to filter by
+     * @return list of Info with the specified name
      */
-    public List<Info> getEventsByName(String name) {
+    public List<Info> getEventsByName(final String name) {
         List<Info> filtered = new ArrayList<>();
         for (Info info : eventInfoAvailable) {
             if (name.equals(info.getName())) {
@@ -88,7 +92,7 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Returns the number of available events.
      *
-     * @return The size of the info list
+     * @return the size of the info list
      */
     public int getEventCount() {
         return eventInfoAvailable.size();
@@ -97,10 +101,10 @@ public class EventAvailable implements EventAvailableInterf {
     /**
      * Checks if a specific Info is in the available event list.
      *
-     * @param info The Info to check
+     * @param info the Info to check
      * @return true if the Info is available, false otherwise
      */
-    public boolean contains(Info info) {
+    public boolean contains(final Info info) {
         return eventInfoAvailable.contains(info);
     }
 
@@ -111,4 +115,5 @@ public class EventAvailable implements EventAvailableInterf {
         eventInfoAvailable.clear();
     }
 }
+
 

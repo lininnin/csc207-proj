@@ -17,7 +17,7 @@ public class EventFactory implements EventFactoryInterf {
      * @throws IllegalArgumentException if any required field is null
      */
     @Override
-    public Event createEvent(Info info, BeginAndDueDates beginAndDueDates) {
+    public Event createEvent(final Info info, final BeginAndDueDates beginAndDueDates) {
         if (info == null) {
             throw new IllegalArgumentException("Info is required");
         }

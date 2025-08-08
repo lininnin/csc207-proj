@@ -14,7 +14,7 @@ public class MoodLabelFactory implements MoodLabelFactoryInterf {
      * @throws IllegalArgumentException if name is null/empty or type is null
      */
     @Override
-    public MoodLabel create(String name, MoodLabel.Type type) {
+    public MoodLabel create(final String name, final MoodLabel.Type type) {
         return new MoodLabel.Builder(name)
                 .type(type)
                 .build();

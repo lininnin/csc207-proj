@@ -11,20 +11,34 @@ import java.util.UUID;
  * Represents a daily log of actual events that occurred on a given date.
  * Each entry in this log corresponds to a recorded Event object.
  */
-public class DailyEventLog implements DailyEventLogInterf{
+public class DailyEventLog implements DailyEventLogInterf {
 
+    /**
+     * The unique identifier for this daily event log.
+     */
+    @SuppressWarnings("FieldCanBeLocal")
     private final String id;
+
+    /**
+     * The date that this daily event log is associated with.
+     */
+    @SuppressWarnings("FieldCanBeLocal")
     private final LocalDate date;
+
+    /**
+     * The list of actual events recorded for the given date.
+     */
+    @SuppressWarnings("FieldCanBeLocal")
     private final List<Event> actualEvents;
 
     /**
      * Constructs a new DailyEventLog for the specified date.
      *
-     * @param date The date this event log corresponds to
+     * @param dateParam the date this event log corresponds to
      */
-    public DailyEventLog(LocalDate date) {
+    public DailyEventLog(final LocalDate dateParam) {
         this.id = UUID.randomUUID().toString();
-        this.date = date;
+        this.date = dateParam;
         this.actualEvents = new ArrayList<>();
     }
 
@@ -32,9 +46,9 @@ public class DailyEventLog implements DailyEventLogInterf{
      * Adds an event to the actual event list for this day.
      * If the event is null or already exists, it is not added.
      *
-     * @param event The Event to add
+     * @param event the Event to add
      */
-    public void addEntry(Event event) {
+    public void addEntry(final Event event) {
         if (event != null && !actualEvents.contains(event)) {
             actualEvents.add(event);
         }
@@ -44,35 +58,39 @@ public class DailyEventLog implements DailyEventLogInterf{
      * Removes an event from the actual event list by its Info ID.
      * If the ID is null or no matching event is found, nothing is removed.
      *
-     * @param id The ID of the event (from its Info object) to remove
+     * @param idParam the ID of the event (from its Info object) to remove
      */
-    public void removeEntry(String id) {
-        if (id == null) return;
-
-        actualEvents.removeIf(entry -> id.equals(entry.getInfo().getId()));
+    public void removeEntry(final String idParam) {
+        if (idParam == null) {
+            return;
+        }
+        actualEvents.removeIf(entry -> idParam.equals(entry.getInfo().getId()));
     }
 
-    // ------------------ Getters ------------------
-
     /**
-     * @return The unique identifier of this daily event log
+     * Returns the unique identifier of this daily event log.
+     *
+     * @return the ID string of the event log
      */
     public String getId() {
         return id;
     }
 
     /**
-     * @return The date associated with this event log
+     * Returns the date associated with this event log.
+     *
+     * @return the date of the log
      */
     public LocalDate getDate() {
         return date;
     }
 
     /**
-     * @return A copy of the list of all events recorded for this day
+     * Returns a copy of the list of all events recorded for this day.
+     *
+     * @return a new List containing the actual events
      */
     public List<Event> getActualEvents() {
-        return new ArrayList<>(actualEvents); // defensive copy
+        return new ArrayList<>(actualEvents);
     }
 }
-

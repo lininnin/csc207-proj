@@ -15,7 +15,7 @@ public class DailyEventLogFactory implements DailyEventLogFactoryInterf {
      * @return A DailyEventLogInterf instance
      */
     @Override
-    public DailyEventLogInterf create(LocalDate date) {
+    public DailyEventLogInterf create(final LocalDate date) {
         return new DailyEventLog(date);
     }
 }

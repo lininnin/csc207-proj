@@ -10,7 +10,7 @@ public class ReminderSchedulerThread extends Thread {
 
     private final NotificationController controller;
 
-    public ReminderSchedulerThread(NotificationController controller) {
+    public ReminderSchedulerThread(final NotificationController controller) {
         this.controller = controller;
         this.setDaemon(true);  // So it doesn't prevent app shutdown
         this.setName("ReminderSchedulerThread");

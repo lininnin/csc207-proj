@@ -3,7 +3,8 @@ package entity.Alex.UserSettings;
 import entity.Alex.NotificationTime.NotificationTimeInterf;
 
 /**
- * Interface for accessing user-specific settings such as notification times and timezone.
+ * Interface for accessing user-specific settings
+ * such as notification times and timezone.
  */
 public interface UserSettingsInterf {
 

@@ -65,11 +65,14 @@ public class EventPageBuilder {
         InfoFactory infoFactory = new InfoFactory();
 
         // --- Use Case Wiring ---
-        CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(createdEventViewModel, availableEventViewModel, commonDao);
-        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(commonDao, createEventPresenter, infoFactory);
+        CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(createdEventViewModel,
+                availableEventViewModel, commonDao);
+        CreateEventInputBoundary createEventInteractor = new CreateEventInteractor(commonDao,
+                createEventPresenter, infoFactory);
         CreateEventController createEventController = new CreateEventController(createEventInteractor);
 
-        DeleteEventOutputBoundary deleteEventPresenter = new DeleteEventPresenter(deletedEventViewModel, availableEventViewModel, addEventViewModel);
+        DeleteEventOutputBoundary deleteEventPresenter = new DeleteEventPresenter(deletedEventViewModel,
+                availableEventViewModel, addEventViewModel);
         DeleteEventInputBoundary deleteEventInteractor = new DeleteEventInteractor(commonDao, deleteEventPresenter);
         DeleteEventController deleteEventController = new DeleteEventController(deleteEventInteractor);
 
@@ -102,7 +105,8 @@ public class EventPageBuilder {
         state.setAvailableNames(names);
         addEventViewModel.setState(state);
 
-        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao);
+        CreateEventView createEventView = new CreateEventView(createdEventViewModel,
+                addEventViewModel, commonDao);
         createEventView.setCreateEventController(createEventController);
 
         AvailableEventView availableEventView = new AvailableEventView(
@@ -111,7 +115,8 @@ public class EventPageBuilder {
         );
 
         // --- Layout Panels ---
-        JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createEventView, addEventView);
+        JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                createEventView, addEventView);
         verticalSplit.setResizeWeight(0.5);
         verticalSplit.setDividerSize(2);
         verticalSplit.setEnabled(false);
