@@ -35,7 +35,7 @@ public final class BayesCorrelationPromptBuilder {
                 .append("to relate wellness metrics to task‑completion rate.\n\n")
 
                 .append("USER:\n")
-                .append("For each of the last 7 days you get:\n")
+                .append("For each of the 7 days you get:\n")
                 .append("  date, completion_rate (0‑1), avg_stress, avg_energy, avg_fatigue.\n")
                 .append("Assume Normal(0,1) priors on coefficients and independent variables.\n")
                 .append("Task:\n")
@@ -56,7 +56,8 @@ public final class BayesCorrelationPromptBuilder {
                 .append("    {\"variable\":\"Energy\", ...},\n")
                 .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
-                .append("  \"notes\": \"one short sentence, if data is missing specify which data, including metrics\"\n")
+                .append("  \"notes\": \"Give 1 brief paragraph explaining the data in the JSON,")
+                .append("then in one short sentence, if data is missing specify which date, including metrics")
                 .append("}\n");
 
         return sb.toString();

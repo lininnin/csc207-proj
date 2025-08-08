@@ -21,11 +21,11 @@ public class FeedbackEntryPanel extends JPanel implements FeedbackEntryView {
         header.setFont(header.getFont().deriveFont(Font.BOLD, 20f));
         add(header, BorderLayout.NORTH);
 
-        JPanel analysisRecPanel = new JPanel(new GridLayout(1, 2, 16, 0));
+        JPanel analysisRecPanel = new JPanel(new GridLayout(1, 2, 14, 0));
         analysisRecPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
         analysisRecPanel.add(makeTextPanel("Analysis", analysisArea));
         analysisRecPanel.add(makeTextPanel("Recommendations", recArea));
-        analysisRecPanel.setPreferredSize(new Dimension(400, 300));
+        analysisRecPanel.setPreferredSize(new Dimension(400, 450));
 
         JPanel correlationPanel = new JPanel();
         correlationPanel.add(new JLabel("No correlation data available."));
@@ -61,14 +61,23 @@ public class FeedbackEntryPanel extends JPanel implements FeedbackEntryView {
 
     private JPanel makeTextPanel(String title, JTextArea area) {
         JPanel panel = new JPanel(new BorderLayout());
+
+        // Title
         JLabel label = new JLabel(title);
-        label.setFont(label.getFont().deriveFont(Font.BOLD, 14f));
+        label.setFont(label.getFont().deriveFont(Font.BOLD, 16f));
         label.setBorder(new EmptyBorder(0, 0, 4, 0));
+
+        // Text area
         area.setEditable(false);
         area.setLineWrap(true);
         area.setWrapStyleWord(true);
+        area.setFont(area.getFont().deriveFont(14f));
+        area.setMargin(new Insets(6, 6, 6, 6));
+
         panel.add(label, BorderLayout.NORTH);
         panel.add(new JScrollPane(area), BorderLayout.CENTER);
+
         return panel;
     }
+
 }

@@ -1,5 +1,6 @@
 package app.feedback_panel;
 
+import data_access.files.FileDailyLogRepository;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Angela.DailyLog;
 import entity.Angela.Task.Task;
@@ -9,7 +10,9 @@ import entity.Alex.MoodLabel.MoodLabel.Type;
 import entity.Alex.Event.Event;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import use_case.repository.DailyLogRepository;
 
+import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,17 +22,20 @@ import java.util.Random;
 
 public class DailyLogGenerator {
     public static List<DailyLog> generateFakeLogs() {
+        DailyLogRepository dailyLogRepository = new FileDailyLogRepository();
         List<DailyLog> logs = new ArrayList<>();
         LocalDate today = LocalDate.now();
         LocalDate monday = today.with(DayOfWeek.MONDAY);
-        for (int i = 0; i < 3; i++) createTestDailyLog4Tasks(monday, i, logs);
-        for (int j = 2; j < 7; j++)createTestDailyLog3Tasks(monday, j, logs);
+        for (int i = 1; i < 4; i++) createTestDailyLog4Tasks(monday, i, logs);
+        for (int j = 3; j < 8; j++)createTestDailyLog3Tasks(monday, j, logs);
+        logs.forEach(dailyLogRepository::save);
         return logs;
     }
 
     private static void createTestDailyLog4Tasks(LocalDate monday, int i, List<DailyLog> logs) {
         LocalDate date = monday.minusDays(i);
         DailyLog log = new DailyLog(date);
+
 
         // Fake Task 1
         Info taskInfo = new Info.Builder("Task " + (i +1))

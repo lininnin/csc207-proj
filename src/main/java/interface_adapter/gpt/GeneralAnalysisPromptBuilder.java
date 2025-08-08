@@ -99,7 +99,7 @@ OUTPUT REQUIREMENTS:
 Return STRICT JSON only, no markdown.  Use this schema exactly:
 
 {
-  "analysis":    string,   // trends & correlations, NO advice
+  "analysis":    string,   // trends & correlations, NO advice, in form of bullet points
   "extra_notes": string    // notes on missing / partial data ("" if none)
 }
 """);
