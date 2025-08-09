@@ -3,6 +3,7 @@ package interface_adapter.Angela.task.mark_complete;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputBoundary;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
 
@@ -13,6 +14,7 @@ import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
 public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary {
     private final TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
 
     public MarkTaskCompletePresenter(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
@@ -20,6 +22,10 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -43,6 +49,11 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
         // Also refresh overdue tasks if the controller is set
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Last 7 days
+        }
+        
+        // Refresh Today So Far panel to show completed tasks
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
         }
         
         System.out.println("DEBUG: MarkTaskCompletePresenter - Success: " + message);

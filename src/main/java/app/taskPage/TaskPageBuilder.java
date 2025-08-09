@@ -14,6 +14,7 @@ import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
 import interface_adapter.Angela.category.edit.*;
+import interface_adapter.Angela.today_so_far.*;
 import interface_adapter.ViewManagerModel;
 import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
@@ -26,8 +27,10 @@ import use_case.Angela.task.overdue.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
+import use_case.Angela.today_so_far.*;
 import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
@@ -57,6 +60,7 @@ public class TaskPageBuilder {
     private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private final OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
+    private final TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     // Views
@@ -225,9 +229,23 @@ public class TaskPageBuilder {
                 overdueTasksInteractor
         );
 
-        // Create Today So Far view
-        todaySoFarView = new TodaySoFarView(overdueTasksViewModel);
+        // Wire up Today So Far Use Case
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(taskGateway);
+        
+        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
+        
+        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
+                todaySoFarDataAccess,
+                todaySoFarPresenter,
+                categoryGateway
+        );
+        
+        TodaySoFarController todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
+        
+        // Create Today So Far view with both view models
+        todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
         todaySoFarView.setOverdueTasksController(overdueTasksController);
+        todaySoFarView.setTodaySoFarController(todaySoFarController);
         
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);
@@ -236,6 +254,9 @@ public class TaskPageBuilder {
         editAvailableTaskPresenter.setOverdueTasksController(overdueTasksController);
         deleteTaskPresenter.setOverdueTasksController(overdueTasksController);
         removeFromTodayPresenter.setOverdueTasksController(overdueTasksController);
+        
+        // Set Today So Far controller on presenters that need to refresh Today So Far panel
+        markCompletePresenter.setTodaySoFarController(todaySoFarController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
