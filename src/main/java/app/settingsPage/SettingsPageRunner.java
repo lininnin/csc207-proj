@@ -1,4 +1,4 @@
-package app;
+package app.settingsPage;
 
 import app.settingsPage.SettingsPageBuilder;
 
