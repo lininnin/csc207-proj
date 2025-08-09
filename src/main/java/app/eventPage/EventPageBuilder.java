@@ -26,6 +26,17 @@ import interface_adapter.alex.event_related.todays_events_module.edit_todays_eve
 import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 
+// Category management imports
+import data_access.InMemoryCategoryGateway;
+import interface_adapter.Angela.category.*;
+import interface_adapter.Angela.category.create.*;
+import interface_adapter.Angela.category.delete.*;
+import interface_adapter.Angela.category.edit.*;
+import use_case.Angela.category.create.*;
+import use_case.Angela.category.delete.*;
+import use_case.Angela.category.edit.*;
+import view.Angela.Category.CategoryManagementDialog;
+
 import use_case.alex.event_related.add_event.*;
 import use_case.alex.event_related.create_event.*;
 import use_case.alex.event_related.avaliable_events_module.delete_event.*;
@@ -41,9 +52,17 @@ import view.Alex.Event.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public class EventPageBuilder {
+    
+    // Category management fields
+    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
+    private CategoryManagementDialog categoryDialog;
+    private CreateEventView createEventView;
 
     public JPanel build() {
         // --- ViewModels ---
@@ -102,8 +121,18 @@ public class EventPageBuilder {
         state.setAvailableNames(names);
         addEventViewModel.setState(state);
 
-        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao);
+        createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, categoryGateway);
         createEventView.setCreateEventController(createEventController);
+        
+        // Set up category management dialog opening
+        createEventView.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("openCategoryManagement".equals(evt.getPropertyName())) {
+                    openCategoryDialog();
+                }
+            }
+        });
 
         AvailableEventView availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
@@ -143,6 +172,69 @@ public class EventPageBuilder {
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
         return mainPanel;
+    }
+    
+    private void openCategoryDialog() {
+        Container parent = createEventView.getParent();
+        while (parent != null && !(parent instanceof JFrame)) {
+            parent = parent.getParent();
+        }
+        JFrame parentFrame = (JFrame) parent;
+        
+        if (parentFrame != null) {
+            if (categoryDialog == null) {
+                categoryDialog = new CategoryManagementDialog(
+                        parentFrame,
+                        categoryGateway,
+                        categoryManagementViewModel
+                );
+                
+                // Wire up controllers
+                CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
+                        categoryManagementViewModel
+                );
+                
+                CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                CreateCategoryController createCategoryController = new CreateCategoryController(
+                        createCategoryInteractor
+                );
+                
+                DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
+                        deleteCategoryInteractor
+                );
+                
+                EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
+                        categoryGateway,
+                        null,  // We don't have task gateway integration for events yet
+                        categoryPresenter
+                );
+                EditCategoryController editCategoryController = new EditCategoryController(
+                        editCategoryInteractor
+                );
+                
+                categoryDialog.setControllers(
+                        createCategoryController,
+                        deleteCategoryController,
+                        editCategoryController
+                );
+                
+                categoryDialog.setCategoryChangeListener(new CategoryManagementDialog.CategoryChangeListener() {
+                    @Override
+                    public void onCategoryChanged() {
+                        createEventView.refreshCategories();
+                    }
+                });
+            }
+            
+            categoryDialog.setVisible(true);
+        }
     }
 }
 
