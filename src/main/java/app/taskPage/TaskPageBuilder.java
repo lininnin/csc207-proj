@@ -247,6 +247,9 @@ public class TaskPageBuilder {
         todaySoFarView.setOverdueTasksController(overdueTasksController);
         todaySoFarView.setTodaySoFarController(todaySoFarController);
         
+        // Trigger initial data load
+        todaySoFarController.refresh();
+        
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);
         editTodayPresenter.setOverdueTasksController(overdueTasksController);
@@ -416,10 +419,27 @@ public class TaskPageBuilder {
         // Initial refresh of overdue tasks
         todaySoFarView.refreshOverdueTasks();
 
-        // --- Final Frame Layout ---
+        // --- Final Frame Layout with Resizable Today So Far ---
+        // Wrap Today So Far in a panel to control sizing
+        JPanel todaySoFarWrapper = new JPanel(new BorderLayout());
+        todaySoFarWrapper.add(todaySoFarView, BorderLayout.CENTER);
+        todaySoFarWrapper.setPreferredSize(new Dimension(380, 750));
+        todaySoFarWrapper.setMinimumSize(new Dimension(320, 400));
+        
+        // Create a horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+                                                   centerSplitPane, 
+                                                   todaySoFarWrapper);
+        mainSplitPane.setDividerLocation(1070);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.75);
+        
+        // Create main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerSplitPane, BorderLayout.CENTER);
-        mainPanel.add(todaySoFarView, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
+        mainPanel.setPreferredSize(new Dimension(1450, 750));
 
         return mainPanel;
     }
