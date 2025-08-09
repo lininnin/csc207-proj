@@ -28,6 +28,8 @@ import interface_adapter.alex.event_related.todays_events_module.todays_events.T
 
 // Category management imports
 import data_access.InMemoryCategoryGateway;
+import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
@@ -36,6 +38,9 @@ import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
 import view.Angela.Category.CategoryManagementDialog;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import use_case.alex.event_related.add_event.*;
 import use_case.alex.event_related.create_event.*;
@@ -92,7 +97,8 @@ public class EventPageBuilder {
         DeleteEventInputBoundary deleteEventInteractor = new DeleteEventInteractor(commonDao, deleteEventPresenter);
         DeleteEventController deleteEventController = new DeleteEventController(deleteEventInteractor);
 
-        EditEventOutputBoundary editEventPresenter = new EditEventPresenter(editedEventViewModel, availableEventViewModel);
+        EditEventPresenter editEventPresenter = new EditEventPresenter(editedEventViewModel, availableEventViewModel);
+        editEventPresenter.setTodaysEventsViewModel(todaysEventsViewModel); // Wire up today's events view model
         EditEventInputBoundary editEventInteractor = new EditEventInteractor(commonDao, editEventPresenter);
         EditEventController editEventController = new EditEventController(editEventInteractor);
 
@@ -114,6 +120,7 @@ public class EventPageBuilder {
                 todaysEventsViewModel, addEventController, addEventViewModel,
                 deleteTodaysEventController, editTodaysEventController, editTodaysEventViewModel
         );
+        todaysEventsView.setCategoryGateway(categoryGateway);
 
         // 初始化 addEventViewModel 的下拉框数据
         List<String> names = commonDao.getAllEvents().stream().map(e -> e.getName()).toList();
@@ -138,6 +145,7 @@ public class EventPageBuilder {
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
                 createdEventViewModel, editEventController, editedEventViewModel
         );
+        availableEventView.setCategoryGateway(categoryGateway);
 
         // --- Layout Panels ---
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createEventView, addEventView);
@@ -210,9 +218,36 @@ public class EventPageBuilder {
                         deleteCategoryInteractor
                 );
                 
+                // Create a no-op adapter for event context (events don't need updates since they share category objects)
+                EditCategoryTaskDataAccessInterface eventCategoryAdapter = new EditCategoryTaskDataAccessInterface() {
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        // Events don't need special handling - they share category objects
+                        return new ArrayList<>();
+                    }
+                    
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        // Events don't need special handling - they share category objects
+                        return new ArrayList<>();
+                    }
+                    
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        // Events don't need special handling - they share category objects
+                        return true;
+                    }
+                    
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        // Events don't need special handling - they share category objects
+                        return true;
+                    }
+                };
+                
                 EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
                         categoryGateway,
-                        null,  // We don't have task gateway integration for events yet
+                        eventCategoryAdapter,
                         categoryPresenter
                 );
                 EditCategoryController editCategoryController = new EditCategoryController(

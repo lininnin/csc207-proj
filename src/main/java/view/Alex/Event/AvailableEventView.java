@@ -12,6 +12,8 @@ import interface_adapter.alex.event_related.available_event_module.edit_event.Ed
 import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventState;
 
 import entity.info.Info;
+import entity.Category;
+import use_case.Angela.category.CategoryGateway;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +30,7 @@ public class AvailableEventView extends JPanel {
     private final CreatedEventViewModel createdEventViewModel;
     private final EditEventController editEventController;
     private final EditedEventViewModel editedEventViewModel;
+    private CategoryGateway categoryGateway;
 
     private final JPanel eventListPanel = new JPanel();
 
@@ -114,6 +117,10 @@ public class AvailableEventView extends JPanel {
         // === 初始刷新 ===
         refreshEventList(availableEventViewModel.getState());
     }
+    
+    public void setCategoryGateway(CategoryGateway categoryGateway) {
+        this.categoryGateway = categoryGateway;
+    }
 
     private void refreshEventList(AvailableEventState state) {
         eventListPanel.removeAll();
@@ -133,7 +140,14 @@ public class AvailableEventView extends JPanel {
 
             row.add(new JLabel(event.getName(), SwingConstants.CENTER));
             row.add(new JLabel(event.getDescription(), SwingConstants.CENTER));
-            row.add(new JLabel(event.getCategory(), SwingConstants.CENTER));
+            
+            // Display category name instead of ID
+            String categoryDisplay = "";
+            if (categoryGateway != null && event.getCategory() != null && !event.getCategory().isEmpty()) {
+                Category category = categoryGateway.getCategoryById(event.getCategory());
+                categoryDisplay = category != null ? category.getName() : event.getCategory();
+            }
+            row.add(new JLabel(categoryDisplay, SwingConstants.CENTER));
 
             JButton editButton = new JButton("edit");
             editButton.addActionListener(e -> {
