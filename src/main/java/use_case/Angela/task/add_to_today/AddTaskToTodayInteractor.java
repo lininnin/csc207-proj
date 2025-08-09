@@ -28,8 +28,9 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
             return;
         }
 
-        // Check if already in today (by template ID)
-        if (dataAccess.isTaskInTodaysList(taskId)) {
+        // Check if already in today AND not overdue
+        // This allows re-adding overdue tasks with new due dates
+        if (dataAccess.isTaskInTodaysListAndNotOverdue(taskId)) {
             outputBoundary.presentError("Task is already in Today's Tasks");
             return;
         }
