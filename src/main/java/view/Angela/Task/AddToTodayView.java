@@ -278,9 +278,9 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         // Set due date to yesterday for testing overdue functionality
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        // Call controller with yesterday's date
+        // Call controller with special testing method that bypasses validation
         if (controller != null) {
-            controller.execute(selectedTask.getId(), priority, yesterday);
+            controller.executeForTestingOverdue(selectedTask.getId(), priority, yesterday);
             showMessage("Task added with yesterday's date for testing overdue functionality", false);
         }
     }
