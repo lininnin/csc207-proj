@@ -3,6 +3,7 @@ package use_case.Angela.category.delete;
 import entity.Category;
 import entity.Angela.Task.TaskAvailable;
 import entity.Angela.Task.Task;
+import entity.info.Info;
 import java.util.List;
 
 /**
@@ -72,6 +73,40 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
                 System.out.println("DEBUG: Failed to update today's task: " + task.getInfo().getId());
             }
         }
+        
+        // CRITICAL: Also handle events if we have event data access
+        int updatedAvailableEventsCount = 0;
+        int updatedTodaysEventsCount = 0;
+        
+        // Check if the data access also supports events (using instanceof check)
+        if (dataAccess instanceof DeleteCategoryEventDataAccessInterface) {
+            DeleteCategoryEventDataAccessInterface eventDataAccess = 
+                (DeleteCategoryEventDataAccessInterface) dataAccess;
+            
+            // Update available events
+            System.out.println("DEBUG: Finding available events with category: " + category.getName());
+            List<Info> availableEvents = eventDataAccess.findAvailableEventsByCategory(categoryId);
+            System.out.println("DEBUG: Found " + availableEvents.size() + " available events to update");
+            
+            for (Info event : availableEvents) {
+                System.out.println("DEBUG: Clearing category for available event: " + event.getName());
+                if (eventDataAccess.clearAvailableEventCategory(event.getId())) {
+                    updatedAvailableEventsCount++;
+                }
+            }
+            
+            // Update today's events
+            System.out.println("DEBUG: Finding today's events with category: " + category.getName());
+            List<Info> todaysEvents = eventDataAccess.findTodaysEventsByCategory(categoryId);
+            System.out.println("DEBUG: Found " + todaysEvents.size() + " today's events to update");
+            
+            for (Info event : todaysEvents) {
+                System.out.println("DEBUG: Clearing category for today's event: " + event.getName());
+                if (eventDataAccess.clearTodaysEventCategory(event.getId())) {
+                    updatedTodaysEventsCount++;
+                }
+            }
+        }
 
         // Now delete the category
         System.out.println("DEBUG: Deleting category: " + category.getName());
@@ -79,10 +114,18 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         System.out.println("DEBUG: Category deletion result: " + deleted);
 
         if (deleted) {
-            String message = String.format(
-                "Category deleted successfully. Updated %d available tasks and %d today's tasks to have empty category.",
-                updatedAvailableCount, updatedTodaysCount
-            );
+            String message;
+            if (updatedAvailableEventsCount > 0 || updatedTodaysEventsCount > 0) {
+                message = String.format(
+                    "Category deleted successfully. Updated %d available tasks, %d today's tasks, %d available events, and %d today's events to have empty category.",
+                    updatedAvailableCount, updatedTodaysCount, updatedAvailableEventsCount, updatedTodaysEventsCount
+                );
+            } else {
+                message = String.format(
+                    "Category deleted successfully. Updated %d available tasks and %d today's tasks to have empty category.",
+                    updatedAvailableCount, updatedTodaysCount
+                );
+            }
             System.out.println("DEBUG: " + message);
             DeleteCategoryOutputData outputData = new DeleteCategoryOutputData(categoryId, message);
             outputBoundary.prepareSuccessView(outputData);
