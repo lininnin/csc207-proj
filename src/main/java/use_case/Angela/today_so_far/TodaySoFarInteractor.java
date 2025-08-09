@@ -32,10 +32,12 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
     
     @Override
     public void refreshTodaySoFar() {
+        System.out.println("DEBUG: TodaySoFarInteractor.refreshTodaySoFar() called");
         try {
             // Collect Goals data
             List<TodaySoFarOutputData.GoalProgress> goalProgressList = new ArrayList<>();
             List<Goal> activeGoals = dataAccess.getActiveGoals();
+            System.out.println("DEBUG: Active goals count: " + (activeGoals != null ? activeGoals.size() : 0));
             if (activeGoals != null) {
                 for (Goal goal : activeGoals) {
                     String name = goal.getGoalInfo().getInfo().getName();
@@ -50,6 +52,7 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             
             // Add completed tasks
             List<Task> completedTasks = dataAccess.getCompletedTasksForToday();
+            System.out.println("DEBUG: Completed tasks count: " + (completedTasks != null ? completedTasks.size() : 0));
             if (completedTasks != null) {
                 for (Task task : completedTasks) {
                     String name = task.getInfo().getName();
@@ -95,9 +98,12 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
                 wellnessEntries
             );
             
+            System.out.println("DEBUG: Presenting output data to boundary");
             outputBoundary.presentTodaySoFar(outputData);
             
         } catch (Exception e) {
+            System.out.println("DEBUG: Error in refreshTodaySoFar: " + e.getMessage());
+            e.printStackTrace();
             outputBoundary.presentError("Failed to load Today So Far data: " + e.getMessage());
         }
     }

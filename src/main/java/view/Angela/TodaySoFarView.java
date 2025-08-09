@@ -57,47 +57,67 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
     private void initialize(OverdueTasksViewModel overdueTasksViewModel) {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        setPreferredSize(new Dimension(350, 0));
-        setMinimumSize(new Dimension(300, 0));
+        setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        // Don't set preferred size here as it's handled by the wrapper
+        setMinimumSize(new Dimension(320, 400));
 
         // Create main content panel
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.WHITE);
+        contentPanel.setOpaque(true);
 
-        // Title
-        JLabel titleLabel = new JLabel("Today so far");
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(titleLabel);
-        contentPanel.add(Box.createVerticalStrut(15));
+        // Title Panel to ensure visibility
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        
+        JLabel titleLabel = new JLabel("Today So Far");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        titlePanel.add(titleLabel);
+        
+        contentPanel.add(titlePanel);
+        contentPanel.add(Box.createVerticalStrut(10));
         
         // Goals Progress Section
-        contentPanel.add(createGoalsSection());
+        JPanel goalsContainer = createGoalsSection();
+        goalsContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(goalsContainer);
         contentPanel.add(Box.createVerticalStrut(15));
         
         // Completed Tasks Section (includes completion rate)
-        contentPanel.add(createCompletedTasksSection());
+        JPanel completedContainer = createCompletedTasksSection();
+        completedContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(completedContainer);
         contentPanel.add(Box.createVerticalStrut(15));
         
         // Wellness Log Section
-        contentPanel.add(createWellnessSection());
+        JPanel wellnessContainer = createWellnessSection();
+        wellnessContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(wellnessContainer);
         contentPanel.add(Box.createVerticalStrut(15));
         
         // Overdue Tasks Section (Improved layout)
-        overdueTasksPanel = createImprovedOverdueSection(overdueTasksViewModel);
-        contentPanel.add(overdueTasksPanel);
+        if (overdueTasksViewModel != null) {
+            overdueTasksPanel = createImprovedOverdueSection(overdueTasksViewModel);
+            overdueTasksPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPanel.add(overdueTasksPanel);
+        }
         
         // Add vertical glue to push content to top
         contentPanel.add(Box.createVerticalGlue());
         
-        // Add content panel to scroll pane for stretchability
+        // Add content panel to scroll pane for vertical scrollability
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getViewport().setBackground(Color.WHITE);
         
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -144,7 +164,7 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
         
         // Section title
@@ -162,13 +182,38 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         panel.add(separator);
         panel.add(Box.createVerticalStrut(10));
         
-        // Goals table
+        // Initialize goals panel as member variable
         goalsPanel = new JPanel();
-        goalsPanel.setLayout(new BoxLayout(goalsPanel, BoxLayout.Y_AXIS));
+        goalsPanel.setLayout(new BorderLayout());
         goalsPanel.setBackground(Color.WHITE);
         goalsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         
-        updateGoalsPanel(null); // Initialize with placeholder
+        // Add initial placeholder content
+        JPanel tablePanel = new JPanel(new GridLayout(0, 3, 5, 5));
+        tablePanel.setBackground(Color.WHITE);
+        
+        // Headers
+        JLabel nameHeader = new JLabel("Goal Name");
+        nameHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(nameHeader);
+        
+        JLabel periodHeader = new JLabel("Period");
+        periodHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(periodHeader);
+        
+        JLabel progressHeader = new JLabel("Progress");
+        progressHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(progressHeader);
+        
+        // Placeholder
+        JLabel placeholder = new JLabel("No goals yet");
+        placeholder.setFont(FontUtil.getStandardFont());
+        placeholder.setForeground(Color.LIGHT_GRAY);
+        tablePanel.add(placeholder);
+        tablePanel.add(new JLabel(""));
+        tablePanel.add(new JLabel(""));
+        
+        goalsPanel.add(tablePanel, BorderLayout.CENTER);
         panel.add(goalsPanel);
         
         return panel;
@@ -181,7 +226,7 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
         
         // Section title
@@ -207,13 +252,38 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         panel.add(completionRateLabel);
         panel.add(Box.createVerticalStrut(10));
         
-        // Tasks/Events table
+        // Initialize completed items panel as member variable
         completedItemsPanel = new JPanel();
-        completedItemsPanel.setLayout(new BoxLayout(completedItemsPanel, BoxLayout.Y_AXIS));
+        completedItemsPanel.setLayout(new BorderLayout());
         completedItemsPanel.setBackground(Color.WHITE);
         completedItemsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
         
-        updateCompletedItemsPanel(null); // Initialize with placeholder
+        // Add initial placeholder content
+        JPanel tablePanel = new JPanel(new GridLayout(0, 3, 5, 5));
+        tablePanel.setBackground(Color.WHITE);
+        
+        // Headers
+        JLabel typeHeader = new JLabel("Type");
+        typeHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(typeHeader);
+        
+        JLabel nameHeader = new JLabel("Name");
+        nameHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(nameHeader);
+        
+        JLabel categoryHeader = new JLabel("Category");
+        categoryHeader.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+        tablePanel.add(categoryHeader);
+        
+        // Placeholder
+        JLabel placeholder = new JLabel("No completed items");
+        placeholder.setFont(FontUtil.getStandardFont());
+        placeholder.setForeground(Color.LIGHT_GRAY);
+        tablePanel.add(placeholder);
+        tablePanel.add(new JLabel(""));
+        tablePanel.add(new JLabel(""));
+        
+        completedItemsPanel.add(tablePanel, BorderLayout.CENTER);
         panel.add(completedItemsPanel);
         
         return panel;
@@ -226,7 +296,7 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
         
         // Section title
@@ -244,13 +314,34 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         panel.add(separator);
         panel.add(Box.createVerticalStrut(10));
         
-        // Wellness table
+        // Initialize wellness panel as member variable
         wellnessPanel = new JPanel();
-        wellnessPanel.setLayout(new BoxLayout(wellnessPanel, BoxLayout.Y_AXIS));
+        wellnessPanel.setLayout(new BorderLayout());
         wellnessPanel.setBackground(Color.WHITE);
         wellnessPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         
-        updateWellnessPanel(null); // Initialize with placeholder
+        // Add initial placeholder content
+        JPanel tablePanel = new JPanel(new GridLayout(0, 5, 5, 5));
+        tablePanel.setBackground(Color.WHITE);
+        
+        // Headers
+        String[] headers = {"Mood", "Stress", "Energy", "Fatigue", "Time"};
+        for (String header : headers) {
+            JLabel headerLabel = new JLabel(header);
+            headerLabel.setFont(FontUtil.getStandardFont().deriveFont(Font.BOLD));
+            tablePanel.add(headerLabel);
+        }
+        
+        // Placeholder
+        JLabel placeholder = new JLabel("No wellness entries");
+        placeholder.setFont(FontUtil.getStandardFont());
+        placeholder.setForeground(Color.LIGHT_GRAY);
+        tablePanel.add(placeholder);
+        for (int i = 1; i < 5; i++) {
+            tablePanel.add(new JLabel(""));
+        }
+        
+        wellnessPanel.add(tablePanel, BorderLayout.CENTER);
         panel.add(wellnessPanel);
         
         return panel;
@@ -261,10 +352,10 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
      */
     private OverdueTasksPanel createImprovedOverdueSection(OverdueTasksViewModel overdueTasksViewModel) {
         OverdueTasksPanel panel = new OverdueTasksPanel(overdueTasksViewModel);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        // Remove the hard maximum size constraint to allow proper text display
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
-        panel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 200));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Set proper sizing for the overdue panel
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+        panel.setPreferredSize(new Dimension(350, 200));
         panel.setBackground(Color.WHITE);
         return panel;
     }
@@ -306,6 +397,9 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
         // Update Wellness section
         updateWellnessPanel(state.getWellnessEntries());
         
+        // Force the entire panel to refresh
+        contentPanel.revalidate();
+        contentPanel.repaint();
         revalidate();
         repaint();
     }
@@ -355,7 +449,9 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
             }
         }
         
-        goalsPanel.add(tablePanel);
+        goalsPanel.add(tablePanel, BorderLayout.CENTER);
+        goalsPanel.revalidate();
+        goalsPanel.repaint();
     }
     
     private void updateCompletedItemsPanel(java.util.List<TodaySoFarOutputData.CompletedItem> items) {
@@ -408,7 +504,9 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
             }
         }
         
-        completedItemsPanel.add(tablePanel);
+        completedItemsPanel.add(tablePanel, BorderLayout.CENTER);
+        completedItemsPanel.revalidate();
+        completedItemsPanel.repaint();
     }
     
     private void updateWellnessPanel(java.util.List<TodaySoFarOutputData.WellnessEntry> entries) {
@@ -461,7 +559,9 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
             }
         }
         
-        wellnessPanel.add(tablePanel);
+        wellnessPanel.add(tablePanel, BorderLayout.CENTER);
+        wellnessPanel.revalidate();
+        wellnessPanel.repaint();
     }
     
     /**
