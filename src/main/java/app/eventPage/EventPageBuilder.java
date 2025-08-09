@@ -68,15 +68,17 @@ public class EventPageBuilder {
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private CategoryManagementDialog categoryDialog;
     private CreateEventView createEventView;
+    private AvailableEventViewModel availableEventViewModel;
+    private TodaysEventsViewModel todaysEventsViewModel;
 
     public JPanel build() {
         // --- ViewModels ---
         CreatedEventViewModel createdEventViewModel = new CreatedEventViewModel();
-        AvailableEventViewModel availableEventViewModel = new AvailableEventViewModel();
+        this.availableEventViewModel = new AvailableEventViewModel();
         DeletedEventViewModel deletedEventViewModel = new DeletedEventViewModel();
         EditedEventViewModel editedEventViewModel = new EditedEventViewModel();
         AddedEventViewModel addEventViewModel = new AddedEventViewModel();
-        TodaysEventsViewModel todaysEventsViewModel = new TodaysEventsViewModel();
+        this.todaysEventsViewModel = new TodaysEventsViewModel();
         DeleteTodaysEventViewModel deleteTodaysEventViewModel = new DeleteTodaysEventViewModel();
         EditTodaysEventViewModel editTodaysEventViewModel = new EditTodaysEventViewModel();
 
@@ -136,7 +138,7 @@ public class EventPageBuilder {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("openCategoryManagement".equals(evt.getPropertyName())) {
-                    openCategoryDialog();
+                    openCategoryDialog(commonDao, todaysEventDAO);
                 }
             }
         });
@@ -182,7 +184,7 @@ public class EventPageBuilder {
         return mainPanel;
     }
     
-    private void openCategoryDialog() {
+    private void openCategoryDialog(EventAvailableDataAccessObject commonDao, TodaysEventDataAccessObject todaysEventDAO) {
         Container parent = createEventView.getParent();
         while (parent != null && !(parent instanceof JFrame)) {
             parent = parent.getParent();
@@ -201,6 +203,9 @@ public class EventPageBuilder {
                 CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
                         categoryManagementViewModel
                 );
+                // Wire up event ViewModels for auto-refresh when categories change
+                categoryPresenter.setAvailableEventViewModel(availableEventViewModel);
+                categoryPresenter.setTodaysEventsViewModel(todaysEventsViewModel);
                 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -210,8 +215,131 @@ public class EventPageBuilder {
                         createCategoryInteractor
                 );
                 
-                DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        categoryGateway,
+                // Create a combined adapter that handles both available and today's events
+                // This adapter implements both task and event interfaces
+                DeleteCategoryDataAccessInterface categoryDeleteAdapter = new DeleteCategoryDataAccessInterface() {
+                    @Override
+                    public entity.Category getCategoryById(String categoryId) {
+                        return categoryGateway.getCategoryById(categoryId);
+                    }
+                    
+                    @Override
+                    public int getCategoryCount() {
+                        return categoryGateway.getCategoryCount();
+                    }
+                    
+                    @Override
+                    public boolean exists(entity.Category category) {
+                        return categoryGateway.getCategoryById(category.getId()) != null;
+                    }
+                    
+                    @Override
+                    public boolean deleteCategory(entity.Category category) {
+                        return categoryGateway.deleteCategory(category.getId());
+                    }
+                    
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
+                    
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
+                    
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        // No tasks in event context
+                        return true;
+                    }
+                    
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        // No tasks in event context
+                        return true;
+                    }
+                };
+                
+                // Also create an event adapter for clearing event categories
+                DeleteCategoryEventDataAccessInterface eventDeleteAdapter = new DeleteCategoryEventDataAccessInterface() {
+                    @Override
+                    public List<entity.info.Info> findAvailableEventsByCategory(String categoryId) {
+                        return commonDao.findAvailableEventsByCategory(categoryId);
+                    }
+                    
+                    @Override
+                    public List<entity.info.Info> findTodaysEventsByCategory(String categoryId) {
+                        return todaysEventDAO.findTodaysEventsByCategory(categoryId);
+                    }
+                    
+                    @Override
+                    public boolean clearAvailableEventCategory(String eventId) {
+                        return commonDao.clearAvailableEventCategory(eventId);
+                    }
+                    
+                    @Override
+                    public boolean clearTodaysEventCategory(String eventId) {
+                        return todaysEventDAO.clearTodaysEventCategory(eventId);
+                    }
+                };
+                
+                // Create a combined adapter that delegates to both
+                DeleteCategoryDataAccessInterface combinedAdapter = new DeleteCategoryDataAccessInterface() {
+                    @Override
+                    public entity.Category getCategoryById(String categoryId) {
+                        return categoryDeleteAdapter.getCategoryById(categoryId);
+                    }
+                    
+                    @Override
+                    public int getCategoryCount() {
+                        return categoryDeleteAdapter.getCategoryCount();
+                    }
+                    
+                    @Override
+                    public boolean exists(entity.Category category) {
+                        return categoryDeleteAdapter.exists(category);
+                    }
+                    
+                    @Override
+                    public boolean deleteCategory(entity.Category category) {
+                        // First clear events
+                        String categoryId = category.getId();
+                        for (entity.info.Info event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
+                            eventDeleteAdapter.clearAvailableEventCategory(event.getId());
+                        }
+                        for (entity.info.Info event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
+                            eventDeleteAdapter.clearTodaysEventCategory(event.getId());
+                        }
+                        // Then delete the category
+                        return categoryDeleteAdapter.deleteCategory(category);
+                    }
+                    
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        return categoryDeleteAdapter.findAvailableTasksByCategory(categoryId);
+                    }
+                    
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        return categoryDeleteAdapter.findTodaysTasksByCategory(categoryId);
+                    }
+                    
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        return categoryDeleteAdapter.updateAvailableTaskCategory(taskId, newCategoryId);
+                    }
+                    
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        return categoryDeleteAdapter.updateTodaysTaskCategory(taskId, newCategoryId);
+                    }
+                };
+                
+                DeleteCategoryInteractor deleteCategoryInteractor = new DeleteCategoryInteractor(
+                        combinedAdapter,
                         categoryPresenter
                 );
                 DeleteCategoryController deleteCategoryController = new DeleteCategoryController(

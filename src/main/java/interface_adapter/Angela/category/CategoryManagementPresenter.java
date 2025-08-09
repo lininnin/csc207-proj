@@ -7,6 +7,8 @@ import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
@@ -23,6 +25,8 @@ public class CategoryManagementPresenter implements
     private AvailableTasksViewModel availableTasksViewModel;
     private TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private AvailableEventViewModel availableEventViewModel;
+    private TodaysEventsViewModel todaysEventsViewModel;
 
     public CategoryManagementPresenter(CategoryManagementViewModel viewModel) {
         this.viewModel = viewModel;
@@ -38,6 +42,14 @@ public class CategoryManagementPresenter implements
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setAvailableEventViewModel(AvailableEventViewModel availableEventViewModel) {
+        this.availableEventViewModel = availableEventViewModel;
+    }
+    
+    public void setTodaysEventsViewModel(TodaysEventsViewModel todaysEventsViewModel) {
+        this.todaysEventsViewModel = todaysEventsViewModel;
     }
 
     // Create Category
@@ -86,6 +98,15 @@ public class CategoryManagementPresenter implements
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
         }
+        
+        // CRITICAL: Refresh event views when categories are deleted
+        if (availableEventViewModel != null) {
+            availableEventViewModel.firePropertyChanged("state");
+        }
+        
+        if (todaysEventsViewModel != null) {
+            todaysEventsViewModel.firePropertyChanged("state");
+        }
     }
 
     // Edit Category
@@ -122,6 +143,17 @@ public class CategoryManagementPresenter implements
         // Also refresh overdue tasks if controller is available  
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
+        }
+        
+        // CRITICAL: Refresh event views when categories are edited
+        if (availableEventViewModel != null) {
+            availableEventViewModel.firePropertyChanged("state");
+            System.out.println("DEBUG: Triggered Available Events refresh after category edit");
+        }
+        
+        if (todaysEventsViewModel != null) {
+            todaysEventsViewModel.firePropertyChanged("state");
+            System.out.println("DEBUG: Triggered Today's Events refresh after category edit");
         }
     }
 
