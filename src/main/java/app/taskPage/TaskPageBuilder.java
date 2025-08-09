@@ -121,6 +121,8 @@ public class TaskPageBuilder {
         );
         // Set the TodayTasksViewModel so edits trigger refresh
         editAvailableTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
+        // Set the AddTaskToTodayViewModel so dropdown refreshes when task names are edited
+        editAvailableTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
                 taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
@@ -154,6 +156,7 @@ public class TaskPageBuilder {
         addToTodayView.setAddTaskToTodayController(addToTodayController);
         System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
         addToTodayView.setDataAccess(taskGateway);
+        addToTodayView.setCategoryGateway(categoryGateway); // Set category gateway for dropdown display
 
         // Wire up Mark Task Complete Use Case
         MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(
