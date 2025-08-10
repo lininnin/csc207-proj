@@ -5,8 +5,10 @@ import entity.Alex.Event.Event;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Sophia.Goal;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
+import interface_adapter.GoalRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,17 +20,17 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     
     private final InMemoryTaskGateway taskGateway;
     private final TodaysEventDataAccessObject eventDataAccess;
-    private final WellnessLogDataAccessObject wellnessDataAccess;
-    private final GoalDataAccessObject goalDataAccess;
+    private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
+    private final GoalRepository goalRepository;
     
     public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway,
                                         TodaysEventDataAccessObject eventDataAccess,
-                                        WellnessLogDataAccessObject wellnessDataAccess,
-                                        GoalDataAccessObject goalDataAccess) {
+                                        TodaysWellnessLogDataAccessObject wellnessDataAccess,
+                                        GoalRepository goalRepository) {
         this.taskGateway = taskGateway;
         this.eventDataAccess = eventDataAccess;
         this.wellnessDataAccess = wellnessDataAccess;
-        this.goalDataAccess = goalDataAccess;
+        this.goalRepository = goalRepository;
     }
     
     // Constructor with optional parameters for gradual integration
@@ -36,7 +38,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
         this.taskGateway = taskGateway;
         this.eventDataAccess = null;
         this.wellnessDataAccess = null;
-        this.goalDataAccess = null;
+        this.goalRepository = null;
     }
     
     @Override
@@ -53,10 +55,9 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     public List<Event> getCompletedEventsForToday() {
         if (eventDataAccess != null) {
             try {
-                // Get today's events and filter for completed ones
-                return eventDataAccess.getTodaysEvents().stream()
-                        .filter(event -> isEventCompleted(event))
-                        .collect(Collectors.toList());
+                // Get today's events - consider all events as "completed" for display purposes
+                // since they're logged events for today
+                return eventDataAccess.getTodaysEvents();
             } catch (Exception e) {
                 // Handle if the method doesn't exist or throws exception
                 return new ArrayList<>();
@@ -69,8 +70,8 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     public List<WellnessLogEntry> getWellnessEntriesForToday() {
         if (wellnessDataAccess != null) {
             try {
-                LocalDate today = LocalDate.now();
-                return wellnessDataAccess.getWellnessEntriesForDate(today);
+                // Get today's wellness log entries
+                return wellnessDataAccess.getTodaysWellnessLogEntries();
             } catch (Exception e) {
                 return new ArrayList<>();
             }
@@ -80,10 +81,11 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     
     @Override
     public List<Goal> getActiveGoals() {
-        if (goalDataAccess != null) {
+        if (goalRepository != null) {
             try {
                 LocalDate today = LocalDate.now();
-                return goalDataAccess.getActiveGoals().stream()
+                // Get current goals (which are the active ones)
+                return goalRepository.getCurrentGoals().stream()
                         .filter(goal -> isGoalActive(goal, today))
                         .collect(Collectors.toList());
             } catch (Exception e) {
@@ -105,7 +107,11 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     @Override
     public int getTotalTasksForToday() {
         if (taskGateway != null) {
-            return taskGateway.getTodaysTasks().size();
+            // Only count tasks that are actually for today (not overdue)
+            // Overdue tasks should not be counted in today's total
+            return (int) taskGateway.getTodaysTasks().stream()
+                    .filter(task -> !task.isOverdue())
+                    .count();
         }
         return 0;
     }
@@ -113,23 +119,13 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     @Override
     public int getCompletedTasksCountForToday() {
         if (taskGateway != null) {
+            // Count completed tasks that are for today (not overdue)
+            // Note: If a task was overdue but completed today, it still counts as today's completion
             return (int) taskGateway.getTodaysTasks().stream()
-                    .filter(Task::isCompleted)
+                    .filter(task -> task.isCompleted() && !task.isOverdue())
                     .count();
         }
         return 0;
-    }
-    
-    private boolean isEventCompleted(Event event) {
-        // Check if event's time has passed or if it has a completed flag
-        // This is a placeholder - actual implementation depends on Event entity
-        LocalDate today = LocalDate.now();
-        if (event.getBeginAndDueDates() != null && 
-            event.getBeginAndDueDates().getDueDate() != null) {
-            return event.getBeginAndDueDates().getDueDate().isBefore(today) ||
-                   event.getBeginAndDueDates().getDueDate().isEqual(today);
-        }
-        return false;
     }
     
     private boolean isGoalActive(Goal goal, LocalDate date) {
@@ -142,18 +138,5 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
                    (dueDate == null || !date.isAfter(dueDate));
         }
         return true; // If no dates, consider it active
-    }
-    
-    // Stub classes for when actual DAOs are not available
-    private static class WellnessLogDataAccessObject {
-        public List<WellnessLogEntry> getWellnessEntriesForDate(LocalDate date) {
-            return new ArrayList<>();
-        }
-    }
-    
-    private static class GoalDataAccessObject {
-        public List<Goal> getActiveGoals() {
-            return new ArrayList<>();
-        }
     }
 }

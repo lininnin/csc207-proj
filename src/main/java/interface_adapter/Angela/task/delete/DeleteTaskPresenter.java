@@ -5,6 +5,7 @@ import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.delete.DeleteTaskOutputBoundary;
 import use_case.Angela.task.delete.DeleteTaskOutputData;
 
@@ -16,6 +17,7 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     private final DeleteTaskViewModel deleteTaskViewModel;
     private TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
 
     public DeleteTaskPresenter(AvailableTasksViewModel availableTasksViewModel,
                                DeleteTaskViewModel deleteTaskViewModel) {
@@ -30,6 +32,10 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -62,6 +68,12 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         // Also refresh overdue tasks if controller is available
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
+        }
+        
+        // Also refresh Today So Far panel since the deleted task might be in completed/overdue sections
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after task delete");
         }
     }
 

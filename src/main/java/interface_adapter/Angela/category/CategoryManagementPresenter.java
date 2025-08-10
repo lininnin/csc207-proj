@@ -7,6 +7,7 @@ import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import use_case.Angela.category.create.*;
@@ -25,6 +26,7 @@ public class CategoryManagementPresenter implements
     private AvailableTasksViewModel availableTasksViewModel;
     private TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
 
@@ -42,6 +44,10 @@ public class CategoryManagementPresenter implements
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
     
     public void setAvailableEventViewModel(AvailableEventViewModel availableEventViewModel) {
@@ -99,6 +105,12 @@ public class CategoryManagementPresenter implements
             overdueTasksController.execute(7); // Refresh with 7 days
         }
         
+        // CRITICAL: Refresh Today So Far panel when categories are deleted
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after category delete");
+        }
+        
         // CRITICAL: Refresh event views when categories are deleted
         if (availableEventViewModel != null) {
             availableEventViewModel.firePropertyChanged("state");
@@ -143,6 +155,12 @@ public class CategoryManagementPresenter implements
         // Also refresh overdue tasks if controller is available  
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
+        }
+        
+        // CRITICAL: Refresh Today So Far panel when categories are edited
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after category edit");
         }
         
         // CRITICAL: Refresh event views when categories are edited

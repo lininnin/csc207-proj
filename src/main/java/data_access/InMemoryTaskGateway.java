@@ -91,8 +91,23 @@ public class InMemoryTaskGateway implements
 
     @Override
     public boolean updateTodaysTask(Task task) {
-        // Implementation for demo
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (task == null || task.getId() == null) {
+            return false;
+        }
+        
+        // Check if the task exists in today's tasks
+        if (!todaysTasks.containsKey(task.getId())) {
+            return false;
+        }
+        
+        // Update the task in the map
+        todaysTasks.put(task.getId(), task);
+        
+        System.out.println("DEBUG: Updated today's task - ID: " + task.getId() + 
+                          ", Name: " + task.getInfo().getName() +
+                          ", Category: " + task.getInfo().getCategory());
+        
+        return true;
     }
 
     @Override
@@ -156,13 +171,24 @@ public class InMemoryTaskGateway implements
 
     @Override
     public double getTodaysCompletionRate() {
-        if (todaysTasks.isEmpty()) {
+        // Filter out overdue tasks - they shouldn't count in today's completion rate
+        List<Task> actualTodayTasks = todaysTasks.values().stream()
+                .filter(task -> {
+                    // Include task if it's NOT overdue OR if it's completed
+                    // (completed overdue tasks still count as today's completions)
+                    return !task.isOverdue() || task.isCompleted();
+                })
+                .collect(java.util.stream.Collectors.toList());
+        
+        if (actualTodayTasks.isEmpty()) {
             return 0.0;
         }
-        long completed = todaysTasks.values().stream()
+        
+        long completed = actualTodayTasks.stream()
                 .filter(Task::isCompleted)
                 .count();
-        return (double) completed / todaysTasks.size() * 100;
+        
+        return (double) completed / actualTodayTasks.size() * 100;
     }
 
     // ===== CreateTaskDataAccessInterface methods =====
@@ -492,10 +518,11 @@ public class InMemoryTaskGateway implements
         
         // Create BeginAndDueDates
         // TEMPORARY: For testing overdue functionality, if due date is in the past,
-        // set begin date to the same date to avoid validation error
+        // set begin date to one day before due date to avoid validation error
+        // and ensure the task doesn't appear in today's "to-do" calculation
         LocalDate beginDate = LocalDate.now();
         if (dueDate != null && dueDate.isBefore(LocalDate.now())) {
-            beginDate = dueDate; // Set begin date to match past due date for testing
+            beginDate = dueDate.minusDays(1); // Set begin date to one day before due date for testing
         }
         
         entity.BeginAndDueDates.BeginAndDueDates dates = new entity.BeginAndDueDates.BeginAndDueDates(

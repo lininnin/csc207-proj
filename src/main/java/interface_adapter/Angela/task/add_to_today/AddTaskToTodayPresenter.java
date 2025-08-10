@@ -3,6 +3,7 @@ package interface_adapter.Angela.task.add_to_today;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.add_to_today.AddTaskToTodayOutputBoundary;
 import use_case.Angela.task.add_to_today.AddTaskToTodayOutputData;
 
@@ -14,6 +15,7 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
     private final AddTaskToTodayViewModel addTaskToTodayViewModel;
     private final TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
 
     public AddTaskToTodayPresenter(AddTaskToTodayViewModel addTaskToTodayViewModel,
                                    TodayTasksViewModel todayTasksViewModel) {
@@ -43,6 +45,12 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
         }
+        
+        // Also refresh Today So Far panel to update completion rate
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after adding task to today");
+        }
     }
 
     @Override
@@ -57,5 +65,9 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 }

@@ -3,6 +3,7 @@ package interface_adapter.Angela.task.edit_today;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.edit_today.EditTodayTaskOutputBoundary;
 import use_case.Angela.task.edit_today.EditTodayTaskOutputData;
 
@@ -14,6 +15,7 @@ public class EditTodayTaskPresenter implements EditTodayTaskOutputBoundary {
     private final EditTodayTaskViewModel editTodayTaskViewModel;
     private final TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
 
     /**
      * Constructs the presenter with its view models.
@@ -29,6 +31,10 @@ public class EditTodayTaskPresenter implements EditTodayTaskOutputBoundary {
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -56,6 +62,12 @@ public class EditTodayTaskPresenter implements EditTodayTaskOutputBoundary {
         // Also refresh overdue tasks if due date was edited
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Last 7 days
+        }
+        
+        // Also refresh Today So Far panel since due dates might affect overdue status
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after editing today task");
         }
         
         System.out.println("DEBUG: Triggered Today's Tasks refresh after edit");
