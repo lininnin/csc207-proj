@@ -7,6 +7,7 @@ import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputBoundary;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputData;
 
@@ -20,6 +21,7 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
     private TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
     private AddTaskToTodayViewModel addTaskToTodayViewModel;
+    private TodaySoFarController todaySoFarController;
 
     public EditAvailableTaskPresenter(EditAvailableTaskViewModel editAvailableTaskViewModel,
                                       AvailableTasksViewModel availableTasksViewModel) {
@@ -86,6 +88,12 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
             addTaskToTodayViewModel.firePropertyChanged();
             System.out.println("DEBUG: Triggered Add to Today dropdown refresh after task edit");
         }
+        
+        // Also refresh Today So Far panel when tasks are edited (especially category changes)
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after task edit");
+        }
     }
 
     @Override
@@ -105,5 +113,9 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
     
     public void setOverdueTasksController(OverdueTasksController controller) {
         this.overdueTasksController = controller;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 }

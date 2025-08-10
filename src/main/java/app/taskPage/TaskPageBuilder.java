@@ -36,10 +36,21 @@ import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
 import view.FontUtil;
 
+import entity.info.Info;
+import entity.Alex.Event.Event;
+import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
+import entity.Alex.WellnessLogEntry.Levels;
+import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelFactory;
+import entity.BeginAndDueDates.BeginAndDueDates;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Builder for the Task page following the MindTrack GUI template.
@@ -73,6 +84,7 @@ public class TaskPageBuilder {
     
     // Controllers
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
 
     public JPanel build() {
         // Note: Category and task gateways are now independent following SRP
@@ -229,8 +241,23 @@ public class TaskPageBuilder {
                 overdueTasksInteractor
         );
 
-        // Wire up Today So Far Use Case
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(taskGateway);
+        // Create Event and Wellness data access objects for integration
+        entity.Alex.DailyEventLog.DailyEventLogFactoryInterf eventLogFactory = 
+            new entity.Alex.DailyEventLog.DailyEventLogFactory();
+        data_access.TodaysEventDataAccessObject eventDataAccess = 
+            new data_access.TodaysEventDataAccessObject(eventLogFactory);
+            
+        entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf wellnessLogFactory = 
+            new entity.Alex.DailyWellnessLog.DailyWellnessLogFactory();
+        data_access.TodaysWellnessLogDataAccessObject wellnessDataAccess = 
+            new data_access.TodaysWellnessLogDataAccessObject(wellnessLogFactory);
+            
+        // Create Goal repository for integration
+        data_access.FileGoalRepository goalRepository = new data_access.FileGoalRepository();
+        
+        // Wire up Today So Far Use Case with all data sources
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
+            taskGateway, eventDataAccess, wellnessDataAccess, goalRepository);
         
         TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
         
@@ -240,12 +267,16 @@ public class TaskPageBuilder {
                 categoryGateway
         );
         
-        TodaySoFarController todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
+        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
         
         // Create Today So Far view with both view models
         todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
         todaySoFarView.setOverdueTasksController(overdueTasksController);
         todaySoFarView.setTodaySoFarController(todaySoFarController);
+        
+        // Add some sample data for testing Today So Far panel integration
+        // This is temporary - in production, data would come from actual user input
+        initializeSampleData(eventDataAccess, wellnessDataAccess, goalRepository);
         
         // Trigger initial data load
         todaySoFarController.refresh();
@@ -259,7 +290,12 @@ public class TaskPageBuilder {
         removeFromTodayPresenter.setOverdueTasksController(overdueTasksController);
         
         // Set Today So Far controller on presenters that need to refresh Today So Far panel
+        editAvailableTaskPresenter.setTodaySoFarController(todaySoFarController);
         markCompletePresenter.setTodaySoFarController(todaySoFarController);
+        addToTodayPresenter.setTodaySoFarController(todaySoFarController);
+        removeFromTodayPresenter.setTodaySoFarController(todaySoFarController);
+        editTodayPresenter.setTodaySoFarController(todaySoFarController);
+        deleteTaskPresenter.setTodaySoFarController(todaySoFarController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
@@ -302,6 +338,7 @@ public class TaskPageBuilder {
                 categoryPresenter.setAvailableTasksViewModel(availableTasksViewModel);
                 categoryPresenter.setTodayTasksViewModel(todayTasksViewModel);
                 categoryPresenter.setOverdueTasksController(overdueTasksController);
+                categoryPresenter.setTodaySoFarController(todaySoFarController);
 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -442,5 +479,72 @@ public class TaskPageBuilder {
         mainPanel.setPreferredSize(new Dimension(1450, 750));
 
         return mainPanel;
+    }
+    
+    /**
+     * Initialize sample data for testing Today So Far panel integration.
+     * This method is temporary and should be removed in production.
+     */
+    private void initializeSampleData(data_access.TodaysEventDataAccessObject eventDataAccess,
+                                      data_access.TodaysWellnessLogDataAccessObject wellnessDataAccess,
+                                      data_access.FileGoalRepository goalRepository) {
+        try {
+            // Add sample events
+            // Create sample event 1: Team Meeting
+            Info eventInfo1 = new Info.Builder("Team Meeting")
+                .description("Weekly team sync")
+                .category("work")
+                .build();
+            Event event1 = new Event.Builder(eventInfo1)
+                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), LocalDate.now()))
+                .oneTime(false)
+                .build();
+            eventDataAccess.save(event1);
+            
+            // Create sample event 2: Yoga Class
+            Info eventInfo2 = new Info.Builder("Yoga Class")
+                .description("Evening yoga session")
+                .category("wellness")
+                .build();
+            Event event2 = new Event.Builder(eventInfo2)
+                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), LocalDate.now()))
+                .oneTime(false)
+                .build();
+            eventDataAccess.save(event2);
+            
+            // Add sample wellness entries
+            WellnessLogEntryFactory wellnessFactory = new WellnessLogEntryFactory();
+            MoodLabelFactory moodFactory = new MoodLabelFactory();
+            
+            // Create morning wellness entry
+            MoodLabel morningMood = moodFactory.create("Happy", MoodLabel.Type.Positive);
+            WellnessLogEntry morningEntry = wellnessFactory.create(
+                LocalDateTime.now().withHour(9).withMinute(0),  // Time
+                Levels.THREE,  // Stress level (low)
+                Levels.EIGHT,  // Energy level (high)
+                Levels.TWO,    // Fatigue level (low)
+                morningMood,   // Mood label
+                "Feeling great this morning!"  // User note
+            );
+            wellnessDataAccess.save(morningEntry);
+            
+            // Create afternoon wellness entry
+            MoodLabel afternoonMood = moodFactory.create("Focused", MoodLabel.Type.Positive);
+            WellnessLogEntry afternoonEntry = wellnessFactory.create(
+                LocalDateTime.now().withHour(14).withMinute(30),  // Time
+                Levels.FIVE,   // Stress level (medium)
+                Levels.SIX,    // Energy level (medium)
+                Levels.FIVE,   // Fatigue level (medium)
+                afternoonMood, // Mood label
+                "Productive afternoon session"  // User note
+            );
+            wellnessDataAccess.save(afternoonEntry);
+            
+            // Note: Goal sample data will be added once Sophia completes the Goal module implementation
+            
+        } catch (Exception e) {
+            // Log error but don't fail - sample data is optional
+            System.out.println("DEBUG: Failed to initialize sample data: " + e.getMessage());
+        }
     }
 }
