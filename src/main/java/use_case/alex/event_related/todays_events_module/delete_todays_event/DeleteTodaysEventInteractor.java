@@ -1,10 +1,11 @@
 package use_case.alex.event_related.todays_events_module.delete_todays_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 /**
  * Interactor for the DeleteAvailableEvent use case.
  * Executes deletion logic and calls presenter with result.
+ * Now fully decoupled from the concrete Event class using EventInterf.
  */
 public class DeleteTodaysEventInteractor implements DeleteTodaysEventInputBoundary {
 
@@ -28,7 +29,7 @@ public class DeleteTodaysEventInteractor implements DeleteTodaysEventInputBounda
         String eventId = inputData.getEventId();
 
         // Step 1: 查找事件
-        Event eventToDelete = dataAccess.getEventById(eventId);
+        EventInterf eventToDelete = dataAccess.getEventById(eventId);
         if (eventToDelete == null || !dataAccess.contains(eventToDelete)) {
             DeleteTodaysEventOutputData failOutput = new DeleteTodaysEventOutputData(
                     eventId, "Event not found or already deleted", false);
@@ -49,3 +50,4 @@ public class DeleteTodaysEventInteractor implements DeleteTodaysEventInputBounda
         }
     }
 }
+

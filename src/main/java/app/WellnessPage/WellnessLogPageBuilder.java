@@ -8,6 +8,8 @@ import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelFactory;
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 
@@ -70,6 +72,7 @@ public class WellnessLogPageBuilder {
         DailyWellnessLogFactoryInterf factory = new DailyWellnessLogFactory();
         TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject(factory);
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
+        MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 
         // --- Add Log Controller ---
         AddWellnessLogOutputBoundary presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
@@ -90,7 +93,7 @@ public class WellnessLogPageBuilder {
 
         EditMoodLabelPresenter editLabelPresenter = new EditMoodLabelPresenter(
                 editMoodLabelViewModel, availableMoodLabelViewModel); // ✅ 正确参数类型
-        EditMoodLabelInteractor editLabelInteractor = new EditMoodLabelInteractor(moodDAO, editLabelPresenter);
+        EditMoodLabelInteractor editLabelInteractor = new EditMoodLabelInteractor(moodDAO, editLabelPresenter, moodLabelFactory);
         EditMoodLabelController editLabelController = new EditMoodLabelController(editLabelInteractor);
 
 
@@ -102,7 +105,7 @@ public class WellnessLogPageBuilder {
         DeleteMoodLabelController deleteLabelController = new DeleteMoodLabelController(deleteLabelInteractor);
 
         // --- 初始化标签列表 ---
-        List<MoodLabel> moodOptions = moodDAO.getAllLabels();
+        List<MoodLabelInterf> moodOptions = moodDAO.getAllLabels();
         addLogViewModel.getState().setAvailableMoodLabels(moodOptions);
         // ✅ 添加这两行用于同步初始标签给 AvailableMoodLabelViewModel
 //        availableMoodLabelViewModel.getState().setMoodLabels(
@@ -120,7 +123,7 @@ public class WellnessLogPageBuilder {
         AvailableMoodLabelState initialState = new AvailableMoodLabelState();
         List<AvailableMoodLabelState.MoodLabelEntry> labelList = new ArrayList<>();
 
-        for (MoodLabel label : moodOptions) {
+        for (MoodLabelInterf label : moodOptions) {
             labelList.add(new AvailableMoodLabelState.MoodLabelEntry(label.getName(), label.getType().name()));
         }
 
@@ -160,14 +163,18 @@ public class WellnessLogPageBuilder {
                         )
                 ),
                 new EditWellnessLogController(
-                        new EditWellnessLogInteractor(wellnessLogDAO,
+                        new EditWellnessLogInteractor(
+                                wellnessLogDAO,
                                 new EditWellnessLogPresenter(
                                         new EditWellnessLogViewModel(),
                                         todaysLogViewModel,
                                         wellnessLogDAO
-                                )
+                                ),
+                                new WellnessLogEntryFactory(), // ✅ 新增工厂
+                                new MoodLabelFactory()         // ✅ 新增工厂
                         )
                 ),
+
                 availableMoodLabelViewModel,
                 addLabelController,
                 editLabelController,

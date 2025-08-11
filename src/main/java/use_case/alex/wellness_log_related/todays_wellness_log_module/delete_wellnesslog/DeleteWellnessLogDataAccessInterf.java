@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public interface DeleteWellnessLogDataAccessInterf {
      *
      * @return list of WellnessLogEntry for today
      */
-    List<WellnessLogEntry> getTodaysWellnessLogEntries();
+    List<WellnessLogEntryInterf> getTodaysWellnessLogEntries();
 }
 
 

@@ -3,6 +3,7 @@ package entityTest.alex.event;
 import entity.Alex.Event.Event;
 import entity.Alex.Event.EventFactory;
 import entity.Alex.Event.EventFactoryInterf;
+import entity.Alex.Event.EventInterf;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class EventFactoryTest {
         BeginAndDueDates dates = new BeginAndDueDates(LocalDate.of(2025, 8, 10), LocalDate.of(2025, 8, 11));
 
         EventFactoryInterf factory = new EventFactory();
-        Event event = factory.createEvent(info, dates);
+        EventInterf event = factory.createEvent(info, dates);
 
         assertNotNull(event);
         assertEquals(info.getId(), event.getInfo().getId());

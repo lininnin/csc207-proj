@@ -1,36 +1,37 @@
 package use_case.alex.event_related.add_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 import java.util.List;
 
 /**
  * Interface for the Create Event data access object.
  * Defines methods to persist and query available events.
+ * Now fully abstracted to depend on EventInterf instead of concrete Event class.
  */
 public interface AddEventDataAccessInterf {
 
     /**
-     * Saves the given Event object to the event pool.
+     * Saves the given event to the event pool.
      *
-     * @param todaysEvent The Event object representing an event to be saved.
+     * @param todaysEvent The EventInterf representing an event to be saved.
      */
-    void save(Event todaysEvent);
+    void save(EventInterf todaysEvent);
 
     /**
      * Removes the given event from the pool.
      *
-     * @param todaysEvent The Event object to remove.
+     * @param todaysEvent The EventInterf to remove.
      * @return true if removed, false otherwise
      */
-    boolean remove(Event todaysEvent);
+    boolean remove(EventInterf todaysEvent);
 
     /**
      * Gets all available events.
      *
-     * @return List of all available event objects.
+     * @return List of all available events.
      */
-    List<Event> getTodaysEvents();
+    List<EventInterf> getTodaysEvents();
 
     /**
      * Gets events matching a specific category.
@@ -38,7 +39,7 @@ public interface AddEventDataAccessInterf {
      * @param category Category to filter.
      * @return Events that match the category.
      */
-    List<Event> getEventsByCategory(String category);
+    List<EventInterf> getEventsByCategory(String category);
 
     /**
      * Gets events matching a specific name.
@@ -46,7 +47,7 @@ public interface AddEventDataAccessInterf {
      * @param name Event name to filter.
      * @return Events that match the name.
      */
-    List<Event> getEventsByName(String name);
+    List<EventInterf> getEventsByName(String name);
 
     /**
      * Gets total count of available events.
@@ -56,15 +57,16 @@ public interface AddEventDataAccessInterf {
     int getEventCount();
 
     /**
-     * Checks whether the given Event is present.
+     * Checks whether the given event is present.
      *
-     * @param todaysEvent The Event to check.
+     * @param todaysEvent The EventInterf to check.
      * @return true if present, false otherwise.
      */
-    boolean contains(Event todaysEvent);
+    boolean contains(EventInterf todaysEvent);
 
     /**
      * Clears all available events.
      */
     void clearAll();
 }
+

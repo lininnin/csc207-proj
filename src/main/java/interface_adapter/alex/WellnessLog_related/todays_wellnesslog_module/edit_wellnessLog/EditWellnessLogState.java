@@ -1,6 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * State object for editing a wellness log entry.
@@ -20,7 +20,7 @@ public class EditWellnessLogState {
     public EditWellnessLogState() {
     }
 
-    public EditWellnessLogState(WellnessLogEntry entry) {
+    public EditWellnessLogState(WellnessLogEntryInterf entry) {
         if (entry != null) {
             this.logId = entry.getId();
             this.moodLabel = entry.getMoodLabel().toString();

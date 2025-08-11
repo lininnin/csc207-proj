@@ -1,6 +1,6 @@
 package interface_adapter.alex.event_related.todays_events_module.delete_todays_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
@@ -10,6 +10,11 @@ import use_case.alex.event_related.todays_events_module.delete_todays_event.Dele
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Presenter for the DeleteTodaysEvent use case.
+ * Updates the TodaysEventsViewModel and DeleteTodaysEventViewModel after deletion.
+ * Now fully decoupled from the concrete Event class using EventInterf.
+ */
 public class DeleteTodaysEventPresenter implements DeleteTodaysEventOutputBoundary {
 
     private final DeleteTodaysEventViewModel deleteTodaysEventViewModel;
@@ -35,17 +40,15 @@ public class DeleteTodaysEventPresenter implements DeleteTodaysEventOutputBounda
         deleteTodaysEventViewModel.firePropertyChanged(DeleteTodaysEventViewModel.DELETE_TODAYS_EVENT_STATE_PROPERTY);
 
         TodaysEventsState currentState = todaysEventViewModel.getState();
-        List<Event> updatedList = new ArrayList<>(currentState.getTodaysEvents());
-        updatedList.removeIf(event -> event.getInfo().getId().equals(outputData.getEventId()));
+        List<EventInterf> updatedList = new ArrayList<>(currentState.getTodaysEvents());
+        updatedList.removeIf(event -> event.getInfo() != null &&
+                event.getInfo().getId().equals(outputData.getEventId()));
         currentState.setTodaysEvents(updatedList);
         todaysEventViewModel.setState(currentState);
-        // ✅ 修改这行：
         todaysEventViewModel.firePropertyChanged("state");
 
-
-        // ✅ 已删除错误下拉框更新逻辑
+        // 这里如果要同步更新 AddedEventViewModel 下拉框数据，可以在此处添加逻辑
     }
-
 
     @Override
     public void prepareFailView(DeleteTodaysEventOutputData outputData) {
@@ -58,4 +61,5 @@ public class DeleteTodaysEventPresenter implements DeleteTodaysEventOutputBounda
         deleteTodaysEventViewModel.firePropertyChanged(DeleteTodaysEventViewModel.DELETE_TODAYS_EVENT_STATE_PROPERTY);
     }
 }
+
 

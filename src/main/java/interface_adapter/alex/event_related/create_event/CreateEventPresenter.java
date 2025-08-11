@@ -1,5 +1,6 @@
 package interface_adapter.alex.event_related.create_event;
 
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
 import use_case.alex.event_related.create_event.CreateEventOutputBoundary;
@@ -43,7 +44,7 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
 
 
         // 2. 获取完整事件列表并更新 AvailableEventViewModel
-        List<Info> updatedList = dataAccess.getAllEvents();
+        List<InfoInterf> updatedList = dataAccess.getAllEvents();
         AvailableEventState newState = new AvailableEventState();
         availableEventViewModel.setState(newState);
         newState.setAvailableEvents(updatedList);

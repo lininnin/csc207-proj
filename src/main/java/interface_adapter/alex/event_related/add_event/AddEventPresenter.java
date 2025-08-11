@@ -5,13 +5,14 @@ import interface_adapter.alex.event_related.todays_events_module.todays_events.T
 import use_case.alex.event_related.add_event.AddEventOutputBoundary;
 import use_case.alex.event_related.add_event.AddEventOutputData;
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 import java.util.List;
 
 /**
  * Presenter for the AddEvent use case.
  * Updates the AddedEventViewModel and TodaysEventsViewModel based on success or failure.
+ * Now fully decoupled from the concrete Event class using EventInterf.
  */
 public class AddEventPresenter implements AddEventOutputBoundary {
 
@@ -38,7 +39,7 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         addedEventViewModel.setState(state);
 
         // ✅ 刷新 Today's Events 模块
-        List<Event> updatedEvents = addEventDAO.getTodaysEvents();  // 使用你提供的接口
+        List<EventInterf> updatedEvents = addEventDAO.getTodaysEvents();  // 使用接口类型
         TodaysEventsState todaysState = new TodaysEventsState();
         todaysState.setTodaysEvents(updatedEvents);
         todaysEventsViewModel.setState(todaysState);
@@ -52,5 +53,6 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         addedEventViewModel.setState(state);
     }
 }
+
 
 

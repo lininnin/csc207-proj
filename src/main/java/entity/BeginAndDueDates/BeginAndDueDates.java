@@ -12,7 +12,7 @@ import java.util.Objects;
  * - Begin date cannot be after due date
  * - Used only for Today's instances, not Available templates
  */
-public class BeginAndDueDates {
+public class BeginAndDueDates implements BeginAndDueDatesInterf {
     private LocalDate beginDate;
     private LocalDate dueDate;
 

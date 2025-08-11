@@ -3,6 +3,8 @@ package data_access;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
+import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.MoodLabel.Type;
 import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
 import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
 import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
@@ -33,13 +35,13 @@ public class MoodAvailableDataAccessObject implements
         this.availableLabels = factory.create();
         // 默认标签初始化
         availableLabels.addLabel(new MoodLabel.Builder("Happy")
-                .type(MoodLabel.Type.Positive).build());
+                .type(Type.Positive).build());
         availableLabels.addLabel(new MoodLabel.Builder("Calm")
-                .type(MoodLabel.Type.Positive).build());
+                .type(Type.Positive).build());
         availableLabels.addLabel(new MoodLabel.Builder("Anxious")
-                .type(MoodLabel.Type.Negative).build());
+                .type(Type.Negative).build());
         availableLabels.addLabel(new MoodLabel.Builder("Stressed")
-                .type(MoodLabel.Type.Negative).build());
+                .type(Type.Negative).build());
     }
 
     /**
@@ -49,7 +51,7 @@ public class MoodAvailableDataAccessObject implements
      * @throws IllegalArgumentException if a label with the same name already exists.
      */
     @Override
-    public void save(final MoodLabel moodLabel) {
+    public void save(final MoodLabelInterf moodLabel) {
         if (contains(moodLabel.getName())) {
             throw new IllegalArgumentException("Label with the same name already exists");
         }
@@ -62,8 +64,8 @@ public class MoodAvailableDataAccessObject implements
      * @return A list of all mood labels.
      */
     @Override
-    public List<MoodLabel> getAllLabels() {
-        List<MoodLabel> all = new ArrayList<>();
+    public List<MoodLabelInterf> getAllLabels() {
+        List<MoodLabelInterf> all = new ArrayList<>();
         all.addAll(availableLabels.getPositiveLabelObjects());
         all.addAll(availableLabels.getNegativeLabelObjects());
         return all;
@@ -76,7 +78,7 @@ public class MoodAvailableDataAccessObject implements
      * @return true if the label existed and was removed, false otherwise.
      */
     @Override
-    public boolean remove(final MoodLabel moodLabel) {
+    public boolean remove(final MoodLabelInterf moodLabel) {
         return removeByName(moodLabel.getName());
     }
 
@@ -87,7 +89,7 @@ public class MoodAvailableDataAccessObject implements
      * @return true if exists, false otherwise.
      */
     @Override
-    public boolean contains(final MoodLabel moodLabel) {
+    public boolean contains(final MoodLabelInterf moodLabel) {
         return contains(moodLabel.getName());
     }
 
@@ -98,8 +100,8 @@ public class MoodAvailableDataAccessObject implements
      * @return The MoodLabel if found, null otherwise.
      */
     @Override
-    public MoodLabel getByName(final String name) {
-        for (MoodLabel label : getAllLabels()) {
+    public MoodLabelInterf getByName(final String name) {
+        for (MoodLabelInterf label : getAllLabels()) {
             if (label.getName().equals(name)) {
                 return label;
             }
@@ -114,7 +116,7 @@ public class MoodAvailableDataAccessObject implements
      * @return true if update successful, false if label does not exist.
      */
     @Override
-    public boolean update(final MoodLabel updatedLabel) {
+    public boolean update(final MoodLabelInterf updatedLabel) {
         final String name = updatedLabel.getName();
         if (!contains(name)) {
             return false;

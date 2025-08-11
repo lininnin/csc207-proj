@@ -1,10 +1,11 @@
 package use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 /**
  * Interactor for the DeleteMoodLabel use case.
  * Handles business logic for removing a mood label from the system.
+ * Now fully decoupled from the concrete MoodLabel class by using the MoodLabelInterf interface.
  */
 public class DeleteMoodLabelInteractor implements DeleteMoodLabelInputBoundary {
 
@@ -21,7 +22,7 @@ public class DeleteMoodLabelInteractor implements DeleteMoodLabelInputBoundary {
     public void execute(DeleteMoodLabelInputData inputData) {
         String name = inputData.getMoodLabelName();
 
-        MoodLabel targetLabel = dataAccess.getByName(name);
+        MoodLabelInterf targetLabel = dataAccess.getByName(name);
         if (targetLabel == null) {
             outputBoundary.prepareFailView(
                     new DeleteMoodLabelOutputData(name, "Mood label not found.")
@@ -41,4 +42,5 @@ public class DeleteMoodLabelInteractor implements DeleteMoodLabelInputBoundary {
         }
     }
 }
+
 

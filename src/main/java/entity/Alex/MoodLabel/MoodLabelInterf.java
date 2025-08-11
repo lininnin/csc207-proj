@@ -26,7 +26,7 @@ public interface MoodLabelInterf {
      *
      * @return the type
      */
-    MoodLabel.Type getType();
+    Type getType();
 
     /**
      * Sets the type of the mood label.
@@ -34,6 +34,6 @@ public interface MoodLabelInterf {
      * @param type the new type
      * @throws IllegalArgumentException if type is null
      */
-    void setType(MoodLabel.Type type);
+    void setType(Type type);
 }
 

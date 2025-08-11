@@ -1,29 +1,30 @@
 package use_case.alex.event_related.todays_events_module.edit_todays_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 /**
  * Interface for data access operations related to editing available events.
  * This interface is used only by the EditAvailableEvent use case.
+ * Now fully abstracted to depend on EventInterf instead of concrete Event class.
  */
 public interface EditTodaysEventDataAccessInterf {
 
     /**
      * Updates an existing event's information in the event pool.
      *
-     * @param updatedEvent The updated Info object.
+     * @param updatedEvent The updated EventInterf object.
      * @return true if update is successful, false otherwise.
      */
-    boolean update(Event updatedEvent);
+    boolean update(EventInterf updatedEvent);
 
     /**
-     * Retrieves an Info object by its ID.
+     * Retrieves an EventInterf object by its ID.
      * Useful when EditInteractor receives only an ID but needs the original event.
      *
-     * @param id The ID of the Info object.
-     * @return The Info object with the given ID, or null if not found.
+     * @param id The ID of the EventInterf object.
+     * @return The EventInterf with the given ID, or null if not found.
      */
-    Event getEventById(String id);
+    EventInterf getEventById(String id);
 
     /**
      * Checks whether an event with the given ID exists.
@@ -33,3 +34,4 @@ public interface EditTodaysEventDataAccessInterf {
      */
     boolean existsById(String id);
 }
+

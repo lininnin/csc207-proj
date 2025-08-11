@@ -1,6 +1,7 @@
 package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.time.LocalDateTime;
 
@@ -17,11 +18,11 @@ public interface WellnessLogEntryFactoryInterf {
      * @param userNote     optional user note (nullable or blank)
      * @return a new WellnessLogEntry
      */
-    WellnessLogEntry create(LocalDateTime time,
+    WellnessLogEntryInterf create(LocalDateTime time,
                             Levels stressLevel,
                             Levels energyLevel,
                             Levels fatigueLevel,
-                            MoodLabel moodLabel,
+                            MoodLabelInterf moodLabel,
                             String userNote);
 }
 

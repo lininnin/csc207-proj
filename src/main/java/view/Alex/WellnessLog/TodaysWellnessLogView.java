@@ -1,7 +1,8 @@
 package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
@@ -76,13 +77,13 @@ public class TodaysWellnessLogView extends JPanel {
     private void refreshDisplay(TodaysWellnessLogState state) {
         logDisplayPanel.removeAll();
 
-        List<WellnessLogEntry> entries = state.getEntries();
+        List<WellnessLogEntryInterf> entries = state.getEntries();
 
         if (entries.isEmpty()) {
             logDisplayPanel.add(new JLabel("No wellness log recorded today.", SwingConstants.CENTER));
         } else {
             for (int i = entries.size() - 1; i >= 0; i--) {
-                WellnessLogEntry entry = entries.get(i);
+                WellnessLogEntryInterf entry = entries.get(i);
 
                 JPanel row = new JPanel(new GridLayout(1, 7));
                 row.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -105,7 +106,7 @@ public class TodaysWellnessLogView extends JPanel {
 
                     JLabel moodDisplay = new JLabel(entry.getMoodLabel().getName());
                     JButton chooseMoodBtn = new JButton("Choose...");
-                    final MoodLabel[] selectedMood = {entry.getMoodLabel()};
+                    final MoodLabelInterf[] selectedMood = {entry.getMoodLabel()};
 
                     chooseMoodBtn.addActionListener(evt -> {
                         AvailableMoodLabelView labelView = new AvailableMoodLabelView(
@@ -120,7 +121,7 @@ public class TodaysWellnessLogView extends JPanel {
                         dialog.setLocationRelativeTo(this);
                         dialog.setVisible(true);
 
-                        MoodLabel chosen = labelView.getSelectedLabel();
+                        MoodLabelInterf chosen = labelView.getSelectedLabel();
                         if (chosen != null) {
                             selectedMood[0] = chosen;
                             moodDisplay.setText(chosen.getName());
@@ -154,7 +155,7 @@ public class TodaysWellnessLogView extends JPanel {
                                 return;
                             }
 
-                            MoodLabel mood = selectedMood[0];
+                            MoodLabel mood = (MoodLabel) selectedMood[0];
                             editController.execute(
                                     entry.getId(), energy, stress, fatigue,
                                     mood.getName(), mood.getType(), note
@@ -188,6 +189,3 @@ public class TodaysWellnessLogView extends JPanel {
         logDisplayPanel.repaint();
     }
 }
-
-
-

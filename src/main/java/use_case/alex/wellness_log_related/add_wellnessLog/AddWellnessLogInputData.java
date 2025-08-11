@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.add_wellnessLog;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 
 import java.time.LocalDateTime;
@@ -11,14 +11,14 @@ public class AddWellnessLogInputData {
     private final Levels stressLevel;
     private final Levels energyLevel;
     private final Levels fatigueLevel;
-    private final MoodLabel moodLabel;
+    private final MoodLabelInterf moodLabel;
     private final String userNote;
 
     public AddWellnessLogInputData(LocalDateTime time,
                                    Levels stressLevel,
                                    Levels energyLevel,
                                    Levels fatigueLevel,
-                                   MoodLabel moodLabel,
+                                   MoodLabelInterf moodLabel,
                                    String userNote) {
         this.time = time;
         this.stressLevel = stressLevel;
@@ -44,7 +44,7 @@ public class AddWellnessLogInputData {
         return fatigueLevel;
     }
 
-    public MoodLabel getMoodLabel() {
+    public MoodLabelInterf getMoodLabel() {
         return moodLabel;
     }
 
@@ -52,4 +52,3 @@ public class AddWellnessLogInputData {
         return userNote;
     }
 }
-

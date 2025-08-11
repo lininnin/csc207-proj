@@ -5,22 +5,6 @@ package entity.Alex.MoodLabel;
  * Used in wellness tracking to categorize emotional states.
  */
 public final class MoodLabel implements MoodLabelInterf {
-    /**
-     * Represents the type of a mood label.
-     * A mood can either be {@code Positive} (e.g., Happy, Excited)
-     * or {@code Negative} (e.g., Sad, Angry).
-     */
-    public enum Type {
-        /**
-         * Indicates a positive mood.
-         */
-        Positive,
-
-        /**
-         * Indicates a negative mood.
-         */
-        Negative
-    }
 
 
     /**

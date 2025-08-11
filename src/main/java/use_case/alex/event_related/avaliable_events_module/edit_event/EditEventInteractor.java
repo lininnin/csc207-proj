@@ -1,6 +1,7 @@
 package use_case.alex.event_related.avaliable_events_module.edit_event;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 
 public class EditEventInteractor implements EditEventInputBoundary {
 
@@ -44,7 +45,7 @@ public class EditEventInteractor implements EditEventInputBoundary {
 
 
             // ✅ Step 2: 查找原始事件
-            Info event = dataAccess.getEventById(eventId);
+            InfoInterf event = dataAccess.getEventById(eventId);
             if (event == null) {
                 presenter.prepareFailView(new EditEventOutputData(eventId, "", "", "Original event not found.", true));
                 return;
@@ -52,7 +53,7 @@ public class EditEventInteractor implements EditEventInputBoundary {
 
 // ✅ Step 3: 冲突校验（插入于 setName 之前）
             if (!name.equals(event.getName())) {
-                for (Info other : dataAccess.getAllEvents()) {
+                for (InfoInterf other : dataAccess.getAllEvents()) {
                     if (!other.getId().equals(eventId) && name.equals(other.getName())) {
                         presenter.prepareFailView(new EditEventOutputData(eventId, "", "", "Event name already exists.", true));
                         return;

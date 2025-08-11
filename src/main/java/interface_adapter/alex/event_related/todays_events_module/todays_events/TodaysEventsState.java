@@ -1,30 +1,34 @@
 package interface_adapter.alex.event_related.todays_events_module.todays_events;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Holds the current list of available events to be shown in the view.
- * This class stores domain-level Event entities.
+ * This class stores domain-level EventInterf entities.
  */
 public class TodaysEventsState {
 
-    private List<Event> todaysEvents = new ArrayList<>();
+    private List<EventInterf> todaysEvents = new ArrayList<>();
 
     /**
-     * Returns the current list of available event Info objects.
+     * Returns the current list of available events.
+     *
+     * @return list of EventInterf objects
      */
-    public List<Event> getTodaysEvents() {
+    public List<EventInterf> getTodaysEvents() {
         return todaysEvents;
     }
 
     /**
      * Sets the available event list.
-     * @param todaysEvents The new list of Event objects to be shown.
+     *
+     * @param todaysEvents The new list of EventInterf objects to be shown.
      */
-    public void setTodaysEvents(List<Event> todaysEvents) {
+    public void setTodaysEvents(List<EventInterf> todaysEvents) {
         this.todaysEvents = todaysEvents;
     }
 }
+

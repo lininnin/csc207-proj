@@ -1,6 +1,6 @@
 package entity.Alex.DailyWellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface DailyWellnessLogInterf {
     /**
      * @return A list of all wellness log entries for this date.
      */
-    List<WellnessLogEntry> getEntries();
+    List<WellnessLogEntryInterf> getEntries();
 
     /**
      * Adds a wellness log entry to the list for this day.
@@ -28,7 +28,7 @@ public interface DailyWellnessLogInterf {
      *
      * @param entry The WellnessLogEntry to add.
      */
-    void addEntry(WellnessLogEntry entry);
+    void addEntry(WellnessLogEntryInterf entry);
 
     /**
      * Removes a wellness log entry by ID.

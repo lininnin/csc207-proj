@@ -1,13 +1,12 @@
 package entity.Alex.AvalibleMoodLabel;
 
-import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.util.List;
 
 /**
  * Interface for AvaliableMoodLabel.
- * Exposes operations for managing categorized mood labels.
+ * Exposes operations for managing categorized mood labels without depending on concrete classes.
  */
 public interface AvaliableMoodLabelInterf {
 
@@ -45,18 +44,19 @@ public interface AvaliableMoodLabelInterf {
     void clear();
 
     /**
-     * Returns all positive MoodLabel objects.
+     * Returns all positive MoodLabel objects (as interface types).
      *
-     * @return list of positive MoodLabel objects
+     * @return list of positive MoodLabelInterf objects
      */
-    List<MoodLabel> getPositiveLabelObjects();
+    List<MoodLabelInterf> getPositiveLabelObjects();
 
     /**
-     * Returns all negative MoodLabel objects.
+     * Returns all negative MoodLabel objects (as interface types).
      *
-     * @return list of negative MoodLabel objects
+     * @return list of negative MoodLabelInterf objects
      */
-    List<MoodLabel> getNegativeLabelObjects();
+    List<MoodLabelInterf> getNegativeLabelObjects();
 }
+
 
 
