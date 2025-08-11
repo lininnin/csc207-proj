@@ -2,6 +2,7 @@ package interface_adapter.alex.event_related.add_event;
 
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.event_related.add_event.AddEventOutputBoundary;
 import use_case.alex.event_related.add_event.AddEventOutputData;
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
@@ -19,6 +20,7 @@ public class AddEventPresenter implements AddEventOutputBoundary {
     private final AddedEventViewModel addedEventViewModel;
     private final TodaysEventsViewModel todaysEventsViewModel;
     private final AddEventDataAccessInterf addEventDAO;
+    private TodaySoFarController todaySoFarController;
 
     public AddEventPresenter(AddedEventViewModel addedEventViewModel,
                              TodaysEventsViewModel todaysEventsViewModel,
@@ -26,6 +28,10 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         this.addedEventViewModel = addedEventViewModel;
         this.todaysEventsViewModel = todaysEventsViewModel;
         this.addEventDAO = addEventDAO;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -43,6 +49,11 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         TodaysEventsState todaysState = new TodaysEventsState();
         todaysState.setTodaysEvents(updatedEvents);
         todaysEventsViewModel.setState(todaysState);
+        
+        // Refresh Today So Far panel if controller is available
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
     }
 
     @Override

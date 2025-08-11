@@ -3,6 +3,7 @@ package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edi
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogState;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogOutputBoundary;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogOutputData;
@@ -18,6 +19,7 @@ public class EditWellnessLogPresenter implements EditWellnessLogOutputBoundary {
     private final EditWellnessLogViewModel editViewModel;
     private final TodaysWellnessLogViewModel todaysViewModel;
     private final EditWellnessLogDataAccessInterf dataAccess;
+    private TodaySoFarController todaySoFarController;
 
     public EditWellnessLogPresenter(EditWellnessLogViewModel editViewModel,
                                     TodaysWellnessLogViewModel todaysViewModel,
@@ -25,6 +27,10 @@ public class EditWellnessLogPresenter implements EditWellnessLogOutputBoundary {
         this.editViewModel = editViewModel;
         this.todaysViewModel = todaysViewModel;
         this.dataAccess = dataAccess;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -43,6 +49,11 @@ public class EditWellnessLogPresenter implements EditWellnessLogOutputBoundary {
         newTodayState.setEntries(updatedList);
         todaysViewModel.setState(newTodayState);
         todaysViewModel.fireStateChanged();
+        
+        // Refresh Today So Far panel if controller is available
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
     }
 
     @Override

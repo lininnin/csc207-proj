@@ -54,6 +54,22 @@ import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellne
 
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
+import view.Angela.TodaySoFarView;
+import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
+import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
+import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
+import use_case.Angela.task.overdue.OverdueTasksInteractor;
+import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInteractor;
+import data_access.InMemoryTaskGateway;
+import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
+import data_access.FileGoalRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,6 +77,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WellnessLogPageBuilder {
+    
+    // Today So Far panel fields
+    private TodaySoFarController todaySoFarController;
+    private OverdueTasksController overdueTasksController;
 
     public JPanel build() {
 
@@ -75,7 +95,7 @@ public class WellnessLogPageBuilder {
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 
         // --- Add Log Controller ---
-        AddWellnessLogOutputBoundary presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
+        AddWellnessLogPresenter presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
         AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, wellnessLogEntryFactory, presenter);
         AddWellnessLogController addLogController = new AddWellnessLogController(interactor);
 
@@ -152,25 +172,27 @@ public class WellnessLogPageBuilder {
         fixedHeightWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
 
         // --- Today's Log View ---
+        DeleteWellnessLogPresenter deletePresenter = new DeleteWellnessLogPresenter(
+                new DeleteWellnessLogViewModel(),
+                todaysLogViewModel,
+                wellnessLogDAO
+        );
+        
+        EditWellnessLogPresenter editPresenter = new EditWellnessLogPresenter(
+                new EditWellnessLogViewModel(),
+                todaysLogViewModel,
+                wellnessLogDAO
+        );
+        
         TodaysWellnessLogView todaysLogView = new TodaysWellnessLogView(
                 todaysLogViewModel,
                 new DeleteWellnessLogController(
-                        new DeleteWellnessLogInteractor(wellnessLogDAO,
-                                new DeleteWellnessLogPresenter(
-                                        new DeleteWellnessLogViewModel(),
-                                        todaysLogViewModel,
-                                        wellnessLogDAO
-                                )
-                        )
+                        new DeleteWellnessLogInteractor(wellnessLogDAO, deletePresenter)
                 ),
                 new EditWellnessLogController(
                         new EditWellnessLogInteractor(
                                 wellnessLogDAO,
-                                new EditWellnessLogPresenter(
-                                        new EditWellnessLogViewModel(),
-                                        todaysLogViewModel,
-                                        wellnessLogDAO
-                                ),
+                                editPresenter,
                                 new WellnessLogEntryFactory(), // ✅ 新增工厂
                                 new MoodLabelFactory()         // ✅ 新增工厂
                         )
@@ -182,7 +204,6 @@ public class WellnessLogPageBuilder {
                 deleteLabelController,
                 moodLabelFactory
         );
-
 
         JPanel lowerPart = new JPanel(new BorderLayout());
         lowerPart.setBorder(BorderFactory.createTitledBorder("Today's Wellness Log"));
@@ -197,13 +218,69 @@ public class WellnessLogPageBuilder {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(verticalSplit, BorderLayout.CENTER);
 
+        // --- Set up Today So Far Panel ---
+        // Create ViewModels for Today So Far
+        OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
+        TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
+        
+        // Create task and category gateways for Today So Far integration
+        InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
+        InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+        
+        // Wire up Overdue Tasks Use Case
+        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
+        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
+                taskGateway, categoryGateway, overdueTasksPresenter);
+        overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
+        
+        // Create Event DAO for Today So Far integration
+        entity.Alex.DailyEventLog.DailyEventLogFactoryInterf eventLogFactory = 
+            new entity.Alex.DailyEventLog.DailyEventLogFactory();
+        data_access.TodaysEventDataAccessObject eventDataAccess = 
+            new data_access.TodaysEventDataAccessObject(eventLogFactory);
+        
+        // Create Goal repository
+        FileGoalRepository goalRepository = new FileGoalRepository();
+        
+        // Wire up Today So Far Use Case with all data sources
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
+                taskGateway, eventDataAccess, wellnessLogDAO, goalRepository);
+        
+        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
+        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
+                todaySoFarDataAccess, todaySoFarPresenter, categoryGateway);
+        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
+        
+        // Create Today So Far view
+        TodaySoFarView todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
+        todaySoFarView.setOverdueTasksController(overdueTasksController);
+        todaySoFarView.setTodaySoFarController(todaySoFarController);
+        
+        // Set Today So Far controller on wellness presenters that need to refresh
+        presenter.setTodaySoFarController(todaySoFarController);
+        deletePresenter.setTodaySoFarController(todaySoFarController);
+        editPresenter.setTodaySoFarController(todaySoFarController);
+        
+        // Trigger initial data load
+        todaySoFarController.refresh();
+        overdueTasksController.execute(7);
+
+        // Wrap Today So Far in a panel
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(500, 0));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setPreferredSize(new Dimension(380, 0));
+        rightPanel.setMinimumSize(new Dimension(320, 0));
+
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, rightPanel);
+        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.7);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return mainPanel;
     }
