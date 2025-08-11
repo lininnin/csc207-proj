@@ -71,13 +71,6 @@ public class EventPageBuilder {
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
 
-    // Category management fields
-    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
-    private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
-    private CategoryManagementDialog categoryDialog;
-    private CreateEventView createEventView;
-    private AvailableEventViewModel availableEventViewModel;
-    private TodaysEventsViewModel todaysEventsViewModel;
 
     public JPanel build() {
         // --- ViewModels ---
@@ -284,12 +277,12 @@ public class EventPageBuilder {
                 // Also create an event adapter for clearing event categories
                 DeleteCategoryEventDataAccessInterface eventDeleteAdapter = new DeleteCategoryEventDataAccessInterface() {
                     @Override
-                    public List<entity.info.Info> findAvailableEventsByCategory(String categoryId) {
+                    public List<entity.info.InfoInterf> findAvailableEventsByCategory(String categoryId) {
                         return commonDao.findAvailableEventsByCategory(categoryId);
                     }
                     
                     @Override
-                    public List<entity.info.Info> findTodaysEventsByCategory(String categoryId) {
+                    public List<entity.info.InfoInterf> findTodaysEventsByCategory(String categoryId) {
                         return todaysEventDAO.findTodaysEventsByCategory(categoryId);
                     }
                     
@@ -325,10 +318,10 @@ public class EventPageBuilder {
                     public boolean deleteCategory(entity.Category category) {
                         // First clear events
                         String categoryId = category.getId();
-                        for (entity.info.Info event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
+                        for (entity.info.InfoInterf event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
                             eventDeleteAdapter.clearAvailableEventCategory(event.getId());
                         }
-                        for (entity.info.Info event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
+                        for (entity.info.InfoInterf event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
                             eventDeleteAdapter.clearTodaysEventCategory(event.getId());
                         }
                         // Then delete the category
