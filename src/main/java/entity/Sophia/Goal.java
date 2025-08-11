@@ -197,9 +197,7 @@ public class Goal implements goalInterface{
     public String getSimpleProgress() {
         return String.format("%d/%d", currentProgress, frequency);
     }
-
-
-
 }
+
 
 
