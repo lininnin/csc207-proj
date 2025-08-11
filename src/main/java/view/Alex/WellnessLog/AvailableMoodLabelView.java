@@ -1,5 +1,6 @@
 package view.Alex.WellnessLog;
 
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.Type;
@@ -23,16 +24,20 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
     private final DeleteMoodLabelController deleteController;
     private final JPanel labelDisplayPanel;
 
+    private final MoodLabelFactoryInterf moodLabelFactory;
+
     private MoodLabelInterf selectedLabel = null;
 
     public AvailableMoodLabelView(AvailableMoodLabelViewModel viewModel,
                                   AddMoodLabelController addController,
                                   EditMoodLabelController editController,
-                                  DeleteMoodLabelController deleteController) {
+                                  DeleteMoodLabelController deleteController,
+                                  MoodLabelFactoryInterf moodLabelFactory) {
         this.viewModel = viewModel;
         this.addController = addController;
         this.editController = editController;
         this.deleteController = deleteController;
+        this.moodLabelFactory = moodLabelFactory;
 
         this.setLayout(new BorderLayout());
         this.viewModel.addPropertyChangeListener(this);
@@ -124,10 +129,10 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
                     }));
 
                     row.add(makeButton("Select", e -> {
-                        selectedLabel = new MoodLabel.Builder(entry.getName())
-                                .type(entry.getType().equals("Positive") ?
-                                        Type.Positive : Type.Negative)
-                                .build();
+                        selectedLabel = moodLabelFactory.create(
+                                entry.getName(),
+                                entry.getType().equals("Positive") ? Type.Positive : Type.Negative
+                        );
                         Window win = SwingUtilities.getWindowAncestor(this);
                         if (win != null) win.dispose();
                     }));

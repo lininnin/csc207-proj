@@ -3,6 +3,7 @@ package data_access;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import use_case.alex.event_related.add_event.ReadAvailableEventDataAccessInterf;
 import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
 import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
@@ -42,7 +43,7 @@ public class EventAvailableDataAccessObject implements
      * @param eventInfo The event information to save.
      */
     @Override
-    public void save(final Info eventInfo) {
+    public void save(final InfoInterf eventInfo) {
         eventAvailable.addEvent(eventInfo);
     }
 
@@ -53,7 +54,7 @@ public class EventAvailableDataAccessObject implements
      * @return true if the event was found and removed.
      */
     @Override
-    public boolean remove(final Info eventInfo) {
+    public boolean remove(final InfoInterf eventInfo) {
         return eventAvailable.removeEvent(eventInfo);
     }
 
@@ -63,7 +64,7 @@ public class EventAvailableDataAccessObject implements
      * @return List of all available Info objects.
      */
     @Override
-    public List<Info> getAllEvents() {
+    public List<InfoInterf> getAllEvents() {
         return eventAvailable.getEventAvailable();
     }
 
@@ -74,7 +75,7 @@ public class EventAvailableDataAccessObject implements
      * @return List of events matching the category.
      */
     @Override
-    public List<Info> getEventsByCategory(final String category) {
+    public List<InfoInterf> getEventsByCategory(final String category) {
         return eventAvailable.getEventsByCategory(category);
     }
 
@@ -85,7 +86,7 @@ public class EventAvailableDataAccessObject implements
      * @return List of events matching the name.
      */
     @Override
-    public List<Info> getEventsByName(final String name) {
+    public List<InfoInterf> getEventsByName(final String name) {
         return eventAvailable.getEventsByName(name);
     }
 
@@ -106,7 +107,7 @@ public class EventAvailableDataAccessObject implements
      * @return true if the event exists, false otherwise.
      */
     @Override
-    public boolean contains(final Info eventInfo) {
+    public boolean contains(final InfoInterf eventInfo) {
         return eventAvailable.contains(eventInfo);
     }
 
@@ -125,8 +126,8 @@ public class EventAvailableDataAccessObject implements
      * @return The matching Info object, or null if not found.
      */
     @Override
-    public Info getEventById(final String id) {
-        for (Info info : eventAvailable.getEventAvailable()) {
+    public InfoInterf getEventById(final String id) {
+        for (InfoInterf info : eventAvailable.getEventAvailable()) {
             if (info.getId().equals(id)) {
                 return info;
             }
@@ -141,8 +142,8 @@ public class EventAvailableDataAccessObject implements
      * @return true if update succeeded, false otherwise.
      */
     @Override
-    public boolean update(final Info updatedInfo) {
-        for (Info info : eventAvailable.getEventAvailable()) {
+    public boolean update(final InfoInterf updatedInfo) {
+        for (InfoInterf info : eventAvailable.getEventAvailable()) {
             if (info.getId().equals(updatedInfo.getId())) {
                 info.setName(updatedInfo.getName());
                 info.setCategory(updatedInfo.getCategory());
@@ -161,7 +162,7 @@ public class EventAvailableDataAccessObject implements
      */
     @Override
     public boolean existsById(final String id) {
-        for (Info info : eventAvailable.getEventAvailable()) {
+        for (InfoInterf info : eventAvailable.getEventAvailable()) {
             if (info.getId().equals(id)) {
                 return true;
             }
@@ -175,8 +176,8 @@ public class EventAvailableDataAccessObject implements
      * @param name The name to search for.
      * @return The matching Info object, or null if not found.
      */
-    public Info findInfoByName(final String name) {
-        for (Info info : eventAvailable.getEventAvailable()) {
+    public InfoInterf findInfoByName(final String name) {
+        for (InfoInterf info : eventAvailable.getEventAvailable()) {
             if (info.getName().equals(name)) {
                 return info;
             }
@@ -187,9 +188,9 @@ public class EventAvailableDataAccessObject implements
     // ===== DeleteCategoryEventDataAccessInterface methods =====
     
     @Override
-    public List<Info> findAvailableEventsByCategory(String categoryId) {
-        List<Info> result = new ArrayList<>();
-        for (Info event : eventAvailable.getEventAvailable()) {
+    public List<InfoInterf> findAvailableEventsByCategory(String categoryId) {
+        List<InfoInterf> result = new ArrayList<>();
+        for (InfoInterf event : eventAvailable.getEventAvailable()) {
             if (event.getCategory() != null && event.getCategory().equals(categoryId)) {
                 result.add(event);
             }
@@ -198,7 +199,7 @@ public class EventAvailableDataAccessObject implements
     }
     
     @Override
-    public List<Info> findTodaysEventsByCategory(String categoryId) {
+    public List<InfoInterf> findTodaysEventsByCategory(String categoryId) {
         // Available events DAO doesn't manage today's events
         // This will be handled by TodaysEventDataAccessObject
         return new ArrayList<>();
@@ -206,7 +207,7 @@ public class EventAvailableDataAccessObject implements
     
     @Override
     public boolean clearAvailableEventCategory(String eventId) {
-        for (Info event : eventAvailable.getEventAvailable()) {
+        for (InfoInterf event : eventAvailable.getEventAvailable()) {
             if (event.getId().equals(eventId)) {
                 event.setCategory(null);  // Clear the category
                 return true;

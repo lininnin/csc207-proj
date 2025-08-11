@@ -1,6 +1,8 @@
 package entity.Alex.EventAvailable;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
+
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ public interface EventAvailableInterf {
      * @param info the {@link Info} object to add
      * @throws IllegalArgumentException if {@code info} is null
      */
-    void addEvent(Info info);
+    void addEvent(InfoInterf info);
 
     /**
      * Removes the specified event info from the available event pool.
@@ -25,14 +27,14 @@ public interface EventAvailableInterf {
      * @return {@code true} if the event was present and removed,
      *         {@code false} otherwise
      */
-    boolean removeEvent(Info info);
+    boolean removeEvent(InfoInterf info);
 
     /**
      * Returns a list of all currently available events.
      *
      * @return a new {@link List} containing all {@link Info} objects
      */
-    List<Info> getEventAvailable();
+    List<InfoInterf> getEventAvailable();
 
     /**
      * Returns a list of available events that match the given category.
@@ -40,7 +42,7 @@ public interface EventAvailableInterf {
      * @param category the category to filter by
      * @return a list of {@link Info} objects in the specified category
      */
-    List<Info> getEventsByCategory(String category);
+    List<InfoInterf> getEventsByCategory(String category);
 
     /**
      * Returns a list of available events that match the given name.
@@ -48,7 +50,7 @@ public interface EventAvailableInterf {
      * @param name the name to filter by
      * @return a list of {@link Info} objects with the specified name
      */
-    List<Info> getEventsByName(String name);
+    List<InfoInterf> getEventsByName(String name);
 
     /**
      * Returns the total number of available events.
@@ -63,7 +65,7 @@ public interface EventAvailableInterf {
      * @param info the {@link Info} object to check
      * @return {@code true} if the event exists, {@code false} otherwise
      */
-    boolean contains(Info info);
+    boolean contains(InfoInterf info);
 
     /**
      * Removes all events from the available event pool.

@@ -1,6 +1,7 @@
 package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +38,7 @@ public interface WellnessLogEntryInterf {
     /**
      * @return The mood label recorded.
      */
-    MoodLabel getMoodLabel();
+    MoodLabelInterf getMoodLabel();
 
     /**
      * @return The optional user note.

@@ -1,6 +1,7 @@
 package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public final class WellnessLogEntry {
     private Levels stressLevel;
     private Levels energyLevel;
     private Levels fatigueLevel;
-    private MoodLabel moodLabel;
+    private MoodLabelInterf moodLabel;
     private String userNote;
 
     /**
@@ -41,7 +42,7 @@ public final class WellnessLogEntry {
         private Levels stressLevel;
         private Levels energyLevel;
         private Levels fatigueLevel;
-        private MoodLabel moodLabel;
+        private MoodLabelInterf moodLabel;
         private String userNote;
 
         // ✅ 新增：从已有 WellnessLogEntry 构建一个可变 Builder
@@ -77,7 +78,7 @@ public final class WellnessLogEntry {
             return this;
         }
 
-        public Builder moodLabel(final MoodLabel moodParam) {
+        public Builder moodLabel(final MoodLabelInterf moodParam) {
             this.moodLabel = moodParam;
             return this;
         }
@@ -124,7 +125,7 @@ public final class WellnessLogEntry {
         return fatigueLevel;
     }
 
-    public MoodLabel getMoodLabel() {
+    public MoodLabelInterf getMoodLabel() {
         return moodLabel;
     }
 
@@ -155,7 +156,7 @@ public final class WellnessLogEntry {
         this.fatigueLevel = levelParam;
     }
 
-    public void setMoodLabel(final MoodLabel moodParam) {
+    public void setMoodLabel(final MoodLabelInterf moodParam) {
         if (moodParam == null) {
             throw new IllegalArgumentException("Mood label cannot be null");
         }

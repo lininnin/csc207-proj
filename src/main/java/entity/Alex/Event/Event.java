@@ -1,7 +1,9 @@
 package entity.Alex.Event;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
 
 import java.time.LocalDate;
 
@@ -14,12 +16,12 @@ public final class Event implements EventInterf {
     /**
      * The basic information of the event.
      */
-    private Info info;
+    private InfoInterf info;
 
     /**
      * The begin and due dates associated with the event.
      */
-    private BeginAndDueDates beginAndDueDates;
+    private BeginAndDueDatesInterf beginAndDueDates;
 
     /**
      * Whether this event is a one-time occurrence.
@@ -52,12 +54,12 @@ public final class Event implements EventInterf {
         /**
          * The event's information (required).
          */
-        private final Info info;
+        private final InfoInterf info;
 
         /**
          * The begin and due dates (required before build).
          */
-        private BeginAndDueDates beginAndDueDates;
+        private BeginAndDueDatesInterf beginAndDueDates;
 
         /**
          * Whether this event is one-time.
@@ -69,7 +71,7 @@ public final class Event implements EventInterf {
          *
          * @param infoParam the info object
          */
-        public Builder(final Info infoParam) {
+        public Builder(final InfoInterf infoParam) {
             if (infoParam == null) {
                 throw new IllegalArgumentException("Info cannot be null.");
             }
@@ -82,7 +84,7 @@ public final class Event implements EventInterf {
          * @param beginAndDueDatesParam the BeginAndDueDates object
          * @return the Builder instance
          */
-        public Builder beginAndDueDates(final BeginAndDueDates beginAndDueDatesParam) {
+        public Builder beginAndDueDates(final BeginAndDueDatesInterf beginAndDueDatesParam) {
             if (beginAndDueDatesParam == null) {
                 throw new IllegalArgumentException(
                         "BeginAndDueDates cannot be null.");
@@ -121,7 +123,7 @@ public final class Event implements EventInterf {
      *
      * @return the info object
      */
-    public Info getInfo() {
+    public InfoInterf getInfo() {
         return info;
     }
 
@@ -130,7 +132,7 @@ public final class Event implements EventInterf {
      *
      * @return the BeginAndDueDates object
      */
-    public BeginAndDueDates getBeginAndDueDates() {
+    public BeginAndDueDatesInterf getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
@@ -148,7 +150,7 @@ public final class Event implements EventInterf {
      *
      * @param infoParam the new Info object
      */
-    public void editInfo(final Info infoParam) {
+    public void editInfo(final InfoInterf infoParam) {
         if (infoParam == null) {
             throw new IllegalArgumentException("Info cannot be null.");
         }

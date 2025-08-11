@@ -1,8 +1,10 @@
 package use_case.alex.event_related.add_event;
 
-import entity.Alex.Event.Event;
-import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+import entity.Alex.Event.EventFactoryInterf;
+import entity.Alex.Event.EventInterf;
+import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
+import entity.info.InfoInterf;
 
 import java.time.LocalDate;
 
@@ -22,19 +24,31 @@ public class AddEventInteractor implements AddEventInputBoundary {
     /** Presenter for preparing output view models. */
     private final AddEventOutputBoundary presenter;
 
+    /** Factory for creating events. */
+    private final EventFactoryInterf eventFactory;
+
+    /** Factory for creating begin and due dates. */
+    private final BeginAndDueDatesFactoryInterf beginAndDueDatesFactory;
+
     /**
      * Constructs an AddEventInteractor.
      *
      * @param todaysDAO       The DAO for saving today's events.
      * @param availableDAO    The DAO for reading available event definitions.
      * @param outputPresenter The presenter that handles output.
+     * @param eventFactory    Factory for creating Event objects.
+     * @param datesFactory    Factory for creating BeginAndDueDates objects.
      */
     public AddEventInteractor(final AddEventDataAccessInterf todaysDAO,
                               final ReadAvailableEventDataAccessInterf availableDAO,
-                              final AddEventOutputBoundary outputPresenter) {
+                              final AddEventOutputBoundary outputPresenter,
+                              final EventFactoryInterf eventFactory,
+                              final BeginAndDueDatesFactoryInterf datesFactory) {
         this.todaysEventDAO = todaysDAO;
         this.availableEventDAO = availableDAO;
         this.presenter = outputPresenter;
+        this.eventFactory = eventFactory;
+        this.beginAndDueDatesFactory = datesFactory;
     }
 
     /**
@@ -49,7 +63,7 @@ public class AddEventInteractor implements AddEventInputBoundary {
         String name = inputData.getSelectedName();
         LocalDate dueDate = inputData.getDueDate();
 
-        Info baseInfo = availableEventDAO.findInfoByName(name);
+        InfoInterf baseInfo = availableEventDAO.findInfoByName(name);
 
         if (baseInfo == null) {
             presenter.prepareFailView(
@@ -57,9 +71,10 @@ public class AddEventInteractor implements AddEventInputBoundary {
             return;
         }
 
-        Event newEvent = new Event.Builder(baseInfo)
-                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), dueDate))
-                .build();
+        BeginAndDueDatesInterf beginAndDueDates =
+                beginAndDueDatesFactory.create(LocalDate.now(), dueDate);
+
+        EventInterf newEvent = eventFactory.createEvent(baseInfo, beginAndDueDates);
 
         if (todaysEventDAO.contains(newEvent)) {
             presenter.prepareFailView(
@@ -72,3 +87,4 @@ public class AddEventInteractor implements AddEventInputBoundary {
                 new AddEventOutputData(name, dueDate, true));
     }
 }
+

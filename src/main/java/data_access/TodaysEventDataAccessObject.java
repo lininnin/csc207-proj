@@ -4,6 +4,9 @@ import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.DailyEventLog.DailyEventLogInterf;
 
 import entity.Alex.Event.EventInterf;
+import entity.Alex.Event.Event;
+
+import entity.info.Info;
 
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
 import use_case.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
@@ -140,6 +143,46 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
      */
     public DailyEventLogInterf getDailyEventLog() {
         return todayLog;
+    }
+
+    // ===== DeleteCategoryEventDataAccessInterface methods =====
+
+    @Override
+    public List<Info> findAvailableEventsByCategory(String categoryId) {
+        // Today's events DAO doesn't manage available events
+        // This is handled by EventAvailableDataAccessObject
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Info> findTodaysEventsByCategory(String categoryId) {
+        List<Info> result = new ArrayList<>();
+        for (EventInterf event : todayLog.getActualEvents()) {
+            if (event.getInfo() != null &&
+                    event.getInfo().getCategory() != null &&
+                    event.getInfo().getCategory().equals(categoryId)) {
+                result.add(event.getInfo());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean clearAvailableEventCategory(String eventId) {
+        // Today's events DAO doesn't manage available events
+        // This is handled by EventAvailableDataAccessObject
+        return false;
+    }
+
+    @Override
+    public boolean clearTodaysEventCategory(String eventId) {
+        for (EventInterf event : todayLog.getActualEvents()) {
+            if (event.getInfo() != null && event.getInfo().getId().equals(eventId)) {
+                event.getInfo().setCategory(null);  // Clear the category
+                return true;
+            }
+        }
+        return false;
     }
 
 }

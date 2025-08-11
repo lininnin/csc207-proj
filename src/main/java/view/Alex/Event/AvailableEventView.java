@@ -1,5 +1,6 @@
 package view.Alex.Event;
 
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventState;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
@@ -128,7 +129,7 @@ public class AvailableEventView extends JPanel {
     private void refreshEventList(AvailableEventState state) {
         eventListPanel.removeAll();
 
-        List<Info> events = state.getAvailableEvents();
+        List<InfoInterf> events = state.getAvailableEvents();
         System.out.println("Refreshing event list, count: " + events.size());
 
         if (events.isEmpty()) {
@@ -137,7 +138,7 @@ public class AvailableEventView extends JPanel {
             eventListPanel.add(emptyLabel);
         }
 
-        for (Info event : events) {
+        for (InfoInterf event : events) {
             JPanel row = new JPanel(new GridLayout(1, 5));
             row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
