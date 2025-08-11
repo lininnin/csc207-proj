@@ -1,72 +1,80 @@
 package use_case.goalManage.today_goal;
 
+import data_access.GoalRepository;
 import entity.Sophia.Goal;
-import use_case.goalManage.GoalRepository;
-import use_case.goalManage.today_goal.TodayGoalsOutputBoundary.OperationType;
+import java.util.List;
+import java.util.Optional;
 
-/**
- * Handles both adding to and removing from Today's Goals
- * Single Responsibility: Manages Today's Goals list operations
- */
-public class TodayGoalInteractor implements TodayGoalsInputBoundary {
+public class TodayGoalInteractor implements TodayGoalInputBoundary {
     private final GoalRepository goalRepository;
-    private final TodayGoalsOutputBoundary outputBoundary;
+    private final TodayGoalOutputBoundary outputBoundary;
 
     public TodayGoalInteractor(GoalRepository goalRepository,
-                               TodayGoalsOutputBoundary outputBoundary) {
+                               TodayGoalOutputBoundary outputBoundary) {
         this.goalRepository = goalRepository;
         this.outputBoundary = outputBoundary;
     }
 
     @Override
+    public void execute() {
+        try {
+            List<Goal> todayGoals = goalRepository.getTodayGoals();
+            TodayGoalOutputData outputData = new TodayGoalOutputData(todayGoals);
+            outputBoundary.prepareSuccessView(outputData);
+        } catch (Exception e) {
+            outputBoundary.prepareFailView("Error loading today's goals: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void addToToday(TodayGoalInputData inputData) {
         try {
-            Goal goal = goalRepository.findByName(inputData.getGoalName())
-                    .orElseThrow(() -> new IllegalArgumentException("Goal not found"));
+            String goalName = inputData.getGoalName();
 
-            if (goalRepository.isInCurrentGoals(goal)) {
-                outputBoundary.prepareFailView(
-                        OperationType.ADD,
-                        "Goal is already in Today's list"
-                );
-                return;
+            // Check if goal already in today's goals to avoid duplicates
+            List<Goal> todayGoals = goalRepository.getTodayGoals();
+            boolean alreadyAdded = todayGoals.stream()
+                    .anyMatch(goal -> goal.getGoalInfo().getInfo().getName().equals(goalName));
+
+            if (!alreadyAdded) {
+                goalRepository.addGoalToToday(goalName);
             }
-
-            goalRepository.addToCurrentGoals(goal);
-            outputBoundary.prepareSuccessView(
-                    OperationType.ADD,
-                    new TodayGoalOutputData(goal.getInfo().getName())
-            );
-
+            execute(); // Refresh the view
         } catch (Exception e) {
-            outputBoundary.prepareFailView(OperationType.ADD, e.getMessage());
+            outputBoundary.prepareFailView("Error adding goal: " + e.getMessage());
         }
     }
 
     @Override
     public void removeFromToday(TodayGoalInputData inputData) {
         try {
-            Goal goal = goalRepository.findByName(inputData.getGoalName())
-                    .orElseThrow(() -> new IllegalArgumentException("Goal not found"));
+            goalRepository.removeGoalFromToday(inputData.getGoalName());
+            execute(); // Refresh the view
+        } catch (Exception e) {
+            outputBoundary.prepareFailView("Error removing goal: " + e.getMessage());
+        }
+    }
 
-            if (!inputData.isConfirmed()) {
-                outputBoundary.prepareConfirmationView(
-                        new TodayGoalOutputData(
-                                goal.getInfo().getName(),
-                                "Delete action is not undoable, continue?"
-                        )
-                );
-                return;
+    @Override
+    public void updateProgress(TodayGoalInputData inputData) {
+        try {
+            Optional<Goal> optGoal = goalRepository.findByName(inputData.getGoalName());
+            if (optGoal.isEmpty()) {
+                throw new Exception("Goal not found");
+            }
+            Goal goal = optGoal.get();
+
+            double newAmount = inputData.getNewAmount();
+            if (newAmount % 1 == 0) {
+                goal.setCurrentProgress((int) newAmount);
+            } else {
+                goal.setCurrentProgress((int) Math.round(newAmount));
             }
 
-            goalRepository.removeFromCurrentGoals(goal);
-            outputBoundary.prepareSuccessView(
-                    OperationType.REMOVE,
-                    new TodayGoalOutputData(goal.getInfo().getName())
-            );
-
+            goalRepository.save(goal);
+            execute(); // Refresh the view
         } catch (Exception e) {
-            outputBoundary.prepareFailView(OperationType.REMOVE, e.getMessage());
+            outputBoundary.prepareFailView("Error updating progress: " + e.getMessage());
         }
     }
 }

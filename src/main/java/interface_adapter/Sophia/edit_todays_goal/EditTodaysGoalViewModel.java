@@ -1,22 +1,24 @@
 package interface_adapter.Sophia.edit_todays_goal;
 
-import view.ViewModel;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.List;
 
-public class EditTodaysGoalViewModel extends ViewModel {
-    public static final String TITLE_LABEL = "Edit Today's Goal";
-    public static final String DUE_DATE_LABEL = "New Due Date";
+public class EditTodaysGoalViewModel {
+    private List<String> goalNames;
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
-    private EditTodaysGoalState state = new EditTodaysGoalState();
-
-    public EditTodaysGoalViewModel() {
-        super("edit today's goal");
+    public void setGoalNames(List<String> goalNames) {
+        List<String> oldValue = this.goalNames;
+        this.goalNames = goalNames;
+        support.firePropertyChange("goalNames", oldValue, goalNames);
     }
 
-    public EditTodaysGoalState getState() {
-        return state;
+    public List<String> getGoalNames() {
+        return goalNames;
     }
 
-    public void setState(EditTodaysGoalState state) {
-        this.state = state;
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
     }
 }

@@ -2,14 +2,18 @@ package use_case.goalManage.today_goal;
 
 public class TodayGoalInputData {
     private final String goalName;
-    private final boolean confirmed;
+    private final double newAmount;
 
-    public TodayGoalInputData(String goalName, boolean confirmed) {
+    public TodayGoalInputData(String goalName, double newAmount) {
         this.goalName = goalName;
-        this.confirmed = confirmed;
+        this.newAmount = newAmount;
     }
 
-    // Getters
-    public String getGoalName() { return goalName; }
-    public boolean isConfirmed() { return confirmed; }
+    public String getGoalName() {
+        return goalName;
+    }
+
+    public double getNewAmount() {
+        return newAmount;
+    }
 }

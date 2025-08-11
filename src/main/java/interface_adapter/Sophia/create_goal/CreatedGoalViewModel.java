@@ -6,7 +6,7 @@ public class CreatedGoalViewModel extends ViewModel {
     public static final String TITLE_LABEL = "Create Goal";
     public static final String NAME_LABEL = "Name";
     public static final String DESCRIPTION_LABEL = "Description";
-    // ... other constant labels
+    public static final String CREATE_BUTTON_LABEL = "Create Goal";
 
     private CreatedGoalState state = new CreatedGoalState();
 

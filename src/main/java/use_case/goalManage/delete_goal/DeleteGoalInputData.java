@@ -1,8 +1,5 @@
 package use_case.goalManage.delete_goal;
 
-/**
- * Input data for deleting a goal
- */
 public class DeleteGoalInputData {
     private final String goalName;
     private final boolean confirmed;
@@ -12,11 +9,6 @@ public class DeleteGoalInputData {
         this.confirmed = confirmed;
     }
 
-    public String getGoalName() {
-        return goalName;
-    }
-
-    public boolean isConfirmed() {
-        return confirmed;
-    }
+    public String getGoalName() { return goalName; }
+    public boolean isConfirmed() { return confirmed; }
 }

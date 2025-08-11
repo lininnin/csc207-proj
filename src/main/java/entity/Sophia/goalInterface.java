@@ -29,4 +29,6 @@ public interface goalInterface {
     int getFrequency();
 
     LocalDateTime getCompletedDateTime();
+
+    String getSimpleProgress();
 }
