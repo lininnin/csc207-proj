@@ -1,13 +1,16 @@
 package use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.Alex.MoodLabel.MoodLabel; // 仅用于访问枚举 Type
+import entity.Alex.MoodLabel.Type;
 
 import java.util.List;
 
 /**
  * Interactor for the AddMoodLabel use case.
  * Implements the business logic for adding a new mood label.
+ * Now fully decoupled from the concrete MoodLabel class by using the MoodLabelInterf interface.
  */
 public class AddMoodLabelInteractor implements AddMoodLabelInputBoundary {
 
@@ -40,8 +43,8 @@ public class AddMoodLabelInteractor implements AddMoodLabelInputBoundary {
         }
 
         // Check for duplicate name
-        List<MoodLabel> existingLabels = dataAccess.getAllLabels();
-        for (MoodLabel label : existingLabels) {
+        List<MoodLabelInterf> existingLabels = dataAccess.getAllLabels();
+        for (MoodLabelInterf label : existingLabels) {
             if (label.getName().equalsIgnoreCase(name)) {
                 outputBoundary.prepareFailView("Mood label already exists.");
                 return;
@@ -49,8 +52,8 @@ public class AddMoodLabelInteractor implements AddMoodLabelInputBoundary {
         }
 
         // Create mood label via factory
-        MoodLabel.Type moodType = type.equals("Positive") ? MoodLabel.Type.Positive : MoodLabel.Type.Negative;
-        MoodLabel newLabel = factory.create(name, moodType);
+        Type moodType = type.equals("Positive") ? Type.Positive : Type.Negative;
+        MoodLabelInterf newLabel = factory.create(name, moodType);
 
         // Save to data access
         dataAccess.save(newLabel);
@@ -60,4 +63,3 @@ public class AddMoodLabelInteractor implements AddMoodLabelInputBoundary {
         outputBoundary.prepareSuccessView(outputData);
     }
 }
-

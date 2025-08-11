@@ -165,6 +165,15 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
 
             if (state.getError() != null) {
                 showMessage(state.getError(), true);
+                // CRITICAL: Clear the error state after displaying it
+                // Otherwise it blocks further actions
+                SwingUtilities.invokeLater(() -> {
+                    CategoryManagementState clearedState = new CategoryManagementState();
+                    clearedState.setError(null);
+                    clearedState.setMessage(null);
+                    clearedState.setLastAction("");
+                    viewModel.setState(clearedState);
+                });
             } else if (state.getMessage() != null) {
                 showMessage(state.getMessage(), false);
                 nameField.setText("");

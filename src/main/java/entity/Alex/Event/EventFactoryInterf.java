@@ -1,7 +1,9 @@
 package entity.Alex.Event;
 
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.InfoInterf;
 
 /**
  * Factory interface for creating Event objects.
@@ -14,6 +16,6 @@ public interface EventFactoryInterf {
      * @param beginAndDueDates Begin and due dates
      * @return a new Event instance
      */
-    Event createEvent(Info info, BeginAndDueDates beginAndDueDates);
+    EventInterf createEvent(InfoInterf info, BeginAndDueDatesInterf beginAndDueDates);
 }
 

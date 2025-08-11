@@ -1,7 +1,9 @@
 package entity.Alex.Event;
 
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.InfoInterf;
 
 import java.time.LocalDate;
 
@@ -13,19 +15,19 @@ public interface EventInterf {
     /**
      * @return the Info of this event.
      */
-    Info getInfo();
+    InfoInterf getInfo();
 
     /**
      * @return the BeginAndDueDates of this event.
      */
-    BeginAndDueDates getBeginAndDueDates();
+    BeginAndDueDatesInterf getBeginAndDueDates();
 
     /**
      * Edit the Info of this event.
      * @param info the new Info object
      * @throws IllegalArgumentException if info is null
      */
-    void editInfo(Info info);
+    void editInfo(InfoInterf info);
 
     /**
      * Edit the due date of this event.

@@ -1,8 +1,11 @@
 package use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * Interactor for the EditWellnessLog use case.
@@ -12,16 +15,22 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
 
     private final EditWellnessLogDataAccessInterf dataAccess;
     private final EditWellnessLogOutputBoundary outputBoundary;
+    private final WellnessLogEntryFactoryInterf wellnessLogEntryFactory; // ✅ 使用接口
+    private final MoodLabelFactoryInterf moodLabelFactory;               // ✅ MoodLabel 也依赖接口
 
     public EditWellnessLogInteractor(EditWellnessLogDataAccessInterf dataAccess,
-                                     EditWellnessLogOutputBoundary outputBoundary) {
+                                     EditWellnessLogOutputBoundary outputBoundary,
+                                     WellnessLogEntryFactoryInterf wellnessLogEntryFactory,
+                                     MoodLabelFactoryInterf moodLabelFactory) {
         this.dataAccess = dataAccess;
         this.outputBoundary = outputBoundary;
+        this.wellnessLogEntryFactory = wellnessLogEntryFactory;
+        this.moodLabelFactory = moodLabelFactory;
     }
 
     @Override
     public void execute(EditWellnessLogInputData inputData) {
-        WellnessLogEntry existing = dataAccess.getById(inputData.getLogId());
+        WellnessLogEntryInterf existing = dataAccess.getById(inputData.getLogId());
 
         if (existing == null) {
             outputBoundary.prepareFailView("Wellness log not found for ID: " + inputData.getLogId());
@@ -29,15 +38,19 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
         }
 
         try {
-            WellnessLogEntry updated = WellnessLogEntry.Builder.from(existing)
-                    .stressLevel(Levels.fromInt(inputData.getStressLevel()))
-                    .energyLevel(Levels.fromInt(inputData.getEnergyLevel()))
-                    .fatigueLevel(Levels.fromInt(inputData.getFatigueLevel()))
-                    .moodLabel(new MoodLabel.Builder(inputData.getMoodName())
-                            .type(inputData.getMoodType())
-                            .build())
-                    .userNote(inputData.getNote())
-                    .build();
+            MoodLabelInterf moodLabel = moodLabelFactory.create(
+                    inputData.getMoodName(),
+                    inputData.getMoodType()
+            );
+
+            WellnessLogEntryInterf updated = wellnessLogEntryFactory.create(
+                    existing.getTime(),
+                    Levels.fromInt(inputData.getStressLevel()),
+                    Levels.fromInt(inputData.getEnergyLevel()),
+                    Levels.fromInt(inputData.getFatigueLevel()),
+                    moodLabel,
+                    inputData.getNote()
+            );
 
             boolean success = dataAccess.update(updated);
             if (success) {
@@ -51,6 +64,7 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
         }
     }
 }
+
 
 
 

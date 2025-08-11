@@ -1,6 +1,6 @@
 package interface_adapter.alex.event_related.available_event_module.delete_event;
 
-import entity.info.Info;
+import entity.info.InfoInterf; // ✅ 改为依赖接口
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Presenter for the DeleteAvailableEvent use case.
  * Converts output data into view model state and notifies the view via the ViewModel.
+ * Now decoupled from concrete Info class using InfoInterf.
  */
 public class DeleteEventPresenter implements DeleteEventOutputBoundary {
 
@@ -41,14 +42,14 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
 
         // ✅ 更新 AvailableEventViewModel
         AvailableEventState currentState = availableEventViewModel.getState();
-        List<Info> updatedList = new ArrayList<>(currentState.getAvailableEvents());
+        List<InfoInterf> updatedList = new ArrayList<>(currentState.getAvailableEvents());
         updatedList.removeIf(info -> info.getId().equals(outputData.getEventId()));
         currentState.setAvailableEvents(updatedList);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
 
         // ✅ 同步更新 AddedEventViewModel 中的下拉框 name 列表
         List<String> names = new ArrayList<>();
-        for (Info info : updatedList) {
+        for (InfoInterf info : updatedList) {
             names.add(info.getName());
         }
 
@@ -67,3 +68,4 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         deletedEventViewModel.setState(newState);
     }
 }
+

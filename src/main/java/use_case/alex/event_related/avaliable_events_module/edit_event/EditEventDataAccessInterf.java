@@ -1,7 +1,6 @@
 package use_case.alex.event_related.avaliable_events_module.edit_event;
 
-import entity.info.Info;
-
+import entity.info.InfoInterf;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ public interface EditEventDataAccessInterf {
      * @param updatedEvent The updated Info object.
      * @return true if update is successful, false otherwise.
      */
-    boolean update(Info updatedEvent);
+    boolean update(InfoInterf updatedEvent);
 
     /**
      * Retrieves an Info object by its ID.
@@ -25,7 +24,7 @@ public interface EditEventDataAccessInterf {
      * @param id The ID of the Info object.
      * @return The Info object with the given ID, or null if not found.
      */
-    Info getEventById(String id);
+    InfoInterf getEventById(String id);
 
     /**
      * Checks whether an event with the given ID exists.
@@ -40,6 +39,5 @@ public interface EditEventDataAccessInterf {
      *
      * @return a list of all Info objects
      */
-    List<Info> getAllEvents();
+    List<InfoInterf> getAllEvents();
 }
-

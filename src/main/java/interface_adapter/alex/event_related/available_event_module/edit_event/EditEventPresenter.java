@@ -1,8 +1,11 @@
 package interface_adapter.alex.event_related.available_event_module.edit_event;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
 import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputData;
 
@@ -16,11 +19,16 @@ public class EditEventPresenter implements EditEventOutputBoundary {
 
     private final EditedEventViewModel editedEventViewModel;
     private final AvailableEventViewModel availableEventViewModel;
+    private TodaysEventsViewModel todaysEventsViewModel;
 
     public EditEventPresenter(EditedEventViewModel editedEventViewModel,
                               AvailableEventViewModel availableEventViewModel) {
         this.editedEventViewModel = editedEventViewModel;
         this.availableEventViewModel = availableEventViewModel;
+    }
+    
+    public void setTodaysEventsViewModel(TodaysEventsViewModel todaysEventsViewModel) {
+        this.todaysEventsViewModel = todaysEventsViewModel;
     }
 
     @Override
@@ -35,9 +43,9 @@ public class EditEventPresenter implements EditEventOutputBoundary {
 
         // 2. 修改 Info 并用新 AvailableEventState 更新 ViewModel
         AvailableEventState oldState = availableEventViewModel.getState();
-        List<Info> eventList = oldState.getAvailableEvents();
+        List<InfoInterf> eventList = oldState.getAvailableEvents();
 
-        for (Info info : eventList) {
+        for (InfoInterf info : eventList) {
             if (info.getId().equals(outputData.getId())) {
                 info.setName(outputData.getName());
                 info.setCategory(outputData.getCategory());
@@ -51,6 +59,12 @@ public class EditEventPresenter implements EditEventOutputBoundary {
         newStateForView.setAvailableEvents(eventList); // 原列表也行
         availableEventViewModel.setState(newStateForView);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
+        
+        // 4. Also trigger refresh of today's events view since they share the same Info objects
+        if (todaysEventsViewModel != null) {
+            // Fire property change to refresh the today's events display
+            todaysEventsViewModel.firePropertyChanged("state");
+        }
 
     }
 

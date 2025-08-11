@@ -5,13 +5,24 @@ import use_case.goalManage.delete_goal.DeleteGoalInputData;
 
 public class DeleteGoalController {
     private final DeleteGoalInputBoundary deleteGoalUseCase;
+    private DeleteGoalPresenter presenter;
 
     public DeleteGoalController(DeleteGoalInputBoundary deleteGoalUseCase) {
         this.deleteGoalUseCase = deleteGoalUseCase;
     }
 
-    public void execute(String goalName, boolean confirmed) {
-        DeleteGoalInputData inputData = new DeleteGoalInputData(goalName, confirmed);
+    // Inject presenter reference here
+    public void setPresenter(DeleteGoalPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public void execute(String goalName) {
+        DeleteGoalInputData inputData = new DeleteGoalInputData(goalName, false);
+        deleteGoalUseCase.execute(inputData);
+    }
+
+    public void executeConfirmedDeletion(String goalName) {
+        DeleteGoalInputData inputData = new DeleteGoalInputData(goalName, true);
         deleteGoalUseCase.execute(inputData);
     }
 }

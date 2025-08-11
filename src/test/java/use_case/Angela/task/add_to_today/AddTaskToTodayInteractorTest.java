@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -278,6 +279,229 @@ class AddTaskToTodayInteractorTest {
 
         // Verify task was added to today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());
+    }
+
+    @Test
+    void testIsTestingOverdueAllowsReAddingTaskWithPastDate() {
+        // Create an available task
+        Info info = new Info.Builder("Test Task")
+                .description("Test description")
+                .build();
+        TaskAvailable availableTask = new TaskAvailable(info);
+        taskGateway.saveTaskAvailable(availableTask);
+
+        // First add the task normally with a future date
+        LocalDate futureDate = LocalDate.now().plusDays(3);
+        AddTaskToTodayInputData normalInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.HIGH,
+                futureDate
+        );
+        interactor.execute(normalInput);
+        
+        // Verify task was added
+        assertEquals(1, taskGateway.getTodaysTasks().size());
+        Task firstTask = taskGateway.getTodaysTasks().get(0);
+        assertFalse(firstTask.isOverdue());
+        
+        // Reset presenter for next test
+        testPresenter = new TestAddTaskToTodayPresenter();
+        interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
+        
+        // Now try to add the same task with yesterday's date using isTestingOverdue flag
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        AddTaskToTodayInputData testingInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.MEDIUM,
+                yesterday,
+                true  // isTestingOverdue = true
+        );
+        interactor.execute(testingInput);
+        
+        // Verify success (no error)
+        assertNotNull(testPresenter.lastOutputData);
+        assertNull(testPresenter.lastError);
+        
+        // The task should be updated or re-added with overdue status
+        List<Task> todaysTasks = taskGateway.getTodaysTasks();
+        assertTrue(todaysTasks.size() >= 1);
+        
+        // Find the task with the overdue date
+        boolean foundOverdueTask = todaysTasks.stream()
+                .anyMatch(task -> task.getDates().getDueDate() != null &&
+                                task.getDates().getDueDate().equals(yesterday) &&
+                                task.isOverdue());
+        assertTrue(foundOverdueTask, "Should have an overdue task with yesterday's date");
+    }
+
+    @Test
+    void testNormalAddFailsWhenTaskAlreadyInTodayAndNotOverdue() {
+        // Create an available task
+        Info info = new Info.Builder("Already Added Task")
+                .description("Already in today")
+                .build();
+        TaskAvailable availableTask = new TaskAvailable(info);
+        taskGateway.saveTaskAvailable(availableTask);
+
+        // Add it to today's list with a future date
+        LocalDate futureDate = LocalDate.now().plusDays(2);
+        AddTaskToTodayInputData inputData = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.MEDIUM,
+                futureDate
+        );
+        interactor.execute(inputData);
+        
+        // Verify success
+        assertNotNull(testPresenter.lastOutputData);
+        assertNull(testPresenter.lastError);
+        assertEquals(1, taskGateway.getTodaysTasks().size());
+        
+        // Reset presenter
+        testPresenter = new TestAddTaskToTodayPresenter();
+        interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
+
+        // Try to add the same task again without isTestingOverdue flag
+        AddTaskToTodayInputData duplicateInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.HIGH,
+                LocalDate.now().plusDays(5)
+        );
+        interactor.execute(duplicateInput);
+
+        // Verify failure
+        assertNull(testPresenter.lastOutputData);
+        assertNotNull(testPresenter.lastError);
+        assertEquals("Task is already in Today's Tasks", testPresenter.lastError);
+        
+        // Verify still only one task in today's list
+        assertEquals(1, taskGateway.getTodaysTasks().size());
+    }
+
+    @Test
+    void testCanReAddOverdueTaskWithNewDueDate() {
+        // Create an available task
+        Info info = new Info.Builder("Overdue Task")
+                .description("Will become overdue")
+                .build();
+        TaskAvailable availableTask = new TaskAvailable(info);
+        taskGateway.saveTaskAvailable(availableTask);
+
+        // First add the task with a past date (making it overdue)
+        LocalDate pastDate = LocalDate.now().minusDays(3);
+        AddTaskToTodayInputData overdueInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.LOW,
+                pastDate,
+                true  // Use testing flag to allow past date
+        );
+        interactor.execute(overdueInput);
+        
+        // Verify task was added and is overdue
+        assertEquals(1, taskGateway.getTodaysTasks().size());
+        Task overdueTask = taskGateway.getTodaysTasks().get(0);
+        assertTrue(overdueTask.isOverdue());
+        assertEquals(pastDate, overdueTask.getDates().getDueDate());
+        
+        // Reset presenter
+        testPresenter = new TestAddTaskToTodayPresenter();
+        interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
+        
+        // Now try to add the same task again with a new future date
+        // This should work because the existing task is overdue
+        LocalDate newFutureDate = LocalDate.now().plusDays(7);
+        AddTaskToTodayInputData newInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.HIGH,
+                newFutureDate
+        );
+        interactor.execute(newInput);
+        
+        // Verify success
+        assertNotNull(testPresenter.lastOutputData);
+        assertNull(testPresenter.lastError);
+        
+        // Should now have 2 instances of the task (one overdue, one not)
+        assertEquals(2, taskGateway.getTodaysTasks().size());
+        
+        // Verify we have both overdue and non-overdue versions
+        List<Task> tasks = taskGateway.getTodaysTasks();
+        boolean hasOverdueVersion = tasks.stream().anyMatch(Task::isOverdue);
+        boolean hasNonOverdueVersion = tasks.stream().anyMatch(t -> !t.isOverdue());
+        assertTrue(hasOverdueVersion, "Should still have the overdue version");
+        assertTrue(hasNonOverdueVersion, "Should have the new non-overdue version");
+    }
+
+    @Test
+    void testIsTaskInTodaysListAndNotOverdueMethod() {
+        // Create an available task
+        Info info = new Info.Builder("Test Task")
+                .description("For testing method")
+                .build();
+        TaskAvailable availableTask = new TaskAvailable(info);
+        taskGateway.saveTaskAvailable(availableTask);
+        
+        // Initially, task should not be in today's list
+        assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
+        
+        // Add task with future date (not overdue)
+        LocalDate futureDate = LocalDate.now().plusDays(2);
+        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, futureDate);
+        
+        // Now it should be in today's list and not overdue
+        assertTrue(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
+        
+        // Manually update the task to be overdue by changing its due date
+        // Create a new task with past date to simulate overdue
+        taskGateway.getTodaysTasks().clear();
+        LocalDate pastDate = LocalDate.now().minusDays(1);
+        Task overdueTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, pastDate);
+        
+        // Now it should be in today's list but overdue, so method should return false
+        assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
+    }
+
+    @Test
+    void testIsTestingOverdueFlagBypassesValidation() {
+        // Create an available task
+        Info info = new Info.Builder("Bypass Test")
+                .description("Testing validation bypass")
+                .build();
+        TaskAvailable availableTask = new TaskAvailable(info);
+        taskGateway.saveTaskAvailable(availableTask);
+
+        // Add task normally first
+        LocalDate normalDate = LocalDate.now().plusDays(1);
+        AddTaskToTodayInputData normalInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                Task.Priority.LOW,
+                normalDate
+        );
+        interactor.execute(normalInput);
+        
+        // Verify task was added
+        assertEquals(1, taskGateway.getTodaysTasks().size());
+        
+        // Reset presenter
+        testPresenter = new TestAddTaskToTodayPresenter();
+        interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
+        
+        // Try to add again with testing flag - should succeed despite already being present
+        LocalDate testDate = LocalDate.now().minusDays(2);
+        AddTaskToTodayInputData testInput = new AddTaskToTodayInputData(
+                availableTask.getId(),
+                null,  // No priority
+                testDate,
+                true  // isTestingOverdue = true bypasses validation
+        );
+        interactor.execute(testInput);
+        
+        // Should succeed even though task is already in today's list
+        assertNotNull(testPresenter.lastOutputData);
+        assertNull(testPresenter.lastError);
+        
+        // Should have added another instance
+        assertEquals(2, taskGateway.getTodaysTasks().size());
     }
 
     /**

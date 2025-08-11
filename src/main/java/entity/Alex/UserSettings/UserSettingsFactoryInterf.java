@@ -14,6 +14,7 @@ public interface UserSettingsFactoryInterf {
      * @param notificationTime The user's notification time settings
      * @return A new UserSettingsInterf instance
      */
-    UserSettingsInterf create(String userId, NotificationTimeInterf notificationTime);
+    UserSettingsInterf create(String userId,
+                              NotificationTimeInterf notificationTime);
 }
 

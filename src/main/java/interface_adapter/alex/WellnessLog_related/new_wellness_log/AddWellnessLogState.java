@@ -1,6 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.new_wellness_log;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AddWellnessLogState {
 
-    private MoodLabel moodLabel = null;
+    private MoodLabelInterf moodLabel = null;
     private Levels stressLevel = null;
     private Levels energyLevel = null;
     private Levels fatigueLevel = null;
@@ -16,7 +16,7 @@ public class AddWellnessLogState {
     private String userNote = "";
 
     /** 用于下拉框选择情绪标签 */
-    private List<MoodLabel> availableMoodLabels = new ArrayList<>();
+    private List<MoodLabelInterf> availableMoodLabels = new ArrayList<>();
 
     /** 错误与成功信息 */
     private String errorMessage = null;
@@ -24,7 +24,7 @@ public class AddWellnessLogState {
 
     // ---------------- Getters ----------------
 
-    public MoodLabel getMoodLabel() {
+    public MoodLabelInterf getMoodLabel() {
         return moodLabel;
     }
 
@@ -44,7 +44,7 @@ public class AddWellnessLogState {
         return userNote;
     }
 
-    public List<MoodLabel> getAvailableMoodLabels() {
+    public List<MoodLabelInterf> getAvailableMoodLabels() {
         return availableMoodLabels;
     }
 
@@ -58,7 +58,7 @@ public class AddWellnessLogState {
 
     // ---------------- Setters ----------------
 
-    public void setMoodLabel(MoodLabel moodLabel) {
+    public void setMoodLabel(MoodLabelInterf moodLabel) {
         this.moodLabel = moodLabel;
     }
 
@@ -78,7 +78,7 @@ public class AddWellnessLogState {
         this.userNote = userNote;
     }
 
-    public void setAvailableMoodLabels(List<MoodLabel> availableMoodLabels) {
+    public void setAvailableMoodLabels(List<MoodLabelInterf> availableMoodLabels) {
         this.availableMoodLabels = availableMoodLabels;
     }
 
@@ -90,4 +90,3 @@ public class AddWellnessLogState {
         this.successMessage = successMessage;
     }
 }
-

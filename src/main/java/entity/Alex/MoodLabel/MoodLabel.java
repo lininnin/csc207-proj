@@ -4,26 +4,26 @@ package entity.Alex.MoodLabel;
  * Represents a mood label with a name and a type (positive or negative).
  * Used in wellness tracking to categorize emotional states.
  */
-public class MoodLabel implements MoodLabelInterf {
+public final class MoodLabel implements MoodLabelInterf {
+
 
     /**
-     * Type of the mood: Positive or Negative.
+     * The type of this mood label (positive/negative).
      */
-    public enum Type {
-        Positive,
-        Negative
-    }
-
     private Type type;
+
+    /**
+     * The name of this mood label (e.g., "Happy", "Stressed").
+     */
     private String name;
 
     /**
      * Private constructor used by the Builder.
      * Fields are validated and assigned via the Builder.
      *
-     * @param builder Builder instance containing the fields.
+     * @param builder Builder instance containing the fields
      */
-    private MoodLabel(Builder builder) {
+    private MoodLabel(final Builder builder) {
         this.type = builder.type;
         this.name = builder.name;
     }
@@ -32,41 +32,49 @@ public class MoodLabel implements MoodLabelInterf {
      * Builder for creating immutable MoodLabel instances.
      */
     public static class Builder {
+
+        /**
+         * The mood type to assign.
+         */
         private Type type;
+
+        /**
+         * The name of the mood label.
+         */
         private String name;
 
         /**
          * Builder constructor with required name.
          *
-         * @param name The name of the mood label (e.g., "Happy", "Stressed")
+         * @param nameParam the name of the mood label (e.g., "Happy")
          * @throws IllegalArgumentException if name is null or empty
          */
-        public Builder(String name) {
-            if (name == null || name.trim().isEmpty()) {
-                throw new IllegalArgumentException("Name cannot be null or empty");
+        public Builder(final String nameParam) {
+            if (nameParam == null || nameParam.trim().isEmpty()) {
+                throw new IllegalArgumentException("Name cannot be null or empty.");
             }
-            this.name = name.trim();
+            this.name = nameParam.trim();
         }
 
         /**
          * Sets the mood type (Positive or Negative).
          *
-         * @param type The type of the mood
-         * @return The Builder itself
+         * @param typeParam the type of the mood
+         * @return the Builder itself
          * @throws IllegalArgumentException if type is null
          */
-        public Builder type(Type type) {
-            if (type == null) {
-                throw new IllegalArgumentException("Type cannot be null");
+        public Builder type(final Type typeParam) {
+            if (typeParam == null) {
+                throw new IllegalArgumentException("Type cannot be null.");
             }
-            this.type = type;
+            this.type = typeParam;
             return this;
         }
 
         /**
          * Builds and returns a new MoodLabel object.
          *
-         * @return A new MoodLabel instance
+         * @return a new MoodLabel instance
          */
         public MoodLabel build() {
             return new MoodLabel(this);
@@ -76,14 +84,18 @@ public class MoodLabel implements MoodLabelInterf {
     // ------------------ Getters ------------------
 
     /**
-     * @return The name of this mood label
+     * Returns the name of this mood label.
+     *
+     * @return the name string
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return The type (Positive or Negative) of this mood label
+     * Returns the type of this mood label.
+     *
+     * @return the type (positive or negative)
      */
     public Type getType() {
         return type;
@@ -94,35 +106,38 @@ public class MoodLabel implements MoodLabelInterf {
     /**
      * Sets the name of this mood label.
      *
-     * @param name The new name
+     * @param nameParam the new name
      * @throws IllegalArgumentException if name is null or empty
      */
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+    public void setName(final String nameParam) {
+        if (nameParam == null || nameParam.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
         }
-        this.name = name.trim();
+        this.name = nameParam.trim();
     }
 
     /**
      * Sets the type of this mood label.
      *
-     * @param type The new mood type
+     * @param typeParam the new mood type
      * @throws IllegalArgumentException if type is null
      */
-    public void setType(Type type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
+    public void setType(final Type typeParam) {
+        if (typeParam == null) {
+            throw new IllegalArgumentException("Type cannot be null.");
         }
-        this.type = type;
+        this.type = typeParam;
     }
 
     // ------------------ Display for JComboBox ------------------
 
+    /**
+     * Returns a string representation of this mood label.
+     *
+     * @return the name of the label
+     */
     @Override
     public String toString() {
         return name; // Or: return name + " (" + type + ")";
     }
 }
-
-

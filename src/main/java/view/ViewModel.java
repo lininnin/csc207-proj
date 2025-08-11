@@ -27,7 +27,15 @@ public abstract class ViewModel {
         support.removePropertyChangeListener(listener);
     }
 
-    protected void firePropertyChanged(String propertyName, Object oldValue, Object newValue) {
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         support.firePropertyChange(propertyName, oldValue, newValue);
+    }
+
+    /**
+     * Convenience method to notify listeners of a state change.
+     * This fires a property change event for the "state" property.
+     */
+    public void firePropertyChanged() {
+        support.firePropertyChange("state", null, this);
     }
 }

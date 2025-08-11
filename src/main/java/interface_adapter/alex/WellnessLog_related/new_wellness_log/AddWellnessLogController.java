@@ -1,6 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.new_wellness_log;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputData;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputBoundary;
@@ -33,7 +34,7 @@ public class AddWellnessLogController {
                         Levels stressLevel,
                         Levels energyLevel,
                         Levels fatigueLevel,
-                        MoodLabel moodLabel,
+                        MoodLabelInterf moodLabel,
                         String userNote) {
 
         AddWellnessLogInputData inputData = new AddWellnessLogInputData(

@@ -1,6 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
 import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelOutputBoundary;
@@ -39,7 +40,7 @@ public class AddMoodLabelPresenter implements AddMoodLabelOutputBoundary {
         addMoodLabelViewModel.setState(state);
 
         // ✅ 刷新 Available Mood Label 模块
-        List<MoodLabel> updatedLabels = dataAccess.getAllLabels(); // 获取最新列表
+        List<MoodLabelInterf> updatedLabels = dataAccess.getAllLabels(); // 获取最新列表
         List<AvailableMoodLabelState.MoodLabelEntry> entries = updatedLabels.stream()
                 .map(label -> new AvailableMoodLabelState.MoodLabelEntry(
                         label.getName(),

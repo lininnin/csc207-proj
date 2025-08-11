@@ -1,6 +1,7 @@
 package use_case.alex.event_related.avaliable_events_module.delete_event;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 
 /**
  * Interactor for the DeleteAvailableEvent use case.
@@ -28,7 +29,7 @@ public class DeleteEventInteractor implements DeleteEventInputBoundary {
         String eventId = inputData.getEventId();
 
         // Step 1: 查找事件
-        Info eventToDelete = dataAccess.getEventById(eventId);
+        InfoInterf eventToDelete = dataAccess.getEventById(eventId);
         if (eventToDelete == null || !dataAccess.contains(eventToDelete)) {
             DeleteEventOutputData failOutput = new DeleteEventOutputData(
                     eventId, "Event not found or already deleted", false);
