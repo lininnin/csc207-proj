@@ -1,14 +1,16 @@
 package app.feedback_panel;
 
 import entity.Alex.WellnessLogEntry.Levels;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 import entity.Angela.Task.Task;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabel.Type;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.Event.Event;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.InfoInterf;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -71,7 +73,7 @@ public class DailyLogGenerator {
         log.markTaskCompleted(task4, LocalDateTime.now());
 
         // Fake Event
-        Info eventInfo = new Info.Builder("Event " + (i +1))
+        InfoInterf eventInfo = new Info.Builder("Event " + (i +1))
                 .category("Life")
                 .build();
         Event event = new Event.Builder(eventInfo)
@@ -155,7 +157,7 @@ public class DailyLogGenerator {
         Random random = new Random();
         Levels randomWellnessLvl =  lvls[random.nextInt(lvls.length)];
         for (int j=0; j < 5; j++) {
-            WellnessLogEntry entry = new WellnessLogEntry.Builder()
+            WellnessLogEntryInterf entry = new WellnessLogEntry.Builder()
                     .time(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
                     .moodLabel(mood)
                     .energyLevel(randomWellnessLvl)

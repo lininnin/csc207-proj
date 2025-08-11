@@ -3,6 +3,7 @@ package data_access;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import use_case.Angela.task.TaskGateway;
 import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
@@ -121,7 +122,7 @@ public class InMemoryTaskGateway implements
 
     @Override
     public String getTaskName(String taskId) {
-        Info info = availableTasks.get(taskId);
+        InfoInterf info = availableTasks.get(taskId);
         if (info != null) {
             return info.getName();
         }
@@ -191,7 +192,7 @@ public class InMemoryTaskGateway implements
         // Check in TaskAvailable storage
         for (TaskAvailable taskAvailable : availableTaskTemplates.values()) {
             if (taskAvailable != null && taskAvailable.getInfo() != null) {
-                Info info = taskAvailable.getInfo();
+                InfoInterf info = taskAvailable.getInfo();
                 if (info.getName() != null && info.getName().equalsIgnoreCase(name)) {
                     String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
                         ? "" : info.getCategory().trim();
@@ -203,7 +204,7 @@ public class InMemoryTaskGateway implements
         }
         
         // Also check legacy storage for backward compatibility
-        for (Info info : availableTasks.values()) {
+        for (InfoInterf info : availableTasks.values()) {
             if (info != null && info.getName() != null && info.getName().equalsIgnoreCase(name)) {
                 String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
                     ? "" : info.getCategory().trim();
@@ -318,7 +319,7 @@ public class InMemoryTaskGateway implements
         }
         
         // ALSO check and remove from legacy storage
-        Info legacyInfo = availableTasks.remove(templateTaskId);
+        InfoInterf legacyInfo = availableTasks.remove(templateTaskId);
         if (legacyInfo != null) {
             deletedFromAvailable = true;
         }
@@ -375,7 +376,7 @@ public class InMemoryTaskGateway implements
         for (Task todayTask : todaysTasks.values()) {
             if (taskId.equals(todayTask.getTemplateTaskId())) {
                 // Update ALL properties in today's task
-                Info todayInfo = todayTask.getInfo();
+                InfoInterf todayInfo = todayTask.getInfo();
                 todayInfo.setName(newName);
                 todayInfo.setDescription(newDescription != null ? newDescription : "");
                 todayInfo.setCategory(newCategoryId != null ? newCategoryId : "");
@@ -408,7 +409,7 @@ public class InMemoryTaskGateway implements
             
             TaskAvailable taskAvailable = entry.getValue();
             if (taskAvailable != null && taskAvailable.getInfo() != null) {
-                Info info = taskAvailable.getInfo();
+                InfoInterf info = taskAvailable.getInfo();
                 if (info.getName() != null && info.getName().equalsIgnoreCase(name)) {
                     String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
                         ? "" : info.getCategory().trim();
@@ -426,7 +427,7 @@ public class InMemoryTaskGateway implements
                 continue;
             }
             
-            Info info = entry.getValue();
+            InfoInterf info = entry.getValue();
             if (info != null && info.getName() != null && info.getName().equalsIgnoreCase(name)) {
                 String taskCategory = (info.getCategory() == null || info.getCategory().trim().isEmpty()) 
                     ? "" : info.getCategory().trim();
@@ -661,7 +662,7 @@ public class InMemoryTaskGateway implements
         }
         
         // Also update in legacy storage
-        Info info = availableTasks.get(taskId);
+        InfoInterf info = availableTasks.get(taskId);
         if (info != null) {
             info.setCategory(newCategoryId);
             return true;

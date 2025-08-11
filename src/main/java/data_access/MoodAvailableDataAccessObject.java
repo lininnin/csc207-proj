@@ -3,6 +3,7 @@ package data_access;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.Type;
 import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
@@ -25,23 +26,22 @@ public class MoodAvailableDataAccessObject implements
      * Reference to the mood label storage (positive/negative).
      */
     private final AvaliableMoodLabelInterf availableLabels;
+    private final MoodLabelFactoryInterf moodLabelFactory;
 
     /**
      * Constructs the DAO using a factory to obtain the label storage implementation.
      *
      * @param factory A factory that provides the implementation for available mood labels.
      */
-    public MoodAvailableDataAccessObject(final AvaliableMoodlabelFactoryInterf factory) {
+    public MoodAvailableDataAccessObject(final AvaliableMoodlabelFactoryInterf factory,
+                                         final MoodLabelFactoryInterf moodLabelFactory) {
         this.availableLabels = factory.create();
+        this.moodLabelFactory = moodLabelFactory;
         // 默认标签初始化
-        availableLabels.addLabel(new MoodLabel.Builder("Happy")
-                .type(Type.Positive).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Calm")
-                .type(Type.Positive).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Anxious")
-                .type(Type.Negative).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Stressed")
-                .type(Type.Negative).build());
+        availableLabels.addLabel(moodLabelFactory.create("Happy", Type.Positive));
+        availableLabels.addLabel(moodLabelFactory.create("Calm", Type.Positive));
+        availableLabels.addLabel(moodLabelFactory.create("Anxious", Type.Negative));
+        availableLabels.addLabel(moodLabelFactory.create("Stressed", Type.Negative));
     }
 
     /**
