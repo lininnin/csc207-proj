@@ -1,23 +1,23 @@
 package entity.Alex.Event;
 
-import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
+import entity.info.InfoInterf;
 
 import java.time.LocalDate;
 
 /**
- * Represents an event that are added to Today's tasks area,
- * info: Info — info of this task
- * beginAndDueDates:  BeginAndDueDates — Begin and due dates of this task
+ * Represents an event that is added to Today's tasks area,
+ * info: InfoInterf — info of this task
+ * beginAndDueDates: BeginAndDueDatesInterf — Begin and due dates of this task
  */
 public class Event implements EventInterf {
 
-    private Info info;
-    private BeginAndDueDates beginAndDueDates;
+    private InfoInterf info;
+    private BeginAndDueDatesInterf beginAndDueDates;
     private boolean oneTime;
 
     /**
-     * Constructs a new Info object with optional description and category.
+     * Constructs a new Event object with required info and begin/due dates.
      * @param builder the builder of the item
      */
     private Event(Builder builder) {
@@ -33,18 +33,18 @@ public class Event implements EventInterf {
     }
 
     public static class Builder {
-        private final Info info;
-        private BeginAndDueDates beginAndDueDates;
+        private final InfoInterf info;
+        private BeginAndDueDatesInterf beginAndDueDates;
         private boolean oneTime = false;
 
-        public Builder(Info info) {
+        public Builder(InfoInterf info) {
             if (info == null) {
                 throw new IllegalArgumentException("Info cannot be null");
             }
             this.info = info;
         }
 
-        public Builder beginAndDueDates(BeginAndDueDates beginAndDueDates) {
+        public Builder beginAndDueDates(BeginAndDueDatesInterf beginAndDueDates) {
             if (beginAndDueDates == null) {
                 throw new IllegalArgumentException("BeginAndDueDates cannot be null");
             }
@@ -67,11 +67,13 @@ public class Event implements EventInterf {
 
     // ----------------- Getters -----------------
 
-    public Info getInfo() {
+    @Override
+    public InfoInterf getInfo() {
         return info;
     }
 
-    public BeginAndDueDates getBeginAndDueDates() {
+    @Override
+    public BeginAndDueDatesInterf getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
@@ -81,13 +83,15 @@ public class Event implements EventInterf {
 
     // ----------------- Setters with validation -----------------
 
-    public void editInfo(Info info) {
+    @Override
+    public void editInfo(InfoInterf info) {
         if (info == null) {
             throw new IllegalArgumentException("Info cannot be null");
         }
         this.info = info;
     }
 
+    @Override
     public void editDueDate(LocalDate newDueDate) {
         if (newDueDate == null) {
             throw new IllegalArgumentException("Due date cannot be null");

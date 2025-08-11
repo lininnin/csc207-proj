@@ -1,6 +1,6 @@
 package entity.Alex.DailyEventLog;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,13 +9,14 @@ import java.util.UUID;
 
 /**
  * Represents a daily log of actual events that occurred on a given date.
- * Each entry in this log corresponds to a recorded Event object.
+ * Each entry in this log corresponds to a recorded EventInterf object.
+ * Fully decoupled from the concrete Event class to follow DIP.
  */
-public class DailyEventLog implements DailyEventLogInterf{
+public class DailyEventLog implements DailyEventLogInterf {
 
     private final String id;
     private final LocalDate date;
-    private final List<Event> actualEvents;
+    private final List<EventInterf> actualEvents;
 
     /**
      * Constructs a new DailyEventLog for the specified date.
@@ -32,9 +33,10 @@ public class DailyEventLog implements DailyEventLogInterf{
      * Adds an event to the actual event list for this day.
      * If the event is null or already exists, it is not added.
      *
-     * @param event The Event to add
+     * @param event The EventInterf to add
      */
-    public void addEntry(Event event) {
+    @Override
+    public void addEntry(EventInterf event) {
         if (event != null && !actualEvents.contains(event)) {
             actualEvents.add(event);
         }
@@ -46,10 +48,11 @@ public class DailyEventLog implements DailyEventLogInterf{
      *
      * @param id The ID of the event (from its Info object) to remove
      */
+    @Override
     public void removeEntry(String id) {
         if (id == null) return;
 
-        actualEvents.removeIf(entry -> id.equals(entry.getInfo().getId()));
+        actualEvents.removeIf(entry -> entry.getInfo() != null && id.equals(entry.getInfo().getId()));
     }
 
     // ------------------ Getters ------------------
@@ -71,8 +74,10 @@ public class DailyEventLog implements DailyEventLogInterf{
     /**
      * @return A copy of the list of all events recorded for this day
      */
-    public List<Event> getActualEvents() {
+    @Override
+    public List<EventInterf> getActualEvents() {
         return new ArrayList<>(actualEvents); // defensive copy
     }
 }
+
 

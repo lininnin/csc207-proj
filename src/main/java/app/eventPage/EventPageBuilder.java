@@ -2,8 +2,13 @@ package app.eventPage;
 
 import entity.Alex.DailyEventLog.DailyEventLogFactory;
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.Alex.Event.EventFactory;
+import entity.Alex.Event.EventFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableFactory;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.Alex.EventAvailable.EventAvailableInterf;
+import entity.BeginAndDueDates.BeginAndDueDatesFactory;
+import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventPresenter;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
@@ -46,6 +51,12 @@ import java.util.List;
 public class EventPageBuilder {
 
     public JPanel build() {
+
+        // --- factories ---
+        EventFactoryInterf eventFactory = new EventFactory();
+        BeginAndDueDatesFactoryInterf datesFactory = new BeginAndDueDatesFactory();
+
+
         // --- ViewModels ---
         CreatedEventViewModel createdEventViewModel = new CreatedEventViewModel();
         AvailableEventViewModel availableEventViewModel = new AvailableEventViewModel();
@@ -78,7 +89,8 @@ public class EventPageBuilder {
         EditEventController editEventController = new EditEventController(editEventInteractor);
 
         AddEventOutputBoundary addEventPresenter = new AddEventPresenter(addEventViewModel, todaysEventsViewModel, todaysEventDAO);
-        AddEventInputBoundary addEventInteractor = new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter);
+        AddEventInputBoundary addEventInteractor =
+                new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter, eventFactory, datesFactory);
         AddEventController addEventController = new AddEventController(addEventInteractor);
 
         DeleteTodaysEventOutputBoundary delTodayPresenter = new DeleteTodaysEventPresenter(deleteTodaysEventViewModel, todaysEventsViewModel, addEventViewModel);

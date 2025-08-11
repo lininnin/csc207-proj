@@ -12,6 +12,8 @@ import interface_adapter.alex.event_related.available_event_module.edit_event.Ed
 import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventState;
 
 import entity.info.Info;
+import entity.Category;
+import use_case.Angela.category.CategoryGateway;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +30,7 @@ public class AvailableEventView extends JPanel {
     private final CreatedEventViewModel createdEventViewModel;
     private final EditEventController editEventController;
     private final EditedEventViewModel editedEventViewModel;
+    private CategoryGateway categoryGateway;
 
     private final JPanel eventListPanel = new JPanel();
 
@@ -78,6 +81,9 @@ public class AvailableEventView extends JPanel {
             System.out.println("AvailableEventView received property change: " + evt.getPropertyName());
             if (AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY.equals(evt.getPropertyName())) {
                 refreshEventList((AvailableEventState) evt.getNewValue());
+            } else if ("state".equals(evt.getPropertyName())) {
+                // Handle refresh triggered by category management
+                refreshEventList(availableEventViewModel.getState());
             }
         });
 
@@ -115,6 +121,10 @@ public class AvailableEventView extends JPanel {
         refreshEventList(availableEventViewModel.getState());
     }
 
+    public void setCategoryGateway(CategoryGateway categoryGateway) {
+        this.categoryGateway = categoryGateway;
+    }
+
     private void refreshEventList(AvailableEventState state) {
         eventListPanel.removeAll();
 
@@ -133,12 +143,39 @@ public class AvailableEventView extends JPanel {
 
             row.add(new JLabel(event.getName(), SwingConstants.CENTER));
             row.add(new JLabel(event.getDescription(), SwingConstants.CENTER));
-            row.add(new JLabel(event.getCategory(), SwingConstants.CENTER));
+
+            // Display category name instead of ID
+            String categoryDisplay = "";
+            if (categoryGateway != null && event.getCategory() != null && !event.getCategory().isEmpty()) {
+                Category category = categoryGateway.getCategoryById(event.getCategory());
+                categoryDisplay = category != null ? category.getName() : event.getCategory();
+            }
+            row.add(new JLabel(categoryDisplay, SwingConstants.CENTER));
 
             JButton editButton = new JButton("edit");
             editButton.addActionListener(e -> {
                 JTextField nameField = new JTextField(event.getName());
-                JTextField categoryField = new JTextField(event.getCategory());
+
+                // Create category dropdown instead of text field
+                JComboBox<CategoryItem> categoryComboBox = new JComboBox<>();
+                categoryComboBox.addItem(new CategoryItem("", "-- No Category --"));
+
+                String currentCategoryId = event.getCategory();
+                int selectedIndex = 0;
+
+                if (categoryGateway != null) {
+                    int index = 1;
+                    for (Category category : categoryGateway.getAllCategories()) {
+                        CategoryItem item = new CategoryItem(category.getId(), category.getName());
+                        categoryComboBox.addItem(item);
+                        if (category.getId().equals(currentCategoryId)) {
+                            selectedIndex = index;
+                        }
+                        index++;
+                    }
+                }
+                categoryComboBox.setSelectedIndex(selectedIndex);
+
                 JTextArea descriptionArea = new JTextArea(event.getDescription());
                 JScrollPane descScroll = new JScrollPane(descriptionArea);
                 descScroll.setPreferredSize(new Dimension(250, 80));
@@ -149,7 +186,7 @@ public class AvailableEventView extends JPanel {
                 panel.add(new JLabel("Description:"));
                 panel.add(descScroll);
                 panel.add(new JLabel("Category:"));
-                panel.add(categoryField);
+                panel.add(categoryComboBox);
 
                 int result = JOptionPane.showConfirmDialog(
                         this, panel, "Edit Event: " + event.getName(),
@@ -157,10 +194,13 @@ public class AvailableEventView extends JPanel {
                 );
 
                 if (result == JOptionPane.OK_OPTION) {
+                    CategoryItem selectedCategory = (CategoryItem) categoryComboBox.getSelectedItem();
+                    String categoryId = selectedCategory != null ? selectedCategory.getId() : "";
+
                     editEventController.execute(
                             event.getId(),
                             nameField.getText(),
-                            categoryField.getText(),
+                            categoryId,
                             descriptionArea.getText()
                     );
                 }
@@ -189,5 +229,24 @@ public class AvailableEventView extends JPanel {
         eventListPanel.revalidate();
         eventListPanel.repaint();
     }
-}
 
+    // Inner class to hold category information
+    private static class CategoryItem {
+        private final String id;
+        private final String name;
+
+        public CategoryItem(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+}

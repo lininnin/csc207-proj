@@ -8,11 +8,12 @@ import java.util.List;
 
 /**
  * Stores available mood labels separated by their type: Positive and Negative.
+ * Now fully decoupled from the concrete MoodLabel class.
  */
 public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
 
-    private final List<MoodLabel> positiveLabels;
-    private final List<MoodLabel> negativeLabels;
+    private final List<MoodLabelInterf> positiveLabels;
+    private final List<MoodLabelInterf> negativeLabels;
 
     /**
      * Default constructor initializes empty lists.
@@ -41,9 +42,9 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
         }
 
         if (type == MoodLabel.Type.Positive) {
-            positiveLabels.add((MoodLabel) moodLabel);
+            positiveLabels.add(moodLabel);
         } else if (type == MoodLabel.Type.Negative) {
-            negativeLabels.add((MoodLabel) moodLabel);
+            negativeLabels.add(moodLabel);
         }
     }
 
@@ -73,7 +74,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
     @Override
     public List<String> getPositiveLabels() {
         List<String> names = new ArrayList<>();
-        for (MoodLabel label : positiveLabels) {
+        for (MoodLabelInterf label : positiveLabels) {
             names.add(label.getName());
         }
         return names;
@@ -85,7 +86,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
     @Override
     public List<String> getNegativeLabels() {
         List<String> names = new ArrayList<>();
-        for (MoodLabel label : negativeLabels) {
+        for (MoodLabelInterf label : negativeLabels) {
             names.add(label.getName());
         }
         return names;
@@ -95,7 +96,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      * Returns all positive MoodLabel objects.
      */
     @Override
-    public List<MoodLabel> getPositiveLabelObjects() {
+    public List<MoodLabelInterf> getPositiveLabelObjects() {
         return new ArrayList<>(positiveLabels);
     }
 
@@ -103,7 +104,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      * Returns all negative MoodLabel objects.
      */
     @Override
-    public List<MoodLabel> getNegativeLabelObjects() {
+    public List<MoodLabelInterf> getNegativeLabelObjects() {
         return new ArrayList<>(negativeLabels);
     }
 
@@ -115,4 +116,3 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
                 || negativeLabels.stream().anyMatch(l -> l.getName().equals(name));
     }
 }
-

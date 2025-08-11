@@ -1,5 +1,6 @@
 package data_access;
 
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
 import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
@@ -11,7 +12,7 @@ import java.util.List;
 
 /**
  * Data Access Object for managing available mood labels.
- * Now decoupled from concrete implementation using DIP.
+ * Fully decoupled from concrete implementation using DIP.
  */
 public class MoodAvailableDataAccessObject implements
         AddMoodLabelDataAccessInterf,
@@ -35,7 +36,7 @@ public class MoodAvailableDataAccessObject implements
     // ----------- AddMoodLabelDataAccessInterf 实现 -----------
 
     @Override
-    public void save(MoodLabel moodLabel) {
+    public void save(MoodLabelInterf moodLabel) {
         if (contains(moodLabel.getName())) {
             throw new IllegalArgumentException("Label with the same name already exists");
         }
@@ -43,8 +44,8 @@ public class MoodAvailableDataAccessObject implements
     }
 
     @Override
-    public List<MoodLabel> getAllLabels() {
-        List<MoodLabel> all = new ArrayList<>();
+    public List<MoodLabelInterf> getAllLabels() {
+        List<MoodLabelInterf> all = new ArrayList<>();
         all.addAll(availableLabels.getPositiveLabelObjects());
         all.addAll(availableLabels.getNegativeLabelObjects());
         return all;
@@ -53,18 +54,18 @@ public class MoodAvailableDataAccessObject implements
     // ----------- DeleteMoodLabelDataAccessInterf 实现 -----------
 
     @Override
-    public boolean remove(MoodLabel moodLabel) {
+    public boolean remove(MoodLabelInterf moodLabel) {
         return removeByName(moodLabel.getName());
     }
 
     @Override
-    public boolean contains(MoodLabel moodLabel) {
+    public boolean contains(MoodLabelInterf moodLabel) {
         return contains(moodLabel.getName());
     }
 
     @Override
-    public MoodLabel getByName(String name) {
-        for (MoodLabel label : getAllLabels()) {
+    public MoodLabelInterf getByName(String name) {
+        for (MoodLabelInterf label : getAllLabels()) {
             if (label.getName().equals(name)) {
                 return label;
             }
@@ -75,7 +76,7 @@ public class MoodAvailableDataAccessObject implements
     // ----------- EditMoodLabelDataAccessInterface 实现 -----------
 
     @Override
-    public boolean update(MoodLabel updatedLabel) {
+    public boolean update(MoodLabelInterf updatedLabel) {
         String name = updatedLabel.getName();
         if (!contains(name)) return false;
         availableLabels.removeLabelByName(name);
@@ -109,6 +110,3 @@ public class MoodAvailableDataAccessObject implements
         availableLabels.clear();
     }
 }
-
-
-

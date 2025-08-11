@@ -1,12 +1,13 @@
 package use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.util.List;
 
 /**
  * Data access interface for adding mood labels.
  * Provides methods to save and retrieve mood labels.
+ * Now fully decoupled from concrete MoodLabel class by depending on the MoodLabelInterf interface.
  */
 public interface AddMoodLabelDataAccessInterf {
 
@@ -15,13 +16,14 @@ public interface AddMoodLabelDataAccessInterf {
      *
      * @param moodLabel The mood label to save.
      */
-    void save(MoodLabel moodLabel);
+    void save(MoodLabelInterf moodLabel);
 
     /**
      * Retrieves all existing mood labels.
      *
      * @return List of all mood labels.
      */
-    List<MoodLabel> getAllLabels();
+    List<MoodLabelInterf> getAllLabels();
 }
+
 

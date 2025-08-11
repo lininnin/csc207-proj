@@ -6,7 +6,7 @@ import java.time.LocalDate;
  * Factory class for creating BeginAndDueDates instances.
  * Provides convenient methods for common date range scenarios.
  */
-public class BeginAndDueDatesFactory {
+public class BeginAndDueDatesFactory implements BeginAndDueDatesFactoryInterf {
 
     /**
      * Creates a BeginAndDueDates with both dates set.
@@ -16,7 +16,7 @@ public class BeginAndDueDatesFactory {
      * @return A new BeginAndDueDates instance
      * @throws IllegalArgumentException if dates are invalid
      */
-    public static BeginAndDueDates create(LocalDate beginDate, LocalDate dueDate) {
+    public BeginAndDueDatesInterf create(LocalDate beginDate, LocalDate dueDate) {
         return new BeginAndDueDates(beginDate, dueDate);
     }
 
@@ -26,7 +26,7 @@ public class BeginAndDueDatesFactory {
      * @param beginDate The start date
      * @return A new BeginAndDueDates instance with no due date
      */
-    public static BeginAndDueDates createOpenEnded(LocalDate beginDate) {
+    public BeginAndDueDatesInterf createOpenEnded(LocalDate beginDate) {
         return new BeginAndDueDates(beginDate, null);
     }
 
@@ -36,7 +36,7 @@ public class BeginAndDueDatesFactory {
      *
      * @return A new BeginAndDueDates instance with no dates
      */
-    public static BeginAndDueDates createEmpty() {
+    public BeginAndDueDatesInterf createEmpty() {
         return new BeginAndDueDates(null, null);
     }
 
@@ -46,7 +46,7 @@ public class BeginAndDueDatesFactory {
      * @param daysUntilDue Number of days from today until due (null for no due date)
      * @return A new BeginAndDueDates instance starting today
      */
-    public static BeginAndDueDates createStartingToday(Integer daysUntilDue) {
+    public BeginAndDueDatesInterf createStartingToday(Integer daysUntilDue) {
         LocalDate today = LocalDate.now();
         LocalDate dueDate = daysUntilDue != null ? today.plusDays(daysUntilDue) : null;
         return new BeginAndDueDates(today, dueDate);
@@ -59,7 +59,7 @@ public class BeginAndDueDatesFactory {
      * @param durationDays Number of days duration
      * @return A new BeginAndDueDates instance with calculated due date
      */
-    public static BeginAndDueDates createWithDuration(LocalDate beginDate, int durationDays) {
+    public BeginAndDueDatesInterf createWithDuration(LocalDate beginDate, int durationDays) {
         if (beginDate == null) {
             throw new IllegalArgumentException("Begin date cannot be null when creating with duration");
         }

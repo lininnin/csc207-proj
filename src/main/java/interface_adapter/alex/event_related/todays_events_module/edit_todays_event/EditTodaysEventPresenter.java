@@ -1,6 +1,6 @@
 package interface_adapter.alex.event_related.todays_events_module.edit_todays_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import use_case.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventOutputBoundary;
@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Presenter for the EditTodaysEvent use case.
- * Updates the Event's due date and refreshes the TodaysEventsViewModel.
+ * Updates the EventInterf's due date and refreshes the TodaysEventsViewModel.
  */
 public class EditTodaysEventPresenter implements EditTodaysEventOutputBoundary {
 
@@ -30,17 +30,15 @@ public class EditTodaysEventPresenter implements EditTodaysEventOutputBoundary {
         EditTodaysEventState newState = new EditTodaysEventState();
         newState.setEventId(outputData.getId());
         newState.setDueDate(outputData.getDueDate());
-// ❌ 原本使用 setState(...)：editTodaysEventViewModel.setState(newState);
-// ✅ 改成调用 updateState 才会触发监听器
+        // ✅ 使用 updateState 而不是 setState，这样才能触发监听器
         editTodaysEventViewModel.updateState(newState);
 
-
-        // 2. 查找对应的 Event 并更新 dueDate
+        // 2. 查找对应的 EventInterf 并更新 dueDate
         TodaysEventsState oldState = todaysEventsViewModel.getState();
-        List<Event> eventList = oldState.getTodaysEvents(); // List<Event> 而非 List<Info>
+        List<EventInterf> eventList = oldState.getTodaysEvents(); // 现在是 List<EventInterf>
 
-        for (Event event : eventList) {
-            if (event.getInfo().getId().equals(outputData.getId())) {
+        for (EventInterf event : eventList) {
+            if (event.getInfo() != null && event.getInfo().getId().equals(outputData.getId())) {
                 event.editDueDate(LocalDate.parse(outputData.getDueDate()));
                 break;
             }
@@ -59,8 +57,8 @@ public class EditTodaysEventPresenter implements EditTodaysEventOutputBoundary {
         newState.setEventId(outputData.getId());
         newState.setEditError("Edit failed: invalid due date or event not found.");
         editTodaysEventViewModel.updateState(newState); // ✅ 使用 updateState
-
     }
 }
+
 
 

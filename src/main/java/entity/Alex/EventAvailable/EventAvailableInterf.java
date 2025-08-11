@@ -1,16 +1,17 @@
 package entity.Alex.EventAvailable;
 
-import entity.info.Info;
+import entity.info.InfoInterf;
 import java.util.List;
 
 public interface EventAvailableInterf {
-    void addEvent(Info info);
-    boolean removeEvent(Info info);
-    List<Info> getEventAvailable();
-    List<Info> getEventsByCategory(String category);
-    List<Info> getEventsByName(String name);
+    void addEvent(InfoInterf info);
+    boolean removeEvent(InfoInterf info);
+    List<InfoInterf> getEventAvailable();
+    List<InfoInterf> getEventsByCategory(String category);
+    List<InfoInterf> getEventsByName(String name);
     int getEventCount();
-    boolean contains(Info info);
+    boolean contains(InfoInterf info);
     void clearAll();
 }
+
 

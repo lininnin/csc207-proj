@@ -1,7 +1,9 @@
 package entity.Alex.Event;
 
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.InfoInterf;
 
 /**
  * Factory class for creating Event instances.
@@ -17,7 +19,7 @@ public class EventFactory implements EventFactoryInterf {
      * @throws IllegalArgumentException if any required field is null
      */
     @Override
-    public Event createEvent(Info info, BeginAndDueDates beginAndDueDates) {
+    public EventInterf createEvent(InfoInterf info, BeginAndDueDatesInterf beginAndDueDates) {
         if (info == null) {
             throw new IllegalArgumentException("Info is required");
         }

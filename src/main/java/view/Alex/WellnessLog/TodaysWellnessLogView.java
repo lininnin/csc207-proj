@@ -188,6 +188,3 @@ public class TodaysWellnessLogView extends JPanel {
         logDisplayPanel.repaint();
     }
 }
-
-
-

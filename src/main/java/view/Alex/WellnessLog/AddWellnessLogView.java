@@ -1,6 +1,6 @@
 package view.Alex.WellnessLog;
 
-import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
@@ -18,17 +18,14 @@ import java.time.LocalDateTime;
 
 /**
  * Swing-based view for creating a new wellness log.
+ * Now decoupled from the concrete MoodLabel class by using the MoodLabelInterf interface.
  */
 public class AddWellnessLogView extends JPanel implements PropertyChangeListener {
 
     private final AddWellnessLogViewModel viewModel;
     private final AddWellnessLogController controller;
 
-    // 删除这一行
-// private final JComboBox<MoodLabel> moodLabelComboBox = new JComboBox<>();
-
-    // 添加这两行
-    private MoodLabel selectedMoodLabel = null;
+    private MoodLabelInterf selectedMoodLabel = null;
     private final JLabel selectedMoodLabelLabel = new JLabel("Selected: None");
     private final JComboBox<Levels> stressComboBox = new JComboBox<>(Levels.values());
     private final JComboBox<Levels> energyComboBox = new JComboBox<>(Levels.values());
@@ -39,7 +36,6 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
     private final AddMoodLabelController addLabelController;
     private final EditMoodLabelController editLabelController;
     private final DeleteMoodLabelController deleteLabelController;
-
 
     private final JLabel messageLabel = new JLabel();
 
@@ -71,7 +67,6 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         JLabel title = new JLabel("New wellness log");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 16f));
         add(title, gbc);
-
         gbc.gridwidth = 1;
 
         // Mood label
@@ -96,7 +91,7 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
-            MoodLabel selected = labelView.getSelectedLabel();
+            MoodLabelInterf selected = labelView.getSelectedLabel();
             if (selected != null) {
                 selectedMoodLabel = selected;
                 selectedMoodLabelLabel.setText("Selected: " + selected.getName());
@@ -106,8 +101,6 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         moodLabelPanel.add(selectedMoodLabelLabel, BorderLayout.CENTER);
         moodLabelPanel.add(chooseBtn, BorderLayout.EAST);
         add(moodLabelPanel, gbc);
-
-
 
         // Energy
         gbc.gridy++;
@@ -152,7 +145,7 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         // Submit listener
         submitButton.addActionListener(e -> {
             System.out.println("Submit button clicked!");
-            MoodLabel mood = selectedMoodLabel;
+            MoodLabelInterf mood = selectedMoodLabel;
 
             Levels stress = (Levels) stressComboBox.getSelectedItem();
             Levels energy = (Levels) energyComboBox.getSelectedItem();
@@ -162,20 +155,11 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
             controller.execute(LocalDateTime.now(), stress, energy, fatigue, mood, note);
         });
 
-        // 初始刷新
         refresh();
     }
 
     private void refresh() {
         AddWellnessLogState state = viewModel.getState();
-
-        // 更新 mood label 下拉框选项
-//        List<MoodLabel> moodOptions = state.getAvailableMoodLabels();
-//        moodLabelComboBox.removeAllItems();
-//        for (MoodLabel label : moodOptions) {
-//            moodLabelComboBox.addItem(label);
-//        }
-
         messageLabel.setText(state.getErrorMessage() != null
                 ? state.getErrorMessage()
                 : state.getSuccessMessage() != null ? state.getSuccessMessage() : "");
@@ -188,4 +172,3 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
         }
     }
 }
-

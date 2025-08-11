@@ -1,6 +1,6 @@
 package entity.Alex.EventAvailable;
 
-import entity.info.Info;
+import entity.info.InfoInterf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  * TODO: Will be used in Sophia's story #2 for filtering and organizing events by category/priority
  */
 public class EventAvailable implements EventAvailableInterf {
-    private final List<Info> eventInfoAvailable;
+    private final List<InfoInterf> eventInfoAvailable;
 
     /**
      * Constructs a new EventAvailable with an empty list of events.
@@ -27,7 +27,8 @@ public class EventAvailable implements EventAvailableInterf {
      * @param info The Info to add
      * @throws IllegalArgumentException if info is null
      */
-    public void addEvent(Info info) {
+    @Override
+    public void addEvent(InfoInterf info) {
         if (info == null) {
             throw new IllegalArgumentException("Info cannot be null");
         }
@@ -40,7 +41,8 @@ public class EventAvailable implements EventAvailableInterf {
      * @param info The Info to remove
      * @return true if the Info was removed, false if it wasn't in the list
      */
-    public boolean removeEvent(Info info) {
+    @Override
+    public boolean removeEvent(InfoInterf info) {
         return eventInfoAvailable.remove(info);
     }
 
@@ -49,7 +51,8 @@ public class EventAvailable implements EventAvailableInterf {
      *
      * @return A copy of the list of available Info
      */
-    public List<Info> getEventAvailable() {
+    @Override
+    public List<InfoInterf> getEventAvailable() {
         return new ArrayList<>(eventInfoAvailable);
     }
 
@@ -59,9 +62,10 @@ public class EventAvailable implements EventAvailableInterf {
      * @param category The category to filter by
      * @return List of Info in the specified category
      */
-    public List<Info> getEventsByCategory(String category) {
-        List<Info> filtered = new ArrayList<>();
-        for (Info info : eventInfoAvailable) {
+    @Override
+    public List<InfoInterf> getEventsByCategory(String category) {
+        List<InfoInterf> filtered = new ArrayList<>();
+        for (InfoInterf info : eventInfoAvailable) {
             if (category.equals(info.getCategory())) {
                 filtered.add(info);
             }
@@ -75,9 +79,10 @@ public class EventAvailable implements EventAvailableInterf {
      * @param name The name to filter by
      * @return List of Info with the specified name
      */
-    public List<Info> getEventsByName(String name) {
-        List<Info> filtered = new ArrayList<>();
-        for (Info info : eventInfoAvailable) {
+    @Override
+    public List<InfoInterf> getEventsByName(String name) {
+        List<InfoInterf> filtered = new ArrayList<>();
+        for (InfoInterf info : eventInfoAvailable) {
             if (name.equals(info.getName())) {
                 filtered.add(info);
             }
@@ -90,6 +95,7 @@ public class EventAvailable implements EventAvailableInterf {
      *
      * @return The size of the info list
      */
+    @Override
     public int getEventCount() {
         return eventInfoAvailable.size();
     }
@@ -100,15 +106,16 @@ public class EventAvailable implements EventAvailableInterf {
      * @param info The Info to check
      * @return true if the Info is available, false otherwise
      */
-    public boolean contains(Info info) {
+    @Override
+    public boolean contains(InfoInterf info) {
         return eventInfoAvailable.contains(info);
     }
 
     /**
      * Clears all Info from the available event list.
      */
+    @Override
     public void clearAll() {
         eventInfoAvailable.clear();
     }
 }
-

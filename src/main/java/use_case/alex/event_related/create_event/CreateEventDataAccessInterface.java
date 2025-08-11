@@ -1,7 +1,6 @@
 package use_case.alex.event_related.create_event;
 
-import entity.info.Info;
-
+import entity.info.InfoInterf;
 import java.util.List;
 
 /**
@@ -15,7 +14,7 @@ public interface CreateEventDataAccessInterface {
      *
      * @param eventInfo The Info object representing an event to be saved.
      */
-    void save(Info eventInfo);
+    void save(InfoInterf eventInfo);
 
     /**
      * Removes the given event from the pool.
@@ -23,24 +22,24 @@ public interface CreateEventDataAccessInterface {
      * @param eventInfo The Info object to remove.
      * @return true if removed, false otherwise
      */
-    boolean remove(Info eventInfo);
+    boolean remove(InfoInterf eventInfo);
 
     /**
      * @return List of all available event Info
      */
-    List<Info> getAllEvents();
+    List<InfoInterf> getAllEvents();
 
     /**
      * @param category Category to filter
      * @return Events that match the category
      */
-    List<Info> getEventsByCategory(String category);
+    List<InfoInterf> getEventsByCategory(String category);
 
     /**
      * @param name Event name to filter
      * @return Events that match the name
      */
-    List<Info> getEventsByName(String name);
+    List<InfoInterf> getEventsByName(String name);
 
     /**
      * @return Total count of available events
@@ -53,11 +52,10 @@ public interface CreateEventDataAccessInterface {
      * @param eventInfo Info to check
      * @return true if present, false otherwise
      */
-    boolean contains(Info eventInfo);
+    boolean contains(InfoInterf eventInfo);
 
     /**
      * Clears all available events.
      */
     void clearAll();
 }
-

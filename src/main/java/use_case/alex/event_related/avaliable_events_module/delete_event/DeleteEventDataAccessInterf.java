@@ -1,6 +1,6 @@
 package use_case.alex.event_related.avaliable_events_module.delete_event;
 
-import entity.info.Info;
+import entity.info.InfoInterf;
 
 /**
  * Interface for data access operations related to deleting available events.
@@ -14,7 +14,7 @@ public interface DeleteEventDataAccessInterf {
      * @param eventInfo The Info object to remove.
      * @return true if removed successfully, false otherwise.
      */
-    boolean remove(Info eventInfo);
+    boolean remove(InfoInterf eventInfo);
 
     /**
      * Checks whether the given event is present in the event pool.
@@ -22,7 +22,7 @@ public interface DeleteEventDataAccessInterf {
      * @param eventInfo The Info object to check.
      * @return true if present, false otherwise.
      */
-    boolean contains(Info eventInfo);
+    boolean contains(InfoInterf eventInfo);
 
     /**
      * Retrieves an Info object by its ID.
@@ -31,6 +31,7 @@ public interface DeleteEventDataAccessInterf {
      * @param id The ID of the Info object.
      * @return The Info object with the given ID, or null if not found.
      */
-    Info getEventById(String id);
+    InfoInterf getEventById(String id);
 }
+
 

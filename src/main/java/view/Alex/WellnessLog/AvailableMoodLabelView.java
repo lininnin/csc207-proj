@@ -1,5 +1,6 @@
 package view.Alex.WellnessLog;
 
+import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
@@ -21,7 +22,7 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
     private final DeleteMoodLabelController deleteController;
     private final JPanel labelDisplayPanel;
 
-    private MoodLabel selectedLabel = null;
+    private MoodLabelInterf selectedLabel = null;
 
     public AvailableMoodLabelView(AvailableMoodLabelViewModel viewModel,
                                   AddMoodLabelController addController,
@@ -55,7 +56,7 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
         refreshDisplay();
     }
 
-    public MoodLabel getSelectedLabel() {
+    public MoodLabelInterf getSelectedLabel() {
         return selectedLabel;
     }
 
@@ -102,8 +103,7 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
                         viewModel.fireLabelListChanged();
                     }));
 
-                    // 留空 Select 按钮
-                    row.add(new JLabel(""));
+                    row.add(new JLabel("")); // Empty Select button placeholder
                 } else {
                     row.add(new JLabel(entry.getName(), SwingConstants.CENTER));
                     row.add(new JLabel(entry.getType(), SwingConstants.CENTER));
@@ -157,8 +157,7 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
             }
         });
 
-        JPanel newBtnPanel = new JPanel();
-        newBtnPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel newBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         newBtnPanel.add(newBtn);
         labelDisplayPanel.add(newBtnPanel);
 
@@ -182,5 +181,3 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
         }
     }
 }
-
-

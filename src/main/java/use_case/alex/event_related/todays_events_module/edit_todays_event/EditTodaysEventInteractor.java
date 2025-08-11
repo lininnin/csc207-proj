@@ -1,9 +1,14 @@
 package use_case.alex.event_related.todays_events_module.edit_todays_event;
 
-import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Interactor for editing today's events.
+ * Now fully decoupled from the concrete Event class using EventInterf.
+ */
 public class EditTodaysEventInteractor implements EditTodaysEventInputBoundary {
 
     private final EditTodaysEventDataAccessInterf dataAccess;
@@ -21,7 +26,7 @@ public class EditTodaysEventInteractor implements EditTodaysEventInputBoundary {
         String dueDateStr = inputData.getDueDate();
 
         try {
-            // ✅ Step 1: 校验 dueDate 格式
+            // Step 1: 校验 dueDate 格式
             LocalDate dueDate;
             try {
                 dueDate = LocalDate.parse(dueDateStr);
@@ -30,24 +35,24 @@ public class EditTodaysEventInteractor implements EditTodaysEventInputBoundary {
                 return;
             }
 
-            // ✅ Step 2: 获取原始事件
-            Event event = dataAccess.getEventById(eventId);
+            // Step 2: 获取原始事件（接口类型）
+            EventInterf event = dataAccess.getEventById(eventId);
             if (event == null) {
                 presenter.prepareFailView(new EditTodaysEventOutputData(eventId, dueDateStr, true));
                 return;
             }
 
-            // ✅ Step 3: 修改 dueDate
-            event.getBeginAndDueDates().setDueDate(dueDate); // 确保 Info 类有此 setter
+            // Step 3: 修改 dueDate
+            event.getBeginAndDueDates().setDueDate(dueDate);
 
-            // ✅ Step 4: 写入数据库
+            // Step 4: 写入数据库
             boolean success = dataAccess.update(event);
             if (!success) {
                 presenter.prepareFailView(new EditTodaysEventOutputData(eventId, dueDateStr, true));
                 return;
             }
 
-            // ✅ Step 5: 成功视图
+            // Step 5: 成功视图
             presenter.prepareSuccessView(new EditTodaysEventOutputData(eventId, dueDateStr, false));
 
         } catch (Exception e) {
@@ -56,4 +61,3 @@ public class EditTodaysEventInteractor implements EditTodaysEventInputBoundary {
         }
     }
 }
-

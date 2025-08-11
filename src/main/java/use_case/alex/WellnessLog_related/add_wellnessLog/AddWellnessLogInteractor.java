@@ -1,11 +1,12 @@
 package use_case.alex.WellnessLog_related.add_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 
 /**
  * The interactor for adding a wellness log entry.
  * Implements the input boundary and contains the business logic.
+ * Now fully decoupled from the concrete WellnessLogEntry class by using the WellnessLogEntryInterf interface.
  */
 public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
 
@@ -31,8 +32,8 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
             System.out.println("  Fatigue: " + inputData.getFatigueLevel());
             System.out.println("  Note: " + inputData.getUserNote());
 
-            // Create the entity
-            WellnessLogEntry entry = factory.create(
+            // Create the entity (factory returns an interface type)
+            WellnessLogEntryInterf entry = factory.create(
                     inputData.getTime(),
                     inputData.getStressLevel(),
                     inputData.getEnergyLevel(),
@@ -60,5 +61,3 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
         }
     }
 }
-
-

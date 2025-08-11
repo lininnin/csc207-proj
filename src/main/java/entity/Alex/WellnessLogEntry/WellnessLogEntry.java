@@ -1,7 +1,6 @@
 package entity.Alex.WellnessLogEntry;
 
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.WellnessLogEntry.Levels;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,15 +9,16 @@ import java.util.UUID;
  * Represents a wellness log entry containing stress, energy, fatigue levels and mood information.
  * <p>
  * This class uses the Builder pattern for controlled construction and input validation.
+ * Now decoupled from the concrete MoodLabel class by depending on the MoodLabelInterf interface.
  */
-public class WellnessLogEntry {
+public class WellnessLogEntry implements WellnessLogEntryInterf {
 
     private final String id;
     private final LocalDateTime time;
     private Levels stressLevel;
     private Levels energyLevel;
     private Levels fatigueLevel;
-    private MoodLabel moodLabel;
+    private MoodLabelInterf moodLabel;
     private String userNote;
 
     /**
@@ -40,7 +40,7 @@ public class WellnessLogEntry {
         private Levels stressLevel;
         private Levels energyLevel;
         private Levels fatigueLevel;
-        private MoodLabel moodLabel;
+        private MoodLabelInterf moodLabel;
         private String userNote;
 
         // ✅ 新增：从已有 WellnessLogEntry 构建一个可变 Builder
@@ -76,7 +76,7 @@ public class WellnessLogEntry {
             return this;
         }
 
-        public Builder moodLabel(MoodLabel mood) {
+        public Builder moodLabel(MoodLabelInterf mood) {
             this.moodLabel = mood;
             return this;
         }
@@ -122,7 +122,7 @@ public class WellnessLogEntry {
         return fatigueLevel;
     }
 
-    public MoodLabel getMoodLabel() {
+    public MoodLabelInterf getMoodLabel() {
         return moodLabel;
     }
 
@@ -153,7 +153,7 @@ public class WellnessLogEntry {
         this.fatigueLevel = level;
     }
 
-    public void setMoodLabel(MoodLabel mood) {
+    public void setMoodLabel(MoodLabelInterf mood) {
         if (mood == null) {
             throw new IllegalArgumentException("Mood label cannot be null");
         }
@@ -172,5 +172,6 @@ public class WellnessLogEntry {
         }
     }
 }
+
 
 

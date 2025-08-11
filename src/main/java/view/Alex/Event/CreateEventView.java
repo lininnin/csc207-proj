@@ -6,6 +6,7 @@ import interface_adapter.alex.event_related.create_event.CreateEventController;
 import interface_adapter.alex.event_related.create_event.CreatedEventViewModel;
 import interface_adapter.alex.event_related.create_event.CreatedEventState;
 import interface_adapter.alex.event_related.create_event.CreateEventViewModelUpdateListener;
+import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
 import view.LabelComponentPanel;
 
 import javax.swing.*;
@@ -19,8 +20,8 @@ import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import entity.info.Info;
-import data_access.EventAvailableDataAccessObject;
+import entity.info.InfoInterf;
+// import use_case.alex.event_related.available_event_module.EventAvailableDataAccessInterf;
 
 public class CreateEventView extends JPanel implements PropertyChangeListener, CreateEventViewModelUpdateListener {
 
@@ -34,13 +35,13 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
     private final JButton create;
     private CreateEventController createEventController;
 
-    // 可选：注入以支持 AddEventViewModel 同步
+    // 注入以支持 AddEventViewModel 同步
     private AddedEventViewModel addedEventViewModel;
-    private final EventAvailableDataAccessObject availableDAO;
+    private final CreateEventDataAccessInterface availableDAO;
 
     public CreateEventView(CreatedEventViewModel createdEventViewModel,
                            AddedEventViewModel addedEventViewModel,
-                           EventAvailableDataAccessObject availableDAO) {
+                           CreateEventDataAccessInterface availableDAO) {
         this.createdEventViewModel = createdEventViewModel;
         this.addedEventViewModel = addedEventViewModel;
         this.availableDAO = availableDAO;
@@ -63,8 +64,6 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         LabelComponentPanel nameInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.NAME_LABEL), nameInputField);
-//        LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
-//                new JLabel(CreatedEventViewModel.ONE_TIME_LABEL), oneTimeCheckbox);
         LabelComponentPanel categoryInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.CATEGORY_LABEL), categoryInputField);
         LabelComponentPanel descriptionInfo = new LabelComponentPanel(
@@ -73,7 +72,6 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         JPanel row1 = new JPanel(new GridLayout(1, 2, 5, 1));
         row1.add(nameInfo);
-        //row1.add(oneTimeInfo);
 
         JPanel row2 = new JPanel(new GridLayout(1, 2, 5, 1));
         row2.add(categoryInfo);
@@ -130,12 +128,6 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
                 createdEventViewModel.setState(state);
             }
         });
-
-//        oneTimeCheckbox.addItemListener(e -> {
-//            CreatedEventState state = createdEventViewModel.getState();
-//            state.setOneTime(oneTimeCheckbox.isSelected());
-//            createdEventViewModel.setState(state);
-//        });
     }
 
     @Override
@@ -150,9 +142,6 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         if (!descriptionInputArea.getText().equals(state.getDescription())) {
             descriptionInputArea.setText(state.getDescription());
         }
-//        if (oneTimeCheckbox.isSelected() != state.isOneTime()) {
-//            oneTimeCheckbox.setSelected(state.isOneTime());
-//        }
     }
 
     @Override
@@ -169,13 +158,12 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         // ✅ 更新 AddEventViewModel 中的名称（同步更新）
         List<String> availableNames = availableDAO.getAllEvents().stream()
-                .map(Info::getName)
+                .map(InfoInterf::getName)
                 .collect(Collectors.toList());
         AddedEventState addState = addedEventViewModel.getState();
         addState.setAvailableNames(availableNames);
         addedEventViewModel.setState(addState);
     }
-
 
     public String getViewName() {
         return viewName;
