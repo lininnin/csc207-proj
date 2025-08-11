@@ -132,11 +132,4 @@ public class BigMain {
         return scheduler;
     }
 
-    private static JPanel makePlaceholderPanel(String title) {
-        JPanel panel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel(title, SwingConstants.CENTER);
-        label.setFont(new Font("SansSerif", Font.BOLD, 36));
-        panel.add(label, BorderLayout.CENTER);
-        return panel;
-    }
 }
