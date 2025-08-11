@@ -11,7 +11,7 @@ import java.util.UUID;
  * Represents a daily log of actual events that occurred on a given date.
  * Each entry in this log corresponds to a recorded Event object.
  */
-public class DailyEventLog {
+public class DailyEventLog implements DailyEventLogInterf{
 
     private final String id;
     private final LocalDate date;

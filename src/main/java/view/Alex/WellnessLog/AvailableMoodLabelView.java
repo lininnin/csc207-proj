@@ -1,11 +1,11 @@
 package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
-import interface_adapter.Alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.edit_moodLabel.EditMoodLabelController;
+import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelController;
 
 import javax.swing.*;
 import java.awt.*;

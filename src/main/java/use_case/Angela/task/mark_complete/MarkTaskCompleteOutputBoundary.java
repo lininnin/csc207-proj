@@ -8,8 +8,9 @@ public interface MarkTaskCompleteOutputBoundary {
      * Prepares the success view.
      *
      * @param outputData The output data
+     * @param message The success message to display
      */
-    void presentSuccess(MarkTaskCompleteOutputData outputData);
+    void presentSuccess(MarkTaskCompleteOutputData outputData, String message);
 
     /**
      * Prepares the error view.

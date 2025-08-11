@@ -37,6 +37,15 @@ public interface TaskGateway {
     boolean availableTaskNameExists(String name);
 
     /**
+     * Checks if a task with the given name and category already exists.
+     *
+     * @param name The task name to check
+     * @param category The category name (can be empty string for no category)
+     * @return true if a task with this name and category combination exists
+     */
+    boolean taskExistsWithNameAndCategory(String name, String category);
+
+    /**
      * Updates an available task.
      *
      * @param info The updated task info
@@ -161,7 +170,7 @@ public interface TaskGateway {
     /**
      * Gets today's task completion rate.
      *
-     * @return Completion rate between 0.0 and 1.0
+     * @return Completion rate between 0.0 and 100.0
      */
     double getTodaysCompletionRate();
 }

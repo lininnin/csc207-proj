@@ -3,12 +3,11 @@ package entity.Ina;
 
 import java.time.LocalDate;
 
-public class FeedbackEntry {
+public class FeedbackEntry implements FeedbackEntryInterf {
     private final LocalDate date;
     private final String aiAnalysis;
     private final String correlationData;
     private final String recommendations;
-    // TODO: Check algorithm for generate feedback use case
 
     public FeedbackEntry(LocalDate date,
                          String aiAnalysis,

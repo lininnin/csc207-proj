@@ -1,32 +1,23 @@
 package entity.Alex.UserSettings;
 
-import entity.Alex.NotificationTime.NotificationTime;
+import entity.Alex.NotificationTime.NotificationTimeInterf;
 
 /**
- * Represents the settings associated with a user, including their notification schedule and timezone.
- *
- * <p>Fields:</p>
- * <ul>
- *   <li>userId: String — Unique identifier for the user (non-null, non-empty)</li>
- *   <li>notificationTime: NotificationTime — User’s customizable notification schedule (non-null)</li>
- *   <li>timezone: String — User's timezone for accurate time block management (default: "Toronto")</li>
- * </ul>
+ * Represents the settings associated with a user, including notification schedule and timezone.
  */
-public class UserSettings {
+public class UserSettings implements UserSettingsInterf {
 
     private final String userId;
-    private final NotificationTime notificationTime;
+    private final NotificationTimeInterf notificationTime;
     private String timezone;
 
     /**
-     * Constructs a new {@code UserSettings} object with the given user ID and notification time.
-     * The timezone is set to "Toronto" by default.
+     * Constructs a new UserSettings object.
      *
      * @param userId the unique ID of the user; must not be null or empty
-     * @param notificationTime the user's custom notification times; must not be null
-     * @throws IllegalArgumentException if {@code userId} is null/empty or {@code notificationTime} is null
+     * @param notificationTime the user's notification time settings; must not be null
      */
-    public UserSettings(String userId, NotificationTime notificationTime) {
+    public UserSettings(String userId, NotificationTimeInterf notificationTime) {
         if (userId == null || userId.trim().isEmpty()) {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
@@ -35,34 +26,30 @@ public class UserSettings {
         }
         this.userId = userId;
         this.notificationTime = notificationTime;
-        this.timezone = "Toronto";
+        this.timezone = "Toronto";  // default
     }
 
-    /**
-     * Returns the user ID.
-     *
-     * @return the user ID
-     */
+    @Override
     public String getUserId() {
         return userId;
     }
 
-    /**
-     * Returns the user's notification time settings.
-     *
-     * @return the notification time settings
-     */
-    public NotificationTime getNotificationTime() {
+    @Override
+    public NotificationTimeInterf getNotificationTime() {
         return notificationTime;
     }
 
-    /**
-     * Returns the user's timezone.
-     *
-     * @return the timezone
-     */
+    @Override
     public String getTimezone() {
         return timezone;
     }
-}
 
+    /**
+     * Sets the user's timezone.
+     *
+     * @param timezone The timezone to set
+     */
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+}

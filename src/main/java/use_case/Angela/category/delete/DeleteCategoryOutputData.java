@@ -1,19 +1,19 @@
 package use_case.Angela.category.delete;
 
 /**
- * Output data for the delete category use case.
+ * Output data for delete category use case.
  */
 public class DeleteCategoryOutputData {
-    private final String deletedCategoryId;
+    private final String categoryId;
     private final String message;
 
-    public DeleteCategoryOutputData(String deletedCategoryId, String message) {
-        this.deletedCategoryId = deletedCategoryId;
+    public DeleteCategoryOutputData(String categoryId, String message) {
+        this.categoryId = categoryId;
         this.message = message;
     }
 
-    public String getDeletedCategoryId() {
-        return deletedCategoryId;
+    public String getCategoryId() {
+        return categoryId;
     }
 
     public String getMessage() {

@@ -1,7 +1,7 @@
 package use_case.Angela.category.create;
 
 /**
- * Input data for creating a category.
+ * Input data for creating a new category.
  */
 public class CreateCategoryInputData {
     private final String categoryName;

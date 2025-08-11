@@ -1,19 +1,24 @@
 package use_case.Angela.category.edit;
 
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
+import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.Task;
+import java.util.List;
 
 /**
  * Interactor for the edit category use case.
- * Implements the business logic for editing a category.
+ * Implements the business logic for editing a category and updating all affected tasks.
  */
 public class EditCategoryInteractor implements EditCategoryInputBoundary {
-    private final CategoryGateway categoryGateway;
+    private final EditCategoryDataAccessInterface categoryDataAccess;
+    private final EditCategoryTaskDataAccessInterface taskDataAccess;
     private final EditCategoryOutputBoundary outputBoundary;
 
-    public EditCategoryInteractor(CategoryGateway categoryGateway,
+    public EditCategoryInteractor(EditCategoryDataAccessInterface categoryDataAccess,
+                                  EditCategoryTaskDataAccessInterface taskDataAccess,
                                   EditCategoryOutputBoundary outputBoundary) {
-        this.categoryGateway = categoryGateway;
+        this.categoryDataAccess = categoryDataAccess;
+        this.taskDataAccess = taskDataAccess;
         this.outputBoundary = outputBoundary;
     }
 
@@ -21,6 +26,12 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
     public void execute(EditCategoryInputData inputData) {
         String categoryId = inputData.getCategoryId();
         String newName = inputData.getNewCategoryName();
+        
+        // Validate category ID first
+        if (categoryId == null || categoryId.trim().isEmpty()) {
+            outputBoundary.prepareFailView("Category ID is required");
+            return;
+        }
 
         // Validate input
         if (newName == null || newName.trim().isEmpty()) {
@@ -34,7 +45,7 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
         }
 
         // Check if category exists
-        Category category = categoryGateway.getCategoryById(categoryId);
+        Category category = categoryDataAccess.getCategoryById(categoryId);
         if (category == null) {
             outputBoundary.prepareFailView("Category not found");
             return;
@@ -43,16 +54,44 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
         String oldName = category.getName();
 
         // Check if new name already exists (unless it's the same as current name)
-        if (!oldName.equalsIgnoreCase(newName) && categoryGateway.categoryNameExists(newName)) {
+        if (!oldName.equalsIgnoreCase(newName) && 
+            categoryDataAccess.existsByNameExcluding(newName, categoryId)) {
             outputBoundary.prepareFailView("The category name already exists");
             return;
         }
 
-        // Update category
-        category.setName(newName);
-        boolean updated = categoryGateway.updateCategory(category);
+        // Update category - DON'T trim the name
+        category.setName(newName);  // Keep spaces as-is
+        boolean updated = categoryDataAccess.updateCategory(category);
 
         if (updated) {
+            // CRITICAL: Update all tasks that use this category
+            // Update available tasks
+            List<TaskAvailable> availableTasks = taskDataAccess.findAvailableTasksByCategory(categoryId);
+            System.out.println("DEBUG: Found " + availableTasks.size() + " available tasks with category: " + oldName);
+            
+            int updatedAvailableCount = 0;
+            for (TaskAvailable task : availableTasks) {
+                // Note: We're keeping the same category ID, just the name changed in the Category object
+                // So we don't need to update the task's category field
+                updatedAvailableCount++;
+            }
+            
+            // Update today's tasks
+            List<Task> todaysTasks = taskDataAccess.findTodaysTasksByCategory(categoryId);
+            System.out.println("DEBUG: Found " + todaysTasks.size() + " today's tasks with category: " + oldName);
+            
+            int updatedTodaysCount = 0;
+            for (Task task : todaysTasks) {
+                // Note: We're keeping the same category ID, just the name changed in the Category object
+                // So we don't need to update the task's category field
+                updatedTodaysCount++;
+            }
+            
+            System.out.println("DEBUG: Category '" + oldName + "' renamed to '" + newName + 
+                             "'. Found " + updatedAvailableCount + " available tasks and " + 
+                             updatedTodaysCount + " today's tasks using this category.");
+            
             EditCategoryOutputData outputData = new EditCategoryOutputData(
                     categoryId, oldName, newName
             );
