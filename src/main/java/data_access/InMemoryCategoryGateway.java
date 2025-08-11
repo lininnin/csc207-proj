@@ -4,6 +4,7 @@ import entity.Category;
 import entity.Angela.Task.TaskAvailable;
 import entity.Angela.Task.Task;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.category.create.CreateCategoryDataAccessInterface;
 import use_case.Angela.category.delete.DeleteCategoryDataAccessInterface;

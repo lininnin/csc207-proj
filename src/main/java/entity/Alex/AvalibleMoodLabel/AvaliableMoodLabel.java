@@ -13,10 +13,10 @@ import java.util.List;
 public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
 
     /** List of positive mood labels. */
-    private final List<MoodLabel> positiveLabels;
+    private final List<MoodLabelInterf> positiveLabels;
 
     /** List of negative mood labels. */
-    private final List<MoodLabel> negativeLabels;
+    private final List<MoodLabelInterf> negativeLabels;
 
     /**
      * Default constructor initializes empty lists.
@@ -45,9 +45,11 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
         }
 
         if (type == Type.Positive) {
+
             positiveLabels.add((MoodLabel) moodLabel);
         } else if (type == Type.Negative) {
             negativeLabels.add((MoodLabel) moodLabel);
+
         }
     }
 
@@ -79,7 +81,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
     @Override
     public List<String> getPositiveLabels() {
         final List<String> names = new ArrayList<>();
-        for (MoodLabel label : positiveLabels) {
+        for (MoodLabelInterf label : positiveLabels) {
             names.add(label.getName());
         }
         return names;
@@ -93,7 +95,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
     @Override
     public List<String> getNegativeLabels() {
         final List<String> names = new ArrayList<>();
-        for (MoodLabel label : negativeLabels) {
+        for (MoodLabelInterf label : negativeLabels) {
             names.add(label.getName());
         }
         return names;

@@ -156,7 +156,7 @@ public final class WellnessLogEntry implements WellnessLogEntryInterf {
         this.fatigueLevel = levelParam;
     }
 
-    public void setMoodLabel(final MoodLabel moodParam) {
+    public void setMoodLabel(final MoodLabelInterf moodParam) {
         if (moodParam == null) {
             throw new IllegalArgumentException("Mood label cannot be null");
         }

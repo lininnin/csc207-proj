@@ -1,6 +1,7 @@
 package entity.Alex.DailyEventLog;
 
 import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class DailyEventLog implements DailyEventLogInterf {
      * The list of actual events recorded for the given date.
      */
     @SuppressWarnings("FieldCanBeLocal")
-    private final List<Event> actualEvents;
+    private final List<EventInterf> actualEvents;
 
     /**
      * Constructs a new DailyEventLog for the specified date.
@@ -48,7 +49,7 @@ public class DailyEventLog implements DailyEventLogInterf {
      *
      * @param event the Event to add
      */
-    public void addEntry(final Event event) {
+    public void addEntry(final EventInterf event) {
         if (event != null && !actualEvents.contains(event)) {
             actualEvents.add(event);
         }
@@ -90,7 +91,7 @@ public class DailyEventLog implements DailyEventLogInterf {
      *
      * @return a new List containing the actual events
      */
-    public List<Event> getActualEvents() {
+    public List<EventInterf> getActualEvents() {
         return new ArrayList<>(actualEvents);
     }
 }

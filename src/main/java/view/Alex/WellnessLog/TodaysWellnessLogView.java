@@ -155,7 +155,7 @@ public class TodaysWellnessLogView extends JPanel {
                                 return;
                             }
 
-                            MoodLabel mood = (MoodLabel) selectedMood[0];
+                            MoodLabelInterf mood = selectedMood[0];
                             editController.execute(
                                     entry.getId(), energy, stress, fatigue,
                                     mood.getName(), mood.getType(), note
