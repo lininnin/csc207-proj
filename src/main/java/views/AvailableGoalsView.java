@@ -80,6 +80,10 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
     }
 
+    public Goal getSelectedGoal() {
+        return goalsList.getSelectedValue();
+    }
+
     private void refreshView() {
         AvailableGoalsState state = viewModel.getState();
         DefaultListModel<Goal> model = new DefaultListModel<>();
@@ -100,7 +104,7 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         }
     }
 
-    private static class GoalListCellRenderer extends DefaultListCellRenderer {
+    private class GoalListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
@@ -121,18 +125,21 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         }
 
         private String formatGoalText(Goal goal) {
-            return String.format("%s - %d/%d (Weekly)",
+            String period = goal.getTimePeriod().toString().equals("MONTH") ? "Monthly" : "Weekly";
+            return String.format("%s - %d/%d (%s)",
                     goal.getGoalInfo().getInfo().getName(),
                     goal.getCurrentProgress(),
-                    goal.getFrequency());
+                    goal.getFrequency(),
+                    period);
         }
 
         private String createTooltipText(Goal goal) {
+            String period = goal.getTimePeriod().toString().equals("MONTH") ? "Monthly" : "Weekly";
             return String.format(
                     "<html><b>Name:</b> %s<br><b>Period:</b> %s<br>" +
                             "<b>Progress:</b> %d/%d<br><b>Dates:</b> %s to %s</html>",
                     goal.getGoalInfo().getInfo().getName(),
-                    goal.getTimePeriod(),
+                    period, // Updated to use the formatted period
                     goal.getCurrentProgress(),
                     goal.getFrequency(),
                     goal.getBeginAndDueDates().getBeginDate(),
@@ -140,6 +147,7 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         }
     }
 
+    // These methods were moved here to resolve the error.
     private void addSelectedToToday() {
         Goal selected = goalsList.getSelectedValue();
         if (selected != null) {
@@ -171,44 +179,14 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         Goal selected = goalsList.getSelectedValue();
         if (selected != null) {
             int confirm = JOptionPane.showConfirmDialog(this,
-                    "Permanently delete this goal?\n" + selected,
+                    "Permanently delete this goal?\n" + selected.getGoalInfo().getInfo().getName(),
                     "Confirm Delete",
                     JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    String deleteCommand = "delete:" + selected.getGoalInfo().getInfo().getName();
-                    controller.execute(deleteCommand);
-
-                    // Immediately remove from Available Goals ViewModel
-                    viewModel.removeGoalByName(selected.getGoalInfo().getInfo().getName());
-
-                    // Also remove from Today's Goals ViewModel (if you have access)
-                    // You might need to inject Today's Goals ViewModel here or notify its controller to update
-                    // For example, if you have todayGoalsViewModel:
-                    // todayGoalsViewModel.removeGoalByName(selected.getGoalInfo().getInfo().getName());
-
-                    JOptionPane.showMessageDialog(this,
-                            "Deleted: " + selected,
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE);
-
-                    // Refresh Available Goals list UI
-                    refreshView();
-
-                    // You should also refresh Today's Goals UI separately or notify that view model
-                    // If you can't access it here, notify its controller or use an observer pattern.
-
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this,
-                            "Error deleting goal: " + e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+                // New, direct call to the controller's deleteGoal method
+                controller.deleteGoal(selected);
             }
         }
     }
-
-
-
 }

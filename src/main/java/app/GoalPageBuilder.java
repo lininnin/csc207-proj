@@ -82,6 +82,7 @@ public class GoalPageBuilder {
     private EditTodaysGoalViewModel editTodaysGoalViewModel; // Tracks today's goals editing
     private TodayGoalsViewModel todayGoalsViewModel;         // Manages today's goals display
     private OrderedGoalViewModel orderedGoalViewModel;       // Tracks goal ordering state
+    private AvailableGoalsView availableGoalsView;
 
     // Controllers (handle user actions)
     private CreateGoalController createGoalController;       // Handles goal creation
@@ -177,6 +178,31 @@ public class GoalPageBuilder {
         );
     }
 
+    private JButton createAddButtonForAvailableGoals() {
+        JButton addButton = new JButton("Add Selected Goal to Today");
+        addButton.addActionListener(e -> {
+            try {
+                // ASSUMPTION: The AvailableGoalsView has a public method getSelectedGoal()
+                Goal selectedGoal = availableGoalsView.getSelectedGoal();
+                if (selectedGoal != null) {
+                    // ASSUMPTION: The AvailableGoalsController has a public method
+                    // addSelectedGoalToToday() that handles the use case logic.
+                    // This method will need to be added to the controller class.
+                    availableGoalsController.addSelectedGoalToToday(selectedGoal);
+                    JOptionPane.showMessageDialog(null, "Goal added to today's list!");
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Please select a goal to add.", "No Goal Selected",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Error adding goal: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        return addButton;
+    }
 
 
 
@@ -189,12 +215,10 @@ public class GoalPageBuilder {
         // Build component sections
         JPanel sidebarPanel = createSidebarPanel();    // Left navigation
         JPanel centerPanel = createCenterPanel();      // Main content area
-        JPanel rightPanel = createRightPanel();        // Right sidebar
 
         // Combine components with collapsible sidebar
         CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
         mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
 
         // Load initial data
         availableGoalsController.execute("");  // Load available goals
@@ -524,17 +548,5 @@ public class GoalPageBuilder {
      */
     private AvailableGoalsView createAvailableGoalsView() {
         return new AvailableGoalsView(availableGoalsViewModel, availableGoalsController);
-    }
-
-    /**
-     * Creates the right sidebar panel
-     */
-    private JPanel createRightPanel() {
-        OrderedGoalView orderedGoalView = new OrderedGoalView(orderedGoalViewModel);
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(orderedGoalView, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(300, 0));
-        rightPanel.setBackground(Color.WHITE);
-        return rightPanel;
     }
 }

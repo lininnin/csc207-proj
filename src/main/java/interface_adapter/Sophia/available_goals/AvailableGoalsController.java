@@ -6,6 +6,8 @@ import use_case.goalManage.delete_goal.DeleteGoalInputData;
 import use_case.goalManage.today_goal.TodayGoalInputBoundary;
 import use_case.goalManage.today_goal.TodayGoalInputData;
 
+import javax.swing.*;
+
 public class AvailableGoalsController {
     private final AvailableGoalsInputBoundary availableGoalsInteractor;
     private final TodayGoalInputBoundary todayGoalInteractor;
@@ -38,6 +40,32 @@ public class AvailableGoalsController {
         }
         else {
             this.availableGoalsInteractor.execute();
+        }
+    }
+
+    public void addSelectedGoalToToday(entity.Sophia.Goal goal) {
+        use_case.goalManage.today_goal.TodayGoalInputData inputData = new use_case.goalManage.today_goal.TodayGoalInputData(
+                goal.getGoalInfo().getInfo().getName(),
+                goal.getCurrentProgress()
+        );
+        this.todayGoalInteractor.addToToday(inputData);
+    }
+
+    // NEW ADDITION: Method to delete a goal
+    public void deleteGoal(entity.Sophia.Goal goal) {
+        try {
+            // Create input data for the delete use case
+            use_case.goalManage.delete_goal.DeleteGoalInputData inputData = new use_case.goalManage.delete_goal.DeleteGoalInputData(
+                    goal.getGoalInfo().getInfo().getName(),
+                    true // true to indicate permanent deletion
+            );
+
+            this.deleteGoalInteractor.execute(inputData);
+            this.availableGoalsInteractor.execute();
+
+        } catch (Exception e) {
+            System.err.println("Error deleting goal: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error deleting goal: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
