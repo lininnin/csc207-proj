@@ -1,15 +1,9 @@
 package app.eventPage;
 
-import data_access.InMemoryCategoryGateway;
 import entity.Alex.DailyEventLog.DailyEventLogFactory;
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
-import entity.Alex.Event.EventFactory;
-import entity.Alex.Event.EventFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableFactory;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
-import entity.Alex.EventAvailable.EventAvailableInterf;
-import entity.BeginAndDueDates.BeginAndDueDatesFactory;
-import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventPresenter;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
@@ -32,6 +26,22 @@ import interface_adapter.alex.event_related.todays_events_module.edit_todays_eve
 import interface_adapter.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 
+// Category management imports
+import data_access.InMemoryCategoryGateway;
+import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
+import interface_adapter.Angela.category.*;
+import interface_adapter.Angela.category.create.*;
+import interface_adapter.Angela.category.delete.*;
+import interface_adapter.Angela.category.edit.*;
+import use_case.Angela.category.create.*;
+import use_case.Angela.category.delete.*;
+import use_case.Angela.category.edit.*;
+import view.Angela.Category.CategoryManagementDialog;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 import use_case.alex.event_related.add_event.*;
 import use_case.alex.event_related.create_event.*;
 import use_case.alex.event_related.avaliable_events_module.delete_event.*;
@@ -47,24 +57,28 @@ import view.Alex.Event.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public class EventPageBuilder {
 
+    // Category management fields
+    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
+    private CategoryManagementDialog categoryDialog;
+    private CreateEventView createEventView;
+    private AvailableEventViewModel availableEventViewModel;
+    private TodaysEventsViewModel todaysEventsViewModel;
+
     public JPanel build() {
-
-        // --- factories ---
-        EventFactoryInterf eventFactory = new EventFactory();
-        BeginAndDueDatesFactoryInterf datesFactory = new BeginAndDueDatesFactory();
-
-
         // --- ViewModels ---
         CreatedEventViewModel createdEventViewModel = new CreatedEventViewModel();
-        AvailableEventViewModel availableEventViewModel = new AvailableEventViewModel();
+        this.availableEventViewModel = new AvailableEventViewModel();
         DeletedEventViewModel deletedEventViewModel = new DeletedEventViewModel();
         EditedEventViewModel editedEventViewModel = new EditedEventViewModel();
         AddedEventViewModel addEventViewModel = new AddedEventViewModel();
-        TodaysEventsViewModel todaysEventsViewModel = new TodaysEventsViewModel();
+        this.todaysEventsViewModel = new TodaysEventsViewModel();
         DeleteTodaysEventViewModel deleteTodaysEventViewModel = new DeleteTodaysEventViewModel();
         EditTodaysEventViewModel editTodaysEventViewModel = new EditTodaysEventViewModel();
 
@@ -75,7 +89,6 @@ public class EventPageBuilder {
         TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject(dailyEventLogFactory);
 
         InfoFactory infoFactory = new InfoFactory();
-        InMemoryCategoryGateway inMemoryCategoryGateway = new InMemoryCategoryGateway();
 
         // --- Use Case Wiring ---
         CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(createdEventViewModel, availableEventViewModel, commonDao);
@@ -86,13 +99,13 @@ public class EventPageBuilder {
         DeleteEventInputBoundary deleteEventInteractor = new DeleteEventInteractor(commonDao, deleteEventPresenter);
         DeleteEventController deleteEventController = new DeleteEventController(deleteEventInteractor);
 
-        EditEventOutputBoundary editEventPresenter = new EditEventPresenter(editedEventViewModel, availableEventViewModel);
+        EditEventPresenter editEventPresenter = new EditEventPresenter(editedEventViewModel, availableEventViewModel);
+        editEventPresenter.setTodaysEventsViewModel(todaysEventsViewModel); // Wire up today's events view model
         EditEventInputBoundary editEventInteractor = new EditEventInteractor(commonDao, editEventPresenter);
         EditEventController editEventController = new EditEventController(editEventInteractor);
 
         AddEventOutputBoundary addEventPresenter = new AddEventPresenter(addEventViewModel, todaysEventsViewModel, todaysEventDAO);
-        AddEventInputBoundary addEventInteractor =
-                new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter, eventFactory, datesFactory);
+        AddEventInputBoundary addEventInteractor = new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter);
         AddEventController addEventController = new AddEventController(addEventInteractor);
 
         DeleteTodaysEventOutputBoundary delTodayPresenter = new DeleteTodaysEventPresenter(deleteTodaysEventViewModel, todaysEventsViewModel, addEventViewModel);
@@ -109,6 +122,7 @@ public class EventPageBuilder {
                 todaysEventsViewModel, addEventController, addEventViewModel,
                 deleteTodaysEventController, editTodaysEventController, editTodaysEventViewModel
         );
+        todaysEventsView.setCategoryGateway(categoryGateway);
 
         // 初始化 addEventViewModel 的下拉框数据
         List<String> names = commonDao.getAllEvents().stream().map(e -> e.getName()).toList();
@@ -116,13 +130,24 @@ public class EventPageBuilder {
         state.setAvailableNames(names);
         addEventViewModel.setState(state);
 
-        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, inMemoryCategoryGateway);
+        createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, categoryGateway);
         createEventView.setCreateEventController(createEventController);
+
+        // Set up category management dialog opening
+        createEventView.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("openCategoryManagement".equals(evt.getPropertyName())) {
+                    openCategoryDialog(commonDao, todaysEventDAO);
+                }
+            }
+        });
 
         AvailableEventView availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
                 createdEventViewModel, editEventController, editedEventViewModel
         );
+        availableEventView.setCategoryGateway(categoryGateway);
 
         // --- Layout Panels ---
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createEventView, addEventView);
@@ -158,6 +183,224 @@ public class EventPageBuilder {
 
         return mainPanel;
     }
+
+    private void openCategoryDialog(EventAvailableDataAccessObject commonDao, TodaysEventDataAccessObject todaysEventDAO) {
+        Container parent = createEventView.getParent();
+        while (parent != null && !(parent instanceof JFrame)) {
+            parent = parent.getParent();
+        }
+        JFrame parentFrame = (JFrame) parent;
+
+        if (parentFrame != null) {
+            if (categoryDialog == null) {
+                categoryDialog = new CategoryManagementDialog(
+                        parentFrame,
+                        categoryGateway,
+                        categoryManagementViewModel
+                );
+
+                // Wire up controllers
+                CategoryManagementPresenter categoryPresenter = new CategoryManagementPresenter(
+                        categoryManagementViewModel
+                );
+                // Wire up event ViewModels for auto-refresh when categories change
+                categoryPresenter.setAvailableEventViewModel(availableEventViewModel);
+                categoryPresenter.setTodaysEventsViewModel(todaysEventsViewModel);
+
+                CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
+                        categoryGateway,
+                        categoryPresenter
+                );
+                CreateCategoryController createCategoryController = new CreateCategoryController(
+                        createCategoryInteractor
+                );
+
+                // Create a combined adapter that handles both available and today's events
+                // This adapter implements both task and event interfaces
+                DeleteCategoryDataAccessInterface categoryDeleteAdapter = new DeleteCategoryDataAccessInterface() {
+                    @Override
+                    public entity.Category getCategoryById(String categoryId) {
+                        return categoryGateway.getCategoryById(categoryId);
+                    }
+
+                    @Override
+                    public int getCategoryCount() {
+                        return categoryGateway.getCategoryCount();
+                    }
+
+                    @Override
+                    public boolean exists(entity.Category category) {
+                        return categoryGateway.getCategoryById(category.getId()) != null;
+                    }
+
+                    @Override
+                    public boolean deleteCategory(entity.Category category) {
+                        return categoryGateway.deleteCategory(category.getId());
+                    }
+
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
+
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
+
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        // No tasks in event context
+                        return true;
+                    }
+
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        // No tasks in event context
+                        return true;
+                    }
+                };
+
+                // Also create an event adapter for clearing event categories
+                DeleteCategoryEventDataAccessInterface eventDeleteAdapter = new DeleteCategoryEventDataAccessInterface() {
+                    @Override
+                    public List<entity.info.InfoInterf> findAvailableEventsByCategory(String categoryId) {
+                        return commonDao.findAvailableEventsByCategory(categoryId);
+                    }
+
+                    @Override
+                    public List<entity.info.Info> findTodaysEventsByCategory(String categoryId) {
+                        return todaysEventDAO.findTodaysEventsByCategory(categoryId);
+                    }
+
+                    @Override
+                    public boolean clearAvailableEventCategory(String eventId) {
+                        return commonDao.clearAvailableEventCategory(eventId);
+                    }
+
+                    @Override
+                    public boolean clearTodaysEventCategory(String eventId) {
+                        return todaysEventDAO.clearTodaysEventCategory(eventId);
+                    }
+                };
+
+                // Create a combined adapter that delegates to both
+                DeleteCategoryDataAccessInterface combinedAdapter = new DeleteCategoryDataAccessInterface() {
+                    @Override
+                    public entity.Category getCategoryById(String categoryId) {
+                        return categoryDeleteAdapter.getCategoryById(categoryId);
+                    }
+
+                    @Override
+                    public int getCategoryCount() {
+                        return categoryDeleteAdapter.getCategoryCount();
+                    }
+
+                    @Override
+                    public boolean exists(entity.Category category) {
+                        return categoryDeleteAdapter.exists(category);
+                    }
+
+                    @Override
+                    public boolean deleteCategory(entity.Category category) {
+                        // First clear events
+                        String categoryId = category.getId();
+                        for (entity.info.Info event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
+                            eventDeleteAdapter.clearAvailableEventCategory(event.getId());
+                        }
+                        for (entity.info.Info event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
+                            eventDeleteAdapter.clearTodaysEventCategory(event.getId());
+                        }
+                        // Then delete the category
+                        return categoryDeleteAdapter.deleteCategory(category);
+                    }
+
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        return categoryDeleteAdapter.findAvailableTasksByCategory(categoryId);
+                    }
+
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        return categoryDeleteAdapter.findTodaysTasksByCategory(categoryId);
+                    }
+
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        return categoryDeleteAdapter.updateAvailableTaskCategory(taskId, newCategoryId);
+                    }
+
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        return categoryDeleteAdapter.updateTodaysTaskCategory(taskId, newCategoryId);
+                    }
+                };
+
+                DeleteCategoryInteractor deleteCategoryInteractor = new DeleteCategoryInteractor(
+                        combinedAdapter,
+                        categoryPresenter
+                );
+                DeleteCategoryController deleteCategoryController = new DeleteCategoryController(
+                        deleteCategoryInteractor
+                );
+
+                // Create a no-op adapter for event context (events don't need updates since they share category objects)
+                EditCategoryTaskDataAccessInterface eventCategoryAdapter = new EditCategoryTaskDataAccessInterface() {
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+                        // Events don't need special handling - they share category objects
+                        return new ArrayList<>();
+                    }
+
+                    @Override
+                    public List<Task> findTodaysTasksByCategory(String categoryId) {
+                        // Events don't need special handling - they share category objects
+                        return new ArrayList<>();
+                    }
+
+                    @Override
+                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+                        // Events don't need special handling - they share category objects
+                        return true;
+                    }
+
+                    @Override
+                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+                        // Events don't need special handling - they share category objects
+                        return true;
+                    }
+                };
+
+                EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
+                        categoryGateway,
+                        eventCategoryAdapter,
+                        categoryPresenter
+                );
+                EditCategoryController editCategoryController = new EditCategoryController(
+                        editCategoryInteractor
+                );
+
+                categoryDialog.setControllers(
+                        createCategoryController,
+                        deleteCategoryController,
+                        editCategoryController
+                );
+
+                categoryDialog.setCategoryChangeListener(new CategoryManagementDialog.CategoryChangeListener() {
+                    @Override
+                    public void onCategoryChanged() {
+                        createEventView.refreshCategories();
+                    }
+                });
+            }
+
+            categoryDialog.setVisible(true);
+        }
+    }
 }
+
+
 
 
