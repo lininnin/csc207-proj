@@ -524,6 +524,25 @@ public class InMemoryTaskGateway implements
     public boolean isTaskInTodaysList(String templateTaskId) {
         return templateExistsInToday(templateTaskId); // Reuse existing method
     }
+    
+    @Override
+    public boolean isTaskInTodaysListAndNotOverdue(String templateTaskId) {
+        // Check if task exists in today's list
+        if (!templateExistsInToday(templateTaskId)) {
+            return false; // Not in today's list at all
+        }
+        
+        // Find the task and check if it's overdue
+        for (Task task : todaysTasks.values()) {
+            if (task.getTemplateTaskId().equals(templateTaskId)) {
+                // Return true only if task is NOT overdue
+                // This allows re-adding overdue tasks with new due dates
+                return !task.isOverdue();
+            }
+        }
+        
+        return false; // Should not reach here if templateExistsInToday worked correctly
+    }
 
     // ===== MarkTaskCompleteDataAccessInterface methods =====
 

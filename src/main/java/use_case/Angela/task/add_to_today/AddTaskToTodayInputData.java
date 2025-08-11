@@ -10,11 +10,17 @@ public class AddTaskToTodayInputData {
     private final String taskId;
     private final Task.Priority priority;
     private final LocalDate dueDate;
+    private final boolean isTestingOverdue;
 
     public AddTaskToTodayInputData(String taskId, Task.Priority priority, LocalDate dueDate) {
+        this(taskId, priority, dueDate, false);
+    }
+    
+    public AddTaskToTodayInputData(String taskId, Task.Priority priority, LocalDate dueDate, boolean isTestingOverdue) {
         this.taskId = taskId;
         this.priority = priority;
         this.dueDate = dueDate;
+        this.isTestingOverdue = isTestingOverdue;
     }
 
     public String getTaskId() {
@@ -27,5 +33,9 @@ public class AddTaskToTodayInputData {
 
     public LocalDate getDueDate() {
         return dueDate;
+    }
+    
+    public boolean isTestingOverdue() {
+        return isTestingOverdue;
     }
 }

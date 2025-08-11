@@ -11,6 +11,8 @@ import interface_adapter.alex.event_related.todays_events_module.todays_events.T
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import interface_adapter.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventController;
 import view.DueDatePickerPanel;
+import entity.Category;
+import use_case.Angela.category.CategoryGateway;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +30,7 @@ public class TodaysEventsView extends JPanel {
     private final DeleteTodaysEventController deleteTodaysEventController; // ✅ 添加删除 controller
     private final EditTodaysEventController editTodaysEventController;
     private final EditTodaysEventViewModel editTodaysEventViewModel;
-
+    private CategoryGateway categoryGateway;
 
     private final JPanel todaysEventsListPanel = new JPanel();
 
@@ -104,6 +106,10 @@ public class TodaysEventsView extends JPanel {
         // 初始加载
         refreshEventList(todaysEventsViewModel.getState());
     }
+    
+    public void setCategoryGateway(CategoryGateway categoryGateway) {
+        this.categoryGateway = categoryGateway;
+    }
 
     private void refreshEventList(TodaysEventsState state) {
         todaysEventsListPanel.removeAll();
@@ -121,7 +127,15 @@ public class TodaysEventsView extends JPanel {
             row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
             row.add(new JLabel(event.getInfo().getName(), SwingConstants.CENTER));
-            row.add(new JLabel(event.getInfo().getCategory(), SwingConstants.CENTER));
+            
+            // Display category name instead of ID
+            String categoryDisplay = "";
+            if (categoryGateway != null && event.getInfo().getCategory() != null && !event.getInfo().getCategory().isEmpty()) {
+                Category category = categoryGateway.getCategoryById(event.getInfo().getCategory());
+                categoryDisplay = category != null ? category.getName() : event.getInfo().getCategory();
+            }
+            row.add(new JLabel(categoryDisplay, SwingConstants.CENTER));
+            
             row.add(new JLabel(String.valueOf(event.getBeginAndDueDates().getDueDate()), SwingConstants.CENTER));
 
             // Edit 按钮（暂留空逻辑）

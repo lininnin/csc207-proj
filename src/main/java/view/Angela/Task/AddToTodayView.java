@@ -4,8 +4,10 @@ import interface_adapter.Angela.task.add_to_today.AddTaskToTodayController;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
+import use_case.Angela.category.CategoryGateway;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
+import entity.Category;
 import view.DueDatePickerPanel;
 
 import javax.swing.*;
@@ -32,6 +34,7 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     private AddTaskToTodayController controller;
     private AddTaskToTodayViewModel viewModel;
     private AddToTodayDataAccessInterface dataAccess;
+    private CategoryGateway categoryGateway;
 
     public AddToTodayView(AddTaskToTodayViewModel viewModel) {
         System.out.println("DEBUG: AddToTodayView constructor called");
@@ -150,6 +153,11 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         this.dataAccess = dataAccess;
         refreshTasks();
     }
+    
+    public void setCategoryGateway(CategoryGateway categoryGateway) {
+        this.categoryGateway = categoryGateway;
+        refreshTasks(); // Refresh to show categories
+    }
 
     private void refreshTasks() {
         System.out.println("DEBUG: AddToTodayView.refreshTasks() called");
@@ -163,8 +171,18 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
             System.out.println("DEBUG: Number of tasks received: " + tasks.size());
             
             for (TaskAvailable task : tasks) {
-                System.out.println("DEBUG: Adding task to dropdown - ID: " + task.getId() + ", Name: " + task.getInfo().getName());
-                taskDropdown.addItem(new TaskItem(task.getId(), task.getInfo().getName()));
+                String categoryName = null;
+                // Get category name if category ID exists
+                if (categoryGateway != null && task.getInfo().getCategory() != null) {
+                    Category category = categoryGateway.getCategoryById(task.getInfo().getCategory());
+                    if (category != null) {
+                        categoryName = category.getName();
+                    }
+                }
+                System.out.println("DEBUG: Adding task to dropdown - ID: " + task.getId() + 
+                                 ", Name: " + task.getInfo().getName() + 
+                                 ", Category: " + categoryName);
+                taskDropdown.addItem(new TaskItem(task.getId(), task.getInfo().getName(), categoryName));
             }
         } else {
             System.out.println("DEBUG: dataAccess is null!");
@@ -260,9 +278,9 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
         // Set due date to yesterday for testing overdue functionality
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        // Call controller with yesterday's date
+        // Call controller with special testing method that bypasses validation
         if (controller != null) {
-            controller.execute(selectedTask.getId(), priority, yesterday);
+            controller.executeForTestingOverdue(selectedTask.getId(), priority, yesterday);
             showMessage("Task added with yesterday's date for testing overdue functionality", false);
         }
     }
@@ -271,15 +289,27 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     private static class TaskItem {
         private final String id;
         private final String name;
+        private final String category;
 
         public TaskItem(String id, String name) {
+            this(id, name, null);
+        }
+        
+        public TaskItem(String id, String name, String category) {
             this.id = id;
             this.name = name;
+            this.category = category;
         }
 
         public String getId() { return id; }
 
         @Override
-        public String toString() { return name; }
+        public String toString() { 
+            // Display name with category for better distinction
+            if (category != null && !category.isEmpty()) {
+                return name + " [" + category + "]";
+            }
+            return name;
+        }
     }
 }

@@ -31,7 +31,6 @@ import data_access.InMemoryCategoryGateway;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
-import view.CollapsibleSidebarView;
 import view.FontUtil;
 
 import javax.swing.*;
@@ -122,6 +121,8 @@ public class TaskPageBuilder {
         );
         // Set the TodayTasksViewModel so edits trigger refresh
         editAvailableTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
+        // Set the AddTaskToTodayViewModel so dropdown refreshes when task names are edited
+        editAvailableTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
                 taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
@@ -155,6 +156,7 @@ public class TaskPageBuilder {
         addToTodayView.setAddTaskToTodayController(addToTodayController);
         System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
         addToTodayView.setDataAccess(taskGateway);
+        addToTodayView.setCategoryGateway(categoryGateway); // Set category gateway for dropdown display
 
         // Wire up Mark Task Complete Use Case
         MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(
@@ -387,51 +389,13 @@ public class TaskPageBuilder {
         // Set divider size
         centerSplitPane.setDividerSize(8);
         
-        // Wrap in JPanel for CollapsibleSidebarView
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(centerSplitPane, BorderLayout.CENTER);
-
-        // --- Sidebar Panel ---
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(60, 63, 65));
-        sidebarPanel.setPreferredSize(new Dimension(200, 700));
-
-        String[] menuItems = {
-                "📋 Tasks", "📆 Events", "🎯 Goals",
-                "🧠 Wellness Log", "📊 Charts",
-                "🤖 AI-Feedback & Analysis", "⚙️ Settings"
-        };
-
-        for (String item : menuItems) {
-            JButton btn = new JButton(item);
-            btn.setMaximumSize(new Dimension(200, 40));
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setForeground(Color.WHITE);
-            btn.setOpaque(true);
-            btn.setBorderPainted(false);
-            btn.setFont(FontUtil.getStandardFont());
-
-            if (item.contains("Tasks")) {
-                btn.setBackground(new Color(45, 47, 49)); // Highlight current page
-            } else {
-                btn.setBackground(new Color(60, 63, 65));
-            }
-
-            sidebarPanel.add(btn);
-        }
-
-        // --- Wrap sidebar + centerPanel ---
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
-
         // --- Right Panel (Today So Far) ---
-        // Use the new TodaySoFarView instead of static content
         // Initial refresh of overdue tasks
         todaySoFarView.refreshOverdueTasks();
 
         // --- Final Frame Layout ---
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+        mainPanel.add(centerSplitPane, BorderLayout.CENTER);
         mainPanel.add(todaySoFarView, BorderLayout.EAST);
 
         return mainPanel;

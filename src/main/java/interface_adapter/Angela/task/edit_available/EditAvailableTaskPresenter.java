@@ -5,6 +5,8 @@ import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputBoundary;
 import use_case.Angela.task.edit_available.EditAvailableTaskOutputData;
 
@@ -17,6 +19,7 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
     private final AvailableTasksViewModel availableTasksViewModel;
     private TodayTasksViewModel todayTasksViewModel;
     private OverdueTasksController overdueTasksController;
+    private AddTaskToTodayViewModel addTaskToTodayViewModel;
 
     public EditAvailableTaskPresenter(EditAvailableTaskViewModel editAvailableTaskViewModel,
                                       AvailableTasksViewModel availableTasksViewModel) {
@@ -27,6 +30,11 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
         System.out.println("DEBUG: EditAvailableTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
+    }
+    
+    public void setAddTaskToTodayViewModel(AddTaskToTodayViewModel addTaskToTodayViewModel) {
+        this.addTaskToTodayViewModel = addTaskToTodayViewModel;
+        System.out.println("DEBUG: EditAvailableTaskPresenter - AddTaskToTodayViewModel set: " + (addTaskToTodayViewModel != null));
     }
 
     @Override
@@ -65,6 +73,18 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
         // Also refresh overdue tasks if controller is available
         if (overdueTasksController != null) {
             overdueTasksController.execute(7); // Refresh with 7 days
+        }
+        
+        // CRITICAL: Also refresh Add to Today dropdown when task names change
+        if (addTaskToTodayViewModel != null) {
+            AddTaskToTodayState addToTodayState = addTaskToTodayViewModel.getState();
+            if (addToTodayState == null) {
+                addToTodayState = new AddTaskToTodayState();
+            }
+            addToTodayState.setRefreshNeeded(true);
+            addTaskToTodayViewModel.setState(addToTodayState);
+            addTaskToTodayViewModel.firePropertyChanged();
+            System.out.println("DEBUG: Triggered Add to Today dropdown refresh after task edit");
         }
     }
 

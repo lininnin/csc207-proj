@@ -37,6 +37,15 @@ public interface AddToTodayDataAccessInterface {
     boolean isTaskInTodaysList(String templateTaskId);
     
     /**
+     * Checks if a task is in today's list and NOT overdue.
+     * This allows re-adding overdue tasks with new due dates.
+     * 
+     * @param templateTaskId the template task ID to check
+     * @return true if task is in today's list and not overdue, false otherwise
+     */
+    boolean isTaskInTodaysListAndNotOverdue(String templateTaskId);
+    
+    /**
      * Gets all available tasks with their full details.
      * 
      * @return list of all available tasks as TaskAvailable objects
