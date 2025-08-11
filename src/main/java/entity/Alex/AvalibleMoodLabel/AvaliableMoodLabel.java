@@ -2,6 +2,7 @@ package entity.Alex.AvalibleMoodLabel;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.MoodLabel.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +38,15 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
         }
 
         final String name = moodLabel.getName();
-        final MoodLabel.Type type = moodLabel.getType();
+        final Type type = moodLabel.getType();
 
         if (containsName(name)) {
             return; // Avoid duplication
         }
 
-        if (type == MoodLabel.Type.Positive) {
+        if (type == Type.Positive) {
             positiveLabels.add((MoodLabel) moodLabel);
-        } else if (type == MoodLabel.Type.Negative) {
+        } else if (type == Type.Negative) {
             negativeLabels.add((MoodLabel) moodLabel);
         }
     }
@@ -104,7 +105,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      * @return a list of positive MoodLabel objects
      */
     @Override
-    public List<MoodLabel> getPositiveLabelObjects() {
+    public List<MoodLabelInterf> getPositiveLabelObjects() {
         return new ArrayList<>(positiveLabels);
     }
 
@@ -114,7 +115,7 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
      * @return a list of negative MoodLabel objects
      */
     @Override
-    public List<MoodLabel> getNegativeLabelObjects() {
+    public List<MoodLabelInterf> getNegativeLabelObjects() {
         return new ArrayList<>(negativeLabels);
     }
 
