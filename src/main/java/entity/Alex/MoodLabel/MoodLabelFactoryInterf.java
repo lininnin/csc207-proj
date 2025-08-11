@@ -13,6 +13,6 @@ public interface MoodLabelFactoryInterf {
      * @return A new MoodLabelInterf instance
      * @throws IllegalArgumentException if name is null/empty or type is null
      */
-    MoodLabelInterf create(String name, MoodLabel.Type type);
+    MoodLabelInterf create(String name, Type type);
 }
 

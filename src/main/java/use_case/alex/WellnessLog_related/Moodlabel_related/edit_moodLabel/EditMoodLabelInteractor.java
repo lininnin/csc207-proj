@@ -3,6 +3,7 @@ package use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.Alex.MoodLabel.Type;
 
 /**
  * Interactor for the EditMoodLabel use case.
@@ -49,9 +50,9 @@ public class EditMoodLabelInteractor implements EditMoodLabelInputBoundary {
             }
 
             // ✅ Step 3: 构造新标签实体（用工厂而不是直接 new）
-            MoodLabel.Type type = "Positive".equalsIgnoreCase(newType)
-                    ? MoodLabel.Type.Positive
-                    : MoodLabel.Type.Negative;
+            Type type = "Positive".equalsIgnoreCase(newType)
+                    ? Type.Positive
+                    : Type.Negative;
 
             MoodLabelInterf updatedLabel = factory.create(newName, type);
 

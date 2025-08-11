@@ -1,6 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogState;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
 import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
@@ -38,7 +38,7 @@ public class EditWellnessLogPresenter implements EditWellnessLogOutputBoundary {
 
         // ✅ 同步更新 Today VM
         System.out.println("✅ Presenter: updating TodaysWellnessLogViewModel");
-        List<WellnessLogEntry> updatedList = dataAccess.getTodaysWellnessLogEntries();
+        List<WellnessLogEntryInterf> updatedList = dataAccess.getTodaysWellnessLogEntries();
         TodaysWellnessLogState newTodayState = new TodaysWellnessLogState();
         newTodayState.setEntries(updatedList);
         todaysViewModel.setState(newTodayState);

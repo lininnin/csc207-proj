@@ -2,6 +2,7 @@ package use_case.alex.event_related.create_event;
 
 import entity.info.Info;
 import entity.info.InfoFactory;
+import entity.info.InfoInterf;
 
 import java.util.List;
 
@@ -35,8 +36,8 @@ public class CreateEventInteractor implements CreateEventInputBoundary {
             return;
         }
 
-        List<Info> existingEvents = eventInfoDataAccessObject.getAllEvents();
-        for (Info event : existingEvents) {
+        List<InfoInterf> existingEvents = eventInfoDataAccessObject.getAllEvents();
+        for (InfoInterf event : existingEvents) {
             if (event.getName().equals(name)) { // ✅ case-sensitive comparison
                 eventInfoPresenter.prepareFailView("No duplicate allowed for event name.");
                 return;
@@ -56,7 +57,7 @@ public class CreateEventInteractor implements CreateEventInputBoundary {
         }
 
         // --- 创建并保存 ---
-        Info newEvent = (Info) eventInfoFactory.create(name.trim(), description, category);
+        InfoInterf newEvent = eventInfoFactory.create(name.trim(), description, category);
 
         eventInfoDataAccessObject.save(newEvent);
 

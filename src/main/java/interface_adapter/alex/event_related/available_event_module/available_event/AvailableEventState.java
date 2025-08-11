@@ -1,6 +1,7 @@
 package interface_adapter.alex.event_related.available_event_module.available_event;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,12 @@ import java.util.List;
  */
 public class AvailableEventState {
 
-    private List<Info> availableEvents = new ArrayList<>();
+    private List<InfoInterf> availableEvents = new ArrayList<>();
 
     /**
      * Returns the current list of available event Info objects.
      */
-    public List<Info> getAvailableEvents() {
+    public List<InfoInterf> getAvailableEvents() {
         return availableEvents;
     }
 
@@ -24,7 +25,7 @@ public class AvailableEventState {
      * Sets the available event list.
      * @param availableEvents The new list of Info objects to be shown.
      */
-    public void setAvailableEvents(List<Info> availableEvents) {
+    public void setAvailableEvents(List<InfoInterf> availableEvents) {
         this.availableEvents = availableEvents;
     }
 }

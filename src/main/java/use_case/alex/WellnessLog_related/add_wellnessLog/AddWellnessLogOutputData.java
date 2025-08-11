@@ -1,6 +1,6 @@
 package use_case.alex.WellnessLog_related.add_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * Output data for AddWellnessLog use case.
@@ -8,17 +8,17 @@ import entity.Alex.WellnessLogEntry.WellnessLogEntry;
  */
 public class AddWellnessLogOutputData {
 
-    private final WellnessLogEntry savedEntry;
+    private final WellnessLogEntryInterf savedEntry;
     private final boolean success;
     private final String message;
 
-    public AddWellnessLogOutputData(WellnessLogEntry savedEntry, boolean success, String message) {
+    public AddWellnessLogOutputData(WellnessLogEntryInterf savedEntry, boolean success, String message) {
         this.savedEntry = savedEntry;
         this.success = success;
         this.message = message;
     }
 
-    public WellnessLogEntry getSavedEntry() {
+    public WellnessLogEntryInterf getSavedEntry() {
         return savedEntry;
     }
 

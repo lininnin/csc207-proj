@@ -3,6 +3,7 @@ package data_access;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import use_case.alex.WellnessLog_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
 import use_case.alex.WellnessLog_related.todays_wellnessLog_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
 import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
@@ -34,7 +35,7 @@ public class TodaysWellnessLogDataAccessObject implements
     }
 
     @Override
-    public void save(WellnessLogEntry entry) {
+    public void save(WellnessLogEntryInterf entry) {
         if (!entry.getTime().toLocalDate().equals(dailyWellnessLog.getDate())) {
             throw new IllegalArgumentException("Entry does not belong to today's log.");
         }
@@ -42,7 +43,7 @@ public class TodaysWellnessLogDataAccessObject implements
     }
 
     @Override
-    public boolean remove(WellnessLogEntry entry) {
+    public boolean remove(WellnessLogEntryInterf entry) {
         int before = dailyWellnessLog.getEntries().size();
         dailyWellnessLog.removeEntry(entry.getId());
         int after = dailyWellnessLog.getEntries().size();
@@ -58,12 +59,12 @@ public class TodaysWellnessLogDataAccessObject implements
     }
 
     @Override
-    public List<WellnessLogEntry> getTodaysWellnessLogEntries() {
+    public List<WellnessLogEntryInterf> getTodaysWellnessLogEntries() {
         return new ArrayList<>(dailyWellnessLog.getEntries()); // ✅ defensive copy
     }
 
     @Override
-    public boolean contains(WellnessLogEntry entry) {
+    public boolean contains(WellnessLogEntryInterf entry) {
         return dailyWellnessLog.getEntries().stream()
                 .anyMatch(e -> e.getId().equals(entry.getId()));
     }
@@ -74,7 +75,7 @@ public class TodaysWellnessLogDataAccessObject implements
     }
 
     @Override
-    public WellnessLogEntry getById(String logId) {
+    public WellnessLogEntryInterf getById(String logId) {
         return dailyWellnessLog.getEntries().stream()
                 .filter(e -> e.getId().equals(logId))
                 .findFirst()
@@ -82,7 +83,7 @@ public class TodaysWellnessLogDataAccessObject implements
     }
 
     @Override
-    public boolean update(WellnessLogEntry updatedEntry) {
+    public boolean update(WellnessLogEntryInterf updatedEntry) {
         boolean removed = deleteById(updatedEntry.getId());
         if (removed) {
             save(updatedEntry);

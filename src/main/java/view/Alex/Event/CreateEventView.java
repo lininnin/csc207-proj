@@ -1,13 +1,16 @@
 package view.Alex.Event;
 
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
 import interface_adapter.alex.event_related.create_event.CreateEventController;
 import interface_adapter.alex.event_related.create_event.CreatedEventViewModel;
 import interface_adapter.alex.event_related.create_event.CreatedEventState;
 import interface_adapter.alex.event_related.create_event.CreateEventViewModelUpdateListener;
-import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
 import view.LabelComponentPanel;
+import view.FontUtil;
+import entity.Category;
+import use_case.Angela.category.CategoryGateway;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -20,8 +23,8 @@ import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import entity.info.InfoInterf;
-// import use_case.alex.event_related.available_event_module.EventAvailableDataAccessInterf;
+import entity.info.Info;
+import data_access.EventAvailableDataAccessObject;
 
 public class CreateEventView extends JPanel implements PropertyChangeListener, CreateEventViewModelUpdateListener {
 
@@ -29,22 +32,26 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
     private final CreatedEventViewModel createdEventViewModel;
     private final JTextField nameInputField = new JTextField(8);
-    private final JTextField categoryInputField = new JTextField(8);
+    private final JComboBox<CategoryItem> categoryComboBox = new JComboBox<>();
     private final JTextArea descriptionInputArea = new JTextArea(2, 8);
     private final JCheckBox oneTimeCheckbox = new JCheckBox();
     private final JButton create;
+    private JButton manageCategoriesButton;
     private CreateEventController createEventController;
 
-    // 注入以支持 AddEventViewModel 同步
+    // 可选：注入以支持 AddEventViewModel 同步
     private AddedEventViewModel addedEventViewModel;
-    private final CreateEventDataAccessInterface availableDAO;
+    private final EventAvailableDataAccessObject availableDAO;
+    private final CategoryGateway categoryGateway;
 
     public CreateEventView(CreatedEventViewModel createdEventViewModel,
                            AddedEventViewModel addedEventViewModel,
-                           CreateEventDataAccessInterface availableDAO) {
+                           EventAvailableDataAccessObject availableDAO,
+                           CategoryGateway categoryGateway) {
         this.createdEventViewModel = createdEventViewModel;
         this.addedEventViewModel = addedEventViewModel;
         this.availableDAO = availableDAO;
+        this.categoryGateway = categoryGateway;
 
         createdEventViewModel.addPropertyChangeListener(this);
         createdEventViewModel.addListener(this);
@@ -58,20 +65,54 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         title.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         nameInputField.setMaximumSize(new Dimension(100, 25));
-        categoryInputField.setMaximumSize(new Dimension(100, 25));
+        nameInputField.setFont(FontUtil.getStandardFont());
+
+        // Setup category dropdown with manage button
+        categoryComboBox.setPreferredSize(new Dimension(80, 25));
+        categoryComboBox.setFont(FontUtil.getStandardFont());
+        categoryComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof CategoryItem) {
+                    setText(((CategoryItem) value).toString());
+                }
+                setFont(FontUtil.getStandardFont());
+                if (!isSelected) {
+                    setForeground(Color.BLACK);
+                    setBackground(Color.WHITE);
+                }
+                return this;
+            }
+        });
+
+        manageCategoriesButton = new JButton("Manage");
+        manageCategoriesButton.setFont(FontUtil.getStandardFont());
+        manageCategoriesButton.setPreferredSize(new Dimension(60, 25));
+        manageCategoriesButton.addActionListener(e -> openCategoryManagement());
+
+        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        categoryPanel.add(categoryComboBox);
+        categoryPanel.add(manageCategoriesButton);
+
         descriptionInputArea.setLineWrap(true);
         descriptionInputArea.setWrapStyleWord(true);
+        descriptionInputArea.setFont(FontUtil.getStandardFont());
 
         LabelComponentPanel nameInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.NAME_LABEL), nameInputField);
+//        LabelComponentPanel oneTimeInfo = new LabelComponentPanel(
+//                new JLabel(CreatedEventViewModel.ONE_TIME_LABEL), oneTimeCheckbox);
         LabelComponentPanel categoryInfo = new LabelComponentPanel(
-                new JLabel(CreatedEventViewModel.CATEGORY_LABEL), categoryInputField);
+                new JLabel(CreatedEventViewModel.CATEGORY_LABEL), categoryPanel);
         LabelComponentPanel descriptionInfo = new LabelComponentPanel(
                 new JLabel(CreatedEventViewModel.DESCRIPTION_LABEL),
                 new JScrollPane(descriptionInputArea));
 
         JPanel row1 = new JPanel(new GridLayout(1, 2, 5, 1));
         row1.add(nameInfo);
+        //row1.add(oneTimeInfo);
 
         JPanel row2 = new JPanel(new GridLayout(1, 2, 5, 1));
         row2.add(categoryInfo);
@@ -83,11 +124,14 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         buttons.add(create);
 
         create.addActionListener(evt -> {
+            CategoryItem selectedCategory = (CategoryItem) categoryComboBox.getSelectedItem();
+            String categoryId = selectedCategory != null ? selectedCategory.getId() : "";
+
             createEventController.execute(
                     UUID.randomUUID().toString(),
                     nameInputField.getText(),
-                    categoryInputField.getText(),
                     descriptionInputArea.getText(),
+                    categoryId,
                     LocalDate.now()
             );
         });
@@ -102,6 +146,26 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         this.add(row2);
         this.add(Box.createVerticalStrut(1));
         this.add(buttons);
+
+        // Load categories on initialization
+        loadCategories();
+    }
+
+    private void openCategoryManagement() {
+        firePropertyChange("openCategoryManagement", null, null);
+    }
+
+    public void refreshCategories() {
+        loadCategories();
+    }
+
+    private void loadCategories() {
+        categoryComboBox.removeAllItems();
+        categoryComboBox.addItem(new CategoryItem("", "-- No Category --"));
+
+        for (Category category : categoryGateway.getAllCategories()) {
+            categoryComboBox.addItem(new CategoryItem(category.getId(), category.getName()));
+        }
     }
 
     private void addFieldListeners() {
@@ -113,10 +177,11 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
             }
         });
 
-        categoryInputField.getDocument().addDocumentListener(new DocumentAdapter() {
-            public void update(DocumentEvent e) {
+        categoryComboBox.addActionListener(e -> {
+            CategoryItem selectedItem = (CategoryItem) categoryComboBox.getSelectedItem();
+            if (selectedItem != null) {
                 CreatedEventState state = createdEventViewModel.getState();
-                state.setCategory(categoryInputField.getText());
+                state.setCategory(selectedItem.getId());
                 createdEventViewModel.setState(state);
             }
         });
@@ -128,6 +193,12 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
                 createdEventViewModel.setState(state);
             }
         });
+
+//        oneTimeCheckbox.addItemListener(e -> {
+//            CreatedEventState state = createdEventViewModel.getState();
+//            state.setOneTime(oneTimeCheckbox.isSelected());
+//            createdEventViewModel.setState(state);
+//        });
     }
 
     @Override
@@ -136,12 +207,23 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         if (!nameInputField.getText().equals(state.getName())) {
             nameInputField.setText(state.getName());
         }
-        if (!categoryInputField.getText().equals(state.getCategory())) {
-            categoryInputField.setText(state.getCategory());
+        // Update category selection if needed
+        String categoryId = state.getCategory();
+        if (categoryId != null) {
+            for (int i = 0; i < categoryComboBox.getItemCount(); i++) {
+                CategoryItem item = categoryComboBox.getItemAt(i);
+                if (item.getId().equals(categoryId)) {
+                    categoryComboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
         }
         if (!descriptionInputArea.getText().equals(state.getDescription())) {
             descriptionInputArea.setText(state.getDescription());
         }
+//        if (oneTimeCheckbox.isSelected() != state.isOneTime()) {
+//            oneTimeCheckbox.setSelected(state.isOneTime());
+//        }
     }
 
     @Override
@@ -165,6 +247,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         addedEventViewModel.setState(addState);
     }
 
+
     public String getViewName() {
         return viewName;
     }
@@ -178,5 +261,25 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         public void insertUpdate(DocumentEvent e) { update(e); }
         public void removeUpdate(DocumentEvent e) { update(e); }
         public void changedUpdate(DocumentEvent e) { update(e); }
+    }
+
+    // Inner class to hold category information
+    private static class CategoryItem {
+        private final String id;
+        private final String name;
+
+        public CategoryItem(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }

@@ -3,6 +3,7 @@ package use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabel; // 仅用于访问枚举 Type
+import entity.Alex.MoodLabel.Type;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class AddMoodLabelInteractor implements AddMoodLabelInputBoundary {
         }
 
         // Create mood label via factory
-        MoodLabel.Type moodType = type.equals("Positive") ? MoodLabel.Type.Positive : MoodLabel.Type.Negative;
+        Type moodType = type.equals("Positive") ? Type.Positive : Type.Negative;
         MoodLabelInterf newLabel = factory.create(name, moodType);
 
         // Save to data access

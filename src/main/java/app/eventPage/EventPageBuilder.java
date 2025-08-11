@@ -1,5 +1,6 @@
 package app.eventPage;
 
+import data_access.InMemoryCategoryGateway;
 import entity.Alex.DailyEventLog.DailyEventLogFactory;
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.Event.EventFactory;
@@ -74,6 +75,7 @@ public class EventPageBuilder {
         TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject(dailyEventLogFactory);
 
         InfoFactory infoFactory = new InfoFactory();
+        InMemoryCategoryGateway inMemoryCategoryGateway = new InMemoryCategoryGateway();
 
         // --- Use Case Wiring ---
         CreateEventOutputBoundary createEventPresenter = new CreateEventPresenter(createdEventViewModel, availableEventViewModel, commonDao);
@@ -114,7 +116,7 @@ public class EventPageBuilder {
         state.setAvailableNames(names);
         addEventViewModel.setState(state);
 
-        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao);
+        CreateEventView createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, inMemoryCategoryGateway);
         createEventView.setCreateEventController(createEventController);
 
         AvailableEventView availableEventView = new AvailableEventView(

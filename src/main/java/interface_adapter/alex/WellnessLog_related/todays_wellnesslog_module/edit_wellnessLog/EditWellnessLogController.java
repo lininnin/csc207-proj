@@ -1,6 +1,7 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInputBoundary;
 import use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog.EditWellnessLogInputData;
 
@@ -32,7 +33,7 @@ public class EditWellnessLogController {
                         int stressLevel,
                         int fatigueLevel,
                         String moodName,
-                        MoodLabel.Type moodType,
+                        Type moodType,
                         String note) {
 
         EditWellnessLogInputData inputData = new EditWellnessLogInputData(

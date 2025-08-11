@@ -2,6 +2,7 @@ package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
@@ -125,7 +126,7 @@ public class AvailableMoodLabelView extends JPanel implements PropertyChangeList
                     row.add(makeButton("Select", e -> {
                         selectedLabel = new MoodLabel.Builder(entry.getName())
                                 .type(entry.getType().equals("Positive") ?
-                                        MoodLabel.Type.Positive : MoodLabel.Type.Negative)
+                                        Type.Positive : Type.Negative)
                                 .build();
                         Window win = SwingUtilities.getWindowAncestor(this);
                         if (win != null) win.dispose();

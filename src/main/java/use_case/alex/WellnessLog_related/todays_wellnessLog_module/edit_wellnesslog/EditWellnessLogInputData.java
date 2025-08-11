@@ -1,6 +1,7 @@
 package use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 
 /**
  * Input data for the EditWellnessLog use case.
@@ -13,7 +14,7 @@ public class EditWellnessLogInputData {
     private final int stressLevel;
     private final int fatigueLevel;
     private final String moodName;
-    private final MoodLabel.Type moodType;
+    private final Type moodType;
     private final String note;
 
     public EditWellnessLogInputData(String logId,
@@ -21,7 +22,7 @@ public class EditWellnessLogInputData {
                                     int stressLevel,
                                     int fatigueLevel,
                                     String moodName,
-                                    MoodLabel.Type moodType,
+                                    Type moodType,
                                     String note) {
         this.logId = logId;
         this.energyLevel = energyLevel;
@@ -52,7 +53,7 @@ public class EditWellnessLogInputData {
         return moodName;
     }
 
-    public MoodLabel.Type getMoodType() {
+    public Type getMoodType() {
         return moodType;
     }
 

@@ -3,6 +3,7 @@ package data_access;
 import entity.Alex.MoodLabel.MoodLabelInterf;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
+import entity.Alex.MoodLabel.Type;
 import use_case.alex.WellnessLog_related.Moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
 import use_case.alex.WellnessLog_related.Moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
 import use_case.alex.WellnessLog_related.Moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;
@@ -27,10 +28,10 @@ public class MoodAvailableDataAccessObject implements
     public MoodAvailableDataAccessObject(entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf factory) {
         this.availableLabels = factory.create();
         // 默认标签初始化
-        availableLabels.addLabel(new MoodLabel.Builder("Happy").type(MoodLabel.Type.Positive).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Calm").type(MoodLabel.Type.Positive).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Anxious").type(MoodLabel.Type.Negative).build());
-        availableLabels.addLabel(new MoodLabel.Builder("Stressed").type(MoodLabel.Type.Negative).build());
+        availableLabels.addLabel(new MoodLabel.Builder("Happy").type(Type.Positive).build());
+        availableLabels.addLabel(new MoodLabel.Builder("Calm").type(Type.Positive).build());
+        availableLabels.addLabel(new MoodLabel.Builder("Anxious").type(Type.Negative).build());
+        availableLabels.addLabel(new MoodLabel.Builder("Stressed").type(Type.Negative).build());
     }
 
     // ----------- AddMoodLabelDataAccessInterf 实现 -----------

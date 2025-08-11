@@ -1,6 +1,7 @@
 package interface_adapter.alex.event_related.available_event_module.edit_event;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
@@ -35,9 +36,9 @@ public class EditEventPresenter implements EditEventOutputBoundary {
 
         // 2. 修改 Info 并用新 AvailableEventState 更新 ViewModel
         AvailableEventState oldState = availableEventViewModel.getState();
-        List<Info> eventList = oldState.getAvailableEvents();
+        List<InfoInterf> eventList = oldState.getAvailableEvents();
 
-        for (Info info : eventList) {
+        for (InfoInterf info : eventList) {
             if (info.getId().equals(outputData.getId())) {
                 info.setName(outputData.getName());
                 info.setCategory(outputData.getCategory());

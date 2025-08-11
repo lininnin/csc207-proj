@@ -9,10 +9,10 @@ public class MoodLabel implements MoodLabelInterf {
     /**
      * Type of the mood: Positive or Negative.
      */
-    public enum Type {
-        Positive,
-        Negative
-    }
+//    public enum Type {
+//        Positive,
+//        Negative
+//    }
 
     private Type type;
     private String name;

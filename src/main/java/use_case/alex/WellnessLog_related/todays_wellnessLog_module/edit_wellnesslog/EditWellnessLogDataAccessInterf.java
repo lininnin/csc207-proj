@@ -1,6 +1,6 @@
 package use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnesslog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface EditWellnessLogDataAccessInterf {
      * @param logId The unique identifier of the wellness log.
      * @return The WellnessLogEntry if found, otherwise null.
      */
-    WellnessLogEntry getById(String logId);
+    WellnessLogEntryInterf getById(String logId);
 
     /**
      * Updates the given wellness log entry in the data store.
@@ -24,14 +24,14 @@ public interface EditWellnessLogDataAccessInterf {
      * @param updatedEntry The updated wellness log entry.
      * @return true if the update was successful, false otherwise.
      */
-    boolean update(WellnessLogEntry updatedEntry);
+    boolean update(WellnessLogEntryInterf updatedEntry);
 
     /**
      * Retrieves all wellness log entries for today.
      *
      * @return List of today's WellnessLogEntry objects.
      */
-    List<WellnessLogEntry> getTodaysWellnessLogEntries();
+    List<WellnessLogEntryInterf> getTodaysWellnessLogEntries();
 }
 
 

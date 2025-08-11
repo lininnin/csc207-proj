@@ -3,6 +3,7 @@ package use_case.alex.WellnessLog_related.todays_wellnessLog_module.edit_wellnes
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * Interactor for the EditWellnessLog use case.
@@ -21,7 +22,7 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
 
     @Override
     public void execute(EditWellnessLogInputData inputData) {
-        WellnessLogEntry existing = dataAccess.getById(inputData.getLogId());
+        WellnessLogEntry existing = (WellnessLogEntry) dataAccess.getById(inputData.getLogId());
 
         if (existing == null) {
             outputBoundary.prepareFailView("Wellness log not found for ID: " + inputData.getLogId());
