@@ -1,4 +1,3 @@
-// AvailableGoalsOutputData.java
 package use_case.goalManage.available_goals;
 
 import entity.Sophia.Goal;

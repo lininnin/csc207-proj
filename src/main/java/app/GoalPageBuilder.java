@@ -1,6 +1,4 @@
 package app;
-
-// Import entity classes
 import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;                // Goal domain model
