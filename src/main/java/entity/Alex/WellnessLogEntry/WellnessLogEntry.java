@@ -45,15 +45,15 @@ public final class WellnessLogEntry {
         private String userNote;
 
         // ✅ 新增：从已有 WellnessLogEntry 构建一个可变 Builder
-        public static Builder from(final WellnessLogEntry entry) {
+        public static Builder from(final WellnessLogEntryInterf entry) {
             Builder builder = new Builder();
-            builder.id = entry.id;
-            builder.time = entry.time;
-            builder.stressLevel = entry.stressLevel;
-            builder.energyLevel = entry.energyLevel;
-            builder.fatigueLevel = entry.fatigueLevel;
-            builder.moodLabel = entry.moodLabel;
-            builder.userNote = entry.userNote;
+            builder.id = entry.getId();
+            builder.time = entry.getTime();
+            builder.stressLevel = entry.getStressLevel();
+            builder.energyLevel = entry.getEnergyLevel();
+            builder.fatigueLevel = entry.getFatigueLevel();
+            builder.moodLabel = entry.getMoodLabel();
+            builder.userNote = entry.getUserNote();
             return builder;
         }
 
