@@ -2,12 +2,10 @@ package data_access;
 
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.DailyEventLog.DailyEventLogInterf;
-import entity.Alex.Event.Event;
-import entity.info.Info;
+import entity.Alex.Event.EventInterf;
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
 import use_case.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
 import use_case.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventDataAccessInterf;
-import use_case.Angela.category.delete.DeleteCategoryEventDataAccessInterface;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,12 +13,11 @@ import java.util.List;
 
 /**
  * DAO for today's events using a DailyEventLogInterf as the internal data store.
- * Now decoupled from the concrete DailyEventLog class using DIP.
+ * Fully decoupled from concrete Event/DailyEventLog classes using DIP.
  */
 public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         DeleteTodaysEventDataAccessInterf,
-        EditTodaysEventDataAccessInterf,
-        DeleteCategoryEventDataAccessInterface {
+        EditTodaysEventDataAccessInterf {
 
     private final DailyEventLogInterf todayLog;
 
@@ -34,7 +31,7 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public void save(Event todaysEvent) {
+    public void save(EventInterf todaysEvent) {
         if (todaysEvent == null) {
             throw new IllegalArgumentException("Event cannot be null");
         }
@@ -42,7 +39,7 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public boolean remove(Event todaysEvent) {
+    public boolean remove(EventInterf todaysEvent) {
         if (todaysEvent == null || todaysEvent.getInfo() == null) {
             return false;
         }
@@ -53,14 +50,14 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public List<Event> getTodaysEvents() {
+    public List<EventInterf> getTodaysEvents() {
         return todayLog.getActualEvents();
     }
 
     @Override
-    public List<Event> getEventsByCategory(String category) {
-        List<Event> filtered = new ArrayList<>();
-        for (Event event : todayLog.getActualEvents()) {
+    public List<EventInterf> getEventsByCategory(String category) {
+        List<EventInterf> filtered = new ArrayList<>();
+        for (EventInterf event : todayLog.getActualEvents()) {
             if (event.getInfo() != null && category.equals(event.getInfo().getCategory())) {
                 filtered.add(event);
             }
@@ -69,9 +66,9 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public List<Event> getEventsByName(String name) {
-        List<Event> filtered = new ArrayList<>();
-        for (Event event : todayLog.getActualEvents()) {
+    public List<EventInterf> getEventsByName(String name) {
+        List<EventInterf> filtered = new ArrayList<>();
+        for (EventInterf event : todayLog.getActualEvents()) {
             if (event.getInfo() != null && name.equals(event.getInfo().getName())) {
                 filtered.add(event);
             }
@@ -85,20 +82,20 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public boolean contains(Event todaysEvent) {
+    public boolean contains(EventInterf todaysEvent) {
         return todayLog.getActualEvents().contains(todaysEvent);
     }
 
     @Override
     public void clearAll() {
-        for (Event e : new ArrayList<>(todayLog.getActualEvents())) {
+        for (EventInterf e : new ArrayList<>(todayLog.getActualEvents())) {
             todayLog.removeEntry(e.getInfo().getId());
         }
     }
 
     @Override
-    public Event getEventById(String id) {
-        for (Event event : todayLog.getActualEvents()) {
+    public EventInterf getEventById(String id) {
+        for (EventInterf event : todayLog.getActualEvents()) {
             if (event.getInfo() != null && id.equals(event.getInfo().getId())) {
                 return event;
             }
@@ -107,14 +104,14 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     }
 
     @Override
-    public boolean update(Event updatedEvent) {
+    public boolean update(EventInterf updatedEvent) {
         if (updatedEvent == null || updatedEvent.getInfo() == null) return false;
 
         String id = updatedEvent.getInfo().getId();
-        List<Event> currentEvents = todayLog.getActualEvents();
+        List<EventInterf> currentEvents = todayLog.getActualEvents();
 
         for (int i = 0; i < currentEvents.size(); i++) {
-            Event oldEvent = currentEvents.get(i);
+            EventInterf oldEvent = currentEvents.get(i);
             if (oldEvent.getInfo().getId().equals(id)) {
                 todayLog.removeEntry(id);
                 todayLog.addEntry(updatedEvent);
@@ -126,7 +123,7 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
 
     @Override
     public boolean existsById(String id) {
-        for (Event event : todayLog.getActualEvents()) {
+        for (EventInterf event : todayLog.getActualEvents()) {
             if (event.getInfo() != null && id.equals(event.getInfo().getId())) {
                 return true;
             }
@@ -140,46 +137,4 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     public DailyEventLogInterf getDailyEventLog() {
         return todayLog;
     }
-    
-    // ===== DeleteCategoryEventDataAccessInterface methods =====
-    
-    @Override
-    public List<Info> findAvailableEventsByCategory(String categoryId) {
-        // Today's events DAO doesn't manage available events
-        // This is handled by EventAvailableDataAccessObject
-        return new ArrayList<>();
-    }
-    
-    @Override
-    public List<Info> findTodaysEventsByCategory(String categoryId) {
-        List<Info> result = new ArrayList<>();
-        for (Event event : todayLog.getActualEvents()) {
-            if (event.getInfo() != null && 
-                event.getInfo().getCategory() != null && 
-                event.getInfo().getCategory().equals(categoryId)) {
-                result.add(event.getInfo());
-            }
-        }
-        return result;
-    }
-    
-    @Override
-    public boolean clearAvailableEventCategory(String eventId) {
-        // Today's events DAO doesn't manage available events
-        // This is handled by EventAvailableDataAccessObject
-        return false;
-    }
-    
-    @Override
-    public boolean clearTodaysEventCategory(String eventId) {
-        for (Event event : todayLog.getActualEvents()) {
-            if (event.getInfo() != null && event.getInfo().getId().equals(eventId)) {
-                event.getInfo().setCategory(null);  // Clear the category
-                return true;
-            }
-        }
-        return false;
-    }
 }
-
-
