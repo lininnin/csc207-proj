@@ -2,10 +2,13 @@ package data_access;
 
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.DailyEventLog.DailyEventLogInterf;
+
 import entity.Alex.Event.EventInterf;
+
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
 import use_case.alex.event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;
 import use_case.alex.event_related.todays_events_module.edit_todays_event.EditTodaysEventDataAccessInterf;
+import use_case.Angela.category.delete.DeleteCategoryEventDataAccessInterface;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,7 +20,8 @@ import java.util.List;
  */
 public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         DeleteTodaysEventDataAccessInterf,
-        EditTodaysEventDataAccessInterf {
+        EditTodaysEventDataAccessInterf,
+        DeleteCategoryEventDataAccessInterface {
 
     private final DailyEventLogInterf todayLog;
 
@@ -137,4 +141,5 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
     public DailyEventLogInterf getDailyEventLog() {
         return todayLog;
     }
+
 }

@@ -1,17 +1,18 @@
 package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.WellnessLogEntry.Levels;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Represents a wellness log entry containing stress, energy, fatigue levels and mood information.
+ * Represents a wellness log entry containing stress,
+ * energy, fatigue levels and mood information.
  * <p>
- * This class uses the Builder pattern for controlled construction and input validation.
+ * This class uses the Builder pattern
+ * for controlled construction and input validation.
  */
-public class WellnessLogEntry {
+public final class WellnessLogEntry {
 
     private final String id;
     private final LocalDateTime time;
@@ -24,7 +25,7 @@ public class WellnessLogEntry {
     /**
      * Private constructor used by the Builder.
      */
-    private WellnessLogEntry(Builder builder) {
+    private WellnessLogEntry(final Builder builder) {
         this.id = builder.id != null ? builder.id : UUID.randomUUID().toString();
         this.time = builder.time;
         this.stressLevel = builder.stressLevel;
@@ -44,7 +45,7 @@ public class WellnessLogEntry {
         private String userNote;
 
         // ✅ 新增：从已有 WellnessLogEntry 构建一个可变 Builder
-        public static Builder from(WellnessLogEntry entry) {
+        public static Builder from(final WellnessLogEntry entry) {
             Builder builder = new Builder();
             builder.id = entry.id;
             builder.time = entry.time;
@@ -56,34 +57,34 @@ public class WellnessLogEntry {
             return builder;
         }
 
-        public Builder time(LocalDateTime time) {
-            this.time = time;
+        public Builder time(final LocalDateTime timeParam) {
+            this.time = timeParam;
             return this;
         }
 
-        public Builder stressLevel(Levels level) {
-            this.stressLevel = level;
+        public Builder stressLevel(final Levels levelParam) {
+            this.stressLevel = levelParam;
             return this;
         }
 
-        public Builder energyLevel(Levels level) {
-            this.energyLevel = level;
+        public Builder energyLevel(final Levels levelParam) {
+            this.energyLevel = levelParam;
             return this;
         }
 
-        public Builder fatigueLevel(Levels level) {
-            this.fatigueLevel = level;
+        public Builder fatigueLevel(final Levels levelParam) {
+            this.fatigueLevel = levelParam;
             return this;
         }
 
-        public Builder moodLabel(MoodLabel mood) {
-            this.moodLabel = mood;
+        public Builder moodLabel(final MoodLabel moodParam) {
+            this.moodLabel = moodParam;
             return this;
         }
 
-        public Builder userNote(String note) {
-            if (note != null) {
-                String trimmed = note.trim();
+        public Builder userNote(final String noteParam) {
+            if (noteParam != null) {
+                String trimmed = noteParam.trim();
                 if (!trimmed.isEmpty()) {
                     this.userNote = trimmed;
                 }
@@ -92,8 +93,9 @@ public class WellnessLogEntry {
         }
 
         public WellnessLogEntry build() {
-            if (time == null || moodLabel == null ||
-                    stressLevel == null || energyLevel == null || fatigueLevel == null) {
+            if (time == null || moodLabel == null
+                    || stressLevel == null || energyLevel == null
+                    || fatigueLevel == null) {
                 throw new IllegalStateException("All required fields must be set.");
             }
             return new WellnessLogEntry(this);
@@ -132,39 +134,39 @@ public class WellnessLogEntry {
 
     // ------------------ Setters ------------------
 
-    public void setStressLevel(Levels level) {
-        if (level == null) {
+    public void setStressLevel(final Levels levelParam) {
+        if (levelParam == null) {
             throw new IllegalArgumentException("Stress level cannot be null");
         }
-        this.stressLevel = level;
+        this.stressLevel = levelParam;
     }
 
-    public void setEnergyLevel(Levels level) {
-        if (level == null) {
+    public void setEnergyLevel(final Levels levelParam) {
+        if (levelParam == null) {
             throw new IllegalArgumentException("Energy level cannot be null");
         }
-        this.energyLevel = level;
+        this.energyLevel = levelParam;
     }
 
-    public void setFatigueLevel(Levels level) {
-        if (level == null) {
+    public void setFatigueLevel(final Levels levelParam) {
+        if (levelParam == null) {
             throw new IllegalArgumentException("Fatigue level cannot be null");
         }
-        this.fatigueLevel = level;
+        this.fatigueLevel = levelParam;
     }
 
-    public void setMoodLabel(MoodLabel mood) {
-        if (mood == null) {
+    public void setMoodLabel(final MoodLabel moodParam) {
+        if (moodParam == null) {
             throw new IllegalArgumentException("Mood label cannot be null");
         }
-        this.moodLabel = mood;
+        this.moodLabel = moodParam;
     }
 
-    public void setUserNote(String note) {
-        if (note == null) {
+    public void setUserNote(final String noteParam) {
+        if (noteParam == null) {
             this.userNote = null;
         } else {
-            String trimmed = note.trim();
+            String trimmed = noteParam.trim();
             if (trimmed.isEmpty()) {
                 throw new IllegalArgumentException("User note cannot be blank");
             }

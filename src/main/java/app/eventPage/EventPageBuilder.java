@@ -71,6 +71,14 @@ public class EventPageBuilder {
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
 
+    // Category management fields
+    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
+    private CategoryManagementDialog categoryDialog;
+    private CreateEventView createEventView;
+    private AvailableEventViewModel availableEventViewModel;
+    private TodaysEventsViewModel todaysEventsViewModel;
+
     public JPanel build() {
         // --- ViewModels ---
         CreatedEventViewModel createdEventViewModel = new CreatedEventViewModel();
@@ -143,6 +151,16 @@ public class EventPageBuilder {
             }
         });
 
+        // Set up category management dialog opening
+        createEventView.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("openCategoryManagement".equals(evt.getPropertyName())) {
+                    openCategoryDialog(commonDao, todaysEventDAO);
+                }
+            }
+        });
+
         AvailableEventView availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
                 createdEventViewModel, editEventController, editedEventViewModel
@@ -183,7 +201,7 @@ public class EventPageBuilder {
 
         return mainPanel;
     }
-    
+  
     private void openCategoryDialog(EventAvailableDataAccessObject commonDao, TodaysEventDataAccessObject todaysEventDAO) {
         Container parent = createEventView.getParent();
         while (parent != null && !(parent instanceof JFrame)) {
@@ -400,5 +418,3 @@ public class EventPageBuilder {
         }
     }
 }
-
-

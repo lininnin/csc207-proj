@@ -240,7 +240,7 @@ public class TaskPageBuilder {
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
+            public void propertyChange(final PropertyChangeEvent evt) {
                 if ("openCategoryManagement".equals(evt.getPropertyName())) {
                     openCategoryDialog();
                 }
