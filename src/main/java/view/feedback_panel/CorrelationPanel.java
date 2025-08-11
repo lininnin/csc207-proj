@@ -55,28 +55,14 @@ public class CorrelationPanel extends JPanel {
 
             // Compact scroll area for the table
             JScrollPane tableScroll = new JScrollPane(table);
-            int visibleRows = Math.min(table.getRowCount(), 4); // show up to 4 rows without growing huge
+            int visibleRows = Math.min(table.getRowCount(), 4);
             int prefHeight = table.getTableHeader().getPreferredSize().height
                     + (visibleRows * table.getRowHeight()) + 8;
             tableScroll.setPreferredSize(new Dimension(400, prefHeight));
 
-            // Center container: table on top, notes right below it
+            // Just table — no notes
             JPanel centre = new JPanel(new BorderLayout());
-            centre.add(tableScroll, BorderLayout.NORTH); // keep it compact; doesn't stretch
-            // (use NORTH so it keeps its preferred height instead of expanding)
-
-            // Notes directly below the table
-            String notes = obj.optString("notes", "");
-            if (!notes.isEmpty()) {
-                JTextArea notesArea = new JTextArea("Notes: " + notes);
-                notesArea.setEditable(false);
-                notesArea.setLineWrap(true);
-                notesArea.setWrapStyleWord(true);
-                notesArea.setBorder(new EmptyBorder(8, 0, 0, 0));
-                notesArea.setBackground(getBackground());
-                notesArea.setFont(tableFont); // match sizes
-                centre.add(notesArea, BorderLayout.CENTER);
-            }
+            centre.add(tableScroll, BorderLayout.NORTH);
 
             add(centre, BorderLayout.CENTER);
 

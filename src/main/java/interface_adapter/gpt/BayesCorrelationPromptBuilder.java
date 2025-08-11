@@ -41,7 +41,6 @@ public final class BayesCorrelationPromptBuilder {
                 .append("Task:\n")
                 .append(" 1. Compute the posterior mean *direction* (+ / – / ~0) for each variable.\n")
                 .append(" 2. Give a 0‑1 confidence score that the sign is correct.\n")
-                .append(" 3. Add one‑sentence methodological note.\n")
                 .append("If there is missing days then focus on analyzing the rest of the days.\n")
                 .append("Return STRICT JSON only, no extra keys. \n\n")
 
@@ -56,7 +55,6 @@ public final class BayesCorrelationPromptBuilder {
                 .append("    {\"variable\":\"Energy\", ...},\n")
                 .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
-                .append("  \"notes\": \"Give 1 brief paragraph explaining the data in the JSON,")
                 .append("}\n");
 
         return sb.toString();
