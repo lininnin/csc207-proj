@@ -60,6 +60,21 @@ import data_access.TodaysEventDataAccessObject;
 import entity.info.InfoFactory;
 
 import view.Alex.Event.*;
+import view.Angela.TodaySoFarView;
+import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
+import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
+import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
+import use_case.Angela.task.overdue.OverdueTasksInteractor;
+import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInteractor;
+import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
+import data_access.FileGoalRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,6 +91,10 @@ public class EventPageBuilder {
     private CreateEventView createEventView;
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
+    
+    // Today So Far panel fields
+    private TodaySoFarController todaySoFarController;
+    private OverdueTasksController overdueTasksController;
 
 
     public JPanel build() {
@@ -191,14 +210,74 @@ public class EventPageBuilder {
         centerPanel.add(topCenterRow, BorderLayout.CENTER);
         centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
+        // --- Set up Today So Far Panel ---
+        // Create ViewModels for Today So Far
+        OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
+        TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
+        
+        // Create task gateway for Today So Far integration
+        InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
+        
+        // Wire up Overdue Tasks Use Case
+        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
+        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
+                taskGateway, categoryGateway, overdueTasksPresenter);
+        overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
+        
+        // Create Goal repository
+        FileGoalRepository goalRepository = new FileGoalRepository();
+        
+        // Create Wellness DAO for Today So Far integration
+        entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf wellnessLogFactory = 
+            new entity.Alex.DailyWellnessLog.DailyWellnessLogFactory();
+        data_access.TodaysWellnessLogDataAccessObject wellnessLogDAO = 
+            new data_access.TodaysWellnessLogDataAccessObject(wellnessLogFactory);
+        
+        // Wire up Today So Far Use Case with all data sources
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
+                taskGateway, todaysEventDAO, wellnessLogDAO, goalRepository);
+        
+        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
+        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
+                todaySoFarDataAccess, todaySoFarPresenter, categoryGateway);
+        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
+        
+        // Create Today So Far view
+        TodaySoFarView todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
+        todaySoFarView.setOverdueTasksController(overdueTasksController);
+        todaySoFarView.setTodaySoFarController(todaySoFarController);
+        
+        // Trigger initial data load
+        todaySoFarController.refresh();
+        overdueTasksController.execute(7);
+        
+        // Set Today So Far controller on event presenters that need to refresh
+        if (addEventPresenter instanceof AddEventPresenter) {
+            ((AddEventPresenter) addEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        if (delTodayPresenter instanceof DeleteTodaysEventPresenter) {
+            ((DeleteTodaysEventPresenter) delTodayPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        if (editTodayPresenter instanceof EditTodaysEventPresenter) {
+            ((EditTodaysEventPresenter) editTodayPresenter).setTodaySoFarController(todaySoFarController);
+        }
 
+        // Wrap Today So Far in a panel
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(300, 0));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setPreferredSize(new Dimension(380, 0));
+        rightPanel.setMinimumSize(new Dimension(320, 0));
+
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, rightPanel);
+        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.7);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return mainPanel;
     }

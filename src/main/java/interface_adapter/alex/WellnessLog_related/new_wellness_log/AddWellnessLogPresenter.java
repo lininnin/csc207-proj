@@ -2,6 +2,7 @@ package interface_adapter.alex.WellnessLog_related.new_wellness_log;
 
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogState;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogOutputBoundary;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogOutputData;
 
@@ -9,11 +10,16 @@ public class AddWellnessLogPresenter implements AddWellnessLogOutputBoundary {
 
     private final AddWellnessLogViewModel addViewModel;
     private final TodaysWellnessLogViewModel todaysViewModel;
+    private TodaySoFarController todaySoFarController;
 
     public AddWellnessLogPresenter(AddWellnessLogViewModel addViewModel,
                                    TodaysWellnessLogViewModel todaysViewModel) {
         this.addViewModel = addViewModel;
         this.todaysViewModel = todaysViewModel;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -34,6 +40,11 @@ public class AddWellnessLogPresenter implements AddWellnessLogOutputBoundary {
 
         todaysViewModel.setState(currentState);
         todaysViewModel.firePropertyChanged(TodaysWellnessLogViewModel.TODAYS_WELLNESS_LOG_PROPERTY);
+        
+        // Refresh Today So Far panel if controller is available
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
     }
 
     @Override
