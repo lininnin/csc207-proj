@@ -3,6 +3,7 @@ package data_access;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;
@@ -48,7 +49,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @param entry The wellness log entry to be added
      */
     @Override
-    public void save(final WellnessLogEntry entry) {
+    public void save(final WellnessLogEntryInterf entry) {
         if (!entry.getTime().toLocalDate().equals(dailyWellnessLog.getDate())) {
             throw new IllegalArgumentException("Entry does not belong to today's log.");
         }
@@ -62,7 +63,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @return true if removal succeeded, false otherwise
      */
     @Override
-    public boolean remove(final WellnessLogEntry entry) {
+    public boolean remove(final WellnessLogEntryInterf entry) {
         int before = dailyWellnessLog.getEntries().size();
         dailyWellnessLog.removeEntry(entry.getId());
         int after = dailyWellnessLog.getEntries().size();
@@ -89,7 +90,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @return List of today's wellness log entries
      */
     @Override
-    public List<WellnessLogEntry> getTodaysWellnessLogEntries() {
+    public List<WellnessLogEntryInterf> getTodaysWellnessLogEntries() {
         return new ArrayList<>(dailyWellnessLog.getEntries());
     }
 
@@ -100,7 +101,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @return true if entry exists, false otherwise
      */
     @Override
-    public boolean contains(final WellnessLogEntry entry) {
+    public boolean contains(final WellnessLogEntryInterf entry) {
         return dailyWellnessLog.getEntries().stream()
                 .anyMatch(e -> e.getId().equals(entry.getId()));
     }
@@ -120,7 +121,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @return The matching entry or null if not found
      */
     @Override
-    public WellnessLogEntry getById(final String logId) {
+    public WellnessLogEntryInterf getById(final String logId) {
         return dailyWellnessLog.getEntries().stream()
                 .filter(e -> e.getId().equals(logId))
                 .findFirst()
@@ -134,7 +135,7 @@ public class TodaysWellnessLogDataAccessObject implements
      * @return true if update succeeded, false otherwise
      */
     @Override
-    public boolean update(final WellnessLogEntry updatedEntry) {
+    public boolean update(final WellnessLogEntryInterf updatedEntry) {
         boolean removed = deleteById(updatedEntry.getId());
         if (removed) {
             save(updatedEntry);
