@@ -2,15 +2,17 @@ package app.feedback_panel;
 
 import data_access.files.FileDailyLogRepository;
 import entity.Alex.WellnessLogEntry.Levels;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 import entity.Angela.Task.Task;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabel.Type;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.Event.Event;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import use_case.repository.DailyLogRepository;
+import entity.info.InfoInterf;
 
 import java.io.File;
 import java.time.DayOfWeek;
@@ -35,7 +37,6 @@ public class DailyLogGenerator {
     private static void createTestDailyLog4Tasks(LocalDate monday, int i, List<DailyLog> logs) {
         LocalDate date = monday.minusDays(i);
         DailyLog log = new DailyLog(date);
-
 
         // Fake Task 1
         Info taskInfo = new Info.Builder("Task " + (i +1))
@@ -77,7 +78,7 @@ public class DailyLogGenerator {
         log.markTaskCompleted(task4, LocalDateTime.now());
 
         // Fake Event
-        Info eventInfo = new Info.Builder("Event " + (i +1))
+        InfoInterf eventInfo = new Info.Builder("Event " + (i +1))
                 .category("Life")
                 .build();
         Event event = new Event.Builder(eventInfo)
@@ -161,7 +162,7 @@ public class DailyLogGenerator {
         Random random = new Random();
         Levels randomWellnessLvl =  lvls[random.nextInt(lvls.length)];
         for (int j=0; j < 5; j++) {
-            WellnessLogEntry entry = new WellnessLogEntry.Builder()
+            WellnessLogEntryInterf entry = new WellnessLogEntry.Builder()
                     .time(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
                     .moodLabel(mood)
                     .energyLevel(randomWellnessLvl)

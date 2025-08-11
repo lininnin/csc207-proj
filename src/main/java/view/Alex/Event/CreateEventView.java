@@ -1,5 +1,6 @@
 package view.Alex.Event;
 
+import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
 import interface_adapter.alex.event_related.create_event.CreateEventController;
@@ -239,7 +240,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
 
         // ✅ 更新 AddEventViewModel 中的名称（同步更新）
         List<String> availableNames = availableDAO.getAllEvents().stream()
-                .map(Info::getName)
+                .map(InfoInterf::getName)
                 .collect(Collectors.toList());
         AddedEventState addState = addedEventViewModel.getState();
         addState.setAvailableNames(availableNames);

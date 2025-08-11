@@ -1,6 +1,7 @@
 package entity.Alex.DailyWellnessLog;
 
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class DailyWellnessLog implements DailyWellnessLogInterf {
     /**
      * The list of wellness log entries for this day.
      */
-    private final List<WellnessLogEntry> entries;
+    private final List<WellnessLogEntryInterf> entries;
 
     /**
      * Constructs a new DailyWellnessLog for the specified date.
@@ -46,7 +47,7 @@ public class DailyWellnessLog implements DailyWellnessLogInterf {
      *
      * @param entry The WellnessLogEntry to add
      */
-    public void addEntry(final WellnessLogEntry entry) {
+    public void addEntry(final WellnessLogEntryInterf entry) {
         if (entry != null && !entries.contains(entry)) {
             entries.add(entry);
         }
@@ -85,7 +86,7 @@ public class DailyWellnessLog implements DailyWellnessLogInterf {
     /**
      * @return A list of all wellness log entries for this date
      */
-    public List<WellnessLogEntry> getEntries() {
+    public List<WellnessLogEntryInterf> getEntries() {
         return new ArrayList<>(entries); // defensive copy
     }
 }

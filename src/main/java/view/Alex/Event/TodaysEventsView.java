@@ -1,6 +1,7 @@
 package view.Alex.Event;
 
 import entity.Alex.Event.Event;
+import entity.Alex.Event.EventInterf;
 import interface_adapter.alex.event_related.add_event.AddEventController;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
@@ -114,7 +115,7 @@ public class TodaysEventsView extends JPanel {
     private void refreshEventList(TodaysEventsState state) {
         todaysEventsListPanel.removeAll();
 
-        List<Event> events = state.getTodaysEvents();
+        List<EventInterf> events = state.getTodaysEvents();
 
         if (events.isEmpty()) {
             JLabel emptyLabel = new JLabel("No available events.", SwingConstants.CENTER);
@@ -122,7 +123,7 @@ public class TodaysEventsView extends JPanel {
             todaysEventsListPanel.add(emptyLabel);
         }
         System.out.println("todays event view,Refreshing event list, count: " + events.size());
-        for (Event event : events) {
+        for (EventInterf event : events) {
             JPanel row = new JPanel(new GridLayout(1, 5));
             row.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 

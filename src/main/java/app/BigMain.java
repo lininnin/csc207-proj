@@ -40,13 +40,14 @@ public class BigMain {
             JPanel centrePanel = new JPanel(new CardLayout());
             JPanel taskPanel = new TaskPageBuilder().build();
             JPanel eventPanel = new EventPageBuilder().build();
+            JPanel goalPanel = new GoalPageBuilder().build();
             JPanel wellnessPanel = new WellnessLogPageBuilder().build();
             JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
             JPanel settingPage = new SettingsPageBuilder().build();
 
             centrePanel.add(taskPanel, "Tasks");
             centrePanel.add(eventPanel, "Events");
-            centrePanel.add(makePlaceholderPanel("Goals"), "Goals");
+            centrePanel.add(goalPanel, "Goals");
             centrePanel.add(wellnessPanel, "WellnessLog");
             centrePanel.add(feedbackPage, "FeedbackPage");
             centrePanel.add(settingPage, "Settings");
