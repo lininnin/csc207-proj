@@ -1,6 +1,5 @@
 package app;
 
-import app.feedback_panel.CreateGeneratedFeedback;
 import app.feedback_panel.FeedbackPageBuilder;
 import app.WellnessPage.WellnessLogPageBuilder;
 import app.eventPage.EventPageBuilder;
@@ -11,7 +10,7 @@ import data_access.files.FileFeedbackRepository;
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
-import interface_adapter.gpt.OpenAIAPIAdapter;
+import interface_adapter.gpt.OpenAiApiAdapter;
 import org.jetbrains.annotations.NotNull;
 import use_case.generate_feedback.*;
 import use_case.repository.DailyLogRepository;
@@ -21,14 +20,12 @@ import view.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
 
 public class BigMain {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Feedback generation every week
             FeedbackRepository feedbackRepository = new FileFeedbackRepository();
-            feedbackRepository.save(CreateGeneratedFeedback.generateFeedbackEntry());
             WeeklyFeedbackScheduler scheduler = getWeeklyFeedbackScheduler(feedbackRepository);
             scheduler.start();
 
@@ -118,7 +115,7 @@ public class BigMain {
     @NotNull
     private static WeeklyFeedbackScheduler getWeeklyFeedbackScheduler(FeedbackRepository feedbackRepository) {
         DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
-        GPTService analyzer = new OpenAIAPIAdapter();
+        GPTService analyzer = new OpenAiApiAdapter();
         FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
         GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
 
