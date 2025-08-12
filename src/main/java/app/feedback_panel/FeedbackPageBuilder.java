@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 import view.feedback_panel.FeedbackCompositePanel;
 
 // style checked

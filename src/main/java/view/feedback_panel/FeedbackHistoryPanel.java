@@ -1,6 +1,6 @@
 package view.feedback_panel;
 
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 
 import javax.swing.*;

@@ -5,7 +5,10 @@ import use_case.feedback_history.FeedbackHistoryOutputData;
 
 public class FeedbackHistoryPresenter implements FeedbackHistoryOutputBoundary {
     private final FeedbackHistoryViewModel viewModel;
-    public FeedbackHistoryPresenter(FeedbackHistoryViewModel viewModel) { this.viewModel = viewModel; }
+
+    public FeedbackHistoryPresenter(FeedbackHistoryViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
 
     @Override
     public void present(FeedbackHistoryOutputData outputData) {

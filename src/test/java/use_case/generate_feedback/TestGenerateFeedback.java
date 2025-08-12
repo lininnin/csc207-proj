@@ -5,7 +5,7 @@ import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
 import interface_adapter.gpt.OpenAiApiAdapter;
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 
 import java.time.LocalDate;
 import java.util.List;

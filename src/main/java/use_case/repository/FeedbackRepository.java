@@ -1,6 +1,6 @@
 package use_case.repository;
 
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 
 import java.time.LocalDate;
 import java.util.List;

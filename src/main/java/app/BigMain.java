@@ -12,12 +12,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import app.goalPage.GoalPageBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import app.WellnessPage.WellnessLogPageBuilder;
 import app.eventPage.EventPageBuilder;
 import app.feedback_panel.FeedbackPageBuilder;
+import app.goalPage.GoalPageBuilder;
 import app.scheduler.WeeklyFeedbackScheduler;
 import app.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
@@ -36,6 +36,9 @@ import use_case.repository.FeedbackRepository;
 import view.CollapsibleSidebarView;
 import view.FontUtil;
 
+/**
+ * App constructing.
+ */
 public class BigMain {
 
     /* Launch MinkTrack application UI.

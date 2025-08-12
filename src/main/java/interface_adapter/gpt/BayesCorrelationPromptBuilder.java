@@ -1,10 +1,10 @@
 package interface_adapter.gpt;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import entity.Angela.DailyLog;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Angela.DailyLog;
 
 /**
  * Builds a Bayesian‑correlation prompt for the last 7 days.
@@ -21,19 +21,20 @@ import java.util.stream.Collectors;
  */
 public final class BayesCorrelationPromptBuilder {
 
-    private BayesCorrelationPromptBuilder() {}
+    private BayesCorrelationPromptBuilder() {
+    }
 
     /**
+     * Build prompt for bayesian regression analysis from daily log of last 7 days.
      * @param weekLogs daily log objects from the last 7 days
      * @return prompt string
      */
     public static String buildPrompt(List<DailyLog> weekLogs) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append("SYSTEM:\n")
                 .append("You are a statistician performing a simple Bayesian regression\n")
                 .append("to relate wellness metrics to task‑completion rate.\n\n")
-
                 .append("USER:\n")
                 .append("For each of the 7 days you get:\n")
                 .append("  date, completion_rate (0‑1), avg_stress, avg_energy, avg_fatigue.\n")
@@ -51,7 +52,9 @@ public final class BayesCorrelationPromptBuilder {
                 .append("OUTPUT JSON SCHEMA:\n")
                 .append("{\n")
                 .append("  \"effect_summary\": [\n")
-                .append("    {\"variable\":\"Stress\",\"direction\":\"Positive|Negative|None\",\"confidence\":0.0‑1.0},\n")
+                .append("    {\"variable\":\"Stress\","
+                        + "\"direction\":\"Positive|Negative|None\","
+                        + "\"confidence\":0.0‑1.0},\n")
                 .append("    {\"variable\":\"Energy\", ...},\n")
                 .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
@@ -61,25 +64,31 @@ public final class BayesCorrelationPromptBuilder {
     }
 
     private static String toWeekVectorJson(List<DailyLog> logs) {
-        return logs.stream().map(dl -> {
-            double completion = dl.getDailyTaskSummary() == null
-                    ? Double.NaN : dl.getDailyTaskSummary().getCompletionRate();
+        return logs.stream().map(dailyLog -> {
+            final double completion;
+            if (dailyLog.getDailyTaskSummary() == null) {
+                completion = Double.NaN;
+            }
+            else {
+                completion = dailyLog.getDailyTaskSummary().getCompletionRate();
+            }
 
             // average wellness levels for the day
-            double stress = avg(dl, w -> w.getStressLevel().getValue());
-            double energy = avg(dl, w -> w.getEnergyLevel().getValue());
-            double fatigue = avg(dl, w -> w.getFatigueLevel().getValue());
+            final double stress = avg(dailyLog, w -> w.getStressLevel().getValue());
+            final double energy = avg(dailyLog, w -> w.getEnergyLevel().getValue());
+            final double fatigue = avg(dailyLog, w -> w.getFatigueLevel().getValue());
 
-            return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f," +
-                            "\"Stress\":%.2f,\"Energy\":%.2f,\"Fatigue\":%.2f}",
-                    dl.getDate(), completion, stress, energy, fatigue);
+            return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f,"
+                            + "\"Stress\":%.2f,\"Energy\":%.2f,\"Fatigue\":%.2f}",
+                    dailyLog.getDate(), completion, stress, energy, fatigue);
         }).collect(Collectors.joining(",\n", "[\n", "\n]"));
     }
 
-    private static double avg(DailyLog dl, java.util.function.ToIntFunction<WellnessLogEntry> f) {
-        if (dl.getDailyWellnessLog() == null || dl.getDailyWellnessLog().getEntries().isEmpty())
+    private static double avg(DailyLog dailyLog, java.util.function.ToIntFunction<WellnessLogEntry> f) {
+        if (dailyLog.getDailyWellnessLog() == null || dailyLog.getDailyWellnessLog().getEntries().isEmpty()) {
             return Double.NaN;
-        return dl.getDailyWellnessLog().getEntries().stream()
+        }
+        return dailyLog.getDailyWellnessLog().getEntries().stream()
                 .mapToInt(f).average().orElse(Double.NaN);
     }
 }

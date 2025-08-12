@@ -15,7 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import constants.Constants;
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 import interface_adapter.feedback_entry.FeedbackEntryView;
 
 /*
@@ -90,7 +90,6 @@ public class FeedbackEntryPanel extends JPanel implements FeedbackEntryView {
     }
 
     private JPanel makeTextPanel(final String title, final JTextArea area) {
-
         // Title
         final JLabel label = new JLabel(title);
         label.setFont(label.getFont().deriveFont(Font.BOLD, Constants.F16));

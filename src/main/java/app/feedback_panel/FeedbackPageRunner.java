@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 import constants.Constants;
 import data_access.files.FileFeedbackRepository;
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 import use_case.repository.FeedbackRepository;
 
 /**

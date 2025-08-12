@@ -1,7 +1,6 @@
 package view.feedback_history;
 
-import entity.Ina.FeedbackEntry;
-import interface_adapter.feedback_history.FeedbackHistoryController;
+import entity.feedback_entry.FeedbackEntry;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import view.feedback_panel.FeedbackHistoryPanel;
 

@@ -1,6 +1,6 @@
 package use_case.generate_feedback;
 
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 
 public class GenerateFeedbackOutputData {
     private final FeedbackEntry feedbackEntry;
