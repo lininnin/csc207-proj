@@ -1,89 +1,110 @@
 package app;
 
-import app.feedback_panel.FeedbackPageBuilder;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import org.jetbrains.annotations.NotNull;
+
 import app.WellnessPage.WellnessLogPageBuilder;
 import app.eventPage.EventPageBuilder;
+import app.feedback_panel.FeedbackPageBuilder;
 import app.scheduler.WeeklyFeedbackScheduler;
 import app.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
+import constants.Constants;
 import data_access.files.FileFeedbackRepository;
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
 import interface_adapter.gpt.OpenAiApiAdapter;
-import org.jetbrains.annotations.NotNull;
-import use_case.generate_feedback.*;
+import use_case.generate_feedback.GPTService;
+import use_case.generate_feedback.GenerateFeedbackInputBoundary;
+import use_case.generate_feedback.GenerateFeedbackInteractor;
+import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 import view.CollapsibleSidebarView;
 import view.FontUtil;
 
-import javax.swing.*;
-import java.awt.*;
-
 public class BigMain {
+
+    /* Launch MinkTrack application UI.
+     * @param args command line arguments not used in application
+     */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Feedback generation every week
-            FeedbackRepository feedbackRepository = new FileFeedbackRepository();
-            WeeklyFeedbackScheduler scheduler = getWeeklyFeedbackScheduler(feedbackRepository);
-            scheduler.start();
+        final FeedbackRepository feedbackRepository = new FileFeedbackRepository();
+        SwingUtilities.invokeLater(() -> buildGui(feedbackRepository));
+    }
 
-            JFrame frame = new JFrame("MindTrack");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1250, 800);
+    private static void buildGui(FeedbackRepository feedbackRepository) {
+        final WeeklyFeedbackScheduler scheduler = getWeeklyFeedbackScheduler(feedbackRepository);
+        scheduler.start();
 
-            // --- Main Content Area ---
-            JPanel centrePanel = new JPanel(new CardLayout());
-            JPanel taskPanel = new TaskPageBuilder().build();
-            JPanel eventPanel = new EventPageBuilder().build();
-            JPanel goalPanel = new GoalPageBuilder().build();
-            JPanel wellnessPanel = new WellnessLogPageBuilder().build();
-            JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
-            JPanel settingPage = new SettingsPageBuilder().build();
+        final JFrame frame = new JFrame("MindTrack");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(Constants.TWELVE_FIFTY, Constants.EIGHT_HUNDRED);
 
-            centrePanel.add(taskPanel, "Tasks");
-            centrePanel.add(eventPanel, "Events");
-            centrePanel.add(goalPanel, "Goals");
-            centrePanel.add(wellnessPanel, "WellnessLog");
-            centrePanel.add(feedbackPage, "FeedbackPage");
-            centrePanel.add(settingPage, "Settings");
+        // --- Main Content Area ---
+        final JPanel centrePanel = new JPanel(new CardLayout());
+        final JPanel taskPanel = new TaskPageBuilder().build();
+        final JPanel eventPanel = new EventPageBuilder().build();
+        final JPanel goalPanel = new GoalPageBuilder().build();
+        final JPanel wellnessPanel = new WellnessLogPageBuilder().build();
+        final JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
+        final JPanel settingPage = new SettingsPageBuilder().build();
 
-            // --- Navigation sidebar ---
-            JPanel sideBar = new JPanel();
-            sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
-            sideBar.setBackground(new Color(60, 63, 65));
-            sideBar.setPreferredSize(new Dimension(200, 700));
+        centrePanel.add(taskPanel, "Tasks");
+        centrePanel.add(eventPanel, "Events");
+        centrePanel.add(goalPanel, "Goals");
+        centrePanel.add(wellnessPanel, "WellnessLog");
+        centrePanel.add(feedbackPage, "FeedbackPage");
+        centrePanel.add(settingPage, "Settings");
 
-            String[] menuItems = {
-                    "📋 Tasks", "📆 Events", "🎯 Goals",
-                    "🧠 Wellness Log", "🤖 AI-Feedback & Analysis", "⚙️ Settings"
-            };
+        // --- Navigation sidebar ---
+        final JPanel sideBar = new JPanel();
+        setBar(sideBar);
 
-            for (String item : menuItems) {
-                JButton btn = configureButton(item, centrePanel);
+        final String[] menuItems = {"📋 Tasks", "📆 Events", "🎯 Goals",
+                                    "🧠 Wellness Log", "🤖 AI-Feedback & Analysis", "⚙️ Settings"};
 
-                sideBar.add(btn);
-            }
+        for (String item : menuItems) {
+            final JButton btn = configureButton(item, centrePanel);
 
-            CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sideBar, centrePanel);
+            sideBar.add(btn);
+        }
 
-            // --- Layout All ---
-            frame.setLayout(new BorderLayout());
-            frame.add(collapsibleCenter, BorderLayout.CENTER);
+        final CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sideBar, centrePanel);
 
-            // Main content by default
-            ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Tasks");
+        // --- Layout All ---
+        frame.setLayout(new BorderLayout());
+        frame.add(collapsibleCenter, BorderLayout.CENTER);
 
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+        // Main content by default
+        ((CardLayout) centrePanel.getLayout()).show(centrePanel, "Tasks");
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private static void setBar(JPanel sideBar) {
+        sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
+        sideBar.setBackground(new Color(Constants.SIXTY, Constants.SIXTY_THREE, Constants.SIXTY_FIVE));
+        sideBar.setPreferredSize(new Dimension(Constants.TWO_HUNDRED, Constants.SEV_HUNDRED));
     }
 
     @NotNull
     private static JButton configureButton(String item, JPanel centrePanel) {
-        JButton btn = new JButton(item);
-        btn.setMaximumSize(new Dimension(200, 40));
+        final JButton btn = new JButton(item);
+        btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FOURTY));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.setForeground(Color.WHITE);
         btn.setOpaque(true);
@@ -91,42 +112,46 @@ public class BigMain {
         btn.setFont(FontUtil.getStandardFont());
 
         if (item.contains("Tasks")) {
-            btn.setBackground(new Color(45, 47, 49)); // Highlight current page
-        } else {
-            btn.setBackground(new Color(60, 63, 65));
+            btn.setBackground(new Color(Constants.FOURTY_FIVE, Constants.FOURTY_SEV, Constants.FOURTY_NINE));
+            // Highlight current page
+        }
+        else {
+            btn.setBackground(new Color(Constants.SIXTY, Constants.SIXTY_THREE, Constants.SIXTY_FIVE));
         }
 
         // ActionListener for navigation
-        btn.addActionListener(e -> {
-            CardLayout cl = (CardLayout) centrePanel.getLayout();
-            // Map menu text to Card name
-            switch (item) {
-                case "📋 Tasks" -> cl.show(centrePanel, "Tasks");
-                case "📆 Events" -> cl.show(centrePanel, "Events");
-                case "🎯 Goals" -> cl.show(centrePanel, "Goals");
-                case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
-                case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");
-                case "⚙️ Settings" -> cl.show(centrePanel, "Settings");
-            }
-        });
+        btn.addActionListener(view -> menuSelection(item, centrePanel));
         return btn;
     }
 
     @NotNull
     private static WeeklyFeedbackScheduler getWeeklyFeedbackScheduler(FeedbackRepository feedbackRepository) {
-        DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
-        GPTService analyzer = new OpenAiApiAdapter();
-        FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
-        GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
+        final DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
+        final GPTService analyzer = new OpenAiApiAdapter();
+        final FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
+        final GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
 
-        GenerateFeedbackInputBoundary feedbackInputBoundary = new GenerateFeedbackInteractor(
+        final GenerateFeedbackInputBoundary feedbackInputBoundary = new GenerateFeedbackInteractor(
                 dailyLogRepository,
                 feedbackRepository,
                 analyzer,
                 presenter
         );
-        WeeklyFeedbackScheduler scheduler = new WeeklyFeedbackScheduler(feedbackInputBoundary);
-        return scheduler;
+        return new WeeklyFeedbackScheduler(feedbackInputBoundary);
     }
 
+    private static void menuSelection(String item, JPanel centrePanel) {
+        final CardLayout cl = (CardLayout) centrePanel.getLayout();
+        switch (item) {
+            case "📋 Tasks" -> cl.show(centrePanel, "Tasks");
+            case "📆 Events" -> cl.show(centrePanel, "Events");
+            case "🎯 Goals" -> cl.show(centrePanel, "Goals");
+            case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
+            case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");
+            case "⚙️ Settings" -> cl.show(centrePanel, "Settings");
+            default -> {
+                // no action needed — all cases are covered
+            }
+        }
+    }
 }
