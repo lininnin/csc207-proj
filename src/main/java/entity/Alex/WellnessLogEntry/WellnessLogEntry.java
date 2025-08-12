@@ -13,7 +13,7 @@ import java.util.UUID;
  * This class uses the Builder pattern
  * for controlled construction and input validation.
  */
-public final class WellnessLogEntry {
+public final class WellnessLogEntry implements WellnessLogEntryInterf {
 
     private final String id;
     private final LocalDateTime time;

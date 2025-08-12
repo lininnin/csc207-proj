@@ -1,6 +1,7 @@
 package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
 
 import java.time.LocalDateTime;
 
@@ -23,11 +24,11 @@ public class WellnessLogEntryFactory implements WellnessLogEntryFactoryInterf {
      * @return A newly constructed {@link WellnessLogEntry} instance.
      */
     @Override
-    public WellnessLogEntry create(final LocalDateTime time,
+    public WellnessLogEntryInterf create(final LocalDateTime time,
                                    final Levels stressLevel,
                                    final Levels energyLevel,
                                    final Levels fatigueLevel,
-                                   final MoodLabel moodLabel,
+                                   final MoodLabelInterf moodLabel,
                                    final String userNote) {
 
         return new WellnessLogEntry.Builder()
