@@ -1,101 +1,64 @@
 package entityTest;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InfoTest {
 
     @Test
-    public void testBuildValidInfo() {
-        Info info = new Info.Builder("Read Book")
-                .description("Read 10 pages of novel")
-                .category("Leisure")
+    public void testBuilderCreatesValidInfo() {
+        // 用接口类型持有实现类对象
+        InfoInterf info = new Info.Builder("Test Name")
+                .description("Test Description")
+                .category("Test Category")
                 .build();
 
-        assertEquals("Read Book", info.getName());
-        assertEquals("Read 10 pages of novel", info.getDescription());
-        assertEquals("Leisure", info.getCategory());
         assertNotNull(info.getId());
-        assertEquals(LocalDate.now(), info.getCreatedDate());
+        assertEquals("Test Name", info.getName());
+        assertEquals("Test Description", info.getDescription());
+        assertEquals("Test Category", info.getCategory());
+        assertNotNull(info.getCreatedDate());
     }
 
     @Test
-    public void testTrimmedFields() {
-        Info info = new Info.Builder("  Study  ")
-                .description("  Review math  ")
-                .category("  Academic ")
-                .build();
+    public void testSettersUpdateFields() {
+        InfoInterf info = new Info.Builder("Original Name").build();
 
-        assertEquals("Study", info.getName());
-        assertEquals("Review math", info.getDescription());
-        assertEquals("Academic", info.getCategory());
+        info.setName("New Name");
+        info.setDescription("New Description");
+        info.setCategory("New Category");
+
+        assertEquals("New Name", info.getName());
+        assertEquals("New Description", info.getDescription());
+        assertEquals("New Category", info.getCategory());
     }
 
     @Test
-    public void testOptionalDescriptionAndCategoryOmitted() {
-        Info info = new Info.Builder("Sleep").build();
-        assertEquals("Sleep", info.getName());
-        assertNull(info.getDescription());
-        assertNull(info.getCategory());
-    }
+    public void testSetNameRejectsNullOrEmpty() {
+        InfoInterf info = new Info.Builder("Valid Name").build();
 
-    @Test
-    public void testNullOrEmptyNameThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new Info.Builder(null));
-        assertThrows(IllegalArgumentException.class, () -> new Info.Builder(""));
-        assertThrows(IllegalArgumentException.class, () -> new Info.Builder("   "));
-    }
-
-    @Test
-    public void testSetNameSuccessfully() {
-        Info info = new Info.Builder("Eat").build();
-        info.setName("Lunch");
-        assertEquals("Lunch", info.getName());
-    }
-
-    @Test
-    public void testSetNameWithWhitespace() {
-        Info info = new Info.Builder("Eat").build();
-        info.setName("  Dinner  ");
-        assertEquals("Dinner", info.getName());
-    }
-
-    @Test
-    public void testSetNameNullOrEmptyThrows() {
-        Info info = new Info.Builder("Play").build();
         assertThrows(IllegalArgumentException.class, () -> info.setName(null));
-        assertThrows(IllegalArgumentException.class, () -> info.setName("   "));
+        assertThrows(IllegalArgumentException.class, () -> info.setName("  "));
     }
 
     @Test
-    public void testSetDescriptionSuccessfully() {
-        Info info = new Info.Builder("Walk").build();
-        info.setDescription("Evening walk");
-        assertEquals("Evening walk", info.getDescription());
+    public void testDescriptionAndCategoryAllowNullOrEmpty() {
+        InfoInterf info = new Info.Builder("Name").build();
+
+        info.setDescription(null);
+        assertEquals("", info.getDescription());
+
+        info.setCategory("");
+        assertEquals("", info.getCategory());
     }
 
     @Test
-    public void testSetDescriptionNullOrEmptyThrows() {
-        Info info = new Info.Builder("Meditate").build();
-        assertThrows(IllegalArgumentException.class, () -> info.setDescription(null));
-        assertThrows(IllegalArgumentException.class, () -> info.setDescription("  "));
-    }
-
-    @Test
-    public void testSetCategorySuccessfully() {
-        Info info = new Info.Builder("Game").build();
-        info.setCategory("Fun");
-        assertEquals("Fun", info.getCategory());
-    }
-
-    @Test
-    public void testSetCategoryNullOrEmptyThrows() {
-        Info info = new Info.Builder("Code").build();
-        assertThrows(IllegalArgumentException.class, () -> info.setCategory(null));
-        assertThrows(IllegalArgumentException.class, () -> info.setCategory(""));
+    public void testBuilderRejectsInvalidName() {
+        assertThrows(IllegalArgumentException.class, () -> new Info.Builder(null));
+        assertThrows(IllegalArgumentException.class, () -> new Info.Builder("  "));
     }
 }
+

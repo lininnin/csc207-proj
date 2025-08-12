@@ -45,9 +45,11 @@ public class AvaliableMoodLabel implements AvaliableMoodLabelInterf {
         }
 
         if (type == Type.Positive) {
-            positiveLabels.add(moodLabel);
+
+            positiveLabels.add((MoodLabel) moodLabel);
         } else if (type == Type.Negative) {
-            negativeLabels.add(moodLabel);
+            negativeLabels.add((MoodLabel) moodLabel);
+
         }
     }
 
