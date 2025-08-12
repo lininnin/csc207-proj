@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import app.goalPage.GoalPageBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import app.WellnessPage.WellnessLogPageBuilder;
@@ -104,7 +105,7 @@ public class BigMain {
     @NotNull
     private static JButton configureButton(String item, JPanel centrePanel) {
         final JButton btn = new JButton(item);
-        btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FOURTY));
+        btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FORTY));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.setForeground(Color.WHITE);
         btn.setOpaque(true);
@@ -112,7 +113,7 @@ public class BigMain {
         btn.setFont(FontUtil.getStandardFont());
 
         if (item.contains("Tasks")) {
-            btn.setBackground(new Color(Constants.FOURTY_FIVE, Constants.FOURTY_SEV, Constants.FOURTY_NINE));
+            btn.setBackground(new Color(Constants.FORTY_FIVE, Constants.FORTY_SEV, Constants.FORTY_NINE));
             // Highlight current page
         }
         else {

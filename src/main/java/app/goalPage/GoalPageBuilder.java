@@ -1,8 +1,7 @@
-package app;
+package app.goalPage;
 import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;                // Goal domain model
-import entity.Sophia.goalInterface;       // Goal interface (if used)
 import entity.Sophia.goalFactory;         // Factory for creating goals
 
 // Import view models
@@ -48,7 +47,6 @@ import view.CollapsibleSidebarView;    // Collapsible sidebar component
 // Import Java/Swing components
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;

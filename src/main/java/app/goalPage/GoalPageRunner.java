@@ -1,4 +1,4 @@
-package app;
+package app.goalPage;
 
 import javax.swing.*;
 
