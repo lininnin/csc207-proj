@@ -1,26 +1,24 @@
-package entity.Sophia;
-
-import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+package entity.sophia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.Info;
+
 /**
  * Represents a goal that tracks progress on a target task over a specific time period (week or month).
  * Each goal has associated metadata (goalInfo), a date range, frequency requirement, and progress tracking.
- *
- * TODO: Will be implemented in Sophia's story #1 for weekly/monthly goal tracking
  */
-public class Goal implements goalInterface{
+public class Goal implements GoalInterface {
 
-    private final GoalInfo goalInfo; // GoalInfo containing goal metadata and target task info
-    private final BeginAndDueDates beginAndDueDates; // Begin and due dates of this goal
-    private final TimePeriod timePeriod; // Time period of the goal (WEEK or MONTH)
-    private int frequency; // Required number of task completions per period
-    private int currentProgress; // Current number of task completions per period
-    private boolean isCompleted; // Whether the goal is currently marked as done
-    private LocalDateTime completedDateTime; // Optional completed datetime
+    private final GoalInfo goalInfo;
+    private final BeginAndDueDates beginAndDueDates;
+    private final TimePeriod timePeriod;
+    private int frequency;
+    private int currentProgress;
+    private boolean isCompleted;
+    private LocalDateTime completedDateTime;
     /**
      * Constructs a new Goal with the given information.
      *
@@ -30,6 +28,7 @@ public class Goal implements goalInterface{
      * @param frequency       Required task completion frequency; must not be negative
      * @throws IllegalArgumentException if any argument is invalid
      */
+
     public Goal(GoalInfo goalInfo, BeginAndDueDates dates, TimePeriod timePeriod, int frequency) {
         if (goalInfo == null) {
             throw new IllegalArgumentException("GoalInfo cannot be null.");
@@ -58,77 +57,128 @@ public class Goal implements goalInterface{
      * If the goal is achieved, marks it as completed and records the time.
      */
     public void recordCompletion() {
-        if (isCompleted) return;
-
-        currentProgress++;
-        if (currentProgress >= frequency) {
-            isCompleted = true;
-            completedDateTime = LocalDateTime.now();
+        if (!isCompleted) {
+            currentProgress++;
+            if (currentProgress >= frequency) {
+                isCompleted = true;
+                completedDateTime = LocalDateTime.now();
+            }
         }
     }
 
+    /**
+     * Decrements the current progress by one, but not below zero.
+     * This method can be used to undo a recorded completion.
+     */
     public void minusCurrentProgress() {
-        if (currentProgress > 0){
+        if (currentProgress > 0) {
             currentProgress--;
         }
     }
 
-    // ------------------ Getters ------------------
-
+    /**
+     * Gets the GoalInfo object associated with this goal.
+     *
+     * @return The GoalInfo object.
+     */
     @Override
     public GoalInfo getGoalInfo() {
         return goalInfo;
     }
 
+    /**
+     * Gets the BeginAndDueDates object for this goal.
+     *
+     * @return The BeginAndDueDates object.
+     */
     @Override
     public BeginAndDueDates getBeginAndDueDates() {
         return beginAndDueDates;
     }
 
+    /**
+     * Gets the time period (WEEK or MONTH) of this goal.
+     *
+     * @return The TimePeriod of the goal.
+     */
     @Override
     public TimePeriod getTimePeriod() {
         return timePeriod;
     }
 
+    /**
+     * Gets the required number of task completions (frequency) for this goal.
+     *
+     * @return The frequency as an int.
+     */
     @Override
     public int getFrequency() {
         return frequency;
     }
 
+    /**
+     * Gets the current progress of the goal.
+     *
+     * @return The current progress as an int.
+     */
     @Override
     public int getCurrentProgress() {
         return currentProgress;
     }
 
+    /**
+     * Checks if the goal is completed.
+     *
+     * @return {@code true} if the goal is completed, {@code false} otherwise.
+     */
     @Override
     public boolean isCompleted() {
         return isCompleted;
     }
 
+    /**
+     * Gets the date and time when the goal was completed.
+     *
+     * @return The LocalDateTime of completion, or null if not yet completed.
+     */
     @Override
     public LocalDateTime getCompletedDateTime() {
         return completedDateTime;
     }
 
+    /**
+     * Gets the general Info object from the GoalInfo.
+     *
+     * @return The Info object.
+     */
     @Override
     public Info getInfo() {
         return goalInfo.getInfo();
     }
 
+    /**
+     * Gets the Info object for the target task from the GoalInfo.
+     *
+     * @return The Info object for the target task.
+     */
     @Override
     public Info getTargetTaskInfo() {
         return goalInfo.getTargetTaskInfo();
     }
 
+    /**
+     * Checks if the goal is currently available for completion.
+     * A goal is considered available if it's not completed and the current date
+     * is within its begin and due dates.
+     *
+     * @return {@code true} if the goal is available, {@code false} otherwise.
+     */
     public boolean isAvailable() {
-        LocalDate today = LocalDate.now();
+        final LocalDate today = LocalDate.now();
         return !isCompleted
                 && !today.isBefore(beginAndDueDates.getBeginDate())
                 && !today.isAfter(beginAndDueDates.getDueDate());
     }
-
-
-    // ------------------ Setters ------------------
 
     /**
      * Sets the frequency of required task completions.
@@ -165,7 +215,8 @@ public class Goal implements goalInterface{
         this.isCompleted = completed;
         if (!completed) {
             this.completedDateTime = null;
-        } else if (this.completedDateTime == null) {
+        }
+        else if (this.completedDateTime == null) {
             this.completedDateTime = LocalDateTime.now();
         }
     }
@@ -179,6 +230,11 @@ public class Goal implements goalInterface{
         this.completedDateTime = completedDateTime;
     }
 
+    /**
+     * Provides a string representation of the goal, including its name, time period, progress, and date range.
+     *
+     * @return A formatted string representation of the goal.
+     */
     @Override
     public String toString() {
         return String.format("%s - %s (Progress: %d/%d, %s to %s)",
@@ -191,13 +247,11 @@ public class Goal implements goalInterface{
     }
 
     /**
-     * Returns the progress in simple "current/target" format
-     * @return String in "currentProgress/frequency" format (e.g., "2/200")
+     * Returns the progress in simple "current/target" format.
+     *
+     * @return A string in "currentProgress/frequency" format (e.g., "2/200").
      */
     public String getSimpleProgress() {
         return String.format("%d/%d", currentProgress, frequency);
     }
 }
-
-
-

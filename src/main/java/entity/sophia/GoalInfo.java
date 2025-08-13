@@ -1,4 +1,4 @@
-package entity.Sophia;
+package entity.sophia;
 
 import entity.info.Info;
 
@@ -47,6 +47,12 @@ public class GoalInfo {
         return targetTaskInfo;
     }
 
+    /**
+     * Sets the information for the target task associated with this goal.
+     *
+     * @param targetTaskInfo The new Info object for the target task; must not be null.
+     * @throws IllegalArgumentException if the provided targetTaskInfo is null.
+     */
     public void setTargetTaskInfo(Info targetTaskInfo) {
         if (targetTaskInfo == null) {
             throw new IllegalArgumentException("Target task info cannot be null.");
