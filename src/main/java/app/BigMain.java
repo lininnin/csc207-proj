@@ -27,7 +27,7 @@ import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
 import interface_adapter.gpt.OpenAiApiAdapter;
-import use_case.generate_feedback.GPTService;
+import use_case.generate_feedback.GptService;
 import use_case.generate_feedback.GenerateFeedbackInputBoundary;
 import use_case.generate_feedback.GenerateFeedbackInteractor;
 import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
@@ -131,7 +131,7 @@ public class BigMain {
     @NotNull
     private static WeeklyFeedbackScheduler getWeeklyFeedbackScheduler(FeedbackRepository feedbackRepository) {
         final DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
-        final GPTService analyzer = new OpenAiApiAdapter();
+        final GptService analyzer = new OpenAiApiAdapter();
         final FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
         final GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
 

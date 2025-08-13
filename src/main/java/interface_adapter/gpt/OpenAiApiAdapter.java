@@ -13,10 +13,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import use_case.generate_feedback.GPTService;
+import use_case.generate_feedback.GptService;
 
 // style checked
-public class OpenAiApiAdapter implements GPTService {
+public class OpenAiApiAdapter implements GptService {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static final String MODEL = "gpt-4o-mini";

@@ -1,29 +1,32 @@
 package view.feedback_panel;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import constants.Constants;
 import entity.feedback_entry.FeedbackEntry;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 public class FeedbackCompositePanel extends JPanel {
 
     public FeedbackCompositePanel(List<FeedbackEntry> entries) {
-        setLayout(new BorderLayout(16, 0));
+        setLayout(new BorderLayout(Constants.SIXTEEN, 0));
 
-        FeedbackEntryPanel entryPanel = new FeedbackEntryPanel();
+        final FeedbackEntryPanel entryPanel = new FeedbackEntryPanel();
 
         // Convert entries list to a ViewModel
-        FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
+        final FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
         viewModel.setEntries(entries);
 
         // History panel with callback to update the detail view
-        FeedbackHistoryPanel historyPanel = new FeedbackHistoryPanel(
+        final FeedbackHistoryPanel historyPanel = new FeedbackHistoryPanel(
                 viewModel,
                 entryPanel::displayEntry
         );
-        historyPanel.setPreferredSize(new Dimension(260, 0));
+        historyPanel.setPreferredSize(new Dimension(Constants.TWO_SIXTY, 0));
 
         add(entryPanel, BorderLayout.CENTER);
         add(historyPanel, BorderLayout.EAST);
