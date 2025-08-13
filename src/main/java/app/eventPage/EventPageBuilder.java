@@ -40,6 +40,8 @@ import interface_adapter.Angela.category.delete.*;
 import interface_adapter.Angela.category.edit.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
+import use_case.Angela.category.delete.DeleteCategoryCategoryDataAccessInterface;
+import use_case.Angela.category.delete.DeleteCategoryTaskDataAccessInterface;
 import use_case.Angela.category.edit.*;
 import view.Angela.Category.CategoryManagementDialog;
 
@@ -232,9 +234,9 @@ public class EventPageBuilder {
                         createCategoryInteractor
                 );
                 
-                // Create a combined adapter that handles both available and today's events
-                // This adapter implements both task and event interfaces
-                DeleteCategoryDataAccessInterface categoryDeleteAdapter = new DeleteCategoryDataAccessInterface() {
+                // Create adapters following ISP - separate interfaces for each concern
+                // Category operations adapter
+                DeleteCategoryCategoryDataAccessInterface categoryCategoryAdapter = new DeleteCategoryCategoryDataAccessInterface() {
                     @Override
                     public entity.Category getCategoryById(String categoryId) {
                         return categoryGateway.getCategoryById(categoryId);
@@ -254,7 +256,11 @@ public class EventPageBuilder {
                     public boolean deleteCategory(entity.Category category) {
                         return categoryGateway.deleteCategory(category.getId());
                     }
-                    
+
+                };
+                
+                // Task operations adapter (no tasks in event context)
+                DeleteCategoryTaskDataAccessInterface categoryTaskAdapter = new DeleteCategoryTaskDataAccessInterface() {
                     @Override
                     public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
                         // No tasks in event context
@@ -303,60 +309,12 @@ public class EventPageBuilder {
                     }
                 };
                 
-                // Create a combined adapter that delegates to both
-                DeleteCategoryDataAccessInterface combinedAdapter = new DeleteCategoryDataAccessInterface() {
-                    @Override
-                    public entity.Category getCategoryById(String categoryId) {
-                        return categoryDeleteAdapter.getCategoryById(categoryId);
-                    }
-                    
-                    @Override
-                    public int getCategoryCount() {
-                        return categoryDeleteAdapter.getCategoryCount();
-                    }
-                    
-                    @Override
-                    public boolean exists(entity.Category category) {
-                        return categoryDeleteAdapter.exists(category);
-                    }
-                    
-                    @Override
-                    public boolean deleteCategory(entity.Category category) {
-                        // First clear events
-                        String categoryId = category.getId();
-                        for (entity.info.Info event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
-                            eventDeleteAdapter.clearAvailableEventCategory(event.getId());
-                        }
-                        for (entity.info.Info event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
-                            eventDeleteAdapter.clearTodaysEventCategory(event.getId());
-                        }
-                        // Then delete the category
-                        return categoryDeleteAdapter.deleteCategory(category);
-                    }
-                    
-                    @Override
-                    public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
-                        return categoryDeleteAdapter.findAvailableTasksByCategory(categoryId);
-                    }
-                    
-                    @Override
-                    public List<Task> findTodaysTasksByCategory(String categoryId) {
-                        return categoryDeleteAdapter.findTodaysTasksByCategory(categoryId);
-                    }
-                    
-                    @Override
-                    public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
-                        return categoryDeleteAdapter.updateAvailableTaskCategory(taskId, newCategoryId);
-                    }
-                    
-                    @Override
-                    public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
-                        return categoryDeleteAdapter.updateTodaysTaskCategory(taskId, newCategoryId);
-                    }
-                };
+                // Combined adapter no longer needed - we use segregated interfaces directly
                 
                 DeleteCategoryInteractor deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        combinedAdapter,
+                        categoryCategoryAdapter,  // Category operations
+                        categoryTaskAdapter,      // Task operations (empty in event context)
+                        eventDeleteAdapter,       // Event operations
                         categoryPresenter
                 );
                 DeleteCategoryController deleteCategoryController = new DeleteCategoryController(

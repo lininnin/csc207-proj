@@ -9,14 +9,28 @@ import java.util.List;
 /**
  * Interactor for the delete category use case.
  * Implements the business logic for deleting a category and updating all affected tasks.
+ * Now follows ISP by using separate interfaces for category and task operations.
  */
 public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
-    private final DeleteCategoryDataAccessInterface dataAccess;
+    private final DeleteCategoryCategoryDataAccessInterface categoryDataAccess;
+    private final DeleteCategoryTaskDataAccessInterface taskDataAccess;
+    private final DeleteCategoryEventDataAccessInterface eventDataAccess;
     private final DeleteCategoryOutputBoundary outputBoundary;
 
-    public DeleteCategoryInteractor(DeleteCategoryDataAccessInterface dataAccess,
+    /**
+     * Constructor with segregated interfaces following ISP.
+     * @param categoryDataAccess Interface for category operations
+     * @param taskDataAccess Interface for task update operations
+     * @param eventDataAccess Interface for event update operations (can be null)
+     * @param outputBoundary Output boundary for the use case
+     */
+    public DeleteCategoryInteractor(DeleteCategoryCategoryDataAccessInterface categoryDataAccess,
+                                    DeleteCategoryTaskDataAccessInterface taskDataAccess,
+                                    DeleteCategoryEventDataAccessInterface eventDataAccess,
                                     DeleteCategoryOutputBoundary outputBoundary) {
-        this.dataAccess = dataAccess;
+        this.categoryDataAccess = categoryDataAccess;
+        this.taskDataAccess = taskDataAccess;
+        this.eventDataAccess = eventDataAccess;
         this.outputBoundary = outputBoundary;
     }
 
@@ -26,7 +40,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         System.out.println("DEBUG: DeleteCategoryInteractor.execute() called with categoryId: " + categoryId);
 
         // Check if category exists
-        Category category = dataAccess.getCategoryById(categoryId);
+        Category category = categoryDataAccess.getCategoryById(categoryId);
         System.out.println("DEBUG: Found category: " + (category != null ? category.getName() : "null"));
         
         if (category == null) {
@@ -35,7 +49,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         }
         
         // Check if we have minimum categories
-        int categoryCount = dataAccess.getCategoryCount();
+        int categoryCount = categoryDataAccess.getCategoryCount();
         if (categoryCount <= 3) {
             outputBoundary.prepareFailView("Cannot delete category: minimum 3 categories required");
             return;
@@ -44,13 +58,13 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         // CRITICAL: Find and update all tasks that have this category BEFORE deleting the category
         // Update available tasks (templates)
         System.out.println("DEBUG: Finding available tasks with category: " + category.getName());
-        List<TaskAvailable> availableTasks = dataAccess.findAvailableTasksByCategory(categoryId);
+        List<TaskAvailable> availableTasks = taskDataAccess.findAvailableTasksByCategory(categoryId);
         System.out.println("DEBUG: Found " + availableTasks.size() + " available tasks to update");
         
         int updatedAvailableCount = 0;
         for (TaskAvailable task : availableTasks) {
             System.out.println("DEBUG: Updating task '" + task.getInfo().getName() + "' to remove category");
-            if (dataAccess.updateAvailableTaskCategory(task.getId(), "")) {
+            if (taskDataAccess.updateAvailableTaskCategory(task.getId(), "")) {
                 updatedAvailableCount++;
                 System.out.println("DEBUG: Successfully updated task: " + task.getId());
             } else {
@@ -60,13 +74,13 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
 
         // Update today's tasks (instances)
         System.out.println("DEBUG: Finding today's tasks with category: " + category.getName());
-        List<Task> todaysTasks = dataAccess.findTodaysTasksByCategory(categoryId);
+        List<Task> todaysTasks = taskDataAccess.findTodaysTasksByCategory(categoryId);
         System.out.println("DEBUG: Found " + todaysTasks.size() + " today's tasks to update");
         
         int updatedTodaysCount = 0;
         for (Task task : todaysTasks) {
             System.out.println("DEBUG: Updating today's task '" + task.getInfo().getName() + "' to remove category");
-            if (dataAccess.updateTodaysTaskCategory(task.getInfo().getId(), "")) {
+            if (taskDataAccess.updateTodaysTaskCategory(task.getInfo().getId(), "")) {
                 updatedTodaysCount++;
                 System.out.println("DEBUG: Successfully updated today's task: " + task.getInfo().getId());
             } else {
@@ -78,11 +92,8 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         int updatedAvailableEventsCount = 0;
         int updatedTodaysEventsCount = 0;
         
-        // Check if the data access also supports events (using instanceof check)
-        if (dataAccess instanceof DeleteCategoryEventDataAccessInterface) {
-            DeleteCategoryEventDataAccessInterface eventDataAccess = 
-                (DeleteCategoryEventDataAccessInterface) dataAccess;
-            
+        // Handle events if event data access is provided (follows OCP - no instanceof check)
+        if (eventDataAccess != null) {
             // Update available events
             System.out.println("DEBUG: Finding available events with category: " + category.getName());
             List<Info> availableEvents = eventDataAccess.findAvailableEventsByCategory(categoryId);
@@ -110,7 +121,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
 
         // Now delete the category
         System.out.println("DEBUG: Deleting category: " + category.getName());
-        boolean deleted = dataAccess.deleteCategory(category);
+        boolean deleted = categoryDataAccess.deleteCategory(category);
         System.out.println("DEBUG: Category deletion result: " + deleted);
 
         if (deleted) {
