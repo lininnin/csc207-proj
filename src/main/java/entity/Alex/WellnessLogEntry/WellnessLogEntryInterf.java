@@ -67,7 +67,7 @@ public interface WellnessLogEntryInterf {
      * Sets the mood label.
      * @param moodParam The mood label.
      */
-    void setMoodLabel(MoodLabel moodParam);
+    void setMoodLabel(MoodLabelInterf moodParam);
 
     /**
      * Sets the user note.

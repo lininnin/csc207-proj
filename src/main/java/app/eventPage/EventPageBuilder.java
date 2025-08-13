@@ -4,6 +4,10 @@ import entity.Alex.DailyEventLog.DailyEventLogFactory;
 import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableFactory;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.Alex.Event.EventFactory;
+import entity.Alex.Event.EventFactoryInterf;
+import entity.BeginAndDueDates.BeginAndDueDatesFactory;
+import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventPresenter;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
@@ -106,7 +110,9 @@ public class EventPageBuilder {
         EditEventController editEventController = new EditEventController(editEventInteractor);
 
         AddEventOutputBoundary addEventPresenter = new AddEventPresenter(addEventViewModel, todaysEventsViewModel, todaysEventDAO);
-        AddEventInputBoundary addEventInteractor = new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter);
+        EventFactoryInterf eventFactory = new EventFactory();
+        BeginAndDueDatesFactoryInterf datesFactory = new BeginAndDueDatesFactory();
+        AddEventInputBoundary addEventInteractor = new AddEventInteractor(todaysEventDAO, commonDao, addEventPresenter, eventFactory, datesFactory);
         AddEventController addEventController = new AddEventController(addEventInteractor);
 
         DeleteTodaysEventOutputBoundary delTodayPresenter = new DeleteTodaysEventPresenter(deleteTodaysEventViewModel, todaysEventsViewModel, addEventViewModel);
@@ -277,12 +283,12 @@ public class EventPageBuilder {
                 // Also create an event adapter for clearing event categories
                 DeleteCategoryEventDataAccessInterface eventDeleteAdapter = new DeleteCategoryEventDataAccessInterface() {
                     @Override
-                    public List<entity.info.InfoInterf> findAvailableEventsByCategory(String categoryId) {
+                    public List<entity.info.Info> findAvailableEventsByCategory(String categoryId) {
                         return commonDao.findAvailableEventsByCategory(categoryId);
                     }
                     
                     @Override
-                    public List<entity.info.InfoInterf> findTodaysEventsByCategory(String categoryId) {
+                    public List<entity.info.Info> findTodaysEventsByCategory(String categoryId) {
                         return todaysEventDAO.findTodaysEventsByCategory(categoryId);
                     }
                     
@@ -318,10 +324,10 @@ public class EventPageBuilder {
                     public boolean deleteCategory(entity.Category category) {
                         // First clear events
                         String categoryId = category.getId();
-                        for (entity.info.InfoInterf event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
+                        for (entity.info.Info event : eventDeleteAdapter.findAvailableEventsByCategory(categoryId)) {
                             eventDeleteAdapter.clearAvailableEventCategory(event.getId());
                         }
-                        for (entity.info.InfoInterf event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
+                        for (entity.info.Info event : eventDeleteAdapter.findTodaysEventsByCategory(categoryId)) {
                             eventDeleteAdapter.clearTodaysEventCategory(event.getId());
                         }
                         // Then delete the category

@@ -2,6 +2,7 @@ package view.Alex.WellnessLog;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;
@@ -26,6 +27,7 @@ public class TodaysWellnessLogView extends JPanel {
     private final AddMoodLabelController addMoodController;
     private final EditMoodLabelController editMoodController;
     private final DeleteMoodLabelController deleteMoodController;
+    private final MoodLabelFactoryInterf moodLabelFactory;
 
     public TodaysWellnessLogView(TodaysWellnessLogViewModel viewModel,
                                  DeleteWellnessLogController deleteController,
@@ -33,7 +35,8 @@ public class TodaysWellnessLogView extends JPanel {
                                  AvailableMoodLabelViewModel moodLabelViewModel,
                                  AddMoodLabelController addMoodController,
                                  EditMoodLabelController editMoodController,
-                                 DeleteMoodLabelController deleteMoodController) {
+                                 DeleteMoodLabelController deleteMoodController,
+                                 MoodLabelFactoryInterf moodLabelFactory) {
         this.viewModel = viewModel;
         this.deleteController = deleteController;
         this.editController = editController;
@@ -41,6 +44,7 @@ public class TodaysWellnessLogView extends JPanel {
         this.addMoodController = addMoodController;
         this.editMoodController = editMoodController;
         this.deleteMoodController = deleteMoodController;
+        this.moodLabelFactory = moodLabelFactory;
 
         setLayout(new BorderLayout());
 
@@ -113,7 +117,8 @@ public class TodaysWellnessLogView extends JPanel {
                                 moodLabelViewModel,
                                 addMoodController,
                                 editMoodController,
-                                deleteMoodController
+                                deleteMoodController,
+                                moodLabelFactory
                         );
                         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Select Mood Label", true);
                         dialog.setContentPane(labelView);

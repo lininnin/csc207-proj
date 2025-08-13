@@ -83,7 +83,7 @@ public class WellnessLogPageBuilder {
         AvailableMoodLabelViewModel availableMoodLabelViewModel = new AvailableMoodLabelViewModel();
         AddMoodLabelViewModel addMoodLabelViewModel = new AddMoodLabelViewModel();
         AvaliableMoodlabelFactoryInterf availableMoodFactory = new AvaliableMoodLabelFactory();
-        MoodAvailableDataAccessObject moodDAO = new MoodAvailableDataAccessObject(availableMoodFactory);
+        MoodAvailableDataAccessObject moodDAO = new MoodAvailableDataAccessObject(availableMoodFactory, moodLabelFactory);
 
         AddMoodLabelPresenter addLabelPresenter = new AddMoodLabelPresenter(addMoodLabelViewModel, availableMoodLabelViewModel, moodDAO);
         AddMoodLabelInteractor addLabelInteractor = new AddMoodLabelInteractor(moodDAO, addLabelPresenter, new MoodLabelFactory());
@@ -140,7 +140,8 @@ public class WellnessLogPageBuilder {
                 availableMoodLabelViewModel,
                 addLabelController,
                 editLabelController,
-                deleteLabelController
+                deleteLabelController,
+                moodLabelFactory
         );
         addLogView.setPreferredSize(new Dimension(Short.MAX_VALUE, 300));
         addLogView.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
@@ -178,7 +179,8 @@ public class WellnessLogPageBuilder {
                 availableMoodLabelViewModel,
                 addLabelController,
                 editLabelController,
-                deleteLabelController
+                deleteLabelController,
+                moodLabelFactory
         );
 
 
