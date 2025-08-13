@@ -1,19 +1,25 @@
 package app.feedback_panel;
 
-import entity.Ina.FeedbackEntry;
-import view.feedback_panel.FeedbackCompositePanel;
-
-import javax.swing.*;
 import java.util.List;
 
-public class FeedbackPageBuilder {
-    private FeedbackPageBuilder() {} // Utility class
+import javax.swing.JPanel;
 
+import entity.feedback_entry.FeedbackEntry;
+import view.feedback_panel.FeedbackCompositePanel;
+
+// style checked
+public final class FeedbackPageBuilder {
+    private FeedbackPageBuilder() {
+
+    }
     /**
      * Builds the whole feedback page (detail+history, all wired up).
      * @param entries List of feedback entries (newest first)
+     * @return A panel that consists of entry panel + history panel
      */
-    public static JPanel build(List<FeedbackEntry> entries) {
+
+    public static JPanel build(final List<FeedbackEntry> entries) {
+        // final list - reference as fixed during call
         return new FeedbackCompositePanel(entries);
     }
 }

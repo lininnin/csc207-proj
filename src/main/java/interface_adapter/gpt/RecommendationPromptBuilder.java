@@ -8,16 +8,19 @@ import org.json.JSONObject;
  */
 public final class RecommendationPromptBuilder {
 
-    private RecommendationPromptBuilder() { }
+    private RecommendationPromptBuilder() {
+
+    }
 
     /**
+     * Build a prompt that returns recommendations based on the user's weekly productivity analysis.
      * @param analysisJson JSON string returned by GeneralAnalysisPromptBuilder call
      * @return prompt string for GPT
      */
     public static String buildPrompt(String analysisJson) {
-        JSONObject obj      = new JSONObject(analysisJson);
-        String analysisTxt  = obj.optString("analysis", "(no analysis)");
-        String dataGapsTxt  = obj.optString("extra_notes", "");
+        final JSONObject obj = new JSONObject(analysisJson);
+        final String analysisTxt = obj.optString("analysis", "(no analysis)");
+        final String dataGapsTxt = obj.optString("extra_notes", "");
 
         return """
 You are a productivity & wellness coach.  Provide concise, concrete advice only.

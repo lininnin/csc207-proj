@@ -18,8 +18,8 @@
 //
 //    @Override
 //    public void loadFeedbackHistory() {
-//        List<entity.Ina.FeedbackEntry> history = repo.loadAll().stream()
-//                .sorted(Comparator.comparing(entity.Ina.FeedbackEntry::getDate).reversed())
+//        List<entity.feedback_entry.FeedbackEntry> history = repo.loadAll().stream()
+//                .sorted(Comparator.comparing(entity.feedback_entry.FeedbackEntry::getDate).reversed())
 //                .collect(Collectors.toList());
 //        presenter.present(new FeedbackHistoryOutputData(history));
 //    }

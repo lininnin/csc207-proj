@@ -388,7 +388,7 @@ public class TaskPageBuilder {
         
         // Set divider size
         centerSplitPane.setDividerSize(8);
-        
+
         // --- Right Panel (Today So Far) ---
         // Initial refresh of overdue tasks
         todaySoFarView.refreshOverdueTasks();

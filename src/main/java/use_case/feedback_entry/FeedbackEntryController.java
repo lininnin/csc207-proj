@@ -1,4 +1,4 @@
-package use_case.feedback_Entry;
+package use_case.feedback_entry;
 
 import java.time.LocalDate;
 

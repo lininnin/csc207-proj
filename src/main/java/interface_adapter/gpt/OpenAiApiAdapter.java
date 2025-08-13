@@ -1,15 +1,22 @@
 package interface_adapter.gpt;
 
-import okhttp3.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import use_case.generate_feedback.GPTService;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Objects;
 
-public class OpenAIAPIAdapter implements GPTService {
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import constants.Constants;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import use_case.generate_feedback.GptService;
+
+// style checked
+public class OpenAiApiAdapter implements GptService {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static final String MODEL = "gpt-4o-mini";
@@ -18,13 +25,13 @@ public class OpenAIAPIAdapter implements GPTService {
             "https://api.openai.com/v1/chat/completions");
 
     private final OkHttpClient client;
-    private final String API_KEY;
+    private final String apiKey;
 
-    public OpenAIAPIAdapter() {
-        this.API_KEY = Objects.requireNonNull(System.getenv("OPENAI_API_KEY"), "OPENAI_API_KEY env variable not set.");
+    public OpenAiApiAdapter() {
+        this.apiKey = Objects.requireNonNull(System.getenv("OPENAI_API_KEY"), "OPENAI_API_KEY env variable not set.");
 
         this.client = new OkHttpClient.Builder()
-                .callTimeout(Duration.ofSeconds(30))
+                .callTimeout(Duration.ofSeconds(Constants.THIRTY))
                 .build();
 
     }
@@ -44,15 +51,15 @@ public class OpenAIAPIAdapter implements GPTService {
     /* --------------- Internal helper --------------- */
 
     private String chat(String userPrompt) throws IOException {
-        JSONObject body = new JSONObject()
+        final JSONObject body = new JSONObject()
                 .put("model", MODEL)
-                .put("temperature", 0.5)
+                .put("temperature", Constants.HALF)
                 .put("messages", new JSONArray()
                         .put(new JSONObject().put("role", "user").put("content", userPrompt)));
 
-        Request req = new Request.Builder()
+        final Request req = new Request.Builder()
                 .url(ENDPOINT)
-                .header("Authorization", "Bearer " + API_KEY)
+                .header("Authorization", "Bearer " + apiKey)
                 .post(RequestBody.create(body.toString(), JSON))
                 .build();
 
@@ -60,8 +67,8 @@ public class OpenAIAPIAdapter implements GPTService {
             if (!resp.isSuccessful()) {
                 throw new IOException("GPT API error " + resp.code() + ": " + resp.body().string());
             }
-            String json = resp.body().string(); // TODO: body is STILL nullable
-            JSONArray choices = new JSONObject(json).getJSONArray("choices");
+            final String json = Objects.requireNonNull(resp.body()).string();
+            final JSONArray choices = new JSONObject(json).getJSONArray("choices");
             return choices.getJSONObject(0)
                     .getJSONObject("message")
                     .getString("content")

@@ -1,15 +1,11 @@
-package use_case.GenerateFeedbackTest;
+package use_case.generate_feedback;
 
 import data_access.in_memory_repo.InMemoryDailyLogRepo;
 import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
-import interface_adapter.gpt.OpenAIAPIAdapter;
-import use_case.generate_feedback.GenerateFeedbackInputData;
-import use_case.generate_feedback.GenerateFeedbackInteractor;
-import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
-import use_case.repository.*;
-import entity.Ina.FeedbackEntry;
+import interface_adapter.gpt.OpenAiApiAdapter;
+import entity.feedback_entry.FeedbackEntry;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,7 +24,7 @@ public class TestGenerateFeedback {
         InMemoryFeedbackRepository feedbackRepo = new InMemoryFeedbackRepository();
 
         // 3. GPT service
-        OpenAIAPIAdapter adapter = new OpenAIAPIAdapter();
+        OpenAiApiAdapter adapter = new OpenAiApiAdapter();
 
         // 4. OutputBoundary: print to console
         GenerateFeedbackOutputBoundary output = data -> {

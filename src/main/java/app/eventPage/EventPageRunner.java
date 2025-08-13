@@ -1,20 +1,20 @@
-package app;
+package app.eventPage;
 
-import app.WellnessPage.WellnessLogPageBuilder;
+import app.eventPage.EventPageBuilder;
 
 import javax.swing.*;
 
-public class WellnessLogPageRunner {
+public class EventPageRunner {
     /**
-     * Call this method from your main program to launch the Wellness Log page.
+     * Call this method from your main program to launch the Event page.
      */
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MindTrack - Wellness Log");
+            JFrame frame = new JFrame("MindTrack - Event Page");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 700);
 
-            WellnessLogPageBuilder builder = new WellnessLogPageBuilder();
+            EventPageBuilder builder = new EventPageBuilder();
             JPanel mainPanel = builder.build();
 
             frame.setContentPane(mainPanel);
@@ -23,4 +23,3 @@ public class WellnessLogPageRunner {
         });
     }
 }
-

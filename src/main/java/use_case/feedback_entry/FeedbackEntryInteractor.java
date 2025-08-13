@@ -1,6 +1,6 @@
-package use_case.feedback_Entry;
+package use_case.feedback_entry;
 
-import entity.Ina.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntry;
 
 public class FeedbackEntryInteractor implements FeedbackEntryInputBoundary {
     private final FeedbackEntryRepository repository;
@@ -13,7 +13,7 @@ public class FeedbackEntryInteractor implements FeedbackEntryInputBoundary {
 
     @Override
     public void viewEntry(FeedbackEntryRequestModel request) {
-        FeedbackEntry entry = repository.getByDate(request.getDate());
+        final FeedbackEntry entry = repository.getByDate(request.getDate());
         presenter.present(new FeedbackEntryResponseModel(entry));
     }
 }
