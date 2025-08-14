@@ -319,6 +319,9 @@ public class GoalPageBuilder {
         // Goal Name (vertical)
         JTextField goalNameField = createLabeledTextField(formPanel, "Goal Name:", "", verticalGap);
 
+        // Goal Description (vertical)
+        JTextField goalDescriptionField = createLabeledTextField(formPanel, "Description (Optional):", "", verticalGap);
+
         // Target Amount & Current Amount (horizontal)
         JPanel amountPanel = new JPanel();
         amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
@@ -327,7 +330,7 @@ public class GoalPageBuilder {
         JPanel targetAmountPanel = new JPanel();
         targetAmountPanel.setLayout(new BoxLayout(targetAmountPanel, BoxLayout.Y_AXIS));
         targetAmountPanel.add(createCompactLabel("Target Amount:"));
-        JTextField targetAmountField = new JTextField("0.0");
+        JTextField targetAmountField = new JTextField("0"); // Changed default to "0"
         targetAmountField.setMaximumSize(new Dimension(150, 25));
         targetAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
         targetAmountPanel.add(targetAmountField);
@@ -336,7 +339,7 @@ public class GoalPageBuilder {
         JPanel currentAmountPanel = new JPanel();
         currentAmountPanel.setLayout(new BoxLayout(currentAmountPanel, BoxLayout.Y_AXIS));
         currentAmountPanel.add(createCompactLabel("Current Amount:"));
-        JTextField currentAmountField = new JTextField("0.0");
+        JTextField currentAmountField = new JTextField("0"); // Changed default to "0"
         currentAmountField.setMaximumSize(new Dimension(150, 25));
         currentAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
         currentAmountPanel.add(currentAmountField);
@@ -489,7 +492,11 @@ public class GoalPageBuilder {
             String goalName = GoalInputValidator.validateString(
                     ((JTextField) createGoalForm.getComponent(1)).getText(), "Goal Name");
 
-            JPanel amountPanel = (JPanel) createGoalForm.getComponent(3);
+            // The description field is now at component index 4
+            String description = ((JTextField) createGoalForm.getComponent(4)).getText();
+
+            // The amount panel has shifted to component index 6
+            JPanel amountPanel = (JPanel) createGoalForm.getComponent(6);
             JPanel targetAmountPanel = (JPanel) amountPanel.getComponent(0);
             double targetAmount = GoalInputValidator.validatePositiveInteger(
                     ((JTextField) targetAmountPanel.getComponent(1)).getText(), "Target Amount");
@@ -498,7 +505,8 @@ public class GoalPageBuilder {
             double currentAmount = GoalInputValidator.validatePositiveInteger(
                     ((JTextField) currentAmountPanel.getComponent(1)).getText(), "Current Amount");
 
-            JPanel datePanel = (JPanel) createGoalForm.getComponent(5);
+            // The date panel has shifted to component index 8
+            JPanel datePanel = (JPanel) createGoalForm.getComponent(8);
             JPanel startDatePanel = (JPanel) datePanel.getComponent(0);
             LocalDate startDate = GoalInputValidator.validateDate(
                     ((JTextField) startDatePanel.getComponent(1)).getText(), "Start Date");
@@ -510,27 +518,29 @@ public class GoalPageBuilder {
             // Validate that the start date is not after the end date
             GoalInputValidator.validateDateRange(startDate, endDate);
 
-            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(7);
+            // The time/frequency panel has shifted to component index 10
+            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(10);
             JPanel timePeriodPanel = (JPanel) timeFreqPanel.getComponent(0);
             JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
 
-            JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
-            int frequency = GoalInputValidator.validatePositiveInteger(
-                    ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
+            // The frequency field is no longer used, so it is commented out.
+            // JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
+            // int frequency = GoalInputValidator.validatePositiveInteger(
+            //         ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
             Task selectedTargetTask = (Task) targetTaskBox.getSelectedItem();
 
-            // Execute the use case with the validated data
+            // The targetAmount value is now used for both the target amount and the frequency.
             createGoalController.execute(
                     goalName,
-                    "",  // Default description
+                    description,
                     targetAmount,
                     currentAmount,
                     startDate,
                     endDate,
                     timePeriod,
-                    frequency,
+                    (int) targetAmount, // Use the targetAmount as the frequency
                     selectedTargetTask
             );
 

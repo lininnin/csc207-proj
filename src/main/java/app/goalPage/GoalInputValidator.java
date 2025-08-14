@@ -31,7 +31,7 @@ public class GoalInputValidator {
     public static int validatePositiveInteger(String input, String fieldName) {
         try {
             int value = Integer.parseInt(input);
-            if (value <= 0) {
+            if (value < 0) {
                 throw new IllegalArgumentException(fieldName + " must be a positive integer.");
             }
             return value;
