@@ -48,7 +48,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
             return;
         }
         
-        // Removed minimum category requirement - users can delete all categories if they want
+        // No minimum category requirement - users can delete all categories
 
         // CRITICAL: Find and update all tasks that have this category BEFORE deleting the category
         // Update available tasks (templates)
