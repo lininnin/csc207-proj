@@ -347,6 +347,9 @@ public class GoalPageBuilder {
         // Goal Name (vertical)
         JTextField goalNameField = createLabeledTextField(formPanel, "Goal Name:", "", verticalGap);
 
+        // Goal Description (vertical)
+        JTextField goalDescriptionField = createLabeledTextField(formPanel, "Description (Optional):", "", verticalGap);
+
         // Target Amount & Current Amount (horizontal)
         JPanel amountPanel = new JPanel();
         amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
@@ -355,7 +358,7 @@ public class GoalPageBuilder {
         JPanel targetAmountPanel = new JPanel();
         targetAmountPanel.setLayout(new BoxLayout(targetAmountPanel, BoxLayout.Y_AXIS));
         targetAmountPanel.add(createCompactLabel("Target Amount:"));
-        JTextField targetAmountField = new JTextField("0.0");
+        JTextField targetAmountField = new JTextField("0"); // Changed default to "0"
         targetAmountField.setMaximumSize(new Dimension(150, 25));
         targetAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
         targetAmountPanel.add(targetAmountField);
@@ -364,7 +367,7 @@ public class GoalPageBuilder {
         JPanel currentAmountPanel = new JPanel();
         currentAmountPanel.setLayout(new BoxLayout(currentAmountPanel, BoxLayout.Y_AXIS));
         currentAmountPanel.add(createCompactLabel("Current Amount:"));
-        JTextField currentAmountField = new JTextField("0.0");
+        JTextField currentAmountField = new JTextField("0"); // Changed default to "0"
         currentAmountField.setMaximumSize(new Dimension(150, 25));
         currentAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
         currentAmountPanel.add(currentAmountField);
@@ -523,34 +526,46 @@ public class GoalPageBuilder {
      */
     private void handleCreateGoal() {
         try {
-            String goalName = ((JTextField) createGoalForm.getComponent(1)).getText();
+            // Retrieve and validate input from the form
+            String goalName = GoalInputValidator.validateString(
+                    ((JTextField) createGoalForm.getComponent(1)).getText(), "Goal Name");
 
-            JPanel amountPanel = (JPanel) createGoalForm.getComponent(3);
+            // The description field is now at component index 4
+            String description = ((JTextField) createGoalForm.getComponent(4)).getText();
+
+            // The amount panel has shifted to component index 6
+            JPanel amountPanel = (JPanel) createGoalForm.getComponent(6);
             JPanel targetAmountPanel = (JPanel) amountPanel.getComponent(0);
-            JTextField targetAmountField = (JTextField) targetAmountPanel.getComponent(1);
-            double targetAmount = Double.parseDouble(targetAmountField.getText());
+            double targetAmount = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) targetAmountPanel.getComponent(1)).getText(), "Target Amount");
 
             JPanel currentAmountPanel = (JPanel) amountPanel.getComponent(1);
-            JTextField currentAmountField = (JTextField) currentAmountPanel.getComponent(1);
-            double currentAmount = Double.parseDouble(currentAmountField.getText());
+            double currentAmount = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) currentAmountPanel.getComponent(1)).getText(), "Current Amount");
 
-            JPanel datePanel = (JPanel) createGoalForm.getComponent(5);
+            // The date panel has shifted to component index 8
+            JPanel datePanel = (JPanel) createGoalForm.getComponent(8);
             JPanel startDatePanel = (JPanel) datePanel.getComponent(0);
-            JTextField startDateField = (JTextField) startDatePanel.getComponent(1);
-            LocalDate startDate = LocalDate.parse(startDateField.getText());
+            LocalDate startDate = GoalInputValidator.validateDate(
+                    ((JTextField) startDatePanel.getComponent(1)).getText(), "Start Date");
 
             JPanel endDatePanel = (JPanel) datePanel.getComponent(1);
-            JTextField endDateField = (JTextField) endDatePanel.getComponent(1);
-            LocalDate endDate = LocalDate.parse(endDateField.getText());
+            LocalDate endDate = GoalInputValidator.validateDate(
+                    ((JTextField) endDatePanel.getComponent(1)).getText(), "End Date");
 
-            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(7);
+            // Validate that the start date is not after the end date
+            GoalInputValidator.validateDateRange(startDate, endDate);
+
+            // The time/frequency panel has shifted to component index 10
+            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(10);
             JPanel timePeriodPanel = (JPanel) timeFreqPanel.getComponent(0);
             JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
 
-            JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
-            JTextField frequencyField = (JTextField) frequencyPanel.getComponent(1);
-            int frequency = Integer.parseInt(frequencyField.getText());
+            // The frequency field is no longer used, so it is commented out.
+            // JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
+            // int frequency = GoalInputValidator.validatePositiveInteger(
+            //         ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
             TaskAvailable selectedTargetTaskAvailable = (TaskAvailable) targetTaskBox.getSelectedItem();
             
@@ -570,9 +585,10 @@ public class GoalPageBuilder {
                 );
             }
 
+            // The targetAmount value is now used for both the target amount and the frequency.
             createGoalController.execute(
                     goalName,
-                    "",  // Default description
+                    description,
                     targetAmount,
                     currentAmount,
                     startDate,
@@ -585,9 +601,15 @@ public class GoalPageBuilder {
             availableGoalsController.execute("");
             JOptionPane.showMessageDialog(null, "Goal created successfully!");
 
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
+            // Catch validation-specific exceptions
             JOptionPane.showMessageDialog(null,
-                    "Error: " + ex.getMessage(), "Invalid Input",
+                    "Validation Error: " + ex.getMessage(), "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            // Catch any other unexpected exceptions
+            JOptionPane.showMessageDialog(null,
+                    "An unexpected error occurred: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

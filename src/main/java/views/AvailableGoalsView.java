@@ -124,22 +124,31 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
             return this;
         }
 
+        /**
+         * Adds more detail to the formatted text displayed in the JList.
+         */
         private String formatGoalText(Goal goal) {
             String period = goal.getTimePeriod().toString().equals("MONTH") ? "Monthly" : "Weekly";
-            return String.format("%s - %d/%d (%s)",
+            return String.format("<html><b>%s</b> - %s<br/>" +
+                            "Progress: %d of %d (%s)<br/>" +
+                            "Dates: %s to %s</html>",
                     goal.getGoalInfo().getInfo().getName(),
+                    goal.getGoalInfo().getInfo().getDescription(),
                     goal.getCurrentProgress(),
                     goal.getFrequency(),
-                    period);
+                    period,
+                    goal.getBeginAndDueDates().getBeginDate(),
+                    goal.getBeginAndDueDates().getDueDate());
         }
 
         private String createTooltipText(Goal goal) {
             String period = goal.getTimePeriod().toString().equals("MONTH") ? "Monthly" : "Weekly";
             return String.format(
-                    "<html><b>Name:</b> %s<br><b>Period:</b> %s<br>" +
+                    "<html><b>Name:</b> %s<br><b>Description:</b> %s<br><b>Period:</b> %s<br>" +
                             "<b>Progress:</b> %d/%d<br><b>Dates:</b> %s to %s</html>",
                     goal.getGoalInfo().getInfo().getName(),
-                    period, // Updated to use the formatted period
+                    goal.getGoalInfo().getInfo().getDescription(),
+                    period,
                     goal.getCurrentProgress(),
                     goal.getFrequency(),
                     goal.getBeginAndDueDates().getBeginDate(),
