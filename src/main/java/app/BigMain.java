@@ -27,10 +27,10 @@ import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
 import interface_adapter.gpt.OpenAiApiAdapter;
-import use_case.generate_feedback.GptService;
 import use_case.generate_feedback.GenerateFeedbackInputBoundary;
 import use_case.generate_feedback.GenerateFeedbackInteractor;
 import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
+import use_case.generate_feedback.GptService;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 import view.CollapsibleSidebarView;
@@ -41,7 +41,8 @@ import view.FontUtil;
  */
 public class BigMain {
 
-    /* Launch MinkTrack application UI.
+    /**
+     *  Launch MinkTrack application UI.
      * @param args command line arguments not used in application
      */
     public static void main(String[] args) {
