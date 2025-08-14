@@ -38,11 +38,12 @@ import view.FontUtil;
 
 import entity.info.Info;
 import entity.Alex.Event.Event;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelFactory;
+import entity.Alex.MoodLabel.Type;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
 import javax.swing.*;
@@ -57,9 +58,9 @@ import java.time.LocalDateTime;
  */
 public class TaskPageBuilder {
 
-    // Data Access
-    private final InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
-    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    // Data Access - Use shared instances
+    private final InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
+    private final InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
 
     // View Models
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
@@ -241,19 +242,16 @@ public class TaskPageBuilder {
                 overdueTasksInteractor
         );
 
-        // Create Event and Wellness data access objects for integration
-        entity.Alex.DailyEventLog.DailyEventLogFactoryInterf eventLogFactory = 
-            new entity.Alex.DailyEventLog.DailyEventLogFactory();
+        // Use shared data access objects for integration
         data_access.TodaysEventDataAccessObject eventDataAccess = 
-            new data_access.TodaysEventDataAccessObject(eventLogFactory);
+            app.SharedDataAccess.getInstance().getEventDataAccess();
             
-        entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf wellnessLogFactory = 
-            new entity.Alex.DailyWellnessLog.DailyWellnessLogFactory();
         data_access.TodaysWellnessLogDataAccessObject wellnessDataAccess = 
-            new data_access.TodaysWellnessLogDataAccessObject(wellnessLogFactory);
+            app.SharedDataAccess.getInstance().getWellnessDataAccess();
             
-        // Create Goal repository for integration
-        data_access.FileGoalRepository goalRepository = new data_access.FileGoalRepository();
+        // Use shared Goal repository
+        data_access.FileGoalRepository goalRepository = 
+            app.SharedDataAccess.getInstance().getGoalRepository();
         
         // Wire up Today So Far Use Case with all data sources
         InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
@@ -274,11 +272,7 @@ public class TaskPageBuilder {
         todaySoFarView.setOverdueTasksController(overdueTasksController);
         todaySoFarView.setTodaySoFarController(todaySoFarController);
         
-        // Add some sample data for testing Today So Far panel integration
-        // This is temporary - in production, data would come from actual user input
-        initializeSampleData(eventDataAccess, wellnessDataAccess, goalRepository);
-        
-        // Trigger initial data load
+        // Trigger initial data load (no sample data - user will input real data)
         todaySoFarController.refresh();
         
         // Set overdue controller on presenters that need to refresh overdue tasks
@@ -479,72 +473,5 @@ public class TaskPageBuilder {
         mainPanel.setPreferredSize(new Dimension(1450, 750));
 
         return mainPanel;
-    }
-    
-    /**
-     * Initialize sample data for testing Today So Far panel integration.
-     * This method is temporary and should be removed in production.
-     */
-    private void initializeSampleData(data_access.TodaysEventDataAccessObject eventDataAccess,
-                                      data_access.TodaysWellnessLogDataAccessObject wellnessDataAccess,
-                                      data_access.FileGoalRepository goalRepository) {
-        try {
-            // Add sample events
-            // Create sample event 1: Team Meeting
-            Info eventInfo1 = new Info.Builder("Team Meeting")
-                .description("Weekly team sync")
-                .category("work")
-                .build();
-            Event event1 = new Event.Builder(eventInfo1)
-                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), LocalDate.now()))
-                .oneTime(false)
-                .build();
-            eventDataAccess.save(event1);
-            
-            // Create sample event 2: Yoga Class
-            Info eventInfo2 = new Info.Builder("Yoga Class")
-                .description("Evening yoga session")
-                .category("wellness")
-                .build();
-            Event event2 = new Event.Builder(eventInfo2)
-                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), LocalDate.now()))
-                .oneTime(false)
-                .build();
-            eventDataAccess.save(event2);
-            
-            // Add sample wellness entries
-            WellnessLogEntryFactory wellnessFactory = new WellnessLogEntryFactory();
-            MoodLabelFactory moodFactory = new MoodLabelFactory();
-            
-            // Create morning wellness entry
-            MoodLabel morningMood = moodFactory.create("Happy", MoodLabel.Type.Positive);
-            WellnessLogEntry morningEntry = wellnessFactory.create(
-                LocalDateTime.now().withHour(9).withMinute(0),  // Time
-                Levels.THREE,  // Stress level (low)
-                Levels.EIGHT,  // Energy level (high)
-                Levels.TWO,    // Fatigue level (low)
-                morningMood,   // Mood label
-                "Feeling great this morning!"  // User note
-            );
-            wellnessDataAccess.save(morningEntry);
-            
-            // Create afternoon wellness entry
-            MoodLabel afternoonMood = moodFactory.create("Focused", MoodLabel.Type.Positive);
-            WellnessLogEntry afternoonEntry = wellnessFactory.create(
-                LocalDateTime.now().withHour(14).withMinute(30),  // Time
-                Levels.FIVE,   // Stress level (medium)
-                Levels.SIX,    // Energy level (medium)
-                Levels.FIVE,   // Fatigue level (medium)
-                afternoonMood, // Mood label
-                "Productive afternoon session"  // User note
-            );
-            wellnessDataAccess.save(afternoonEntry);
-            
-            // Note: Goal sample data will be added once Sophia completes the Goal module implementation
-            
-        } catch (Exception e) {
-            // Log error but don't fail - sample data is optional
-            System.out.println("DEBUG: Failed to initialize sample data: " + e.getMessage());
-        }
     }
 }

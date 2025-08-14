@@ -497,6 +497,14 @@ public class InMemoryTaskGateway implements
         
         return allTasks;
     }
+    
+    /**
+     * Public method to get all available task templates for external use (like GoalPageBuilder).
+     * @return List of all available task templates
+     */
+    public List<TaskAvailable> getAvailableTaskTemplates() {
+        return getAllAvailableTasksWithDetails();
+    }
 
     // ===== AddToTodayDataAccessInterface methods =====
 

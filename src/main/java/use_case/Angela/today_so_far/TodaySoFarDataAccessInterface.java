@@ -1,8 +1,8 @@
 package use_case.Angela.today_so_far;
 
 import entity.Angela.Task.Task;
-import entity.Alex.Event.Event;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.Event.EventInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 
 import java.time.LocalDate;
@@ -24,13 +24,13 @@ public interface TodaySoFarDataAccessInterface {
      * Gets all completed events for today.
      * @return List of completed events for today
      */
-    List<Event> getCompletedEventsForToday();
+    List<EventInterf> getCompletedEventsForToday();
     
     /**
      * Gets wellness log entries for today.
      * @return List of wellness entries for today
      */
-    List<WellnessLogEntry> getWellnessEntriesForToday();
+    List<WellnessLogEntryInterf> getWellnessEntriesForToday();
     
     /**
      * Gets all active goals with their progress.

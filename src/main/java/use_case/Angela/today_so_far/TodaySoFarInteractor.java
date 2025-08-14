@@ -1,8 +1,8 @@
 package use_case.Angela.today_so_far;
 
 import entity.Angela.Task.Task;
-import entity.Alex.Event.Event;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.Event.EventInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Category;
 import use_case.Angela.category.CategoryGateway;
@@ -62,9 +62,9 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             }
             
             // Add completed events
-            List<Event> completedEvents = dataAccess.getCompletedEventsForToday();
+            List<EventInterf> completedEvents = dataAccess.getCompletedEventsForToday();
             if (completedEvents != null) {
-                for (Event event : completedEvents) {
+                for (EventInterf event : completedEvents) {
                     String name = event.getInfo().getName();
                     String categoryName = getCategoryName(event.getInfo().getCategory());
                     completedItems.add(new TodaySoFarOutputData.CompletedItem("Event", name, categoryName));
@@ -76,9 +76,9 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             
             // Collect Wellness entries
             List<TodaySoFarOutputData.WellnessEntry> wellnessEntries = new ArrayList<>();
-            List<WellnessLogEntry> todaysWellness = dataAccess.getWellnessEntriesForToday();
+            List<WellnessLogEntryInterf> todaysWellness = dataAccess.getWellnessEntriesForToday();
             if (todaysWellness != null) {
-                for (WellnessLogEntry entry : todaysWellness) {
+                for (WellnessLogEntryInterf entry : todaysWellness) {
                     String mood = entry.getMoodLabel() != null ? entry.getMoodLabel().toString() : "Unknown";
                     int stress = entry.getStressLevel() != null ? entry.getStressLevel().getValue() : 0;
                     int energy = entry.getEnergyLevel() != null ? entry.getEnergyLevel().getValue() : 0;

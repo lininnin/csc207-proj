@@ -1,8 +1,8 @@
 package data_access;
 
 import entity.Angela.Task.Task;
-import entity.Alex.Event.Event;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.Event.EventInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
 import interface_adapter.GoalRepository;
@@ -52,7 +52,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<Event> getCompletedEventsForToday() {
+    public List<EventInterf> getCompletedEventsForToday() {
         if (eventDataAccess != null) {
             try {
                 // Get today's events - consider all events as "completed" for display purposes
@@ -67,7 +67,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<WellnessLogEntry> getWellnessEntriesForToday() {
+    public List<WellnessLogEntryInterf> getWellnessEntriesForToday() {
         if (wellnessDataAccess != null) {
             try {
                 // Get today's wellness log entries
