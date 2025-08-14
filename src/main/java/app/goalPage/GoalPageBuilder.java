@@ -485,25 +485,30 @@ public class GoalPageBuilder {
      */
     private void handleCreateGoal() {
         try {
-            String goalName = ((JTextField) createGoalForm.getComponent(1)).getText();
+            // Retrieve and validate input from the form
+            String goalName = GoalInputValidator.validateString(
+                    ((JTextField) createGoalForm.getComponent(1)).getText(), "Goal Name");
 
             JPanel amountPanel = (JPanel) createGoalForm.getComponent(3);
             JPanel targetAmountPanel = (JPanel) amountPanel.getComponent(0);
-            JTextField targetAmountField = (JTextField) targetAmountPanel.getComponent(1);
-            double targetAmount = Double.parseDouble(targetAmountField.getText());
+            double targetAmount = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) targetAmountPanel.getComponent(1)).getText(), "Target Amount");
 
             JPanel currentAmountPanel = (JPanel) amountPanel.getComponent(1);
-            JTextField currentAmountField = (JTextField) currentAmountPanel.getComponent(1);
-            double currentAmount = Double.parseDouble(currentAmountField.getText());
+            double currentAmount = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) currentAmountPanel.getComponent(1)).getText(), "Current Amount");
 
             JPanel datePanel = (JPanel) createGoalForm.getComponent(5);
             JPanel startDatePanel = (JPanel) datePanel.getComponent(0);
-            JTextField startDateField = (JTextField) startDatePanel.getComponent(1);
-            LocalDate startDate = LocalDate.parse(startDateField.getText());
+            LocalDate startDate = GoalInputValidator.validateDate(
+                    ((JTextField) startDatePanel.getComponent(1)).getText(), "Start Date");
 
             JPanel endDatePanel = (JPanel) datePanel.getComponent(1);
-            JTextField endDateField = (JTextField) endDatePanel.getComponent(1);
-            LocalDate endDate = LocalDate.parse(endDateField.getText());
+            LocalDate endDate = GoalInputValidator.validateDate(
+                    ((JTextField) endDatePanel.getComponent(1)).getText(), "End Date");
+
+            // Validate that the start date is not after the end date
+            GoalInputValidator.validateDateRange(startDate, endDate);
 
             JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(7);
             JPanel timePeriodPanel = (JPanel) timeFreqPanel.getComponent(0);
@@ -511,11 +516,12 @@ public class GoalPageBuilder {
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
 
             JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
-            JTextField frequencyField = (JTextField) frequencyPanel.getComponent(1);
-            int frequency = Integer.parseInt(frequencyField.getText());
+            int frequency = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
             Task selectedTargetTask = (Task) targetTaskBox.getSelectedItem();
 
+            // Execute the use case with the validated data
             createGoalController.execute(
                     goalName,
                     "",  // Default description
@@ -531,9 +537,15 @@ public class GoalPageBuilder {
             availableGoalsController.execute("");
             JOptionPane.showMessageDialog(null, "Goal created successfully!");
 
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
+            // Catch validation-specific exceptions
             JOptionPane.showMessageDialog(null,
-                    "Error: " + ex.getMessage(), "Invalid Input",
+                    "Validation Error: " + ex.getMessage(), "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            // Catch any other unexpected exceptions
+            JOptionPane.showMessageDialog(null,
+                    "An unexpected error occurred: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
