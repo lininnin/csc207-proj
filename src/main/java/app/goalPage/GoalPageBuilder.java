@@ -314,19 +314,19 @@ public class GoalPageBuilder {
         // Create Today So Far panel
         TodaySoFarView todaySoFarView = createTodaySoFarPanel();
         
-        // Wrap Today So Far in a panel
+        // Wrap Today So Far in a panel with flexible sizing
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(todaySoFarView, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(380, 0));
-        rightPanel.setMinimumSize(new Dimension(320, 0));
+        rightPanel.setMinimumSize(new Dimension(250, 0));
+        // Remove preferred size to allow flexible sizing
         
         // Create horizontal split pane for resizable layout
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerContent, rightPanel);
-        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setDividerLocation(800);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(8);
-        mainSplitPane.setResizeWeight(0.7);
+        mainSplitPane.setResizeWeight(0.75);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(mainSplitPane, BorderLayout.CENTER);
