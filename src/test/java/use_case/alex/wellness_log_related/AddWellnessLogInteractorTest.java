@@ -1,6 +1,7 @@
 package use_case.alex.wellness_log_related;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
@@ -35,7 +36,7 @@ public class AddWellnessLogInteractorTest {
         Levels energy = Levels.SIX;
         Levels fatigue = Levels.THREE;
         MoodLabel mood = new MoodLabel.Builder("Happy")
-                .type(MoodLabel.Type.Positive)
+                .type(Type.Positive)
                 .build();
         String note = "Feeling great!";
 
@@ -76,7 +77,7 @@ public class AddWellnessLogInteractorTest {
         Levels energy = Levels.ONE;
         Levels fatigue = Levels.SEVEN;
         MoodLabel mood = new MoodLabel.Builder("Anxious")
-                .type(MoodLabel.Type.Negative)
+                .type(Type.Negative)
                 .build();
         String note = "Burned out.";
 

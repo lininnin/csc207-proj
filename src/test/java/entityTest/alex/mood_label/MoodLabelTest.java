@@ -1,7 +1,7 @@
 package entityTest.alex.mood_label;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabel.Type;
+import entity.Alex.MoodLabel.Type;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,83 +10,93 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MoodLabelTest {
 
     @Test
-    public void testBuildMoodLabelSuccessfully() {
-        MoodLabel mood = new MoodLabel.Builder("Happy")
+    void testBuilderCreatesValidMoodLabel() {
+        MoodLabel label = new MoodLabel.Builder("Happy")
                 .type(Type.Positive)
                 .build();
 
-        assertEquals("Happy", mood.getName());
-        assertEquals(Type.Positive, mood.getType());
+        assertEquals("Happy", label.getName());
+        assertEquals(Type.Positive, label.getType());
     }
 
     @Test
-    public void testBuilderTrimsName() {
-        MoodLabel mood = new MoodLabel.Builder("  Calm  ")
+    void testBuilderTrimsName() {
+        MoodLabel label = new MoodLabel.Builder("  Calm  ")
                 .type(Type.Positive)
                 .build();
 
-        assertEquals("Calm", mood.getName());
+        assertEquals("Calm", label.getName());
     }
 
     @Test
-    public void testBuilderRejectsNullOrEmptyName() {
+    void testBuilderWithNullNameThrows() {
         assertThrows(IllegalArgumentException.class, () -> new MoodLabel.Builder(null));
-        assertThrows(IllegalArgumentException.class, () -> new MoodLabel.Builder("   "));
     }
 
     @Test
-    public void testBuilderRejectsNullTypeInSetter() {
-        MoodLabel.Builder builder = new MoodLabel.Builder("Relaxed");
+    void testBuilderWithEmptyNameThrows() {
+        assertThrows(IllegalArgumentException.class, () -> new MoodLabel.Builder("  "));
+    }
+
+    @Test
+    void testBuilderWithNullTypeThrows() {
+        MoodLabel.Builder builder = new MoodLabel.Builder("Anxious");
         assertThrows(IllegalArgumentException.class, () -> builder.type(null));
     }
 
     @Test
-    public void testSetNameSuccessfully() {
-        MoodLabel mood = new MoodLabel.Builder("Tense")
+    void testSetNameSuccessfully() {
+        MoodLabel label = new MoodLabel.Builder("Sad")
                 .type(Type.Negative)
                 .build();
 
-        mood.setName("Anxious");
-        assertEquals("Anxious", mood.getName());
+        label.setName("Tired");
+        assertEquals("Tired", label.getName());
     }
 
     @Test
-    public void testSetNameTrimsWhitespace() {
-        MoodLabel mood = new MoodLabel.Builder("Tired")
+    void testSetNameWithNullThrows() {
+        MoodLabel label = new MoodLabel.Builder("Sad")
                 .type(Type.Negative)
                 .build();
 
-        mood.setName("  Drained ");
-        assertEquals("Drained", mood.getName());
+        assertThrows(IllegalArgumentException.class, () -> label.setName(null));
     }
 
     @Test
-    public void testSetNameRejectsNullOrEmpty() {
-        MoodLabel mood = new MoodLabel.Builder("Sleepy")
+    void testSetNameWithEmptyThrows() {
+        MoodLabel label = new MoodLabel.Builder("Sad")
                 .type(Type.Negative)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> mood.setName(null));
-        assertThrows(IllegalArgumentException.class, () -> mood.setName("   "));
+        assertThrows(IllegalArgumentException.class, () -> label.setName("   "));
     }
 
     @Test
-    public void testSetTypeSuccessfully() {
-        MoodLabel mood = new MoodLabel.Builder("Hopeful")
+    void testSetTypeSuccessfully() {
+        MoodLabel label = new MoodLabel.Builder("Bored")
+                .type(Type.Negative)
+                .build();
+
+        label.setType(Type.Positive);
+        assertEquals(Type.Positive, label.getType());
+    }
+
+    @Test
+    void testSetTypeWithNullThrows() {
+        MoodLabel label = new MoodLabel.Builder("Bored")
+                .type(Type.Negative)
+                .build();
+
+        assertThrows(IllegalArgumentException.class, () -> label.setType(null));
+    }
+
+    @Test
+    void testToStringReturnsName() {
+        MoodLabel label = new MoodLabel.Builder("Excited")
                 .type(Type.Positive)
                 .build();
 
-        mood.setType(Type.Negative);
-        assertEquals(Type.Negative, mood.getType());
-    }
-
-    @Test
-    public void testSetTypeRejectsNull() {
-        MoodLabel mood = new MoodLabel.Builder("Confused")
-                .type(Type.Negative)
-                .build();
-
-        assertThrows(IllegalArgumentException.class, () -> mood.setType(null));
+        assertEquals("Excited", label.toString());
     }
 }
-

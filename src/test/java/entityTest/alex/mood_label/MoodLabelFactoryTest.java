@@ -1,51 +1,50 @@
 package entityTest.alex.mood_label;
 
-import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelFactory;
+import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.MoodLabel.Type;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MoodLabelFactoryTest {
 
-    @Test
-    public void testCreateValidMoodLabel() {
-        MoodLabelFactory factory = new MoodLabelFactory();
+    private MoodLabelFactoryInterf factory;
 
-        MoodLabelInterf mood = factory.create("Joyful", MoodLabel.Type.Positive);
-
-        assertNotNull(mood);
-        assertTrue(mood instanceof MoodLabel);
-        assertEquals("Joyful", mood.getName());
-        assertEquals(MoodLabel.Type.Positive, mood.getType());
+    @BeforeEach
+    void setUp() {
+        factory = new MoodLabelFactory();
     }
 
     @Test
-    public void testCreateWithNullNameThrowsException() {
-        MoodLabelFactory factory = new MoodLabelFactory();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            factory.create(null, MoodLabel.Type.Negative);
-        });
+    void testCreateMoodLabelSuccessfully() {
+        MoodLabelInterf label = factory.create("Happy", Type.Positive);
+        assertNotNull(label);
+        assertEquals("Happy", label.getName());
+        assertEquals(Type.Positive, label.getType());
     }
 
     @Test
-    public void testCreateWithEmptyNameThrowsException() {
-        MoodLabelFactory factory = new MoodLabelFactory();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            factory.create("   ", MoodLabel.Type.Positive);
-        });
+    void testCreateMoodLabelTrimsWhitespace() {
+        MoodLabelInterf label = factory.create("  Calm  ", Type.Positive);
+        assertEquals("Calm", label.getName());
     }
 
     @Test
-    public void testCreateWithNullTypeThrowsException() {
-        MoodLabelFactory factory = new MoodLabelFactory();
+    void testCreateMoodLabelWithEmptyNameThrows() {
+        assertThrows(IllegalArgumentException.class, () -> factory.create("  ", Type.Negative));
+    }
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            factory.create("Worried", null);
-        });
+    @Test
+    void testCreateMoodLabelWithNullNameThrows() {
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null, Type.Positive));
+    }
+
+    @Test
+    void testCreateMoodLabelWithNullTypeThrows() {
+        assertThrows(IllegalArgumentException.class, () -> factory.create("Sad", null));
     }
 }
-

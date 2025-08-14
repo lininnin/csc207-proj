@@ -2,6 +2,7 @@ package use_case.alex.wellness_log_related.todays_wellness_log_module.edit_welln
 
 import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.MoodLabel.MoodLabel;
@@ -43,14 +44,16 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
                     inputData.getMoodType()
             );
 
-            WellnessLogEntryInterf updated = wellnessLogEntryFactory.create(
-                    existing.getTime(),
-                    Levels.fromInt(inputData.getStressLevel()),
-                    Levels.fromInt(inputData.getEnergyLevel()),
-                    Levels.fromInt(inputData.getFatigueLevel()),
-                    moodLabel,
-                    inputData.getNote()
-            );
+            WellnessLogEntryInterf updated = new WellnessLogEntry.Builder()
+                    .id(existing.getId()) // ✅ 保留原 ID，确保 update() 成功
+                    .time(existing.getTime())
+                    .stressLevel(Levels.fromInt(inputData.getStressLevel()))
+                    .energyLevel(Levels.fromInt(inputData.getEnergyLevel()))
+                    .fatigueLevel(Levels.fromInt(inputData.getFatigueLevel()))
+                    .moodLabel(moodLabel)
+                    .userNote(inputData.getNote())
+                    .build();
+
 
             boolean success = dataAccess.update(updated);
             if (success) {
@@ -64,7 +67,3 @@ public class EditWellnessLogInteractor implements EditWellnessLogInputBoundary {
         }
     }
 }
-
-
-
-

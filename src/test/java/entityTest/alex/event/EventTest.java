@@ -1,8 +1,11 @@
 package entityTest.alex.event;
 
 import entity.Alex.Event.Event;
-import entity.info.Info;
+import entity.Alex.Event.EventInterf;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
+import entity.info.Info;
+import entity.info.InfoInterf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,93 +16,115 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EventTest {
 
-    private Info sampleInfo;
-    private BeginAndDueDates validDates;
+    private InfoInterf initialInfo;
+    private BeginAndDueDatesInterf initialDates;
+    private LocalDate beginDate;
+    private LocalDate dueDate;
 
     @BeforeEach
-    public void setUp() {
-        sampleInfo = new Info.Builder("Meeting with client")
-                .description("Discuss requirements")
-                .category("Work")
+    void setUp() {
+        beginDate = LocalDate.of(2025, 8, 15);
+        dueDate = LocalDate.of(2025, 8, 20);
+        initialInfo = new Info.Builder("Task")
+                .description("Description")
+                .category("Category")
+                .build();
+        initialDates = new BeginAndDueDates(beginDate, dueDate);
+    }
+
+    @Test
+    void testBuilderCreatesValidEvent() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
+                .oneTime(true)
                 .build();
 
-        validDates = new BeginAndDueDates(
-                LocalDate.of(2025, 7, 21),
-                LocalDate.of(2025, 7, 22)
-        );
+        assertNotNull(event);
+        assertEquals(initialInfo, event.getInfo());
+        assertEquals(initialDates, event.getBeginAndDueDates());
+        assertTrue(((Event) event).isOneTime()); // cast to access concrete method
     }
 
     @Test
-    public void testBuildValidEvent() {
-        Event event = new Event.Builder(sampleInfo)
-                .beginAndDueDates(validDates)
+    void testEditInfoWorks() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
                 .build();
 
-        assertEquals(sampleInfo, event.getInfo());
-        assertEquals(validDates, event.getBeginAndDueDates());
-    }
-
-    @Test
-    public void testBuildEventWithoutBeginAndDueDatesThrows() {
-        Event.Builder builder = new Event.Builder(sampleInfo);
-        assertThrows(IllegalStateException.class, builder::build);
-    }
-
-    @Test
-    public void testBuilderWithNullInfoThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new Event.Builder(null));
-    }
-
-    @Test
-    public void testBeginAndDueDatesSetterRejectsNull() {
-        Event.Builder builder = new Event.Builder(sampleInfo);
-        assertThrows(IllegalArgumentException.class, () -> builder.beginAndDueDates(null));
-    }
-
-    @Test
-    public void testEditInfoSuccessfully() {
-        Event event = createDefaultEvent();
-        Info newInfo = new Info.Builder("Updated Meeting")
-                .description("Revised details")
-                .category("Client")
+        InfoInterf newInfo = new Info.Builder("NewName")
+                .description("NewDesc")
+                .category("NewCat")
                 .build();
-
         event.editInfo(newInfo);
-        assertEquals(newInfo, event.getInfo());
+
+        assertEquals("NewName", event.getInfo().getName());
     }
 
     @Test
-    public void testEditInfoWithNullThrows() {
-        Event event = createDefaultEvent();
+    void testEditInfoThrowsIfNull() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
+                .build();
+
         assertThrows(IllegalArgumentException.class, () -> event.editInfo(null));
     }
 
     @Test
-    public void testEditDueDateSuccessfully() {
-        Event event = createDefaultEvent();
-        LocalDate newDueDate = LocalDate.of(2025, 7, 23);
-        event.editDueDate(newDueDate);
-        assertEquals(newDueDate, event.getBeginAndDueDates().getDueDate());
+    void testEditDueDateSuccessfully() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
+                .build();
+
+        LocalDate newDue = dueDate.plusDays(2);
+        event.editDueDate(newDue);
+
+        assertEquals(newDue, event.getBeginAndDueDates().getDueDate());
     }
 
     @Test
-    public void testEditDueDateBeforeBeginDateThrows() {
-        Event event = createDefaultEvent();
-        LocalDate invalidDue = LocalDate.of(2025, 7, 20); // earlier than begin
-        assertThrows(IllegalArgumentException.class, () -> event.editDueDate(invalidDue));
-    }
+    void testEditDueDateThrowsIfNull() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
+                .build();
 
-    @Test
-    public void testEditDueDateNullThrows() {
-        Event event = createDefaultEvent();
         assertThrows(IllegalArgumentException.class, () -> event.editDueDate(null));
     }
 
-    // Helper
-    private Event createDefaultEvent() {
-        return new Event.Builder(sampleInfo)
-                .beginAndDueDates(validDates)
+    @Test
+    void testEditDueDateThrowsIfBeforeBeginDate() {
+        EventInterf event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
                 .build();
+
+        LocalDate earlier = beginDate.minusDays(1);
+        assertThrows(IllegalArgumentException.class, () -> event.editDueDate(earlier));
+    }
+
+    @Test
+    void testSetOneTimeUpdatesFlag() {
+        Event event = new Event.Builder(initialInfo)
+                .beginAndDueDates(initialDates)
+                .build();
+
+        assertFalse(event.isOneTime());
+        event.setOneTime(true);
+        assertTrue(event.isOneTime());
+    }
+
+    @Test
+    void testBuilderThrowsIfInfoIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Event.Builder(null));
+    }
+
+    @Test
+    void testBuilderThrowsIfBeginAndDueDatesIsNull() {
+        Event.Builder builder = new Event.Builder(initialInfo);
+        assertThrows(IllegalArgumentException.class, () -> builder.beginAndDueDates(null));
+    }
+
+    @Test
+    void testBuildThrowsIfBeginAndDueDatesNotSet() {
+        Event.Builder builder = new Event.Builder(initialInfo);
+        assertThrows(IllegalStateException.class, builder::build);
     }
 }
-

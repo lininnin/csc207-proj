@@ -56,7 +56,7 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
 
         } catch (Exception e) {
             System.out.println("[Interactor] Exception occurred:");
-            e.printStackTrace(); // ✅ 打印到 terminal
+            e.printStackTrace();
             presenter.prepareFailView("Failed to add log: " + e.getMessage());
         }
     }

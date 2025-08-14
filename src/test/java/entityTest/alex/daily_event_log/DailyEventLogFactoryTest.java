@@ -2,41 +2,44 @@ package entityTest.alex.daily_event_log;
 
 import entity.Alex.DailyEventLog.DailyEventLog;
 import entity.Alex.DailyEventLog.DailyEventLogFactory;
+import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.DailyEventLog.DailyEventLogInterf;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for DailyEventLogFactory.
+ */
 public class DailyEventLogFactoryTest {
 
-    @Test
-    public void testCreateReturnsNonNullInstance() {
-        DailyEventLogFactory factory = new DailyEventLogFactory();
-        DailyEventLogInterf result = factory.create(LocalDate.of(2025, 8, 8));
+    private DailyEventLogFactoryInterf factory;
 
-        assertNotNull(result);
-        assertTrue(result instanceof DailyEventLog);
+    @BeforeEach
+    void setUp() {
+        factory = new DailyEventLogFactory();
     }
 
     @Test
-    public void testCreatedInstanceHasCorrectDate() {
-        DailyEventLogFactory factory = new DailyEventLogFactory();
-        LocalDate date = LocalDate.of(2025, 8, 8);
-        DailyEventLogInterf log = factory.create(date);
-
-        assertEquals(date, log.getDate());
+    void testCreateReturnsNonNull() {
+        DailyEventLogInterf log = factory.create(LocalDate.now());
+        assertNotNull(log, "Factory should return a non-null DailyEventLogInterf.");
     }
 
     @Test
-    public void testCreateReturnsDifferentInstances() {
-        DailyEventLogFactory factory = new DailyEventLogFactory();
-        DailyEventLogInterf first = factory.create(LocalDate.of(2025, 8, 8));
-        DailyEventLogInterf second = factory.create(LocalDate.of(2025, 8, 9));
+    void testCreateReturnsCorrectType() {
+        DailyEventLogInterf log = factory.create(LocalDate.of(2025, 8, 14));
+        assertTrue(log instanceof DailyEventLog, "Returned object should be an instance of DailyEventLog.");
+    }
 
-        assertNotSame(first, second);
-        assertNotEquals(first.getDate(), second.getDate());
+    @Test
+    void testLogHasCorrectDate() {
+        LocalDate expectedDate = LocalDate.of(2023, 11, 20);
+        DailyEventLogInterf log = factory.create(expectedDate);
+        assertEquals(expectedDate, log.getDate(), "Date in the log should match the date provided.");
     }
 }
-

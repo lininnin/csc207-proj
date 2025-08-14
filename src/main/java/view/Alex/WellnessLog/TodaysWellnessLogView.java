@@ -160,6 +160,7 @@ public class TodaysWellnessLogView extends JPanel {
                                 return;
                             }
 
+
                             MoodLabelInterf mood = selectedMood[0];
                             editController.execute(
                                     entry.getId(), energy, stress, fatigue,
