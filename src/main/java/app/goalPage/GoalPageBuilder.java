@@ -1,11 +1,14 @@
 package app.goalPage;
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;                // Goal domain model
 import entity.Sophia.GoalFactory;         // Factory for creating goals
 
 // Import view models
 import entity.info.Info;
+import data_access.InMemoryTaskGateway;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
 import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
@@ -38,14 +41,15 @@ import use_case.goalManage.today_goal.*;
 
 // Import data access
 import data_access.FileGoalRepository;  // File-based goal repository
-import data_access.GoalRepository;     // Goal repository interface
 
 // Import views
 import views.*;
 import view.CollapsibleSidebarView;    // Collapsible sidebar component
+import view.Angela.TodaySoFarView;
 
 // Import Java/Swing components
 import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -63,13 +67,14 @@ import java.util.List;
  */
 public class GoalPageBuilder {
     // Data access components
-    private GoalRepository goalRepository;  // Handles goal persistence
+    private FileGoalRepository goalRepository;  // Handles goal persistence (implements both interfaces)
     private GoalFactory goalFactory;       // Creates goal objects
+    private InMemoryTaskGateway taskGateway; // For accessing available tasks
 
     // Form reference for goal creation
     private JPanel createGoalForm;
 
-    private JComboBox<Task> targetTaskBox;
+    private JComboBox<TaskAvailable> targetTaskBox;
 
 
     // View Models (hold state for different UI sections)
@@ -87,6 +92,10 @@ public class GoalPageBuilder {
     private TodayGoalController todayGoalController;         // Manages today's goals
     private OrderGoalController orderGoalController;         // Handles goal ordering
     private AvailableGoalsController availableGoalsController; // Manages available goals
+    
+    // Presenters (needed for wiring TodaySoFarController)
+    private CreateGoalPresenter createGoalPresenter;
+    private TodayGoalPresenter todayGoalPresenter;
 
     /**
      * Main build method that constructs the complete goal page
@@ -114,14 +123,12 @@ public class GoalPageBuilder {
      * Sets up data access layer with file-based persistence
      */
     private void initializeDataAccess() {
-        // Initialize repository with data files
-        goalRepository = new FileGoalRepository(
-                new File("goals.txt"),         // Main goals storage
-                new File("current_goals.txt"), // Current goals state
-                new File("today_goal.txt"),    // Today's goals
-                new GoalFactory()             // Goal object factory
-        );
+        // Use shared goal repository
+        goalRepository = app.SharedDataAccess.getInstance().getGoalRepository();
         goalFactory = new GoalFactory();
+        
+        // Use shared task gateway to access available tasks
+        taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
     }
 
     /**
@@ -129,7 +136,7 @@ public class GoalPageBuilder {
      */
     private void initializeUseCases() {
         // Goal Creation Setup
-        CreateGoalOutputBoundary createGoalPresenter = new CreateGoalPresenter();
+        createGoalPresenter = new CreateGoalPresenter();
         CreateGoalInputBoundary createGoalInteractor = new CreateGoalInteractor(
                 goalRepository, createGoalPresenter, goalFactory);
         createGoalController = new CreateGoalController(createGoalInteractor);
@@ -152,7 +159,7 @@ public class GoalPageBuilder {
         editTodaysGoalController = new EditTodaysGoalController(editTodaysGoalInteractor);
 
         // Today's Goals Management Setup
-        TodayGoalOutputBoundary todayGoalPresenter = new TodayGoalPresenter(todayGoalsViewModel);
+        todayGoalPresenter = new TodayGoalPresenter(todayGoalsViewModel);
         TodayGoalInputBoundary todayGoalInteractor = new TodayGoalInteractor(
                 goalRepository, todayGoalPresenter);
         todayGoalController = new TodayGoalController((TodayGoalInteractor) todayGoalInteractor);
@@ -258,6 +265,7 @@ public class GoalPageBuilder {
      * - Goal creation form
      * - Today's goals view
      * - Available goals list
+     * - Today So Far panel
      */
     private JPanel createCenterPanel() {
         // Goal Creation Form
@@ -299,9 +307,29 @@ public class GoalPageBuilder {
         topCenterRow.add(verticalSplit);
         topCenterRow.add(todayGoalsContainer);
 
+        JPanel centerContent = new JPanel(new BorderLayout());
+        centerContent.add(topCenterRow, BorderLayout.CENTER);
+        centerContent.add(availableGoalsContainer, BorderLayout.SOUTH);
+        
+        // Create Today So Far panel
+        TodaySoFarView todaySoFarView = createTodaySoFarPanel();
+        
+        // Wrap Today So Far in a panel with flexible sizing
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setMinimumSize(new Dimension(250, 0));
+        // Remove preferred size to allow flexible sizing
+        
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerContent, rightPanel);
+        mainSplitPane.setDividerLocation(800);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.75);
+
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(topCenterRow, BorderLayout.CENTER);
-        centerPanel.add(availableGoalsContainer, BorderLayout.SOUTH);
+        centerPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return centerPanel;
     }
@@ -403,29 +431,39 @@ public class GoalPageBuilder {
         formPanel.add(timeFreqPanel);
         formPanel.add(Box.createRigidArea(new Dimension(0, verticalGap)));
 
-        // Target Task (vertical)
-        formPanel.add(createCompactLabel("Target Task:"));
+        // Target Task (vertical) with refresh button
+        JPanel targetTaskPanel = new JPanel();
+        targetTaskPanel.setLayout(new BoxLayout(targetTaskPanel, BoxLayout.X_AXIS));
+        targetTaskPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel targetTaskLabel = createCompactLabel("Target Task:");
+        targetTaskLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        targetTaskPanel.add(targetTaskLabel);
+        
+        JButton refreshTasksButton = new JButton("Refresh");
+        refreshTasksButton.setMaximumSize(new Dimension(80, 25));
+        refreshTasksButton.addActionListener(e -> refreshTargetTaskDropdown());
+        targetTaskPanel.add(refreshTasksButton);
+        
+        formPanel.add(targetTaskPanel);
 
-        // Dummy tasks
-        Info dummyInfo1 = new Info.Builder("Read Chapter 1")
-                .description("Finish by Friday")
-                .category("Reading")
-                .build();
-        BeginAndDueDates dummyDates1 = new BeginAndDueDates(LocalDate.now(), LocalDate.now().plusDays(2));
-        Task task1 = new Task("template-task-1", dummyInfo1, dummyDates1, false);
-
-        Info dummyInfo2 = new Info.Builder("Exercise")
-                .description("Do 30 minutes of cardio")
-                .category("Fitness")
-                .build();
-        BeginAndDueDates dummyDates2 = new BeginAndDueDates(LocalDate.now(), LocalDate.now().plusDays(5));
-        Task task2 = new Task("template-task-2", dummyInfo2, dummyDates2, false);
-
-        List<Task> availableTasks = new ArrayList<>();
-        availableTasks.add(task1);
-        availableTasks.add(task2);
-
-        targetTaskBox = new JComboBox<>(availableTasks.toArray(new Task[0]));
+        // Get real available tasks from the task gateway
+        List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
+        
+        // Create a custom renderer to display task names in the combo box
+        targetTaskBox = new JComboBox<>(availableTasks.toArray(new TaskAvailable[0]));
+        targetTaskBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, 
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof TaskAvailable) {
+                    TaskAvailable task = (TaskAvailable) value;
+                    setText(task.getInfo().getName());
+                }
+                return this;
+            }
+        });
         targetTaskBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         targetTaskBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         formPanel.add(targetTaskBox);
@@ -524,14 +562,30 @@ public class GoalPageBuilder {
             JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
 
-            // The frequency field is no longer used, so it is commented out.
-            // JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
-            // int frequency = GoalInputValidator.validatePositiveInteger(
-            //         ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
+            // Get frequency from the form
+            JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
+            int frequency = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
-            Task selectedTargetTask = (Task) targetTaskBox.getSelectedItem();
+            TaskAvailable selectedTargetTaskAvailable = (TaskAvailable) targetTaskBox.getSelectedItem();
+            
+            // Convert TaskAvailable to Task for goal creation
+            Task targetTask = null;
+            if (selectedTargetTaskAvailable != null) {
+                // Create a BeginAndDueDates object for the Task
+                // Use today as begin date and the goal's end date as due date
+                BeginAndDueDates taskDates = new BeginAndDueDates(LocalDate.now(), endDate);
+                
+                // Create a Task from TaskAvailable for the goal
+                targetTask = new Task(
+                    selectedTargetTaskAvailable.getId(),  // Use template ID
+                    selectedTargetTaskAvailable.getInfo(),
+                    taskDates,
+                    selectedTargetTaskAvailable.isOneTime()
+                );
+            }
 
-            // The targetAmount value is now used for both the target amount and the frequency.
+            // Execute goal creation with frequency from the form
             createGoalController.execute(
                     goalName,
                     description,
@@ -540,8 +594,8 @@ public class GoalPageBuilder {
                     startDate,
                     endDate,
                     timePeriod,
-                    (int) targetAmount, // Use the targetAmount as the frequency
-                    selectedTargetTask
+                    frequency,
+                    targetTask
             );
 
             availableGoalsController.execute("");
@@ -566,5 +620,61 @@ public class GoalPageBuilder {
      */
     private AvailableGoalsView createAvailableGoalsView() {
         return new AvailableGoalsView(availableGoalsViewModel, availableGoalsController);
+    }
+    
+    /**
+     * Refreshes the target task dropdown with the latest available tasks
+     */
+    private void refreshTargetTaskDropdown() {
+        if (targetTaskBox != null) {
+            TaskAvailable selectedTask = (TaskAvailable) targetTaskBox.getSelectedItem();
+            
+            // Get fresh list of available tasks
+            List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
+            
+            // Update the combo box
+            targetTaskBox.removeAllItems();
+            for (TaskAvailable task : availableTasks) {
+                targetTaskBox.addItem(task);
+            }
+            
+            // Try to restore previous selection if it still exists
+            if (selectedTask != null) {
+                for (int i = 0; i < targetTaskBox.getItemCount(); i++) {
+                    TaskAvailable task = targetTaskBox.getItemAt(i);
+                    if (task.getId().equals(selectedTask.getId())) {
+                        targetTaskBox.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Creates the Today So Far panel with all data sources connected
+     */
+    private TodaySoFarView createTodaySoFarPanel() {
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        
+        // Get the TodaySoFarController to wire to presenters
+        TodaySoFarController todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
+        
+        // Wire TodaySoFarController to presenters that need to refresh the panel
+        if (createGoalPresenter != null) {
+            createGoalPresenter.setTodaySoFarController(todaySoFarController);
+        }
+        if (todayGoalPresenter != null) {
+            todayGoalPresenter.setTodaySoFarController(todaySoFarController);
+        }
+        
+        // Trigger initial data load
+        sharedTodaySoFar.refresh();
+        
+        return todaySoFarView;
     }
 }

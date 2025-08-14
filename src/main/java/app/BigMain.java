@@ -60,8 +60,10 @@ public class BigMain {
 
         // --- Main Content Area ---
         final JPanel centrePanel = new JPanel(new CardLayout());
-        final JPanel taskPanel = new TaskPageBuilder().build();
-        final JPanel eventPanel = new EventPageBuilder().build();
+        final TaskPageBuilder taskBuilder = new TaskPageBuilder();
+        final JPanel taskPanel = taskBuilder.build();
+        final EventPageBuilder eventBuilder = new EventPageBuilder();
+        final JPanel eventPanel = eventBuilder.build();
         final JPanel goalPanel = new GoalPageBuilder().build();
         final JPanel wellnessPanel = new WellnessLogPageBuilder().build();
         final JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
@@ -82,7 +84,7 @@ public class BigMain {
                                     "🧠 Wellness Log", "🤖 AI-Feedback & Analysis", "⚙️ Settings"};
 
         for (String item : menuItems) {
-            final JButton btn = configureButton(item, centrePanel);
+            final JButton btn = configureButton(item, centrePanel, taskBuilder, eventBuilder);
 
             sideBar.add(btn);
         }
@@ -107,7 +109,7 @@ public class BigMain {
     }
 
     @NotNull
-    private static JButton configureButton(String item, JPanel centrePanel) {
+    private static JButton configureButton(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final JButton btn = new JButton(item);
         btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FORTY));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -125,7 +127,7 @@ public class BigMain {
         }
 
         // ActionListener for navigation
-        btn.addActionListener(view -> menuSelection(item, centrePanel));
+        btn.addActionListener(view -> menuSelection(item, centrePanel, taskBuilder, eventBuilder));
         return btn;
     }
 
@@ -145,11 +147,23 @@ public class BigMain {
         return new WeeklyFeedbackScheduler(feedbackInputBoundary);
     }
 
-    private static void menuSelection(String item, JPanel centrePanel) {
+    private static void menuSelection(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final CardLayout cl = (CardLayout) centrePanel.getLayout();
         switch (item) {
-            case "📋 Tasks" -> cl.show(centrePanel, "Tasks");
-            case "📆 Events" -> cl.show(centrePanel, "Events");
+            case "📋 Tasks" -> {
+                cl.show(centrePanel, "Tasks");
+                // Refresh task views to show latest categories from Event page
+                if (taskBuilder != null) {
+                    taskBuilder.refreshViews();
+                }
+            }
+            case "📆 Events" -> {
+                cl.show(centrePanel, "Events");
+                // Refresh event views to show latest categories from Task page
+                if (eventBuilder != null) {
+                    eventBuilder.refreshViews();
+                }
+            }
             case "🎯 Goals" -> cl.show(centrePanel, "Goals");
             case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
             case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");

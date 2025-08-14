@@ -27,7 +27,7 @@ import entity.Sophia.GoalFactory;
  * serialization, while the lists of current and today's goal names are stored in simple
  * text files.
  */
-public class FileGoalRepository implements GoalRepository {
+public class FileGoalRepository implements GoalRepository, interface_adapter.GoalRepository {
     /**
      * The file where the main Map of all goals is stored.
      */
@@ -451,5 +451,41 @@ public class FileGoalRepository implements GoalRepository {
         saveGoals();
         saveCurrentGoals();
         saveTodayGoals();
+    }
+    
+    // ===== interface_adapter.GoalRepository methods =====
+    
+    /**
+     * Gets a goal by its name (for interface_adapter.GoalRepository).
+     * Returns null if not found instead of Optional.
+     *
+     * @param name The name of the goal to retrieve
+     * @return The Goal object or null if not found
+     */
+    @Override
+    public Goal getGoalByName(String name) {
+        return goals.get(name);
+    }
+    
+    /**
+     * Saves a goal (for interface_adapter.GoalRepository).
+     * Delegates to the existing save method.
+     *
+     * @param goal The goal to save
+     */
+    @Override
+    public void saveGoal(Goal goal) {
+        save(goal);
+    }
+    
+    /**
+     * Deletes a goal by name (for interface_adapter.GoalRepository).
+     * Delegates to the existing deleteByName method.
+     *
+     * @param name The name of the goal to delete
+     */
+    @Override
+    public void deleteGoal(String name) {
+        deleteByName(name);
     }
 }

@@ -90,7 +90,13 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         manageCategoriesButton = new JButton("Manage");
         manageCategoriesButton.setFont(FontUtil.getStandardFont());
         manageCategoriesButton.setPreferredSize(new Dimension(60, 25));
-        manageCategoriesButton.addActionListener(e -> openCategoryManagement());
+        manageCategoriesButton.addActionListener(e -> {
+            // Refresh categories before opening dialog to ensure we have latest from Task page
+            refreshCategories();
+            openCategoryManagement();
+            // Also trigger refresh of event views to update with any category changes made from Task page
+            firePropertyChange("refreshEventViews", null, true);
+        });
         
         JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
         categoryPanel.add(categoryComboBox);

@@ -108,27 +108,22 @@ class DeleteCategoryInteractorTest {
     }
 
     @Test
-    void testDeleteWhenMinimumCategoriesReached() {
-        // Create exactly 3 categories (minimum required)
+    void testDeleteLastCategory() {
+        // Test that users can delete all categories (no minimum requirement)
         String categoryId1 = UUID.randomUUID().toString();
-        String categoryId2 = UUID.randomUUID().toString();
-        String categoryId3 = UUID.randomUUID().toString();
-        
         categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
-        categoryGateway.save(new Category(categoryId3, "Urgent", "#FF0000"));
 
-        // Try to delete one category when at minimum
+        // Delete the only category (should succeed with new business rule)
         DeleteCategoryInputData inputData = new DeleteCategoryInputData(categoryId1);
         interactor.execute(inputData);
 
-        // Verify failure
-        assertNull(testPresenter.lastOutputData);
-        assertNotNull(testPresenter.lastError);
-        assertEquals("Cannot delete category: minimum 3 categories required", testPresenter.lastError);
+        // Verify success - users can have 0 categories
+        assertNotNull(testPresenter.lastOutputData);
+        assertNotNull(testPresenter.lastOutputData.getMessage());
+        assertNull(testPresenter.lastError);
 
-        // Verify all categories still exist
-        assertEquals(3, categoryGateway.getAllCategories().size());
+        // Verify category was deleted
+        assertEquals(0, categoryGateway.getAllCategories().size());
     }
 
     @Test

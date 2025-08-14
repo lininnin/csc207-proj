@@ -3,17 +3,21 @@ package app.taskPage;
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
+import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.edit_available.*;
 import interface_adapter.Angela.task.add_to_today.*;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.Angela.task.mark_complete.*;
 import interface_adapter.Angela.task.edit_today.*;
 import interface_adapter.Angela.task.today.*;
+import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.remove_from_today.*;
 import interface_adapter.Angela.task.overdue.*;
 import interface_adapter.Angela.category.*;
 import interface_adapter.Angela.category.create.*;
 import interface_adapter.Angela.category.delete.*;
 import interface_adapter.Angela.category.edit.*;
+import interface_adapter.Angela.today_so_far.*;
 import interface_adapter.ViewManagerModel;
 import use_case.Angela.task.create.*;
 import use_case.Angela.task.delete.*;
@@ -26,26 +30,40 @@ import use_case.Angela.task.overdue.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
+import use_case.Angela.today_so_far.*;
 import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
 import view.FontUtil;
 
+import entity.info.Info;
+import entity.Alex.Event.Event;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.Alex.WellnessLogEntry.Levels;
+import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelFactory;
+import entity.Alex.MoodLabel.Type;
+import entity.BeginAndDueDates.BeginAndDueDates;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Builder for the Task page following the MindTrack GUI template.
  */
 public class TaskPageBuilder {
 
-    // Data Access
-    private final InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
-    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    // Data Access - Use shared instances
+    private final InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
+    private final InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
 
     // View Models
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
@@ -56,7 +74,6 @@ public class TaskPageBuilder {
     private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
     private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
-    private final OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     // Views
@@ -69,6 +86,49 @@ public class TaskPageBuilder {
     
     // Controllers
     private OverdueTasksController overdueTasksController;
+    private TodaySoFarController todaySoFarController;
+    
+    /**
+     * Refreshes all task views to show updated categories and tasks.
+     * Call this when the task page becomes visible.
+     */
+    public void refreshViews() {
+        if (createTaskView != null) {
+            createTaskView.refreshCategories();
+        }
+        
+        // Trigger refresh of available tasks view through ViewModel
+        if (availableTasksViewModel != null) {
+            AvailableTasksState availableState = availableTasksViewModel.getState();
+            availableState.setRefreshNeeded(true);
+            availableTasksViewModel.setState(availableState);
+            availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+        }
+        
+        // Trigger refresh of the Add to Today dropdown
+        if (addTaskToTodayViewModel != null) {
+            AddTaskToTodayState addState = addTaskToTodayViewModel.getState();
+            addState.setRefreshNeeded(true);
+            addTaskToTodayViewModel.setState(addState);
+            addTaskToTodayViewModel.firePropertyChanged();
+        }
+        
+        // Trigger refresh of today's tasks view through ViewModel
+        if (todayTasksViewModel != null) {
+            TodayTasksState todayState = todayTasksViewModel.getState();
+            if (todayState == null) {
+                todayState = new TodayTasksState();
+            }
+            todayState.setRefreshNeeded(true);
+            todayTasksViewModel.setState(todayState);
+            todayTasksViewModel.firePropertyChanged();
+        }
+        
+        // Refresh Today So Far panel
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
+    }
 
     public JPanel build() {
         // Note: Category and task gateways are now independent following SRP
@@ -105,6 +165,8 @@ public class TaskPageBuilder {
         );
         // Set the TodayTasksViewModel so deletes trigger refresh
         deleteTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
+        // Set the AddTaskToTodayViewModel so the dropdown refreshes when tasks are deleted
+        deleteTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         DeleteTaskInputBoundary deleteTaskInteractor = new DeleteTaskInteractor(
                 taskGateway,
@@ -165,7 +227,8 @@ public class TaskPageBuilder {
 
         MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
                 taskGateway, // InMemoryTaskGateway implements MarkTaskCompleteDataAccessInterface
-                markCompletePresenter
+                markCompletePresenter,
+                app.SharedDataAccess.getInstance().getGoalRepository() // Pass goal repository for updating goal progress
         );
 
         MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(
@@ -210,24 +273,16 @@ public class TaskPageBuilder {
         // Set the controller on the today's tasks view
         todaysTasksView.setRemoveFromTodayController(removeFromTodayController);
 
-        // Wire up Overdue Tasks Use Case
-        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(
-                overdueTasksViewModel
-        );
-
-        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                taskGateway, // InMemoryTaskGateway implements OverdueTasksDataAccessInterface
-                categoryGateway,
-                overdueTasksPresenter
-        );
-
-        overdueTasksController = new OverdueTasksController(
-                overdueTasksInteractor
-        );
-
-        // Create Today So Far view
-        todaySoFarView = new TodaySoFarView(overdueTasksViewModel);
-        todaySoFarView.setOverdueTasksController(overdueTasksController);
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
+        
+        // Create Today So Far view using shared components
+        todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        
+        // Trigger initial data load (no sample data - user will input real data)
+        sharedTodaySoFar.refresh();
         
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);
@@ -236,6 +291,14 @@ public class TaskPageBuilder {
         editAvailableTaskPresenter.setOverdueTasksController(overdueTasksController);
         deleteTaskPresenter.setOverdueTasksController(overdueTasksController);
         removeFromTodayPresenter.setOverdueTasksController(overdueTasksController);
+        
+        // Set Today So Far controller on presenters that need to refresh Today So Far panel
+        editAvailableTaskPresenter.setTodaySoFarController(todaySoFarController);
+        markCompletePresenter.setTodaySoFarController(todaySoFarController);
+        addToTodayPresenter.setTodaySoFarController(todaySoFarController);
+        removeFromTodayPresenter.setTodaySoFarController(todaySoFarController);
+        editTodayPresenter.setTodaySoFarController(todaySoFarController);
+        deleteTaskPresenter.setTodaySoFarController(todaySoFarController);
 
         // Set up category management dialog opening
         createTaskView.addPropertyChangeListener(new PropertyChangeListener() {
@@ -278,6 +341,7 @@ public class TaskPageBuilder {
                 categoryPresenter.setAvailableTasksViewModel(availableTasksViewModel);
                 categoryPresenter.setTodayTasksViewModel(todayTasksViewModel);
                 categoryPresenter.setOverdueTasksController(overdueTasksController);
+                categoryPresenter.setTodaySoFarController(todaySoFarController);
 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -320,6 +384,8 @@ public class TaskPageBuilder {
                 });
             }
 
+            // Reload categories to ensure latest from Event page
+            categoryDialog.loadCategories();
             categoryDialog.setVisible(true);
         }
     }
@@ -395,10 +461,27 @@ public class TaskPageBuilder {
         // Initial refresh of overdue tasks
         todaySoFarView.refreshOverdueTasks();
 
-        // --- Final Frame Layout ---
+        // --- Final Frame Layout with Resizable Today So Far ---
+        // Wrap Today So Far in a panel to control sizing
+        JPanel todaySoFarWrapper = new JPanel(new BorderLayout());
+        todaySoFarWrapper.add(todaySoFarView, BorderLayout.CENTER);
+        todaySoFarWrapper.setPreferredSize(new Dimension(380, 750));
+        todaySoFarWrapper.setMinimumSize(new Dimension(320, 400));
+        
+        // Create a horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+                                                   centerSplitPane, 
+                                                   todaySoFarWrapper);
+        mainSplitPane.setDividerLocation(1070);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.75);
+        
+        // Create main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerSplitPane, BorderLayout.CENTER);
-        mainPanel.add(todaySoFarView, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
+        mainPanel.setPreferredSize(new Dimension(1450, 750));
 
         return mainPanel;
     }

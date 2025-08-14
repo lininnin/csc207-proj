@@ -111,6 +111,13 @@ public class TodaysEventsView extends JPanel {
     public void setCategoryGateway(CategoryGateway categoryGateway) {
         this.categoryGateway = categoryGateway;
     }
+    
+    /**
+     * Force refresh the event list to get updated categories
+     */
+    public void forceRefresh() {
+        refreshEventList(todaysEventsViewModel.getState());
+    }
 
     private void refreshEventList(TodaysEventsState state) {
         todaysEventsListPanel.removeAll();
@@ -133,7 +140,8 @@ public class TodaysEventsView extends JPanel {
             String categoryDisplay = "";
             if (categoryGateway != null && event.getInfo().getCategory() != null && !event.getInfo().getCategory().isEmpty()) {
                 Category category = categoryGateway.getCategoryById(event.getInfo().getCategory());
-                categoryDisplay = category != null ? category.getName() : event.getInfo().getCategory();
+                // Only show category name if it exists, otherwise show empty
+                categoryDisplay = category != null ? category.getName() : "";
             }
             row.add(new JLabel(categoryDisplay, SwingConstants.CENTER));
             

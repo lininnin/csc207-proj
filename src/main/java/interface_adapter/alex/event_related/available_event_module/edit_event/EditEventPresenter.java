@@ -6,6 +6,7 @@ import interface_adapter.alex.event_related.available_event_module.available_eve
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
 import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputData;
 
@@ -20,6 +21,7 @@ public class EditEventPresenter implements EditEventOutputBoundary {
     private final EditedEventViewModel editedEventViewModel;
     private final AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
+    private TodaySoFarController todaySoFarController;
 
     public EditEventPresenter(EditedEventViewModel editedEventViewModel,
                               AvailableEventViewModel availableEventViewModel) {
@@ -29,6 +31,10 @@ public class EditEventPresenter implements EditEventOutputBoundary {
     
     public void setTodaysEventsViewModel(TodaysEventsViewModel todaysEventsViewModel) {
         this.todaysEventsViewModel = todaysEventsViewModel;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController todaySoFarController) {
+        this.todaySoFarController = todaySoFarController;
     }
 
     @Override
@@ -64,6 +70,12 @@ public class EditEventPresenter implements EditEventOutputBoundary {
         if (todaysEventsViewModel != null) {
             // Fire property change to refresh the today's events display
             todaysEventsViewModel.firePropertyChanged("state");
+        }
+        
+        // 5. Also refresh Today So Far panel to show updated event names/categories
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after event edit");
         }
 
     }
