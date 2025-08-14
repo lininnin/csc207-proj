@@ -1,4 +1,4 @@
-package entity.sophia;
+package entity.Sophia;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
 

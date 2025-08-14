@@ -1,4 +1,4 @@
-package entity.sophia;
+package entity.Sophia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

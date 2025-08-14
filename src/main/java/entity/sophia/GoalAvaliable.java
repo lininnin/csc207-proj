@@ -1,4 +1,4 @@
-package entity.sophia;
+package entity.Sophia;
 
 import java.util.ArrayList;
 import java.util.List;
