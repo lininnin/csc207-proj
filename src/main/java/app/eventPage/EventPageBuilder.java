@@ -86,12 +86,34 @@ public class EventPageBuilder {
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private CategoryManagementDialog categoryDialog;
     private CreateEventView createEventView;
+    private AddEventView addEventView;
+    private AvailableEventView availableEventView;
+    private TodaysEventsView todaysEventsView;
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
     
     // Today So Far panel fields
     private TodaySoFarController todaySoFarController;
     private OverdueTasksController overdueTasksController;
+    
+    /**
+     * Refreshes all event views to show updated categories.
+     * Call this when the event page becomes visible.
+     */
+    public void refreshViews() {
+        if (createEventView != null) {
+            createEventView.refreshCategories();
+        }
+        if (addEventView != null) {
+            addEventView.forceRefresh();
+        }
+        if (availableEventView != null) {
+            availableEventView.forceRefresh();
+        }
+        if (todaysEventsView != null) {
+            todaysEventsView.forceRefresh();
+        }
+    }
 
 
     public JPanel build() {
@@ -142,8 +164,8 @@ public class EventPageBuilder {
         EditTodaysEventController editTodaysEventController = new EditTodaysEventController(editTodayInteractor);
 
         // --- Views ---
-        AddEventView addEventView = new AddEventView(addEventViewModel, addEventController);
-        TodaysEventsView todaysEventsView = new TodaysEventsView(
+        addEventView = new AddEventView(addEventViewModel, addEventController);
+        todaysEventsView = new TodaysEventsView(
                 todaysEventsViewModel, addEventController, addEventViewModel,
                 deleteTodaysEventController, editTodaysEventController, editTodaysEventViewModel
         );
@@ -158,27 +180,25 @@ public class EventPageBuilder {
         createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, categoryGateway);
         createEventView.setCreateEventController(createEventController);
         
-        // Set up category management dialog opening
+        // Set up category management dialog opening and event view refresh
         createEventView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("openCategoryManagement".equals(evt.getPropertyName())) {
                     openCategoryDialog(commonDao, todaysEventDAO);
+                } else if ("refreshEventViews".equals(evt.getPropertyName())) {
+                    // Refresh event views to show updated categories from Task page
+                    if (availableEventView != null) {
+                        availableEventView.forceRefresh();
+                    }
+                    if (todaysEventsView != null) {
+                        todaysEventsView.forceRefresh();
+                    }
                 }
             }
         });
 
-        // Set up category management dialog opening
-        createEventView.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("openCategoryManagement".equals(evt.getPropertyName())) {
-                    openCategoryDialog(commonDao, todaysEventDAO);
-                }
-            }
-        });
-
-        AvailableEventView availableEventView = new AvailableEventView(
+        availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
                 createdEventViewModel, editEventController, editedEventViewModel
         );
@@ -232,6 +252,12 @@ public class EventPageBuilder {
         if (editTodayPresenter instanceof EditTodaysEventPresenter) {
             ((EditTodaysEventPresenter) editTodayPresenter).setTodaySoFarController(todaySoFarController);
         }
+        // Also set for edit available event presenter
+        editEventPresenter.setTodaySoFarController(todaySoFarController);
+        // Also set for delete available event presenter
+        if (deleteEventPresenter instanceof DeleteEventPresenter) {
+            ((DeleteEventPresenter) deleteEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
 
         // Wrap Today So Far in a panel
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -275,6 +301,8 @@ public class EventPageBuilder {
                 // Wire up event ViewModels for auto-refresh when categories change
                 categoryPresenter.setAvailableEventViewModel(availableEventViewModel);
                 categoryPresenter.setTodaysEventsViewModel(todaysEventsViewModel);
+                // Wire up Today So Far controller for auto-refresh when categories change
+                categoryPresenter.setTodaySoFarController(todaySoFarController);
                 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -421,6 +449,8 @@ public class EventPageBuilder {
                 });
             }
             
+            // Reload categories in the dialog to ensure latest from Task page
+            categoryDialog.loadCategories();
             categoryDialog.setVisible(true);
         }
     }

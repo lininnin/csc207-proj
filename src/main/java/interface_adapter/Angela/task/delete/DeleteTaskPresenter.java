@@ -4,6 +4,8 @@ import interface_adapter.Angela.task.available.AvailableTasksViewModel;
 import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.Angela.task.delete.DeleteTaskOutputBoundary;
@@ -16,6 +18,7 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     private final AvailableTasksViewModel availableTasksViewModel;
     private final DeleteTaskViewModel deleteTaskViewModel;
     private TodayTasksViewModel todayTasksViewModel;
+    private AddTaskToTodayViewModel addTaskToTodayViewModel;
     private OverdueTasksController overdueTasksController;
     private TodaySoFarController todaySoFarController;
 
@@ -28,6 +31,11 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
         System.out.println("DEBUG: DeleteTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
+    }
+    
+    public void setAddTaskToTodayViewModel(AddTaskToTodayViewModel addTaskToTodayViewModel) {
+        this.addTaskToTodayViewModel = addTaskToTodayViewModel;
+        System.out.println("DEBUG: DeleteTaskPresenter - AddTaskToTodayViewModel set: " + (addTaskToTodayViewModel != null));
     }
     
     public void setOverdueTasksController(OverdueTasksController controller) {
@@ -74,6 +82,18 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
             System.out.println("DEBUG: Triggered Today So Far refresh after task delete");
+        }
+        
+        // Also trigger refresh of Add to Today dropdown since the deleted task should be removed
+        if (addTaskToTodayViewModel != null) {
+            AddTaskToTodayState addToTodayState = addTaskToTodayViewModel.getState();
+            if (addToTodayState == null) {
+                addToTodayState = new AddTaskToTodayState();
+            }
+            addToTodayState.setRefreshNeeded(true);
+            addTaskToTodayViewModel.setState(addToTodayState);
+            addTaskToTodayViewModel.firePropertyChanged();
+            System.out.println("DEBUG: Triggered Add to Today dropdown refresh after task delete");
         }
     }
 

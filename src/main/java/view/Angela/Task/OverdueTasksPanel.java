@@ -73,11 +73,11 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         // Set column widths with better proportions
         overdueTable.getColumnModel().getColumn(0).setPreferredWidth(120); // Task Name
         overdueTable.getColumnModel().getColumn(1).setPreferredWidth(80);  // Category
-        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(80);  // Due Date
-        overdueTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Days Overdue
+        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Due Date - increased width
+        overdueTable.getColumnModel().getColumn(3).setPreferredWidth(80);  // Days Overdue
         
-        // Enable auto-resize to fit panel width
-        overdueTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        // Disable auto-resize to allow horizontal scrolling when needed
+        overdueTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         // Custom renderer for red text
         DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer() {

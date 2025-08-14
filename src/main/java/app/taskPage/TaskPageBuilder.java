@@ -3,11 +3,14 @@ package app.taskPage;
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
+import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.edit_available.*;
 import interface_adapter.Angela.task.add_to_today.*;
+import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.Angela.task.mark_complete.*;
 import interface_adapter.Angela.task.edit_today.*;
 import interface_adapter.Angela.task.today.*;
+import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.remove_from_today.*;
 import interface_adapter.Angela.task.overdue.*;
 import interface_adapter.Angela.category.*;
@@ -84,6 +87,48 @@ public class TaskPageBuilder {
     // Controllers
     private OverdueTasksController overdueTasksController;
     private TodaySoFarController todaySoFarController;
+    
+    /**
+     * Refreshes all task views to show updated categories and tasks.
+     * Call this when the task page becomes visible.
+     */
+    public void refreshViews() {
+        if (createTaskView != null) {
+            createTaskView.refreshCategories();
+        }
+        
+        // Trigger refresh of available tasks view through ViewModel
+        if (availableTasksViewModel != null) {
+            AvailableTasksState availableState = availableTasksViewModel.getState();
+            availableState.setRefreshNeeded(true);
+            availableTasksViewModel.setState(availableState);
+            availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
+        }
+        
+        // Trigger refresh of the Add to Today dropdown
+        if (addTaskToTodayViewModel != null) {
+            AddTaskToTodayState addState = addTaskToTodayViewModel.getState();
+            addState.setRefreshNeeded(true);
+            addTaskToTodayViewModel.setState(addState);
+            addTaskToTodayViewModel.firePropertyChanged();
+        }
+        
+        // Trigger refresh of today's tasks view through ViewModel
+        if (todayTasksViewModel != null) {
+            TodayTasksState todayState = todayTasksViewModel.getState();
+            if (todayState == null) {
+                todayState = new TodayTasksState();
+            }
+            todayState.setRefreshNeeded(true);
+            todayTasksViewModel.setState(todayState);
+            todayTasksViewModel.firePropertyChanged();
+        }
+        
+        // Refresh Today So Far panel
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
+    }
 
     public JPanel build() {
         // Note: Category and task gateways are now independent following SRP
@@ -120,6 +165,8 @@ public class TaskPageBuilder {
         );
         // Set the TodayTasksViewModel so deletes trigger refresh
         deleteTaskPresenter.setTodayTasksViewModel(todayTasksViewModel);
+        // Set the AddTaskToTodayViewModel so the dropdown refreshes when tasks are deleted
+        deleteTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         DeleteTaskInputBoundary deleteTaskInteractor = new DeleteTaskInteractor(
                 taskGateway,
@@ -337,6 +384,8 @@ public class TaskPageBuilder {
                 });
             }
 
+            // Reload categories to ensure latest from Event page
+            categoryDialog.loadCategories();
             categoryDialog.setVisible(true);
         }
     }

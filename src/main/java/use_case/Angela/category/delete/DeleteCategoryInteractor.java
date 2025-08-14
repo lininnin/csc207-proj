@@ -48,12 +48,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
             return;
         }
         
-        // Check if we have minimum categories
-        int categoryCount = categoryDataAccess.getCategoryCount();
-        if (categoryCount <= 3) {
-            outputBoundary.prepareFailView("Cannot delete category: minimum 3 categories required");
-            return;
-        }
+        // Removed minimum category requirement - users can delete all categories if they want
 
         // CRITICAL: Find and update all tasks that have this category BEFORE deleting the category
         // Update available tasks (templates)
