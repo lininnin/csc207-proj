@@ -234,19 +234,19 @@ public class WellnessLogPageBuilder {
         // Trigger initial data load
         sharedTodaySoFar.refresh();
 
-        // Wrap Today So Far in a panel
+        // Wrap Today So Far in a panel with flexible sizing
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(todaySoFarView, BorderLayout.CENTER);
-        rightPanel.setPreferredSize(new Dimension(380, 0));
-        rightPanel.setMinimumSize(new Dimension(320, 0));
+        rightPanel.setMinimumSize(new Dimension(250, 0));
+        // Remove preferred size to allow flexible sizing
 
         // Create horizontal split pane for resizable layout
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, rightPanel);
-        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setDividerLocation(800);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(8);
-        mainSplitPane.setResizeWeight(0.7);
+        mainSplitPane.setResizeWeight(0.75);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(mainSplitPane, BorderLayout.CENTER);
