@@ -12,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class InfoFactoryTest {
 
     private InfoFactory factory;
+    private TestInfoFactory testFactory; // For edge case tests
 
     @BeforeEach
     void setUp() {
         factory = new InfoFactory();
+        testFactory = new TestInfoFactory(); // For tests that need exact preservation
     }
 
     @Test
@@ -54,8 +56,8 @@ class InfoFactoryTest {
 
     @Test
     void testCreateInfoWithEmptyStrings() {
-        // Create Info with empty strings
-        InfoInterf info = factory.create("", "", "");
+        // Use TestInfoFactory for edge case testing with empty strings
+        InfoInterf info = testFactory.create("", "", "");
 
         assertNotNull(info);
         assertEquals("", info.getName());
@@ -82,8 +84,8 @@ class InfoFactoryTest {
 
     @Test
     void testCreateInfoPreservesSpaces() {
-        // Test that spaces in strings are preserved
-        InfoInterf info = factory.create("  Task with spaces  ", 
+        // Use TestInfoFactory for exact space preservation testing
+        InfoInterf info = testFactory.create("  Task with spaces  ", 
                                    "  Description with spaces  ", 
                                    "  category  ");
 

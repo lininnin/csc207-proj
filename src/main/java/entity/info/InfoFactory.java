@@ -16,13 +16,21 @@ public class InfoFactory implements InfoFactoryInterf {
      */
     @Override
     public InfoInterf create(String name, String description, String category) {
-        Info.Builder builder = new Info.Builder(name);
+        // Handle null or empty name - Info requires non-empty name
+        String effectiveName = (name == null || name.trim().isEmpty()) ? "Untitled" : name.trim();
+        
+        Info.Builder builder = new Info.Builder(effectiveName);
+        
+        // Add description if provided
         if (description != null) {
             builder.description(description);
         }
+        
+        // Add category if provided
         if (category != null) {
             builder.category(category);
         }
+        
         return builder.build();
     }
 }
