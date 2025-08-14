@@ -451,11 +451,18 @@ class AddTaskToTodayInteractorTest {
         // Now it should be in today's list and not overdue
         assertTrue(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
         
-        // Manually update the task to be overdue by changing its due date
-        // Create a new task with past date to simulate overdue
-        taskGateway.getTodaysTasks().clear();
+        // Remove the task from today's list and verify it's no longer there
+        assertTrue(taskGateway.removeFromToday(todayTask.getId()));
+        assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
+        
+        // Now add a task with a past date
+        // Note: The InMemoryTaskGateway adjusts dates to allow testing overdue tasks
         LocalDate pastDate = LocalDate.now().minusDays(1);
         Task overdueTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, pastDate);
+        
+        // Verify the task was created and is actually overdue
+        assertNotNull(overdueTask);
+        assertTrue(overdueTask.isOverdue(), "Task should be overdue with past due date");
         
         // Now it should be in today's list but overdue, so method should return false
         assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));

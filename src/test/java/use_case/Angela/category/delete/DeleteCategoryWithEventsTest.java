@@ -28,7 +28,14 @@ class DeleteCategoryWithEventsTest {
     void setUp() {
         dataAccess = new TestDataAccess();
         outputBoundary = new TestOutputBoundary();
-        interactor = new DeleteCategoryInteractor(dataAccess, outputBoundary);
+        // Use the new constructor with segregated interfaces
+        // TestDataAccess implements all three interfaces
+        interactor = new DeleteCategoryInteractor(
+            dataAccess,  // implements DeleteCategoryCategoryDataAccessInterface
+            dataAccess,  // implements DeleteCategoryTaskDataAccessInterface
+            dataAccess,  // implements DeleteCategoryEventDataAccessInterface
+            outputBoundary
+        );
         
         // Set up initial categories (Category constructor requires id, name, color)
         dataAccess.addCategory(new Category("1", "Work", "#FF0000"));
@@ -119,7 +126,10 @@ class DeleteCategoryWithEventsTest {
     /**
      * Test data access implementation that supports both tasks and events.
      */
-    private static class TestDataAccess implements DeleteCategoryDataAccessInterface, DeleteCategoryEventDataAccessInterface {
+    private static class TestDataAccess implements 
+            DeleteCategoryCategoryDataAccessInterface,
+            DeleteCategoryTaskDataAccessInterface,
+            DeleteCategoryEventDataAccessInterface {
         private final Map<String, Category> categories = new HashMap<>();
         private final List<TaskAvailable> availableTasks = new ArrayList<>();
         private final List<Task> todayTasks = new ArrayList<>();

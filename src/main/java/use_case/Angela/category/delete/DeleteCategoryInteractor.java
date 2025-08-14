@@ -80,11 +80,11 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         int updatedTodaysCount = 0;
         for (Task task : todaysTasks) {
             System.out.println("DEBUG: Updating today's task '" + task.getInfo().getName() + "' to remove category");
-            if (taskDataAccess.updateTodaysTaskCategory(task.getInfo().getId(), "")) {
+            if (taskDataAccess.updateTodaysTaskCategory(task.getId(), "")) {
                 updatedTodaysCount++;
-                System.out.println("DEBUG: Successfully updated today's task: " + task.getInfo().getId());
+                System.out.println("DEBUG: Successfully updated today's task: " + task.getId());
             } else {
-                System.out.println("DEBUG: Failed to update today's task: " + task.getInfo().getId());
+                System.out.println("DEBUG: Failed to update today's task: " + task.getId());
             }
         }
         

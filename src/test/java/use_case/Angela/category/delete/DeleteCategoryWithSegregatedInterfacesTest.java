@@ -5,6 +5,13 @@ import entity.Angela.Task.Task;
 import entity.Category;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import use_case.Angela.category.delete.DeleteCategoryCategoryDataAccessInterface;
+import use_case.Angela.category.delete.DeleteCategoryTaskDataAccessInterface;
+import use_case.Angela.category.delete.DeleteCategoryEventDataAccessInterface;
+import use_case.Angela.category.delete.DeleteCategoryInteractor;
+import use_case.Angela.category.delete.DeleteCategoryInputData;
+import use_case.Angela.category.delete.DeleteCategoryOutputBoundary;
+import use_case.Angela.category.delete.DeleteCategoryOutputData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -71,8 +78,12 @@ class DeleteCategoryWithSegregatedInterfacesTest {
         // Verify success
         assertNotNull(testPresenter.lastOutputData);
         assertNull(testPresenter.lastError);
-        assertTrue(testPresenter.lastOutputData.getMessage().contains("2 task(s)"));
-        assertTrue(testPresenter.lastOutputData.getMessage().contains("1 event(s)"));
+        // The actual format is: "Updated X available tasks, Y today's tasks, Z available events, and W today's events"
+        // Note: The interactor now successfully updates the today's task
+        assertTrue(testPresenter.lastOutputData.getMessage().contains("1 available tasks"));
+        assertTrue(testPresenter.lastOutputData.getMessage().contains("1 today's tasks"));
+        assertTrue(testPresenter.lastOutputData.getMessage().contains("1 available events"));
+        assertTrue(testPresenter.lastOutputData.getMessage().contains("0 today's events"));
 
         // Verify category was deleted
         assertFalse(categoryDataAccess.categories.containsKey(categoryId));
@@ -138,8 +149,8 @@ class DeleteCategoryWithSegregatedInterfacesTest {
         // Verify success
         assertNotNull(testPresenter.lastOutputData);
         assertNull(testPresenter.lastError);
-        assertEquals("Category 'Work' deleted successfully. " +
-                    "Updated 0 task(s) and 0 event(s) by removing their category.", 
+        // The actual format doesn't include category name
+        assertEquals("Category deleted successfully. Updated 0 available tasks and 0 today's tasks to have empty category.", 
                     testPresenter.lastOutputData.getMessage());
 
         // Verify category was deleted

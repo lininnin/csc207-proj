@@ -5,6 +5,12 @@ import entity.Angela.Task.Task;
 import entity.Category;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import use_case.Angela.category.edit.EditCategoryDataAccessInterface;
+import use_case.Angela.category.edit.EditCategoryTaskDataAccessInterface;
+import use_case.Angela.category.edit.EditCategoryInteractor;
+import use_case.Angela.category.edit.EditCategoryInputData;
+import use_case.Angela.category.edit.EditCategoryOutputBoundary;
+import use_case.Angela.category.edit.EditCategoryOutputData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -321,6 +327,16 @@ class EditCategoryWithSegregatedInterfacesTest {
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean exists(Category category) {
+            return categories.containsKey(category.getId());
+        }
+
+        @Override
+        public List<Category> getAllCategories() {
+            return new ArrayList<>(categories.values());
         }
     }
 

@@ -26,9 +26,15 @@ class DeleteCategoryInteractorTest {
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway(taskGateway);  // Wire them together
+        categoryGateway = new InMemoryCategoryGateway();
         testPresenter = new TestDeleteCategoryPresenter();
-        interactor = new DeleteCategoryInteractor(categoryGateway, testPresenter);
+        // Use the new constructor with segregated interfaces
+        interactor = new DeleteCategoryInteractor(
+            categoryGateway,  // implements DeleteCategoryCategoryDataAccessInterface
+            taskGateway,      // implements DeleteCategoryTaskDataAccessInterface  
+            null,             // no event data access needed for this test
+            testPresenter
+        );
     }
 
     @Test
