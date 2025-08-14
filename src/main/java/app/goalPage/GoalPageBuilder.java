@@ -562,10 +562,10 @@ public class GoalPageBuilder {
             JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
 
-            // The frequency field is no longer used, so it is commented out.
-            // JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
-            // int frequency = GoalInputValidator.validatePositiveInteger(
-            //         ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
+            // Get frequency from the form
+            JPanel frequencyPanel = (JPanel) timeFreqPanel.getComponent(1);
+            int frequency = GoalInputValidator.validatePositiveInteger(
+                    ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
             TaskAvailable selectedTargetTaskAvailable = (TaskAvailable) targetTaskBox.getSelectedItem();
             
@@ -585,7 +585,7 @@ public class GoalPageBuilder {
                 );
             }
 
-            // The targetAmount value is now used for both the target amount and the frequency.
+            // Execute goal creation with frequency from the form
             createGoalController.execute(
                     goalName,
                     description,
