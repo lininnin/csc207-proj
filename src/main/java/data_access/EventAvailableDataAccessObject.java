@@ -188,18 +188,21 @@ public class EventAvailableDataAccessObject implements
     // ===== DeleteCategoryEventDataAccessInterface methods =====
     
     @Override
-    public List<InfoInterf> findAvailableEventsByCategory(String categoryId) {
-        List<InfoInterf> result = new ArrayList<>();
+    public List<Info> findAvailableEventsByCategory(String categoryId) {
+        List<Info> result = new ArrayList<>();
         for (InfoInterf event : eventAvailable.getEventAvailable()) {
             if (event.getCategory() != null && event.getCategory().equals(categoryId)) {
-                result.add(event);
+                // Cast to Info since InfoInterf is implemented by Info
+                if (event instanceof Info) {
+                    result.add((Info) event);
+                }
             }
         }
         return result;
     }
     
     @Override
-    public List<InfoInterf> findTodaysEventsByCategory(String categoryId) {
+    public List<Info> findTodaysEventsByCategory(String categoryId) {
         // Available events DAO doesn't manage today's events
         // This will be handled by TodaysEventDataAccessObject
         return new ArrayList<>();

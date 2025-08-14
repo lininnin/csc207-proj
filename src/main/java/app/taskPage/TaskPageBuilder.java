@@ -71,8 +71,8 @@ public class TaskPageBuilder {
     private OverdueTasksController overdueTasksController;
 
     public JPanel build() {
-        // CRITICAL: Connect the gateways so category deletion can update tasks
-        categoryGateway.setTaskGateway(taskGateway);
+        // Note: Category and task gateways are now independent following SRP
+        // Task updates during category deletion are handled by the interactor
         
         // Create Views
         createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
@@ -288,7 +288,9 @@ public class TaskPageBuilder {
                 );
 
                 DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        categoryGateway, // InMemoryCategoryGateway implements DeleteCategoryDataAccessInterface
+                        categoryGateway, // InMemoryCategoryGateway implements DeleteCategoryCategoryDataAccessInterface
+                        taskGateway,     // InMemoryTaskGateway implements DeleteCategoryTaskDataAccessInterface
+                        null,            // No event data access needed in task context
                         categoryPresenter
                 );
                 DeleteCategoryController deleteCategoryController = new DeleteCategoryController(

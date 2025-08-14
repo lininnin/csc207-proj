@@ -1,6 +1,7 @@
 package app;
 
 import app.Notification_related.NotificationSystemRunner;
+import app.eventPage.EventPageRunner;
 
 class MainApp {
     public static void main(String[] args) {

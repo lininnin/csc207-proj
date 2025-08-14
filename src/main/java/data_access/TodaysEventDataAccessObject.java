@@ -161,7 +161,10 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
             if (event.getInfo() != null &&
                     event.getInfo().getCategory() != null &&
                     event.getInfo().getCategory().equals(categoryId)) {
-                result.add(event.getInfo());
+                // Cast to Info since InfoInterf is implemented by Info
+                if (event.getInfo() instanceof Info) {
+                    result.add((Info) event.getInfo());
+                }
             }
         }
         return result;

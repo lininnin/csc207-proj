@@ -14,6 +14,7 @@ import use_case.Angela.task.edit_today.EditTodayTaskDataAccessInterface;
 import use_case.Angela.category.edit.EditCategoryTaskDataAccessInterface;
 import use_case.Angela.task.remove_from_today.RemoveFromTodayDataAccessInterface;
 import use_case.Angela.task.overdue.OverdueTasksDataAccessInterface;
+import use_case.Angela.category.delete.DeleteCategoryTaskDataAccessInterface;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -34,7 +35,8 @@ public class InMemoryTaskGateway implements
         EditTodayTaskDataAccessInterface,
         EditCategoryTaskDataAccessInterface,
         RemoveFromTodayDataAccessInterface,
-        OverdueTasksDataAccessInterface {
+        OverdueTasksDataAccessInterface,
+        DeleteCategoryTaskDataAccessInterface {
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
@@ -518,6 +520,7 @@ public class InMemoryTaskGateway implements
         String taskId = todayTask.getId();
         todaysTasks.put(taskId, todayTask);
         
+        
         return todayTask;
     }
 
@@ -535,7 +538,8 @@ public class InMemoryTaskGateway implements
         
         // Find the task and check if it's overdue
         for (Task task : todaysTasks.values()) {
-            if (task.getTemplateTaskId().equals(templateTaskId)) {
+            // Use Objects.equals for null-safe comparison
+            if (templateTaskId != null && templateTaskId.equals(task.getTemplateTaskId())) {
                 // Return true only if task is NOT overdue
                 // This allows re-adding overdue tasks with new due dates
                 return !task.isOverdue();
