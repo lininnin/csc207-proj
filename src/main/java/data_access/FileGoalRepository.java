@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import entity.sophia.Goal;
-import entity.sophia.GoalFactory;
+import entity.Sophia.Goal;
+import entity.Sophia.GoalFactory;
 
 /**
  * An implementation of the {@link GoalRepository} interface that persists goal data to files.

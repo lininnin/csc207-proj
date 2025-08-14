@@ -3,7 +3,7 @@ package data_access;
 import java.util.List;
 import java.util.Optional;
 
-import entity.sophia.Goal;
+import entity.Sophia.Goal;
 
 /**
  * An interface for data access operations related to goals.

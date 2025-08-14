@@ -2,7 +2,7 @@ package use_case.goalManage.create_goal;
 
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
-import entity.Sophia.goalFactory;
+import entity.Sophia.GoalFactory;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 import data_access.GoalRepository;
@@ -10,11 +10,11 @@ import data_access.GoalRepository;
 public class CreateGoalInteractor implements CreateGoalInputBoundary {
     private final GoalRepository goalRepository;
     private final CreateGoalOutputBoundary presenter;
-    private final goalFactory goalFactory;
+    private final GoalFactory goalFactory;
 
     public CreateGoalInteractor(GoalRepository goalRepository,
                                 CreateGoalOutputBoundary presenter,
-                                goalFactory goalFactory) {
+                                GoalFactory goalFactory) {
         this.goalRepository = goalRepository;
         this.presenter = presenter;
         this.goalFactory = goalFactory;

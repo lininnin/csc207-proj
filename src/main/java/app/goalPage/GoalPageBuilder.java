@@ -2,7 +2,7 @@ package app.goalPage;
 import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;                // Goal domain model
-import entity.Sophia.goalFactory;         // Factory for creating goals
+import entity.Sophia.GoalFactory;         // Factory for creating goals
 
 // Import view models
 import entity.info.Info;
@@ -64,7 +64,7 @@ import java.util.List;
 public class GoalPageBuilder {
     // Data access components
     private GoalRepository goalRepository;  // Handles goal persistence
-    private goalFactory goalFactory;       // Creates goal objects
+    private GoalFactory goalFactory;       // Creates goal objects
 
     // Form reference for goal creation
     private JPanel createGoalForm;
@@ -119,9 +119,9 @@ public class GoalPageBuilder {
                 new File("goals.txt"),         // Main goals storage
                 new File("current_goals.txt"), // Current goals state
                 new File("today_goal.txt"),    // Today's goals
-                new goalFactory()             // Goal object factory
+                new GoalFactory()             // Goal object factory
         );
-        goalFactory = new goalFactory();
+        goalFactory = new GoalFactory();
     }
 
     /**

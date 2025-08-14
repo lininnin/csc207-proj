@@ -6,7 +6,7 @@ import entity.info.Info;
 
 import java.time.LocalDateTime;
 
-public interface goalInterface {
+public interface GoalInterface {
     public enum TimePeriod {
         WEEK,
         MONTH
