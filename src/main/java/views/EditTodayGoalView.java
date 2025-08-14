@@ -39,7 +39,7 @@ public class EditTodayGoalView extends JPanel implements PropertyChangeListener 
 
         viewModel.addPropertyChangeListener(this);
         initializeUI();
-        updateGoals(viewModel.getGoalNames()); // Use getGoalNames instead of getGoals
+        updateGoals(viewModel.getGoalNames());
     }
 
     private void initializeUI() {
@@ -51,118 +51,9 @@ public class EditTodayGoalView extends JPanel implements PropertyChangeListener 
         JScrollPane scrollPane = new JScrollPane(goalList);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        // Button panel
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
-
-        // Delete button
-        buttonPanel.add(new JButton(new AbstractAction("Delete") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selected = goalList.getSelectedValue();
-                if (selected != null) {
-                    // First show confirmation dialog
-                    int confirm = JOptionPane.showConfirmDialog(
-                            EditTodayGoalView.this,
-                            "Are you sure you want to delete '" + selected + "'?",
-                            "Confirm Deletion",
-                            JOptionPane.YES_NO_OPTION
-                    );
-
-                    boolean confirmed = (confirm == JOptionPane.YES_OPTION);
-                    deleteController.execute(selected);
-                }
-            }
-        }));
-
-        // Edit button
-        buttonPanel.add(new JButton(new AbstractAction("Edit") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selected = goalList.getSelectedValue();
-                if (selected != null) {
-                    String newDueDateStr = JOptionPane.showInputDialog(
-                            EditTodayGoalView.this,
-                            "Enter new due date (YYYY-MM-DD):",
-                            "Edit Goal Due Date",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
-
-                    if (newDueDateStr != null && !newDueDateStr.isEmpty()) {
-                        try {
-                            LocalDate newDueDate = LocalDate.parse(newDueDateStr);
-                            editController.execute(selected, newDueDate, false);
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(
-                                    EditTodayGoalView.this,
-                                    "Invalid date format. Please use YYYY-MM-DD",
-                                    "Input Error",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                        }
-                    }
-                }
-            }
-        }));
-
-        // In EditTodayGoalView.java - inside initializeUI()
-        buttonPanel.add(new JButton(new AbstractAction("Add to Today") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedName = goalList.getSelectedValue();
-                if (selectedName != null) {
-                    try {
-                        // Add to today's goals
-                        todayController.addToToday(selectedName);
-
-                        // Show success message
-                        JOptionPane.showMessageDialog(
-                                EditTodayGoalView.this,
-                                "'" + selectedName + "' was successfully added to Today's Goals!",
-                                "Success",
-                                JOptionPane.INFORMATION_MESSAGE
-                        );
-
-
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(
-                                EditTodayGoalView.this,
-                                "Failed to add goal: " + ex.getMessage(),
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(
-                            EditTodayGoalView.this,
-                            "Please select a goal first",
-                            "No Selection",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
-            }
-        }));
-
-        // Order button
-        buttonPanel.add(new JButton(new AbstractAction("Order") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String[] options = {"name", "deadline", "period"};
-                String selection = (String) JOptionPane.showInputDialog(
-                        EditTodayGoalView.this,
-                        "Select ordering criteria:",
-                        "Order Goals",
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                );
-                if (selection != null) {
-                    orderController.execute(selection, false);
-                }
-            }
-        }));
-
-        this.add(buttonPanel, BorderLayout.SOUTH);
+        // Remove button panel and all buttons
+        // JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
+        // this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     @Override

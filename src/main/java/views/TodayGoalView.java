@@ -128,8 +128,9 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value instanceof Goal) {
                 Goal goal = (Goal) value;
-                setText(String.format("%s - %d/%d",
+                setText(String.format("<html><b>%s</b> - %s<br/>Progress: %d of %d</html>",
                         goal.getGoalInfo().getInfo().getName(),
+                        goal.getGoalInfo().getInfo().getDescription(),
                         goal.getCurrentProgress(),
                         goal.getFrequency()));
 
