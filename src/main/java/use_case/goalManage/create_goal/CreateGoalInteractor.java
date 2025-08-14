@@ -1,5 +1,6 @@
 package use_case.goalManage.create_goal;
 
+import entity.Angela.Task.Task;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
 import entity.Sophia.GoalFactory;
@@ -28,9 +29,19 @@ public class CreateGoalInteractor implements CreateGoalInputBoundary {
                     .description(inputData.getGoalDescription())
                     .build();
 
-            Info targetTaskInfo = new Info.Builder("TargetTask")
-                    .description(String.valueOf(inputData.getTargetAmount()))
-                    .build();
+            // Use the actual target task's info if provided
+            Info targetTaskInfo;
+            if (inputData.getTargetTask() != null && inputData.getTargetTask().getInfo() != null) {
+                // Use the actual task's info
+                targetTaskInfo = inputData.getTargetTask().getInfo();
+                System.out.println("DEBUG: CreateGoalInteractor - Using target task: " + targetTaskInfo.getName());
+            } else {
+                // Fallback to default if no target task provided
+                targetTaskInfo = new Info.Builder("TargetTask")
+                        .description(String.valueOf(inputData.getTargetAmount()))
+                        .build();
+                System.out.println("DEBUG: CreateGoalInteractor - No target task provided, using default");
+            }
 
             // Create GoalInfo and BeginAndDueDates
             GoalInfo goalInfo = new GoalInfo(mainInfo, targetTaskInfo);

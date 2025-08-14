@@ -218,41 +218,13 @@ public class WellnessLogPageBuilder {
         centerPanel.add(verticalSplit, BorderLayout.CENTER);
 
         // --- Set up Today So Far Panel ---
-        // Create ViewModels for Today So Far
-        OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
-        TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
-        // Use shared task and category gateways for Today So Far integration
-        InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
-        InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
-        
-        // Wire up Overdue Tasks Use Case
-        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
-        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                taskGateway, categoryGateway, overdueTasksPresenter);
-        overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
-        
-        // Use shared Event DAO for Today So Far integration
-        data_access.TodaysEventDataAccessObject eventDataAccess = 
-            app.SharedDataAccess.getInstance().getEventDataAccess();
-        
-        // Use shared Goal repository
-        data_access.FileGoalRepository goalRepository = 
-            app.SharedDataAccess.getInstance().getGoalRepository();
-        
-        // Wire up Today So Far Use Case with all data sources
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
-                taskGateway, eventDataAccess, wellnessLogDAO, goalRepository);
-        
-        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
-        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
-                todaySoFarDataAccess, todaySoFarPresenter, categoryGateway);
-        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
-        
-        // Create Today So Far view
-        TodaySoFarView todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
-        todaySoFarView.setOverdueTasksController(overdueTasksController);
-        todaySoFarView.setTodaySoFarController(todaySoFarController);
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         
         // Set Today So Far controller on wellness presenters that need to refresh
         presenter.setTodaySoFarController(todaySoFarController);
@@ -260,8 +232,7 @@ public class WellnessLogPageBuilder {
         editPresenter.setTodaySoFarController(todaySoFarController);
         
         // Trigger initial data load
-        todaySoFarController.refresh();
-        overdueTasksController.execute(7);
+        sharedTodaySoFar.refresh();
 
         // Wrap Today So Far in a panel
         JPanel rightPanel = new JPanel(new BorderLayout());
