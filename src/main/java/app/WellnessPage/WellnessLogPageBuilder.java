@@ -69,7 +69,6 @@ import use_case.Angela.today_so_far.TodaySoFarInteractor;
 import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
 import data_access.InMemoryTodaySoFarDataAccess;
-import data_access.FileGoalRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,9 +87,9 @@ public class WellnessLogPageBuilder {
         AddWellnessLogViewModel addLogViewModel = new AddWellnessLogViewModel();
         TodaysWellnessLogViewModel todaysLogViewModel = new TodaysWellnessLogViewModel();
 
-        // --- DAO + Factory ---
-        DailyWellnessLogFactoryInterf factory = new DailyWellnessLogFactory();
-        TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject(factory);
+        // --- Use shared DAO ---
+        TodaysWellnessLogDataAccessObject wellnessLogDAO = 
+            app.SharedDataAccess.getInstance().getWellnessDataAccess();
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 
@@ -223,9 +222,9 @@ public class WellnessLogPageBuilder {
         OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
         TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
         
-        // Create task and category gateways for Today So Far integration
-        InMemoryTaskGateway taskGateway = new InMemoryTaskGateway();
-        InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+        // Use shared task and category gateways for Today So Far integration
+        InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
+        InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
         
         // Wire up Overdue Tasks Use Case
         OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
@@ -233,14 +232,13 @@ public class WellnessLogPageBuilder {
                 taskGateway, categoryGateway, overdueTasksPresenter);
         overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
         
-        // Create Event DAO for Today So Far integration
-        entity.Alex.DailyEventLog.DailyEventLogFactoryInterf eventLogFactory = 
-            new entity.Alex.DailyEventLog.DailyEventLogFactory();
+        // Use shared Event DAO for Today So Far integration
         data_access.TodaysEventDataAccessObject eventDataAccess = 
-            new data_access.TodaysEventDataAccessObject(eventLogFactory);
+            app.SharedDataAccess.getInstance().getEventDataAccess();
         
-        // Create Goal repository
-        FileGoalRepository goalRepository = new FileGoalRepository();
+        // Use shared Goal repository
+        data_access.FileGoalRepository goalRepository = 
+            app.SharedDataAccess.getInstance().getGoalRepository();
         
         // Wire up Today So Far Use Case with all data sources
         InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(

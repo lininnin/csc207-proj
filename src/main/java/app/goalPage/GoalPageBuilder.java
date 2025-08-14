@@ -1,11 +1,13 @@
 package app.goalPage;
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;                // Goal domain model
 import entity.Sophia.GoalFactory;         // Factory for creating goals
 
 // Import view models
 import entity.info.Info;
+import data_access.InMemoryTaskGateway;
 import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
 import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
@@ -46,6 +48,7 @@ import view.CollapsibleSidebarView;    // Collapsible sidebar component
 
 // Import Java/Swing components
 import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -65,11 +68,12 @@ public class GoalPageBuilder {
     // Data access components
     private GoalRepository goalRepository;  // Handles goal persistence
     private GoalFactory goalFactory;       // Creates goal objects
+    private InMemoryTaskGateway taskGateway; // For accessing available tasks
 
     // Form reference for goal creation
     private JPanel createGoalForm;
 
-    private JComboBox<Task> targetTaskBox;
+    private JComboBox<TaskAvailable> targetTaskBox;
 
 
     // View Models (hold state for different UI sections)
@@ -122,6 +126,9 @@ public class GoalPageBuilder {
                 new GoalFactory()             // Goal object factory
         );
         goalFactory = new GoalFactory();
+        
+        // Initialize task gateway to access available tasks
+        taskGateway = new InMemoryTaskGateway();
     }
 
     /**
@@ -400,29 +407,39 @@ public class GoalPageBuilder {
         formPanel.add(timeFreqPanel);
         formPanel.add(Box.createRigidArea(new Dimension(0, verticalGap)));
 
-        // Target Task (vertical)
-        formPanel.add(createCompactLabel("Target Task:"));
+        // Target Task (vertical) with refresh button
+        JPanel targetTaskPanel = new JPanel();
+        targetTaskPanel.setLayout(new BoxLayout(targetTaskPanel, BoxLayout.X_AXIS));
+        targetTaskPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel targetTaskLabel = createCompactLabel("Target Task:");
+        targetTaskLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        targetTaskPanel.add(targetTaskLabel);
+        
+        JButton refreshTasksButton = new JButton("Refresh");
+        refreshTasksButton.setMaximumSize(new Dimension(80, 25));
+        refreshTasksButton.addActionListener(e -> refreshTargetTaskDropdown());
+        targetTaskPanel.add(refreshTasksButton);
+        
+        formPanel.add(targetTaskPanel);
 
-        // Dummy tasks
-        Info dummyInfo1 = new Info.Builder("Read Chapter 1")
-                .description("Finish by Friday")
-                .category("Reading")
-                .build();
-        BeginAndDueDates dummyDates1 = new BeginAndDueDates(LocalDate.now(), LocalDate.now().plusDays(2));
-        Task task1 = new Task("template-task-1", dummyInfo1, dummyDates1, false);
-
-        Info dummyInfo2 = new Info.Builder("Exercise")
-                .description("Do 30 minutes of cardio")
-                .category("Fitness")
-                .build();
-        BeginAndDueDates dummyDates2 = new BeginAndDueDates(LocalDate.now(), LocalDate.now().plusDays(5));
-        Task task2 = new Task("template-task-2", dummyInfo2, dummyDates2, false);
-
-        List<Task> availableTasks = new ArrayList<>();
-        availableTasks.add(task1);
-        availableTasks.add(task2);
-
-        targetTaskBox = new JComboBox<>(availableTasks.toArray(new Task[0]));
+        // Get real available tasks from the task gateway
+        List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
+        
+        // Create a custom renderer to display task names in the combo box
+        targetTaskBox = new JComboBox<>(availableTasks.toArray(new TaskAvailable[0]));
+        targetTaskBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, 
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof TaskAvailable) {
+                    TaskAvailable task = (TaskAvailable) value;
+                    setText(task.getInfo().getName());
+                }
+                return this;
+            }
+        });
         targetTaskBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         targetTaskBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         formPanel.add(targetTaskBox);
@@ -514,7 +531,23 @@ public class GoalPageBuilder {
             JTextField frequencyField = (JTextField) frequencyPanel.getComponent(1);
             int frequency = Integer.parseInt(frequencyField.getText());
 
-            Task selectedTargetTask = (Task) targetTaskBox.getSelectedItem();
+            TaskAvailable selectedTargetTaskAvailable = (TaskAvailable) targetTaskBox.getSelectedItem();
+            
+            // Convert TaskAvailable to Task for goal creation
+            Task targetTask = null;
+            if (selectedTargetTaskAvailable != null) {
+                // Create a BeginAndDueDates object for the Task
+                // Use today as begin date and the goal's end date as due date
+                BeginAndDueDates taskDates = new BeginAndDueDates(LocalDate.now(), endDate);
+                
+                // Create a Task from TaskAvailable for the goal
+                targetTask = new Task(
+                    selectedTargetTaskAvailable.getId(),  // Use template ID
+                    selectedTargetTaskAvailable.getInfo(),
+                    taskDates,
+                    selectedTargetTaskAvailable.isOneTime()
+                );
+            }
 
             createGoalController.execute(
                     goalName,
@@ -525,7 +558,7 @@ public class GoalPageBuilder {
                     endDate,
                     timePeriod,
                     frequency,
-                    selectedTargetTask
+                    targetTask
             );
 
             availableGoalsController.execute("");
@@ -544,5 +577,34 @@ public class GoalPageBuilder {
      */
     private AvailableGoalsView createAvailableGoalsView() {
         return new AvailableGoalsView(availableGoalsViewModel, availableGoalsController);
+    }
+    
+    /**
+     * Refreshes the target task dropdown with the latest available tasks
+     */
+    private void refreshTargetTaskDropdown() {
+        if (targetTaskBox != null) {
+            TaskAvailable selectedTask = (TaskAvailable) targetTaskBox.getSelectedItem();
+            
+            // Get fresh list of available tasks
+            List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
+            
+            // Update the combo box
+            targetTaskBox.removeAllItems();
+            for (TaskAvailable task : availableTasks) {
+                targetTaskBox.addItem(task);
+            }
+            
+            // Try to restore previous selection if it still exists
+            if (selectedTask != null) {
+                for (int i = 0; i < targetTaskBox.getItemCount(); i++) {
+                    TaskAvailable task = targetTaskBox.getItemAt(i);
+                    if (task.getId().equals(selectedTask.getId())) {
+                        targetTaskBox.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
