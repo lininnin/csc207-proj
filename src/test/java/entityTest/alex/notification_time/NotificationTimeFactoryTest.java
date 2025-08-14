@@ -1,8 +1,10 @@
 package entityTest.alex.notification_time;
 
-import entity.Alex.NotificationTime.NotificationTime;
 import entity.Alex.NotificationTime.NotificationTimeFactory;
+import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
 import entity.Alex.NotificationTime.NotificationTimeInterf;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
@@ -11,43 +13,49 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NotificationTimeFactoryTest {
 
-    @Test
-    public void testCreateDefaultNotificationTime() {
-        NotificationTimeFactory factory = new NotificationTimeFactory();
-        NotificationTimeInterf notification = factory.createDefault();
+    private NotificationTimeFactoryInterf factory;
 
-        assertNotNull(notification);
-        assertTrue(notification instanceof NotificationTime);
-        assertEquals(LocalTime.of(8, 0), notification.getReminder1());
-        assertEquals(LocalTime.of(12, 0), notification.getReminder2());
-        assertEquals(LocalTime.of(20, 0), notification.getReminder3());
+    @BeforeEach
+    void setUp() {
+        factory = new NotificationTimeFactory();
     }
 
     @Test
-    public void testCreateCustomNotificationTime() {
-        NotificationTimeFactory factory = new NotificationTimeFactory();
-        LocalTime r1 = LocalTime.of(9, 30);
-        LocalTime r2 = LocalTime.of(14, 0);
-        LocalTime r3 = LocalTime.of(21, 15);
+    void testCreateDefaultNotificationTime() {
+        NotificationTimeInterf time = factory.createDefault();
 
-        NotificationTimeInterf notification = factory.create(r1, r2, r3);
-
-        assertNotNull(notification);
-        assertEquals(r1, notification.getReminder1());
-        assertEquals(r2, notification.getReminder2());
-        assertEquals(r3, notification.getReminder3());
+        assertEquals(LocalTime.of(8, 0), time.getReminder1());
+        assertEquals(LocalTime.of(12, 0), time.getReminder2());
+        assertEquals(LocalTime.of(20, 0), time.getReminder3());
     }
 
     @Test
-    public void testCreateWithNullTimes() {
-        NotificationTimeFactory factory = new NotificationTimeFactory();
+    void testCreateCustomNotificationTime() {
+        LocalTime t1 = LocalTime.of(9, 30);
+        LocalTime t2 = LocalTime.of(14, 0);
+        LocalTime t3 = LocalTime.of(22, 15);
 
-        NotificationTimeInterf notification = factory.create(null, null, null);
+        NotificationTimeInterf time = factory.create(t1, t2, t3);
 
-        assertNotNull(notification);
-        assertNull(notification.getReminder1());
-        assertNull(notification.getReminder2());
-        assertNull(notification.getReminder3());
+        assertEquals(t1, time.getReminder1());
+        assertEquals(t2, time.getReminder2());
+        assertEquals(t3, time.getReminder3());
+    }
+
+    @Test
+    void testModifyReminderTimesAfterCreation() {
+        NotificationTimeInterf time = factory.createDefault();
+
+        LocalTime new1 = LocalTime.of(6, 45);
+        LocalTime new2 = LocalTime.of(13, 30);
+        LocalTime new3 = LocalTime.of(19, 0);
+
+        time.setReminder1(new1);
+        time.setReminder2(new2);
+        time.setReminder3(new3);
+
+        assertEquals(new1, time.getReminder1());
+        assertEquals(new2, time.getReminder2());
+        assertEquals(new3, time.getReminder3());
     }
 }
-

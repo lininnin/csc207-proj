@@ -1,44 +1,52 @@
 package entityTest.alex.user_settings;
 
 import entity.Alex.NotificationTime.NotificationTime;
-import entity.Alex.UserSettings.UserSettings;
+import entity.Alex.NotificationTime.NotificationTimeInterf;
 import entity.Alex.UserSettings.UserSettingsFactory;
+import entity.Alex.UserSettings.UserSettingsFactoryInterf;
 import entity.Alex.UserSettings.UserSettingsInterf;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserSettingsFactoryTest {
 
-    @Test
-    public void testCreateUserSettingsSuccessfully() {
-        String userId = "user-123";
-        NotificationTime notificationTime = new NotificationTime();  // 默认时间
+    private UserSettingsFactoryInterf factory;
+    private NotificationTimeInterf notificationTime;
 
-        UserSettingsFactory factory = new UserSettingsFactory();
-        UserSettingsInterf settings = factory.create(userId, notificationTime);
-
-        assertNotNull(settings);
-        assertTrue(settings instanceof UserSettings);
-
-        UserSettings casted = (UserSettings) settings;
-        assertEquals("user-123", casted.getUserId());
-        assertEquals(notificationTime, casted.getNotificationTime());
+    @BeforeEach
+    void setUp() {
+        factory = new UserSettingsFactory();
+        notificationTime = new NotificationTime();
+        notificationTime.setReminder1(LocalTime.of(9, 0));
+        notificationTime.setReminder2(LocalTime.of(13, 0));
+        notificationTime.setReminder3(LocalTime.of(18, 0));
     }
 
     @Test
-    public void testCreateWithNullUserId() {
-        NotificationTime notificationTime = new NotificationTime();
-        UserSettingsFactory factory = new UserSettingsFactory();
+    void testCreateUserSettingsSuccessfully() {
+        UserSettingsInterf settings = factory.create("user123", notificationTime);
 
+        assertNotNull(settings);
+        assertEquals("user123", settings.getUserId());
+        assertEquals(notificationTime, settings.getNotificationTime());
+    }
+
+    @Test
+    void testCreateWithNullUserIdThrows() {
         assertThrows(IllegalArgumentException.class, () -> factory.create(null, notificationTime));
     }
 
     @Test
-    public void testCreateWithNullNotificationTime() {
-        UserSettingsFactory factory = new UserSettingsFactory();
+    void testCreateWithEmptyUserIdThrows() {
+        assertThrows(IllegalArgumentException.class, () -> factory.create("   ", notificationTime));
+    }
 
-        assertThrows(IllegalArgumentException.class, () -> factory.create("user-456", null));
+    @Test
+    void testCreateWithNullNotificationTimeThrows() {
+        assertThrows(IllegalArgumentException.class, () -> factory.create("user456", null));
     }
 }
-

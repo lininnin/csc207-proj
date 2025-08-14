@@ -30,9 +30,10 @@ public class EditAvailableEventInteractorTest {
         interactor.execute(input);
 
         verify(mockPresenter).prepareFailView(
-                argThat(out -> out.getErrorMessage().equals("Event name cannot be empty.")
+                argThat(out -> "Event name cannot be empty.".equals(out.getErrorMessage())
                         && out.isUseCaseFailed())
         );
+
         verifyNoInteractions(mockDataAccess);
     }
 

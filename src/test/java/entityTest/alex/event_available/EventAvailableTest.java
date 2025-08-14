@@ -1,7 +1,9 @@
 package entityTest.alex.event_available;
 
+import entity.Alex.EventAvailable.EventAvailableInterf;
 import entity.Alex.EventAvailable.EventAvailable;
 import entity.info.Info;
+import entity.info.InfoInterf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,105 +14,106 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EventAvailableTest {
 
-    private EventAvailable eventAvailable;
-    private Info event1;
-    private Info event2;
-    private Info event3;
+    private EventAvailableInterf eventAvailable;
+    private InfoInterf mathExam;
+    private InfoInterf csProject;
+    private InfoInterf dinner;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         eventAvailable = new EventAvailable();
 
-        event1 = new Info.Builder("Meeting")
-                .description("Discuss budget")
-                .category("Work")
+        mathExam = new Info.Builder("Math Exam")
+                .description("Final math exam")
+                .category("School")
                 .build();
 
-        event2 = new Info.Builder("Yoga Class")
-                .description("Evening session")
-                .category("Wellness")
+        csProject = new Info.Builder("CS Project")
+                .description("CSC207 project")
+                .category("School")
                 .build();
 
-        event3 = new Info.Builder("Team Lunch")
-                .description("With new interns")
-                .category("Work")
+        dinner = new Info.Builder("Dinner")
+                .description("Dinner with friends")
+                .category("Personal")
                 .build();
     }
 
     @Test
-    public void testAddEventSuccessfully() {
-        eventAvailable.addEvent(event1);
-        assertEquals(1, eventAvailable.getEventCount());
-        assertTrue(eventAvailable.contains(event1));
+    void testAddAndGetEvent() {
+        eventAvailable.addEvent(mathExam);
+        eventAvailable.addEvent(csProject);
+        List<InfoInterf> all = eventAvailable.getEventAvailable();
+        assertEquals(2, all.size());
+        assertTrue(all.contains(mathExam));
+        assertTrue(all.contains(csProject));
     }
 
     @Test
-    public void testAddNullEventThrows() {
+    void testAddNullThrows() {
         assertThrows(IllegalArgumentException.class, () -> eventAvailable.addEvent(null));
     }
 
     @Test
-    public void testRemoveEventSuccessfully() {
-        eventAvailable.addEvent(event1);
-        assertTrue(eventAvailable.removeEvent(event1));
-        assertFalse(eventAvailable.contains(event1));
+    void testRemoveEventSuccess() {
+        eventAvailable.addEvent(csProject);
+        assertTrue(eventAvailable.removeEvent(csProject));
+        assertFalse(eventAvailable.contains(csProject));
     }
 
     @Test
-    public void testRemoveNonexistentEventReturnsFalse() {
-        assertFalse(eventAvailable.removeEvent(event2));
+    void testRemoveEventFail() {
+        assertFalse(eventAvailable.removeEvent(dinner));
     }
 
     @Test
-    public void testGetEventsByCategory() {
-        eventAvailable.addEvent(event1);
-        eventAvailable.addEvent(event2);
-        eventAvailable.addEvent(event3);
-
-        List<Info> workEvents = eventAvailable.getEventsByCategory("Work");
-        assertEquals(2, workEvents.size());
-        assertTrue(workEvents.contains(event1));
-        assertTrue(workEvents.contains(event3));
+    void testGetEventsByCategory() {
+        eventAvailable.addEvent(csProject);
+        eventAvailable.addEvent(mathExam);
+        eventAvailable.addEvent(dinner);
+        List<InfoInterf> schoolEvents = eventAvailable.getEventsByCategory("School");
+        assertEquals(2, schoolEvents.size());
+        assertTrue(schoolEvents.contains(mathExam));
+        assertTrue(schoolEvents.contains(csProject));
     }
 
     @Test
-    public void testGetEventsByName() {
-        eventAvailable.addEvent(event1);
-        eventAvailable.addEvent(event2);
-        eventAvailable.addEvent(event3);
-
-        List<Info> named = eventAvailable.getEventsByName("Yoga Class");
-        assertEquals(1, named.size());
-        assertEquals("Yoga Class", named.get(0).getName());
+    void testGetEventsByName() {
+        eventAvailable.addEvent(csProject);
+        eventAvailable.addEvent(dinner);
+        List<InfoInterf> dinnerEvents = eventAvailable.getEventsByName("Dinner");
+        assertEquals(1, dinnerEvents.size());
+        assertEquals("Dinner", dinnerEvents.get(0).getName());
     }
 
     @Test
-    public void testGetEventAvailableReturnsCopy() {
-        eventAvailable.addEvent(event1);
-        List<Info> copy = eventAvailable.getEventAvailable();
-
-        assertEquals(1, copy.size());
-        copy.clear();
-        assertEquals(1, eventAvailable.getEventCount()); // ensure original list is unmodified
+    void testGetEventCount() {
+        assertEquals(0, eventAvailable.getEventCount());
+        eventAvailable.addEvent(mathExam);
+        assertEquals(1, eventAvailable.getEventCount());
     }
 
     @Test
-    public void testClearAll() {
-        eventAvailable.addEvent(event1);
-        eventAvailable.addEvent(event2);
+    void testContains() {
+        eventAvailable.addEvent(dinner);
+        assertTrue(eventAvailable.contains(dinner));
+        assertFalse(eventAvailable.contains(csProject));
+    }
+
+    @Test
+    void testClearAll() {
+        eventAvailable.addEvent(mathExam);
+        eventAvailable.addEvent(csProject);
         eventAvailable.clearAll();
         assertEquals(0, eventAvailable.getEventCount());
+        assertFalse(eventAvailable.contains(mathExam));
     }
 
     @Test
-    public void testContainsReturnsTrueIfPresent() {
-        eventAvailable.addEvent(event2);
-        assertTrue(eventAvailable.contains(event2));
-    }
-
-    @Test
-    public void testContainsReturnsFalseIfAbsent() {
-        assertFalse(eventAvailable.contains(event3));
+    void testDeepCopyFromGetEventAvailable() {
+        eventAvailable.addEvent(mathExam);
+        List<InfoInterf> listCopy = eventAvailable.getEventAvailable();
+        listCopy.clear();  // 应不影响原始数据
+        assertEquals(1, eventAvailable.getEventCount());
     }
 }
-

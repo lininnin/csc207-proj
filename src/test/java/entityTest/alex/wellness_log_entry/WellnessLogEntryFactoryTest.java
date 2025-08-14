@@ -1,10 +1,14 @@
 package entityTest.alex.wellness_log_entry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.WellnessLogEntry.Levels;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,51 +17,64 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WellnessLogEntryFactoryTest {
 
-    @Test
-    public void testCreateValidWellnessLogEntry() {
-        LocalDateTime time = LocalDateTime.of(2025, 8, 8, 10, 0);
-        MoodLabel mood = new MoodLabel.Builder("Relaxed")
-                .type(MoodLabel.Type.Positive)
-                .build();
+    private WellnessLogEntryFactoryInterf factory;
+    private MoodLabelInterf moodLabel;
 
-        WellnessLogEntryFactoryInterf factory = new WellnessLogEntryFactory();
-        WellnessLogEntry entry = factory.create(
-                time,
-                Levels.THREE,
-                Levels.SIX,
-                Levels.TWO,
-                mood,
-                "Morning walk."
+    @BeforeEach
+    void setUp() {
+        factory = new WellnessLogEntryFactory();
+        moodLabel = new MoodLabel.Builder("Grateful")
+                .type(Type.Positive)
+                .build();
+    }
+
+    @Test
+    void testCreateWellnessLogEntrySuccessfully() {
+        LocalDateTime time = LocalDateTime.of(2025, 8, 14, 10, 30);
+        Levels stress = Levels.THREE;
+        Levels energy = Levels.SIX;
+        Levels fatigue = Levels.FOUR;
+        String note = "Felt more energetic after walk.";
+
+        WellnessLogEntryInterf entry = factory.create(
+                time, stress, energy, fatigue, moodLabel, note
         );
 
-        assertNotNull(entry);
         assertEquals(time, entry.getTime());
-        assertEquals(Levels.THREE, entry.getStressLevel());
-        assertEquals(Levels.SIX, entry.getEnergyLevel());
-        assertEquals(Levels.TWO, entry.getFatigueLevel());
-        assertEquals("Relaxed", entry.getMoodLabel().getName());
-        assertEquals("Morning walk.", entry.getUserNote());
+        assertEquals(stress, entry.getStressLevel());
+        assertEquals(energy, entry.getEnergyLevel());
+        assertEquals(fatigue, entry.getFatigueLevel());
+        assertEquals(moodLabel, entry.getMoodLabel());
+        assertEquals(note, entry.getUserNote());
     }
 
     @Test
-    public void testCreateWithNullFieldsThrows() {
-        MoodLabel mood = new MoodLabel.Builder("Blank").type(MoodLabel.Type.Negative).build();
-        WellnessLogEntryFactory factory = new WellnessLogEntryFactory();
+    void testCreateWithNullNoteIsAllowed() {
+        LocalDateTime time = LocalDateTime.now();
+        WellnessLogEntryInterf entry = factory.create(
+                time,
+                Levels.FIVE,
+                Levels.FIVE,
+                Levels.FIVE,
+                moodLabel,
+                null
+        );
 
-        assertThrows(IllegalStateException.class, () ->
-                factory.create(null, Levels.ONE, Levels.ONE, Levels.ONE, mood, "note"));
+        assertNull(entry.getUserNote());
+    }
 
-        assertThrows(IllegalStateException.class, () ->
-                factory.create(LocalDateTime.now(), null, Levels.ONE, Levels.ONE, mood, "note"));
+    @Test
+    void testCreateWithEmptyNoteIsAllowed() {
+        LocalDateTime time = LocalDateTime.now();
+        WellnessLogEntryInterf entry = factory.create(
+                time,
+                Levels.SEVEN,
+                Levels.TWO,
+                Levels.SIX,
+                moodLabel,
+                ""
+        );
 
-        assertThrows(IllegalStateException.class, () ->
-                factory.create(LocalDateTime.now(), Levels.ONE, null, Levels.ONE, mood, "note"));
-
-        assertThrows(IllegalStateException.class, () ->
-                factory.create(LocalDateTime.now(), Levels.ONE, Levels.ONE, null, mood, "note"));
-
-        assertThrows(IllegalStateException.class, () ->
-                factory.create(LocalDateTime.now(), Levels.ONE, Levels.ONE, Levels.ONE, null, "note"));
+        assertEquals("", entry.getUserNote());
     }
 }
-

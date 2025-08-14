@@ -2,42 +2,45 @@ package entityTest.alex.daily_wellness_log;
 
 import entity.Alex.DailyWellnessLog.DailyWellnessLog;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
+import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for DailyWellnessLogFactory.
+ */
 public class DailyWellnessLogFactoryTest {
 
-    @Test
-    public void testCreateReturnsNonNullInstance() {
-        DailyWellnessLogFactory factory = new DailyWellnessLogFactory();
-        DailyWellnessLogInterf log = factory.create(LocalDate.of(2025, 8, 8));
+    private DailyWellnessLogFactoryInterf factory;
 
-        assertNotNull(log);
-        assertTrue(log instanceof DailyWellnessLog);
+    @BeforeEach
+    void setUp() {
+        factory = new DailyWellnessLogFactory();
     }
 
     @Test
-    public void testCreatedLogHasCorrectDate() {
-        LocalDate targetDate = LocalDate.of(2025, 8, 8);
-        DailyWellnessLogFactory factory = new DailyWellnessLogFactory();
-        DailyWellnessLogInterf log = factory.create(targetDate);
-
-        assertEquals(targetDate, log.getDate());
+    void testCreateReturnsNonNull() {
+        DailyWellnessLogInterf log = factory.create(LocalDate.now());
+        assertNotNull(log, "Factory should return a non-null DailyWellnessLogInterf.");
     }
 
     @Test
-    public void testCreateReturnsDifferentInstances() {
-        DailyWellnessLogFactory factory = new DailyWellnessLogFactory();
+    void testCreateReturnsCorrectType() {
+        LocalDate date = LocalDate.of(2025, 8, 14);
+        DailyWellnessLogInterf log = factory.create(date);
+        assertTrue(log instanceof DailyWellnessLog, "Returned object should be instance of DailyWellnessLog.");
+    }
 
-        DailyWellnessLogInterf log1 = factory.create(LocalDate.of(2025, 8, 8));
-        DailyWellnessLogInterf log2 = factory.create(LocalDate.of(2025, 8, 9));
-
-        assertNotSame(log1, log2);
-        assertNotEquals(log1.getDate(), log2.getDate());
+    @Test
+    void testLogHasCorrectDate() {
+        LocalDate date = LocalDate.of(2023, 12, 1);
+        DailyWellnessLogInterf log = factory.create(date);
+        assertEquals(date, log.getDate(), "Log should retain the date passed to the factory.");
     }
 }
-

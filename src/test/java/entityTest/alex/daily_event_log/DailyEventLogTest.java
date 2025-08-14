@@ -1,9 +1,9 @@
 package entityTest.alex.daily_event_log;
 
 import entity.Alex.DailyEventLog.DailyEventLog;
-import entity.Alex.Event.Event;
-import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+import entity.Alex.Event.EventInterf;
+import entity.info.InfoInterf;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,81 +11,104 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for DailyEventLog.
+ */
 public class DailyEventLogTest {
 
-    private DailyEventLog eventLog;
-    private Event mockEvent;
+    private DailyEventLog log;
+    private LocalDate testDate;
 
     @BeforeEach
-    public void setUp() {
-        eventLog = new DailyEventLog(LocalDate.of(2025, 8, 8));
-
-        Info info = new Info.Builder("Test Event")
-                .description("Team sync")
-                .category("Work")
-                .build();
-
-        // 使用简单构造的 BeginAndDueDates 对象（你可替换为真实类）
-        BeginAndDueDates dates = new BeginAndDueDates(LocalDate.of(2025, 8, 8), LocalDate.of(2025, 8, 10));
-
-        mockEvent = new Event.Builder(info)
-                .beginAndDueDates(dates)
-                .oneTime(true)
-                .build();
+    void setUp() {
+        testDate = LocalDate.of(2025, 8, 14);
+        log = new DailyEventLog(testDate);
     }
 
     @Test
-    public void testAddEntry() {
-        eventLog.addEntry(mockEvent);
-        List<Event> events = eventLog.getActualEvents();
+    void testGetDateReturnsCorrectValue() {
+        assertEquals(testDate, log.getDate());
+    }
 
+    @Test
+    void testGetIdIsNotNullAndUnique() {
+        String id1 = log.getId();
+        String id2 = new DailyEventLog(LocalDate.now()).getId();
+        assertNotNull(id1);
+        assertNotEquals(id1, id2, "Each instance should have a unique ID.");
+    }
+
+    @Test
+    void testAddEntrySuccessfullyAddsNewEvent() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        log.addEntry(mockEvent);
+        List<EventInterf> events = log.getActualEvents();
         assertEquals(1, events.size());
-        assertEquals(mockEvent.getInfo().getId(), events.get(0).getInfo().getId());
+        assertTrue(events.contains(mockEvent));
     }
 
     @Test
-    public void testAddNullEntry() {
-        eventLog.addEntry(null);
-        assertTrue(eventLog.getActualEvents().isEmpty());
+    void testAddEntryDoesNotAddNull() {
+        log.addEntry(null);
+        assertTrue(log.getActualEvents().isEmpty());
     }
 
     @Test
-    public void testAddDuplicateEntry() {
-        eventLog.addEntry(mockEvent);
-        eventLog.addEntry(mockEvent);
-        assertEquals(1, eventLog.getActualEvents().size());
+    void testAddEntryDoesNotAddDuplicate() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        log.addEntry(mockEvent);
+        log.addEntry(mockEvent); // Duplicate
+        assertEquals(1, log.getActualEvents().size());
     }
 
     @Test
-    public void testRemoveEntryById() {
-        eventLog.addEntry(mockEvent);
-        eventLog.removeEntry(mockEvent.getInfo().getId());
-        assertTrue(eventLog.getActualEvents().isEmpty());
+    void testRemoveEntryByIdSuccess() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        InfoInterf mockInfo = mock(InfoInterf.class);
+        when(mockInfo.getId()).thenReturn("event123");
+        when(mockEvent.getInfo()).thenReturn(mockInfo);
+
+        log.addEntry(mockEvent);
+        log.removeEntry("event123");
+
+        assertTrue(log.getActualEvents().isEmpty());
     }
 
     @Test
-    public void testRemoveEntryWithInvalidId() {
-        eventLog.addEntry(mockEvent);
-        eventLog.removeEntry("non-existent-id");
-        assertEquals(1, eventLog.getActualEvents().size());
+    void testRemoveEntryByIdFailsIfIdNotMatch() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        InfoInterf mockInfo = mock(InfoInterf.class);
+        when(mockInfo.getId()).thenReturn("event123");
+        when(mockEvent.getInfo()).thenReturn(mockInfo);
+
+        log.addEntry(mockEvent);
+        log.removeEntry("nonexistent-id");
+
+        assertEquals(1, log.getActualEvents().size());
     }
 
     @Test
-    public void testGetDate() {
-        assertEquals(LocalDate.of(2025, 8, 8), eventLog.getDate());
+    void testRemoveEntryDoesNothingIfNullId() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        InfoInterf mockInfo = mock(InfoInterf.class);
+        when(mockInfo.getId()).thenReturn("event456");
+        when(mockEvent.getInfo()).thenReturn(mockInfo);
+
+        log.addEntry(mockEvent);
+        log.removeEntry(null); // Should do nothing
+
+        assertEquals(1, log.getActualEvents().size());
     }
 
     @Test
-    public void testGetIdIsNotNull() {
-        assertNotNull(eventLog.getId());
-    }
+    void testGetActualEventsReturnsCopy() {
+        EventInterf mockEvent = mock(EventInterf.class);
+        log.addEntry(mockEvent);
+        List<EventInterf> events = log.getActualEvents();
+        events.clear(); // Modify copy
 
-    @Test
-    public void testGetActualEventsReturnsCopy() {
-        eventLog.addEntry(mockEvent);
-        List<Event> copy = eventLog.getActualEvents();
-        copy.clear();
-        assertEquals(1, eventLog.getActualEvents().size());
+        assertEquals(1, log.getActualEvents().size(), "Original list should not be affected.");
     }
 }
