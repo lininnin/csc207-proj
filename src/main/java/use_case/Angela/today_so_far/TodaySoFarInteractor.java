@@ -43,6 +43,8 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
                     String name = goal.getGoalInfo().getInfo().getName();
                     String period = formatPeriod(goal);
                     String progress = formatProgress(goal);
+                    System.out.println("DEBUG: Adding goal to Today So Far - Name: " + name + 
+                                      ", Period: " + period + ", Progress: " + progress);
                     goalProgressList.add(new TodaySoFarOutputData.GoalProgress(name, period, progress));
                 }
             }
@@ -63,11 +65,13 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             
             // Add completed events
             List<EventInterf> completedEvents = dataAccess.getCompletedEventsForToday();
+            System.out.println("DEBUG: Completed events count: " + (completedEvents != null ? completedEvents.size() : 0));
             if (completedEvents != null) {
                 for (EventInterf event : completedEvents) {
                     String name = event.getInfo().getName();
                     String categoryName = getCategoryName(event.getInfo().getCategory());
                     completedItems.add(new TodaySoFarOutputData.CompletedItem("Event", name, categoryName));
+                    System.out.println("DEBUG: Added event to completed items: " + name);
                 }
             }
             

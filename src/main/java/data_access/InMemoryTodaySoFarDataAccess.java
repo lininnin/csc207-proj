@@ -5,10 +5,7 @@ import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
-import interface_adapter.GoalRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +18,12 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     private final InMemoryTaskGateway taskGateway;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
-    private final GoalRepository goalRepository;
+    private final data_access.GoalRepository goalRepository;
     
     public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway,
                                         TodaysEventDataAccessObject eventDataAccess,
                                         TodaysWellnessLogDataAccessObject wellnessDataAccess,
-                                        GoalRepository goalRepository) {
+                                        data_access.GoalRepository goalRepository) {
         this.taskGateway = taskGateway;
         this.eventDataAccess = eventDataAccess;
         this.wellnessDataAccess = wellnessDataAccess;
@@ -83,15 +80,18 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     public List<Goal> getActiveGoals() {
         if (goalRepository != null) {
             try {
-                LocalDate today = LocalDate.now();
-                // Get current goals (which are the active ones)
-                return goalRepository.getCurrentGoals().stream()
-                        .filter(goal -> isGoalActive(goal, today))
-                        .collect(Collectors.toList());
+                // Get today's goals (not current/available goals)
+                // Today's goals are the ones that have been added to today's list
+                List<Goal> todayGoals = goalRepository.getTodayGoals();
+                System.out.println("DEBUG: InMemoryTodaySoFarDataAccess.getActiveGoals() returning " + 
+                                   (todayGoals != null ? todayGoals.size() : 0) + " goals");
+                return todayGoals;
             } catch (Exception e) {
+                System.out.println("DEBUG: Error getting today's goals: " + e.getMessage());
                 return new ArrayList<>();
             }
         }
+        System.out.println("DEBUG: goalRepository is null in InMemoryTodaySoFarDataAccess");
         return new ArrayList<>();
     }
     
@@ -128,15 +128,4 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
         return 0;
     }
     
-    private boolean isGoalActive(Goal goal, LocalDate date) {
-        // Check if goal is active on the given date
-        if (goal.getBeginAndDueDates() != null) {
-            LocalDate beginDate = goal.getBeginAndDueDates().getBeginDate();
-            LocalDate dueDate = goal.getBeginAndDueDates().getDueDate();
-            
-            return (beginDate == null || !date.isBefore(beginDate)) &&
-                   (dueDate == null || !date.isAfter(dueDate));
-        }
-        return true; // If no dates, consider it active
-    }
 }

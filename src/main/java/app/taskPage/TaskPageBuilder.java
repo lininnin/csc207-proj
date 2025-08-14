@@ -71,8 +71,6 @@ public class TaskPageBuilder {
     private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
     private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
-    private final OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
-    private final TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     // Views
@@ -182,7 +180,8 @@ public class TaskPageBuilder {
 
         MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
                 taskGateway, // InMemoryTaskGateway implements MarkTaskCompleteDataAccessInterface
-                markCompletePresenter
+                markCompletePresenter,
+                app.SharedDataAccess.getInstance().getGoalRepository() // Pass goal repository for updating goal progress
         );
 
         MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(
@@ -227,53 +226,16 @@ public class TaskPageBuilder {
         // Set the controller on the today's tasks view
         todaysTasksView.setRemoveFromTodayController(removeFromTodayController);
 
-        // Wire up Overdue Tasks Use Case
-        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(
-                overdueTasksViewModel
-        );
-
-        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                taskGateway, // InMemoryTaskGateway implements OverdueTasksDataAccessInterface
-                categoryGateway,
-                overdueTasksPresenter
-        );
-
-        overdueTasksController = new OverdueTasksController(
-                overdueTasksInteractor
-        );
-
-        // Use shared data access objects for integration
-        data_access.TodaysEventDataAccessObject eventDataAccess = 
-            app.SharedDataAccess.getInstance().getEventDataAccess();
-            
-        data_access.TodaysWellnessLogDataAccessObject wellnessDataAccess = 
-            app.SharedDataAccess.getInstance().getWellnessDataAccess();
-            
-        // Use shared Goal repository
-        data_access.FileGoalRepository goalRepository = 
-            app.SharedDataAccess.getInstance().getGoalRepository();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
-        // Wire up Today So Far Use Case with all data sources
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
-            taskGateway, eventDataAccess, wellnessDataAccess, goalRepository);
-        
-        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
-        
-        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
-                todaySoFarDataAccess,
-                todaySoFarPresenter,
-                categoryGateway
-        );
-        
-        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
-        
-        // Create Today So Far view with both view models
-        todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
-        todaySoFarView.setOverdueTasksController(overdueTasksController);
-        todaySoFarView.setTodaySoFarController(todaySoFarController);
+        // Create Today So Far view using shared components
+        todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         
         // Trigger initial data load (no sample data - user will input real data)
-        todaySoFarController.refresh();
+        sharedTodaySoFar.refresh();
         
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);

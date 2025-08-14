@@ -8,6 +8,7 @@ import entity.Sophia.GoalFactory;         // Factory for creating goals
 // Import view models
 import entity.info.Info;
 import data_access.InMemoryTaskGateway;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
 import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
@@ -40,11 +41,11 @@ import use_case.goalManage.today_goal.*;
 
 // Import data access
 import data_access.FileGoalRepository;  // File-based goal repository
-import data_access.GoalRepository;     // Goal repository interface
 
 // Import views
 import views.*;
 import view.CollapsibleSidebarView;    // Collapsible sidebar component
+import view.Angela.TodaySoFarView;
 
 // Import Java/Swing components
 import javax.swing.*;
@@ -66,7 +67,7 @@ import java.util.List;
  */
 public class GoalPageBuilder {
     // Data access components
-    private GoalRepository goalRepository;  // Handles goal persistence
+    private FileGoalRepository goalRepository;  // Handles goal persistence (implements both interfaces)
     private GoalFactory goalFactory;       // Creates goal objects
     private InMemoryTaskGateway taskGateway; // For accessing available tasks
 
@@ -91,6 +92,10 @@ public class GoalPageBuilder {
     private TodayGoalController todayGoalController;         // Manages today's goals
     private OrderGoalController orderGoalController;         // Handles goal ordering
     private AvailableGoalsController availableGoalsController; // Manages available goals
+    
+    // Presenters (needed for wiring TodaySoFarController)
+    private CreateGoalPresenter createGoalPresenter;
+    private TodayGoalPresenter todayGoalPresenter;
 
     /**
      * Main build method that constructs the complete goal page
@@ -118,17 +123,12 @@ public class GoalPageBuilder {
      * Sets up data access layer with file-based persistence
      */
     private void initializeDataAccess() {
-        // Initialize repository with data files
-        goalRepository = new FileGoalRepository(
-                new File("goals.txt"),         // Main goals storage
-                new File("current_goals.txt"), // Current goals state
-                new File("today_goal.txt"),    // Today's goals
-                new GoalFactory()             // Goal object factory
-        );
+        // Use shared goal repository
+        goalRepository = app.SharedDataAccess.getInstance().getGoalRepository();
         goalFactory = new GoalFactory();
         
-        // Initialize task gateway to access available tasks
-        taskGateway = new InMemoryTaskGateway();
+        // Use shared task gateway to access available tasks
+        taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
     }
 
     /**
@@ -136,7 +136,7 @@ public class GoalPageBuilder {
      */
     private void initializeUseCases() {
         // Goal Creation Setup
-        CreateGoalOutputBoundary createGoalPresenter = new CreateGoalPresenter();
+        createGoalPresenter = new CreateGoalPresenter();
         CreateGoalInputBoundary createGoalInteractor = new CreateGoalInteractor(
                 goalRepository, createGoalPresenter, goalFactory);
         createGoalController = new CreateGoalController(createGoalInteractor);
@@ -159,7 +159,7 @@ public class GoalPageBuilder {
         editTodaysGoalController = new EditTodaysGoalController(editTodaysGoalInteractor);
 
         // Today's Goals Management Setup
-        TodayGoalOutputBoundary todayGoalPresenter = new TodayGoalPresenter(todayGoalsViewModel);
+        todayGoalPresenter = new TodayGoalPresenter(todayGoalsViewModel);
         TodayGoalInputBoundary todayGoalInteractor = new TodayGoalInteractor(
                 goalRepository, todayGoalPresenter);
         todayGoalController = new TodayGoalController((TodayGoalInteractor) todayGoalInteractor);
@@ -265,6 +265,7 @@ public class GoalPageBuilder {
      * - Goal creation form
      * - Today's goals view
      * - Available goals list
+     * - Today So Far panel
      */
     private JPanel createCenterPanel() {
         // Goal Creation Form
@@ -306,9 +307,29 @@ public class GoalPageBuilder {
         topCenterRow.add(verticalSplit);
         topCenterRow.add(todayGoalsContainer);
 
+        JPanel centerContent = new JPanel(new BorderLayout());
+        centerContent.add(topCenterRow, BorderLayout.CENTER);
+        centerContent.add(availableGoalsContainer, BorderLayout.SOUTH);
+        
+        // Create Today So Far panel
+        TodaySoFarView todaySoFarView = createTodaySoFarPanel();
+        
+        // Wrap Today So Far in a panel
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setPreferredSize(new Dimension(380, 0));
+        rightPanel.setMinimumSize(new Dimension(320, 0));
+        
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerContent, rightPanel);
+        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.7);
+
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(topCenterRow, BorderLayout.CENTER);
-        centerPanel.add(availableGoalsContainer, BorderLayout.SOUTH);
+        centerPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return centerPanel;
     }
@@ -606,5 +627,32 @@ public class GoalPageBuilder {
                 }
             }
         }
+    }
+    
+    /**
+     * Creates the Today So Far panel with all data sources connected
+     */
+    private TodaySoFarView createTodaySoFarPanel() {
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        
+        // Get the TodaySoFarController to wire to presenters
+        TodaySoFarController todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
+        
+        // Wire TodaySoFarController to presenters that need to refresh the panel
+        if (createGoalPresenter != null) {
+            createGoalPresenter.setTodaySoFarController(todaySoFarController);
+        }
+        if (todayGoalPresenter != null) {
+            todayGoalPresenter.setTodaySoFarController(todaySoFarController);
+        }
+        
+        // Trigger initial data load
+        sharedTodaySoFar.refresh();
+        
+        return todaySoFarView;
     }
 }

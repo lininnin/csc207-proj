@@ -1,7 +1,5 @@
 package app.eventPage;
 
-import entity.Alex.DailyEventLog.DailyEventLogFactory;
-import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableFactory;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
 import entity.Alex.Event.EventFactory;
@@ -110,8 +108,8 @@ public class EventPageBuilder {
         // --- Data Access & Factory ---
         EventAvailableFactoryInterf eventAvailableFactory = new EventAvailableFactory();
         EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject(eventAvailableFactory);
-        DailyEventLogFactoryInterf dailyEventLogFactory = new DailyEventLogFactory(); // 假设你实现了这个类
-        TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject(dailyEventLogFactory);
+        // Use shared event data access so Today So Far panel can see the events
+        TodaysEventDataAccessObject todaysEventDAO = app.SharedDataAccess.getInstance().getEventDataAccess();
 
         InfoFactory infoFactory = new InfoFactory();
 
@@ -210,46 +208,21 @@ public class EventPageBuilder {
         centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
         // --- Set up Today So Far Panel ---
-        // Create ViewModels for Today So Far
-        OverdueTasksViewModel overdueTasksViewModel = new OverdueTasksViewModel();
-        TodaySoFarViewModel todaySoFarViewModel = new TodaySoFarViewModel();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
-        // Use shared task gateway for Today So Far integration
-        InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
-        
-        // Wire up Overdue Tasks Use Case
-        OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
-        OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                taskGateway, categoryGateway, overdueTasksPresenter);
-        overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
-        
-        // Use shared Goal repository
-        data_access.FileGoalRepository goalRepository = 
-            app.SharedDataAccess.getInstance().getGoalRepository();
-        
-        // Use shared Wellness DAO for Today So Far integration
-        data_access.TodaysWellnessLogDataAccessObject wellnessLogDAO = 
-            app.SharedDataAccess.getInstance().getWellnessDataAccess();
-        
-        // Wire up Today So Far Use Case with all data sources
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
-                taskGateway, todaysEventDAO, wellnessLogDAO, goalRepository);
-        
-        TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
-        TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
-                todaySoFarDataAccess, todaySoFarPresenter, categoryGateway);
-        todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
-        
-        // Create Today So Far view
-        TodaySoFarView todaySoFarView = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
-        todaySoFarView.setOverdueTasksController(overdueTasksController);
-        todaySoFarView.setTodaySoFarController(todaySoFarController);
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         
         // Trigger initial data load
-        todaySoFarController.refresh();
-        overdueTasksController.execute(7);
+        sharedTodaySoFar.refresh();
         
         // Set Today So Far controller on event presenters that need to refresh
+        if (createEventPresenter instanceof CreateEventPresenter) {
+            ((CreateEventPresenter) createEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
         if (addEventPresenter instanceof AddEventPresenter) {
             ((AddEventPresenter) addEventPresenter).setTodaySoFarController(todaySoFarController);
         }
