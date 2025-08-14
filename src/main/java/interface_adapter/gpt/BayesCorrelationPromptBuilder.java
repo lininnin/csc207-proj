@@ -68,9 +68,9 @@ public final class BayesCorrelationPromptBuilder {
                     ? Double.NaN : dl.getDailyTaskSummary().getCompletionRate();
 
             // average wellness levels for the day
-            double stress = avg(dl, w -> w.getStressLevel().getValue());
-            double energy = avg(dl, w -> w.getEnergyLevel().getValue());
-            double fatigue = avg(dl, w -> w.getFatigueLevel().getValue());
+            final double stress = avg(dailyLog, logEntry -> logEntry.getStressLevel().getValue());
+            final double energy = avg(dailyLog, logEntry -> logEntry.getEnergyLevel().getValue());
+            final double fatigue = avg(dailyLog, logEntry -> logEntry.getFatigueLevel().getValue());
 
             return String.format("{\"date\":\"%s\",\"completion_rate\":%.3f," +
                             "\"Stress\":%.2f,\"Energy\":%.2f,\"Fatigue\":%.2f}",
@@ -78,10 +78,11 @@ public final class BayesCorrelationPromptBuilder {
         }).collect(Collectors.joining(",\n", "[\n", "\n]"));
     }
 
-    private static double avg(DailyLog dl, java.util.function.ToIntFunction<WellnessLogEntryInterf> f) {
-        if (dl.getDailyWellnessLog() == null || dl.getDailyWellnessLog().getEntries().isEmpty())
+    private static double avg(DailyLog dailyLog, java.util.function.ToIntFunction<WellnessLogEntry> map) {
+        if (dailyLog.getDailyWellnessLog() == null || dailyLog.getDailyWellnessLog().getEntries().isEmpty()) {
             return Double.NaN;
-        return dl.getDailyWellnessLog().getEntries().stream()
-                .mapToInt(f).average().orElse(Double.NaN);
+        }
+        return dailyLog.getDailyWellnessLog().getEntries().stream()
+                .mapToInt(map).average().orElse(Double.NaN);
     }
 }
