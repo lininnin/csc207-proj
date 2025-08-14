@@ -57,6 +57,10 @@ public final class WellnessLogEntry implements WellnessLogEntryInterf {
             builder.userNote = entry.getUserNote();
             return builder;
         }
+        public Builder id(final String id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder time(final LocalDateTime timeParam) {
             this.time = timeParam;

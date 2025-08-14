@@ -2,6 +2,7 @@ package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInputData;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +40,10 @@ public class WellnessLogEntryFactory implements WellnessLogEntryFactoryInterf {
                 .moodLabel(moodLabel)
                 .userNote(userNote)
                 .build();
+    }
+
+    public WellnessLogEntryInterf from(WellnessLogEntryInterf entry) {
+        return WellnessLogEntry.Builder.from(entry).build();
     }
 }
 
