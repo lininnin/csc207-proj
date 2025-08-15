@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AvailableGoalsView extends JPanel implements PropertyChangeListener {
     private final AvailableGoalsViewModel viewModel;
@@ -15,8 +18,6 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
     private final JList<Goal> goalsList;
     private final JButton addToTodayButton;
     private final JButton deleteButton;
-    // The reverseOrderButton is not a class member, it will be created dynamically
-    // private final JButton reverseOrderButton;
     private final JButton orderButton;
 
     public AvailableGoalsView(AvailableGoalsViewModel viewModel,
@@ -44,22 +45,19 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         addToTodayButton = new JButton("Add to Today");
         deleteButton = new JButton("Delete");
         JButton refreshButton = new JButton("Refresh");
-        // NEW BUTTON
-        orderButton = new JButton("Order Goals"); // Changed button text
+        orderButton = new JButton("Order Goals");
 
         // Style buttons
         styleButton(addToTodayButton, new Color(76, 175, 80)); // Green
         styleButton(deleteButton, new Color(244, 67, 54)); // Red
         styleButton(refreshButton, new Color(33, 150, 243)); // Blue
-        // Style the new button
         styleButton(orderButton, new Color(255, 193, 7)); // Yellow
 
         // Add action listeners
         refreshButton.addActionListener(e -> controller.execute("refresh"));
         addToTodayButton.addActionListener(e -> addSelectedToToday());
         deleteButton.addActionListener(e -> deleteSelectedGoal());
-        // Modified listener for the "Order Goals" button
-        orderButton.addActionListener(e -> showOrderOptions());
+        orderButton.addActionListener(e -> showOrderDialog());
 
         // Enable/disable buttons based on selection
         goalsList.addListSelectionListener(e -> {
@@ -71,19 +69,12 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         buttonPanel.add(addToTodayButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(refreshButton);
-        // Add the new button to the panel
         buttonPanel.add(orderButton);
 
         // Layout
         add(title, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-
-        // Remove this block since the reverse order button will be part of the dialog
-        // reverseOrderButton = new JButton("Reverse Order");
-        // styleButton(reverseOrderButton, new Color(255, 152, 0)); // Orange
-        // reverseOrderButton.addActionListener(e -> showOrderOptions(true));
-        // buttonPanel.add(reverseOrderButton);
 
         // Initial load
         refreshView();
@@ -185,7 +176,7 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
                 controller.execute(goalCommand);
 
                 JOptionPane.showMessageDialog(this,
-                        "Added to Today: " + selected,
+                        "Added to Today: " + selected.getGoalInfo().getInfo().getName(),
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
 
@@ -216,27 +207,65 @@ public class AvailableGoalsView extends JPanel implements PropertyChangeListener
         }
     }
 
-    private void showOrderOptions() {
-        String[] options = {"name", "deadline", "period"};
-        String selection = (String) JOptionPane.showInputDialog(
-                this,
-                "Select ordering criteria:",
-                "Order Goals",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-        if (selection != null) {
-            // Add a confirmation for reverse order
-            int reverseOption = JOptionPane.showConfirmDialog(
-                    this,
-                    "Order in reverse?",
-                    "Reverse Order",
-                    JOptionPane.YES_NO_OPTION
-            );
-            boolean reverse = (reverseOption == JOptionPane.YES_OPTION);
-            controller.orderGoals(selection, reverse);
-        }
+    private void showOrderDialog() {
+        JDialog orderDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Order Goals", true);
+        orderDialog.setLayout(new GridLayout(3, 1, 10, 10));
+        orderDialog.setSize(300, 200);
+        orderDialog.setLocationRelativeTo(this);
+
+        String[] options = {"Name", "Deadline", "Period", "Frequency"};
+        JComboBox<String> sortCriteriaBox = new JComboBox<>(options);
+
+        JCheckBox reverseCheckBox = new JCheckBox("Reverse Order");
+
+        JButton applyButton = new JButton("Apply Order");
+        applyButton.addActionListener(e -> {
+            String selectedCriterion = (String) sortCriteriaBox.getSelectedItem();
+            boolean isReverse = reverseCheckBox.isSelected();
+
+            // Get the current list of goals from the view model
+            List<Goal> goalsToOrder = viewModel.getState().getAvailableGoals();
+
+            // Sort the list based on the user's selection
+            Comparator<Goal> comparator;
+            switch (selectedCriterion) {
+                case "Name":
+                    comparator = Comparator.comparing(g -> g.getGoalInfo().getInfo().getName());
+                    break;
+                case "Deadline":
+                    comparator = Comparator.comparing(g -> g.getBeginAndDueDates().getDueDate());
+                    break;
+                case "Period":
+                    comparator = Comparator.comparing(g -> g.getTimePeriod().toString());
+                    break;
+                case "Frequency":
+                    comparator = Comparator.comparingInt(Goal::getFrequency);
+                    break;
+                default:
+                    comparator = Comparator.comparing(g -> g.getGoalInfo().getInfo().getName());
+                    break;
+            }
+
+            if (isReverse) {
+                comparator = comparator.reversed();
+            }
+
+            List<Goal> sortedGoals = goalsToOrder.stream().sorted(comparator).collect(Collectors.toList());
+
+            // Update the view model's state with the new, sorted list
+            AvailableGoalsState newState = viewModel.getState();
+            newState.setAvailableGoals(sortedGoals);
+            viewModel.setState(newState);
+            refreshView();
+
+            orderDialog.dispose();
+        });
+
+        orderDialog.add(new JLabel("Sort by:"));
+        orderDialog.add(sortCriteriaBox);
+        orderDialog.add(reverseCheckBox);
+        orderDialog.add(applyButton);
+
+        orderDialog.setVisible(true);
     }
 }
