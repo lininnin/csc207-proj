@@ -92,7 +92,7 @@ public class GoalPageBuilder {
     private TodayGoalController todayGoalController;         // Manages today's goals
     private OrderGoalController orderGoalController;         // Handles goal ordering
     private AvailableGoalsController availableGoalsController; // Manages available goals
-    
+
     // Presenters (needed for wiring TodaySoFarController)
     private CreateGoalPresenter createGoalPresenter;
     private TodayGoalPresenter todayGoalPresenter;
@@ -126,11 +126,14 @@ public class GoalPageBuilder {
         // Use shared goal repository
         goalRepository = app.SharedDataAccess.getInstance().getGoalRepository();
         goalFactory = new GoalFactory();
-        
+
         // Use shared task gateway to access available tasks
         taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
     }
 
+    /**
+     * Configures all use cases with their dependencies
+     */
     /**
      * Configures all use cases with their dependencies
      */
@@ -166,18 +169,21 @@ public class GoalPageBuilder {
 
         // Goal Ordering Setup
         OrderGoalsOutputBoundary orderGoalPresenter = new OrderGoalPresenter();
+        // Create the AvailableGoalsPresenter here
+        AvailableGoalsOutputBoundary availableGoalsPresenter = new AvailableGoalsPresenter(availableGoalsViewModel);
         OrderGoalsInputBoundary orderGoalInteractor = new OrderGoalsInteractor(
-                goalRepository, orderGoalPresenter);
+                goalRepository, orderGoalPresenter, availableGoalsPresenter);
         orderGoalController = new OrderGoalController(orderGoalInteractor);
 
         // Available Goals Management Setup
-        AvailableGoalsOutputBoundary availableGoalsPresenter = new AvailableGoalsPresenter(availableGoalsViewModel);
+        // Use the same AvailableGoalsPresenter created above
         AvailableGoalsInputBoundary availableGoalsInteractor = new AvailableGoalsInteractor(
                 goalRepository, availableGoalsPresenter);
         availableGoalsController = new AvailableGoalsController(
                 availableGoalsInteractor,
                 todayGoalInteractor,
-                deleteGoalInteractor
+                deleteGoalInteractor,
+                orderGoalController
         );
     }
 
@@ -310,16 +316,16 @@ public class GoalPageBuilder {
         JPanel centerContent = new JPanel(new BorderLayout());
         centerContent.add(topCenterRow, BorderLayout.CENTER);
         centerContent.add(availableGoalsContainer, BorderLayout.SOUTH);
-        
+
         // Create Today So Far panel
         TodaySoFarView todaySoFarView = createTodaySoFarPanel();
-        
+
         // Wrap Today So Far in a panel with flexible sizing
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(todaySoFarView, BorderLayout.CENTER);
         rightPanel.setMinimumSize(new Dimension(250, 0));
         // Remove preferred size to allow flexible sizing
-        
+
         // Create horizontal split pane for resizable layout
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerContent, rightPanel);
         mainSplitPane.setDividerLocation(800);
@@ -435,27 +441,27 @@ public class GoalPageBuilder {
         JPanel targetTaskPanel = new JPanel();
         targetTaskPanel.setLayout(new BoxLayout(targetTaskPanel, BoxLayout.X_AXIS));
         targetTaskPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         JLabel targetTaskLabel = createCompactLabel("Target Task:");
         targetTaskLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         targetTaskPanel.add(targetTaskLabel);
-        
+
         JButton refreshTasksButton = new JButton("Refresh");
         refreshTasksButton.setMaximumSize(new Dimension(80, 25));
         refreshTasksButton.addActionListener(e -> refreshTargetTaskDropdown());
         targetTaskPanel.add(refreshTasksButton);
-        
+
         formPanel.add(targetTaskPanel);
 
         // Get real available tasks from the task gateway
         List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
-        
+
         // Create a custom renderer to display task names in the combo box
         targetTaskBox = new JComboBox<>(availableTasks.toArray(new TaskAvailable[0]));
         targetTaskBox.setRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, 
-                    int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof TaskAvailable) {
                     TaskAvailable task = (TaskAvailable) value;
@@ -568,20 +574,20 @@ public class GoalPageBuilder {
                     ((JTextField) frequencyPanel.getComponent(1)).getText(), "Frequency");
 
             TaskAvailable selectedTargetTaskAvailable = (TaskAvailable) targetTaskBox.getSelectedItem();
-            
+
             // Convert TaskAvailable to Task for goal creation
             Task targetTask = null;
             if (selectedTargetTaskAvailable != null) {
                 // Create a BeginAndDueDates object for the Task
                 // Use today as begin date and the goal's end date as due date
                 BeginAndDueDates taskDates = new BeginAndDueDates(LocalDate.now(), endDate);
-                
+
                 // Create a Task from TaskAvailable for the goal
                 targetTask = new Task(
-                    selectedTargetTaskAvailable.getId(),  // Use template ID
-                    selectedTargetTaskAvailable.getInfo(),
-                    taskDates,
-                    selectedTargetTaskAvailable.isOneTime()
+                        selectedTargetTaskAvailable.getId(),  // Use template ID
+                        selectedTargetTaskAvailable.getInfo(),
+                        taskDates,
+                        selectedTargetTaskAvailable.isOneTime()
                 );
             }
 
@@ -621,23 +627,23 @@ public class GoalPageBuilder {
     private AvailableGoalsView createAvailableGoalsView() {
         return new AvailableGoalsView(availableGoalsViewModel, availableGoalsController);
     }
-    
+
     /**
      * Refreshes the target task dropdown with the latest available tasks
      */
     private void refreshTargetTaskDropdown() {
         if (targetTaskBox != null) {
             TaskAvailable selectedTask = (TaskAvailable) targetTaskBox.getSelectedItem();
-            
+
             // Get fresh list of available tasks
             List<TaskAvailable> availableTasks = taskGateway.getAvailableTaskTemplates();
-            
+
             // Update the combo box
             targetTaskBox.removeAllItems();
             for (TaskAvailable task : availableTasks) {
                 targetTaskBox.addItem(task);
             }
-            
+
             // Try to restore previous selection if it still exists
             if (selectedTask != null) {
                 for (int i = 0; i < targetTaskBox.getItemCount(); i++) {
@@ -650,20 +656,20 @@ public class GoalPageBuilder {
             }
         }
     }
-    
+
     /**
      * Creates the Today So Far panel with all data sources connected
      */
     private TodaySoFarView createTodaySoFarPanel() {
         // Get shared Today So Far components
         app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
-        
+
         // Create Today So Far view using shared components
         TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
-        
+
         // Get the TodaySoFarController to wire to presenters
         TodaySoFarController todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
-        
+
         // Wire TodaySoFarController to presenters that need to refresh the panel
         if (createGoalPresenter != null) {
             createGoalPresenter.setTodaySoFarController(todaySoFarController);
@@ -671,10 +677,10 @@ public class GoalPageBuilder {
         if (todayGoalPresenter != null) {
             todayGoalPresenter.setTodaySoFarController(todaySoFarController);
         }
-        
+
         // Trigger initial data load
         sharedTodaySoFar.refresh();
-        
+
         return todaySoFarView;
     }
 }

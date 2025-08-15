@@ -21,4 +21,11 @@ public class AvailableGoalsInteractor implements AvailableGoalsInputBoundary {
         AvailableGoalsOutputData outputData = new AvailableGoalsOutputData(availableGoals);
         presenter.presentAvailableGoals(outputData);
     }
+
+    @Override
+    public void execute(String command) {
+        if ("refresh".equalsIgnoreCase(command)) {
+            execute();
+        }
+    }
 }
