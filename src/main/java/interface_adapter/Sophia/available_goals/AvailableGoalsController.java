@@ -1,24 +1,28 @@
 package interface_adapter.Sophia.available_goals;
 
+import entity.Sophia.Goal;
+import interface_adapter.Sophia.order_goal.OrderGoalController;
 import use_case.goalManage.available_goals.AvailableGoalsInputBoundary;
 import use_case.goalManage.delete_goal.DeleteGoalInputBoundary;
 import use_case.goalManage.delete_goal.DeleteGoalInputData;
 import use_case.goalManage.today_goal.TodayGoalInputBoundary;
 import use_case.goalManage.today_goal.TodayGoalInputData;
-
 import javax.swing.*;
 
 public class AvailableGoalsController {
     private final AvailableGoalsInputBoundary availableGoalsInteractor;
     private final TodayGoalInputBoundary todayGoalInteractor;
     private final DeleteGoalInputBoundary deleteGoalInteractor;
+    private final OrderGoalController orderGoalController;
 
     public AvailableGoalsController(AvailableGoalsInputBoundary availableGoalsInteractor,
                                     TodayGoalInputBoundary todayGoalInteractor,
-                                    DeleteGoalInputBoundary deleteGoalInteractor) {
+                                    DeleteGoalInputBoundary deleteGoalInteractor,
+                                    OrderGoalController orderGoalController) {
         this.availableGoalsInteractor = availableGoalsInteractor;
         this.todayGoalInteractor = todayGoalInteractor;
         this.deleteGoalInteractor = deleteGoalInteractor;
+        this.orderGoalController = orderGoalController;
     }
 
     public void execute(String command) {
@@ -32,13 +36,11 @@ public class AvailableGoalsController {
             // Default to 0 when adding to today's goals
             TodayGoalInputData inputData = new TodayGoalInputData(goalName, 0.0);
             this.todayGoalInteractor.addToToday(inputData);
-        }
-        else if (command.startsWith("delete:")) {
+        } else if (command.startsWith("delete:")) {
             String goalName = command.substring("delete:".length()).trim();
             DeleteGoalInputData inputData = new DeleteGoalInputData(goalName, false);
             this.deleteGoalInteractor.execute(inputData);
-        }
-        else {
+        } else {
             this.availableGoalsInteractor.execute();
         }
     }
@@ -51,21 +53,22 @@ public class AvailableGoalsController {
         this.todayGoalInteractor.addToToday(inputData);
     }
 
-    // NEW ADDITION: Method to delete a goal
     public void deleteGoal(entity.Sophia.Goal goal) {
         try {
-            // Create input data for the delete use case
             use_case.goalManage.delete_goal.DeleteGoalInputData inputData = new use_case.goalManage.delete_goal.DeleteGoalInputData(
                     goal.getGoalInfo().getInfo().getName(),
-                    true // true to indicate permanent deletion
+                    true
             );
-
             this.deleteGoalInteractor.execute(inputData);
             this.availableGoalsInteractor.execute();
-
         } catch (Exception e) {
             System.err.println("Error deleting goal: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Error deleting goal: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public void orderGoals(String criteria, boolean reverse) {
+        orderGoalController.execute(criteria, reverse);
+        availableGoalsInteractor.execute();
     }
 }
