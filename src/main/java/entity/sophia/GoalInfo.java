@@ -60,4 +60,3 @@ public class GoalInfo {
         this.targetTaskInfo = targetTaskInfo;
     }
 }
-
