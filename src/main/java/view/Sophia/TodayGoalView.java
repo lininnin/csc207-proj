@@ -1,4 +1,4 @@
-package views;
+package view.Sophia;
 
 import entity.Sophia.Goal;
 import interface_adapter.sophia.today_goal.TodayGoalController;

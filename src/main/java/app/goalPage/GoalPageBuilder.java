@@ -42,7 +42,9 @@ import use_case.goalManage.today_goal.*;
 import data_access.FileGoalRepository;
 
 // Import views
-import views.*;
+import view.Sophia.AvailableGoalsView;
+import view.Sophia.EditTodayGoalView;
+import view.Sophia.TodayGoalView;
 import view.CollapsibleSidebarView;
 import view.Angela.TodaySoFarView;
 

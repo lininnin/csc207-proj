@@ -1,7 +1,6 @@
-package views;
+package view.Sophia;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class CollapsibleSidebarView extends JSplitPane {
     public CollapsibleSidebarView(JPanel sidebar, JPanel mainContent) {
