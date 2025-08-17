@@ -191,7 +191,8 @@ public class GoalPageBuilder {
                             "Please select a goal to add.", "No Goal Selected",
                             JOptionPane.WARNING_MESSAGE);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,
                         "Error adding goal: " + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
@@ -209,12 +210,12 @@ public class GoalPageBuilder {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Build component sections
-        JPanel sidebarPanel = createSidebarPanel();    // Left navigation
+//        JPanel sidebarPanel = createSidebarPanel();    // Left navigation
         JPanel centerPanel = createCenterPanel();      // Main content area
 
         // Combine components with collapsible sidebar
-        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
-        mainPanel.add(collapsibleCenter, BorderLayout.CENTER);
+//        CollapsibleSidebarView collapsibleCenter = new CollapsibleSidebarView(sidebarPanel, centerPanel);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Load initial data
         availableGoalsController.execute("");  // Load available goals
@@ -223,35 +224,35 @@ public class GoalPageBuilder {
         return mainPanel;
     }
 
-    /**
-     * Creates the left navigation sidebar
-     */
-    private JPanel createSidebarPanel() {
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(60, 63, 65));
-        sidebarPanel.setPreferredSize(new Dimension(200, 700));
-
-        // Sidebar menu items
-        String[] buttonLabels = {
-                "📋 Tasks", "📆 Events", "🎯 Goals",
-                "🧠 Wellness Log", "📊 Charts",
-                "🤖 AI-Feedback", "⚙️ Settings"
-        };
-
-        // Add all navigation buttons
-        for (String label : buttonLabels) {
-            JButton button = new JButton(label);
-            button.setAlignmentX(Component.CENTER_ALIGNMENT);
-            button.setBackground(new Color(70, 73, 75));
-            button.setForeground(Color.YELLOW);
-            button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-            sidebarPanel.add(button);
-            sidebarPanel.add(Box.createVerticalStrut(10));
-        }
-
-        return sidebarPanel;
-    }
+//    /**
+//     * Creates the left navigation sidebar
+//     */
+//    private JPanel createSidebarPanel() {
+//        JPanel sidebarPanel = new JPanel();
+//        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
+//        sidebarPanel.setBackground(new Color(60, 63, 65));
+//        sidebarPanel.setPreferredSize(new Dimension(200, 700));
+//
+//        // Sidebar menu items
+//        String[] buttonLabels = {
+//                "📋 Tasks", "📆 Events", "🎯 Goals",
+//                "🧠 Wellness Log", "📊 Charts",
+//                "🤖 AI-Feedback", "⚙️ Settings"
+//        };s
+//
+//        // Add all navigation buttons
+//        for (String label : buttonLabels) {
+//            JButton button = new JButton(label);
+//            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+//            button.setBackground(new Color(70, 73, 75));
+//            button.setForeground(Color.YELLOW);
+//            button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+//            sidebarPanel.add(button);
+//            sidebarPanel.add(Box.createVerticalStrut(10));
+//        }
+//
+//        return sidebarPanel;
+//    }
 
     /**
      * Creates the main content center panel containing:
