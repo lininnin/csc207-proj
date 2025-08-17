@@ -191,8 +191,7 @@ public class GoalPageBuilder {
                             "Please select a goal to add.", "No Goal Selected",
                             JOptionPane.WARNING_MESSAGE);
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,
                         "Error adding goal: " + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);

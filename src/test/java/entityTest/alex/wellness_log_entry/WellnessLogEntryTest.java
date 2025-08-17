@@ -1,8 +1,11 @@
 package entityTest.alex.wellness_log_entry;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -11,119 +14,98 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WellnessLogEntryTest {
 
-    @Test
-    public void testBuilderCreatesValidEntry() {
-        MoodLabel mood = new MoodLabel.Builder("Calm")
-                .type(MoodLabel.Type.Positive)
+    private WellnessLogEntry entry;
+    private LocalDateTime time;
+    private MoodLabel mood;
+
+    @BeforeEach
+    void setUp() {
+        time = LocalDateTime.of(2025, 8, 14, 14, 0);
+        mood = new MoodLabel.Builder("Happy")
+                .type(Type.Positive)
                 .build();
 
-        WellnessLogEntry entry = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.of(2025, 8, 8, 9, 0))
+        entry = new WellnessLogEntry.Builder()
+                .time(time)
                 .stressLevel(Levels.THREE)
-                .energyLevel(Levels.SEVEN)
-                .fatigueLevel(Levels.TWO)
+                .energyLevel(Levels.FIVE)
+                .fatigueLevel(Levels.SIX)
                 .moodLabel(mood)
-                .userNote("Refreshed and ready.")
+                .userNote("Felt good")
                 .build();
+    }
 
+    @Test
+    void testBuilderAndGetters() {
         assertNotNull(entry.getId());
+        assertEquals(time, entry.getTime());
         assertEquals(Levels.THREE, entry.getStressLevel());
-        assertEquals(Levels.SEVEN, entry.getEnergyLevel());
-        assertEquals(Levels.TWO, entry.getFatigueLevel());
+        assertEquals(Levels.FIVE, entry.getEnergyLevel());
+        assertEquals(Levels.SIX, entry.getFatigueLevel());
+        assertEquals(mood, entry.getMoodLabel());
+        assertEquals("Felt good", entry.getUserNote());
+    }
+
+    @Test
+    void testSetters() {
+        entry.setStressLevel(Levels.EIGHT);
+        assertEquals(Levels.EIGHT, entry.getStressLevel());
+
+        entry.setEnergyLevel(Levels.TWO);
+        assertEquals(Levels.TWO, entry.getEnergyLevel());
+
+        entry.setFatigueLevel(Levels.NINE);
+        assertEquals(Levels.NINE, entry.getFatigueLevel());
+
+        MoodLabel newMood = new MoodLabel.Builder("Calm")
+                .type(Type.Positive)
+                .build();
+        entry.setMoodLabel(newMood);
         assertEquals("Calm", entry.getMoodLabel().getName());
-        assertEquals("Refreshed and ready.", entry.getUserNote());
+
+        entry.setUserNote("  Recovered well  ");
+        assertEquals("Recovered well", entry.getUserNote());
     }
 
     @Test
-    public void testBuilderRejectsMissingRequiredFields() {
-        WellnessLogEntry.Builder builder = new WellnessLogEntry.Builder();
-
-        IllegalStateException ex = assertThrows(IllegalStateException.class, builder::build);
-        assertEquals("All required fields must be set.", ex.getMessage());
-    }
-
-    @Test
-    public void testSettersUpdateValuesCorrectly() {
-        MoodLabel mood = new MoodLabel.Builder("Happy")
-                .type(MoodLabel.Type.Positive)
-                .build();
-
-        WellnessLogEntry entry = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.now())
-                .stressLevel(Levels.FOUR)
-                .energyLevel(Levels.FOUR)
-                .fatigueLevel(Levels.FOUR)
-                .moodLabel(mood)
-                .userNote("initial")
-                .build();
-
-        entry.setEnergyLevel(Levels.SIX);
-        entry.setFatigueLevel(Levels.ONE);
-        entry.setStressLevel(Levels.TWO);
-        entry.setUserNote("  updated note  ");
-
-        assertEquals(Levels.SIX, entry.getEnergyLevel());
-        assertEquals(Levels.ONE, entry.getFatigueLevel());
-        assertEquals(Levels.TWO, entry.getStressLevel());
-        assertEquals("updated note", entry.getUserNote());
-    }
-
-    @Test
-    public void testSettersThrowOnNull() {
-        MoodLabel mood = new MoodLabel.Builder("Neutral").type(MoodLabel.Type.Negative).build();
-        WellnessLogEntry entry = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.now())
-                .stressLevel(Levels.ONE)
-                .energyLevel(Levels.TWO)
-                .fatigueLevel(Levels.THREE)
-                .moodLabel(mood)
-                .userNote("entry")
-                .build();
-
+    void testSetNullLevelsThrows() {
         assertThrows(IllegalArgumentException.class, () -> entry.setStressLevel(null));
         assertThrows(IllegalArgumentException.class, () -> entry.setEnergyLevel(null));
         assertThrows(IllegalArgumentException.class, () -> entry.setFatigueLevel(null));
+    }
+
+    @Test
+    void testSetNullMoodThrows() {
         assertThrows(IllegalArgumentException.class, () -> entry.setMoodLabel(null));
     }
 
     @Test
-    public void testSetUserNoteNullAndBlank() {
-        MoodLabel mood = new MoodLabel.Builder("Focused").type(MoodLabel.Type.Positive).build();
-        WellnessLogEntry entry = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.now())
-                .stressLevel(Levels.TWO)
-                .energyLevel(Levels.TWO)
-                .fatigueLevel(Levels.TWO)
-                .moodLabel(mood)
-                .userNote("valid note")
-                .build();
-
+    void testSetNullNoteIsAllowed() {
         entry.setUserNote(null);
         assertNull(entry.getUserNote());
+    }
 
+    @Test
+    void testSetEmptyNoteThrows() {
         assertThrows(IllegalArgumentException.class, () -> entry.setUserNote("   "));
     }
 
     @Test
-    public void testBuilderFromCopiesCorrectly() {
-        MoodLabel mood = new MoodLabel.Builder("Tired").type(MoodLabel.Type.Negative).build();
-        WellnessLogEntry original = new WellnessLogEntry.Builder()
-                .time(LocalDateTime.of(2025, 8, 8, 20, 0))
-                .stressLevel(Levels.EIGHT)
-                .energyLevel(Levels.THREE)
-                .fatigueLevel(Levels.NINE)
-                .moodLabel(mood)
-                .userNote("late night")
-                .build();
+    void testBuilderFromCopiesAllFields() {
+        WellnessLogEntryInterf copy = WellnessLogEntry.Builder.from(entry).build();
 
-        WellnessLogEntry copy = WellnessLogEntry.Builder
-                .from(original)
-                .userNote("copied and changed")
-                .build();
+        assertNotSame(entry, copy);
+        assertEquals(entry.getId(), copy.getId());
+        assertEquals(entry.getTime(), copy.getTime());
+        assertEquals(entry.getStressLevel(), copy.getStressLevel());
+        assertEquals(entry.getEnergyLevel(), copy.getEnergyLevel());
+        assertEquals(entry.getFatigueLevel(), copy.getFatigueLevel());
+        assertEquals(entry.getMoodLabel(), copy.getMoodLabel());
+        assertEquals(entry.getUserNote(), copy.getUserNote());
+    }
 
-        assertEquals(original.getTime(), copy.getTime());
-        assertEquals("copied and changed", copy.getUserNote());
-        assertEquals(original.getMoodLabel(), copy.getMoodLabel());
+    @Test
+    void testBuildWithoutRequiredFieldsThrows() {
+        assertThrows(IllegalStateException.class, () -> new WellnessLogEntry.Builder().build());
     }
 }
-

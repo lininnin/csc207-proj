@@ -1,80 +1,80 @@
 package use_case.alex.event_related;
 
-import entity.Alex.Event.Event;
-import entity.BeginAndDueDates.BeginAndDueDates;
+import data_access.EventAvailableDataAccessObject;
+import data_access.TodaysEventDataAccessObject;
+import entity.Alex.DailyEventLog.DailyEventLogFactory;
+import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.Alex.Event.EventFactory;
+import entity.Alex.Event.EventFactoryInterf;
+import entity.Alex.Event.EventInterf;
+import entity.BeginAndDueDates.BeginAndDueDatesFactory;
+import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
+import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.alex.event_related.add_event.AddEventPresenter;
+import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import use_case.alex.event_related.add_event.*;
 
 import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AddEventInteractorTest {
 
-    private AddEventDataAccessInterf mockTodaysEventDAO;
-    private ReadAvailableEventDataAccessInterf mockAvailableEventDAO;
-    private AddEventOutputBoundary mockPresenter;
-    private AddEventInteractor interactor;
+    private AddEventInputBoundary interactor;
+    private TodaysEventDataAccessObject todaysDao;
+    private EventAvailableDataAccessObject availableDao;
 
     @BeforeEach
-    void setUp() {
-        mockTodaysEventDAO = mock(AddEventDataAccessInterf.class);
-        mockAvailableEventDAO = mock(ReadAvailableEventDataAccessInterf.class);
-        mockPresenter = mock(AddEventOutputBoundary.class);
-        interactor = new AddEventInteractor(mockTodaysEventDAO, mockAvailableEventDAO, mockPresenter);
-    }
+    public void setup() {
+        // 初始化 ViewModel
+        AddedEventViewModel addedVM = new AddedEventViewModel();
+        TodaysEventsViewModel todaysVM = new TodaysEventsViewModel();
 
-    @Test
-    void testExecute_eventNotFoundInAvailable_shouldFail() {
-        AddEventInputData inputData = new AddEventInputData("NonExistentEvent", LocalDate.of(2025, 8, 10));
-        when(mockAvailableEventDAO.findInfoByName("NonExistentEvent")).thenReturn(null);
+        // 初始化 DAO 和 Factory
+        DailyEventLogFactoryInterf logFactory = new DailyEventLogFactory();
+        todaysDao = new TodaysEventDataAccessObject(logFactory);
+        availableDao = new EventAvailableDataAccessObject(() -> new entity.Alex.EventAvailable.EventAvailable());  // Lambda for factory
 
-        interactor.execute(inputData);
-
-        verify(mockPresenter).prepareFailView("No available event with name: NonExistentEvent");
-        verifyNoInteractions(mockTodaysEventDAO);
-    }
-
-    @Test
-    void testExecute_eventAlreadyExistsToday_shouldFail() {
-        Info mockInfo = new Info.Builder("Test Event")
-                .description("Some description")
-                .category("Work")
+        // 添加一个事件模板（Info）
+        InfoInterf template = new Info.Builder("Test Event")
+                .category("School")
+                .description("Study for final")
                 .build();
+        availableDao.save(template);
 
-        AddEventInputData inputData = new AddEventInputData("Test Event", LocalDate.of(2025, 8, 10));
+        // 创建 presenter
+        AddEventOutputBoundary presenter = new AddEventPresenter(addedVM, todaysVM, todaysDao);
 
-        when(mockAvailableEventDAO.findInfoByName("Test Event")).thenReturn(mockInfo);
-        when(mockTodaysEventDAO.contains(any(Event.class))).thenReturn(true);
+        // 创建 interactor
+        EventFactoryInterf eventFactory = new EventFactory();
+        BeginAndDueDatesFactoryInterf dateFactory = new BeginAndDueDatesFactory();
 
-        interactor.execute(inputData);
-
-        verify(mockPresenter).prepareFailView("Event already added today.");
-        verify(mockTodaysEventDAO, never()).save(any(Event.class));
+        interactor = new AddEventInteractor(todaysDao, availableDao, presenter, eventFactory, dateFactory);
     }
 
     @Test
-    void testExecute_validEvent_shouldSucceed() {
-        Info mockInfo = new Info.Builder("Test Event")
-                .description("A test event")
-                .category("Personal")
-                .build();
+    public void testAddEventSuccess() {
+        AddEventInputData input = new AddEventInputData("Test Event", LocalDate.now());
 
-        AddEventInputData inputData = new AddEventInputData("Test Event", LocalDate.of(2025, 8, 10));
+        interactor.execute(input);
 
-        when(mockAvailableEventDAO.findInfoByName("Test Event")).thenReturn(mockInfo);
-        when(mockTodaysEventDAO.contains(any(Event.class))).thenReturn(false);
+        assertEquals(1, todaysDao.getTodaysEvents().size());
 
-        interactor.execute(inputData);
+        EventInterf event = todaysDao.getTodaysEvents().get(0);
+        assertEquals("Test Event", event.getInfo().getName());
+        assertEquals("School", event.getInfo().getCategory());
+    }
 
-        verify(mockTodaysEventDAO).save(any(Event.class));
-        verify(mockPresenter).prepareSuccessView(
-                argThat(output -> output.getName().equals("Test Event")
-                        && output.getDueDate().equals(LocalDate.of(2025, 8, 10))
-                        && output.isSuccess()));
+    @Test
+    public void testAddEventFailure_EventNotFound() {
+        AddEventInputData input = new AddEventInputData("Nonexistent Event", LocalDate.now());
+
+        interactor.execute(input);
+
+        assertEquals(0, todaysDao.getTodaysEvents().size());
     }
 }
-

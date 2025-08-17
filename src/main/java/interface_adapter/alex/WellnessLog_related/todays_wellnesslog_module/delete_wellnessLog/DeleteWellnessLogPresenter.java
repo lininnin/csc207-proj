@@ -2,6 +2,7 @@ package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.del
 
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogState;
 import interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log.TodaysWellnessLogViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogOutputBoundary;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogOutputData;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
@@ -15,6 +16,7 @@ public class DeleteWellnessLogPresenter implements DeleteWellnessLogOutputBounda
     private final DeleteWellnessLogViewModel deleteViewModel;
     private final TodaysWellnessLogViewModel todaysViewModel;
     private final DeleteWellnessLogDataAccessInterf dataAccess;
+    private TodaySoFarController todaySoFarController;
 
     public DeleteWellnessLogPresenter(DeleteWellnessLogViewModel deleteViewModel,
                                       TodaysWellnessLogViewModel todaysViewModel,
@@ -22,6 +24,10 @@ public class DeleteWellnessLogPresenter implements DeleteWellnessLogOutputBounda
         this.deleteViewModel = deleteViewModel;
         this.todaysViewModel = todaysViewModel;
         this.dataAccess = dataAccess;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -38,6 +44,11 @@ public class DeleteWellnessLogPresenter implements DeleteWellnessLogOutputBounda
         newState.setEntries(dataAccess.getTodaysWellnessLogEntries());
         todaysViewModel.setState(newState);
         todaysViewModel.firePropertyChanged(TodaysWellnessLogViewModel.TODAYS_WELLNESS_LOG_PROPERTY);
+        
+        // Refresh Today So Far panel if controller is available
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
     }
 
     @Override

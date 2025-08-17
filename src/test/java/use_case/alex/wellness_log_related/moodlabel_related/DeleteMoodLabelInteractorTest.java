@@ -1,7 +1,7 @@
 package use_case.alex.wellness_log_related.moodlabel_related;
 
 import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabel.Type;
+import entity.Alex.MoodLabel.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.*;

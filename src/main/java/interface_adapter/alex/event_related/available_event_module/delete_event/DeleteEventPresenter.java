@@ -5,6 +5,7 @@ import interface_adapter.alex.event_related.available_event_module.available_eve
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventOutputBoundary;
 import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventOutputData;
 
@@ -21,6 +22,7 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
     private final DeletedEventViewModel deletedEventViewModel;
     private final AvailableEventViewModel availableEventViewModel;
     private final AddedEventViewModel addedEventViewModel;
+    private TodaySoFarController todaySoFarController;
 
     public DeleteEventPresenter(DeletedEventViewModel deletedEventViewModel,
                                 AvailableEventViewModel availableEventViewModel,
@@ -28,6 +30,10 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         this.deletedEventViewModel = deletedEventViewModel;
         this.availableEventViewModel = availableEventViewModel;
         this.addedEventViewModel = addedEventViewModel;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController todaySoFarController) {
+        this.todaySoFarController = todaySoFarController;
     }
 
     @Override
@@ -57,6 +63,12 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         addedState.setAvailableNames(names);
         addedEventViewModel.setState(addedState);
         addedEventViewModel.firePropertyChanged(AddedEventViewModel.ADD_EVENT_STATE_PROPERTY);
+        
+        // ✅ Refresh Today So Far panel to remove deleted event if it was displayed
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+            System.out.println("DEBUG: Triggered Today So Far refresh after event delete");
+        }
     }
 
     @Override

@@ -1,7 +1,5 @@
 package app.eventPage;
 
-import entity.Alex.DailyEventLog.DailyEventLogFactory;
-import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.Alex.EventAvailable.EventAvailableFactory;
 import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
 import entity.Alex.Event.EventFactory;
@@ -60,6 +58,20 @@ import data_access.TodaysEventDataAccessObject;
 import entity.info.InfoFactory;
 
 import view.Alex.Event.*;
+import view.Angela.TodaySoFarView;
+import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
+import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
+import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
+import use_case.Angela.task.overdue.OverdueTasksInteractor;
+import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInteractor;
+import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,13 +81,39 @@ import java.util.List;
 
 public class EventPageBuilder {
     
-    // Category management fields
-    private final InMemoryCategoryGateway categoryGateway = new InMemoryCategoryGateway();
+    // Category management fields - Use shared instance
+    private final InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
     private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
     private CategoryManagementDialog categoryDialog;
     private CreateEventView createEventView;
+    private AddEventView addEventView;
+    private AvailableEventView availableEventView;
+    private TodaysEventsView todaysEventsView;
     private AvailableEventViewModel availableEventViewModel;
     private TodaysEventsViewModel todaysEventsViewModel;
+    
+    // Today So Far panel fields
+    private TodaySoFarController todaySoFarController;
+    private OverdueTasksController overdueTasksController;
+    
+    /**
+     * Refreshes all event views to show updated categories.
+     * Call this when the event page becomes visible.
+     */
+    public void refreshViews() {
+        if (createEventView != null) {
+            createEventView.refreshCategories();
+        }
+        if (addEventView != null) {
+            addEventView.forceRefresh();
+        }
+        if (availableEventView != null) {
+            availableEventView.forceRefresh();
+        }
+        if (todaysEventsView != null) {
+            todaysEventsView.forceRefresh();
+        }
+    }
 
 
     public JPanel build() {
@@ -92,8 +130,8 @@ public class EventPageBuilder {
         // --- Data Access & Factory ---
         EventAvailableFactoryInterf eventAvailableFactory = new EventAvailableFactory();
         EventAvailableDataAccessObject commonDao = new EventAvailableDataAccessObject(eventAvailableFactory);
-        DailyEventLogFactoryInterf dailyEventLogFactory = new DailyEventLogFactory(); // 假设你实现了这个类
-        TodaysEventDataAccessObject todaysEventDAO = new TodaysEventDataAccessObject(dailyEventLogFactory);
+        // Use shared event data access so Today So Far panel can see the events
+        TodaysEventDataAccessObject todaysEventDAO = app.SharedDataAccess.getInstance().getEventDataAccess();
 
         InfoFactory infoFactory = new InfoFactory();
 
@@ -126,8 +164,8 @@ public class EventPageBuilder {
         EditTodaysEventController editTodaysEventController = new EditTodaysEventController(editTodayInteractor);
 
         // --- Views ---
-        AddEventView addEventView = new AddEventView(addEventViewModel, addEventController);
-        TodaysEventsView todaysEventsView = new TodaysEventsView(
+        addEventView = new AddEventView(addEventViewModel, addEventController);
+        todaysEventsView = new TodaysEventsView(
                 todaysEventsViewModel, addEventController, addEventViewModel,
                 deleteTodaysEventController, editTodaysEventController, editTodaysEventViewModel
         );
@@ -142,27 +180,25 @@ public class EventPageBuilder {
         createEventView = new CreateEventView(createdEventViewModel, addEventViewModel, commonDao, categoryGateway);
         createEventView.setCreateEventController(createEventController);
         
-        // Set up category management dialog opening
+        // Set up category management dialog opening and event view refresh
         createEventView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("openCategoryManagement".equals(evt.getPropertyName())) {
                     openCategoryDialog(commonDao, todaysEventDAO);
+                } else if ("refreshEventViews".equals(evt.getPropertyName())) {
+                    // Refresh event views to show updated categories from Task page
+                    if (availableEventView != null) {
+                        availableEventView.forceRefresh();
+                    }
+                    if (todaysEventsView != null) {
+                        todaysEventsView.forceRefresh();
+                    }
                 }
             }
         });
 
-        // Set up category management dialog opening
-        createEventView.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("openCategoryManagement".equals(evt.getPropertyName())) {
-                    openCategoryDialog(commonDao, todaysEventDAO);
-                }
-            }
-        });
-
-        AvailableEventView availableEventView = new AvailableEventView(
+        availableEventView = new AvailableEventView(
                 availableEventViewModel, deleteEventController, deletedEventViewModel,
                 createdEventViewModel, editEventController, editedEventViewModel
         );
@@ -191,14 +227,54 @@ public class EventPageBuilder {
         centerPanel.add(topCenterRow, BorderLayout.CENTER);
         centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
+        // --- Set up Today So Far Panel ---
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
+        
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        
+        // Trigger initial data load
+        sharedTodaySoFar.refresh();
+        
+        // Set Today So Far controller on event presenters that need to refresh
+        if (createEventPresenter instanceof CreateEventPresenter) {
+            ((CreateEventPresenter) createEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        if (addEventPresenter instanceof AddEventPresenter) {
+            ((AddEventPresenter) addEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        if (delTodayPresenter instanceof DeleteTodaysEventPresenter) {
+            ((DeleteTodaysEventPresenter) delTodayPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        if (editTodayPresenter instanceof EditTodaysEventPresenter) {
+            ((EditTodaysEventPresenter) editTodayPresenter).setTodaySoFarController(todaySoFarController);
+        }
+        // Also set for edit available event presenter
+        editEventPresenter.setTodaySoFarController(todaySoFarController);
+        // Also set for delete available event presenter
+        if (deleteEventPresenter instanceof DeleteEventPresenter) {
+            ((DeleteEventPresenter) deleteEventPresenter).setTodaySoFarController(todaySoFarController);
+        }
 
+        // Wrap Today So Far in a panel
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(300, 0));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setPreferredSize(new Dimension(380, 0));
+        rightPanel.setMinimumSize(new Dimension(320, 0));
+
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, rightPanel);
+        mainSplitPane.setDividerLocation(870);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.7);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return mainPanel;
     }
@@ -225,6 +301,8 @@ public class EventPageBuilder {
                 // Wire up event ViewModels for auto-refresh when categories change
                 categoryPresenter.setAvailableEventViewModel(availableEventViewModel);
                 categoryPresenter.setTodaysEventsViewModel(todaysEventsViewModel);
+                // Wire up Today So Far controller for auto-refresh when categories change
+                categoryPresenter.setTodaySoFarController(todaySoFarController);
                 
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
                         categoryGateway,
@@ -371,6 +449,8 @@ public class EventPageBuilder {
                 });
             }
             
+            // Reload categories in the dialog to ensure latest from Task page
+            categoryDialog.loadCategories();
             categoryDialog.setVisible(true);
         }
     }

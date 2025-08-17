@@ -66,15 +66,18 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         overdueTable = new JTable(tableModel);
         overdueTable.setFont(FontUtil.getStandardFont());
         overdueTable.getTableHeader().setFont(FontUtil.getBoldFont());
-        overdueTable.setRowHeight(25);
+        overdueTable.setRowHeight(30);
         overdueTable.setShowGrid(true);
         overdueTable.setGridColor(Color.LIGHT_GRAY);
         
-        // Set column widths
-        overdueTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Task Name
-        overdueTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Category
-        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Due Date
+        // Set column widths with better proportions
+        overdueTable.getColumnModel().getColumn(0).setPreferredWidth(120); // Task Name
+        overdueTable.getColumnModel().getColumn(1).setPreferredWidth(80);  // Category
+        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Due Date - increased width
         overdueTable.getColumnModel().getColumn(3).setPreferredWidth(80);  // Days Overdue
+        
+        // Enable auto-resize to fit panel width
+        overdueTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         
         // Custom renderer for red text
         DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer() {
@@ -96,8 +99,13 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         }
         
         scrollPane = new JScrollPane(overdueTable);
-        scrollPane.setPreferredSize(new Dimension(280, 150));
+        scrollPane.setPreferredSize(new Dimension(320, 180));
+        scrollPane.setMinimumSize(new Dimension(280, 120));
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        
+        // Ensure horizontal scrollbar appears if needed
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
         // Empty state label
         emptyLabel = new JLabel("No overdue tasks");

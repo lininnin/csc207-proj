@@ -2,7 +2,6 @@ package use_case.goalManage.delete_goal;
 
 /**
  * Output data for a goal deletion use case.
- * <p>
  * Encapsulates the name of the deleted goal, a flag indicating whether
  * the goal was part of the current goals, and a user-facing message.
  */
@@ -13,10 +12,9 @@ public class DeleteGoalOutputData {
 
     /**
      * Constructs an output data object for goal deletion.
-     *
-     * @param goalName          the name of the deleted goal
+     * @param goalName the name of the deleted goal
      * @param wasInCurrentGoals whether the goal was part of the current goals list
-     * @param message           a user-facing message about the deletion result
+     * @param message a user-facing message about the deletion result
      */
     public DeleteGoalOutputData(String goalName, boolean wasInCurrentGoals, String message) {
         this.goalName = goalName;
@@ -25,6 +23,7 @@ public class DeleteGoalOutputData {
     }
 
     /**
+     * Gets the name of the deleted goal.
      * @return the name of the deleted goal
      */
     public String getGoalName() {
@@ -32,14 +31,16 @@ public class DeleteGoalOutputData {
     }
 
     /**
-     * @return true if the goal was in the current goals list before deletion
+     * Checks if the goal was in current goals before deletion.
+     * @return true if the goal was in the current goals list
      */
     public boolean wasInCurrentGoals() {
         return wasInCurrentGoals;
     }
 
     /**
-     * @return the result message about the deletion
+     * Gets the result message about the deletion.
+     * @return the result message
      */
     public String getMessage() {
         return message;

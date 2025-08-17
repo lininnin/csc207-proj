@@ -97,23 +97,21 @@ class DeleteCategoryWithSegregatedInterfacesTest {
     }
 
     @Test
-    void testFailureWhenMinimumCategoriesReached() {
-        // Setup: Create exactly 3 categories (minimum)
+    void testDeleteWithOnlyOneCategory() {
+        // Setup: Create only 1 category (no minimum requirement)
         categoryDataAccess.addCategory(new Category("cat-1", "Work", "#0000FF"));
-        categoryDataAccess.addCategory(new Category("cat-2", "Personal", "#00FF00"));
-        categoryDataAccess.addCategory(new Category("cat-3", "Urgent", "#FF0000"));
 
-        // Try to delete when at minimum
+        // Delete the only category (should succeed with new business rule)
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("cat-1");
         interactor.execute(inputData);
 
-        // Verify failure
-        assertNull(testPresenter.lastOutputData);
-        assertNotNull(testPresenter.lastError);
-        assertEquals("Cannot delete category: minimum 3 categories required", testPresenter.lastError);
+        // Verify success - users can have 0 categories
+        assertNotNull(testPresenter.lastOutputData);
+        assertNull(testPresenter.lastError);
+        assertTrue(testPresenter.lastOutputData.getMessage().contains("Category deleted successfully"));
         
-        // Verify category was not deleted
-        assertEquals(3, categoryDataAccess.categories.size());
+        // Verify category was deleted
+        assertEquals(0, categoryDataAccess.categories.size());
     }
 
     @Test
@@ -164,9 +162,7 @@ class DeleteCategoryWithSegregatedInterfacesTest {
         
         String categoryId = "cat-1";
         categoryDataAccess.addCategory(new Category(categoryId, "Work", "#0000FF"));
-        categoryDataAccess.addCategory(new Category("cat-2", "Personal", "#00FF00"));
-        categoryDataAccess.addCategory(new Category("cat-3", "Urgent", "#FF0000"));
-        categoryDataAccess.addCategory(new Category("cat-4", "Extra", "#FFFF00"));
+        // Only add one category since there's no minimum requirement
 
         // Track method calls
         categoryDataAccess.resetCallTracking();
@@ -178,7 +174,7 @@ class DeleteCategoryWithSegregatedInterfacesTest {
 
         // Verify each interface was called appropriately
         assertTrue(categoryDataAccess.getCategoryByIdCalled, "Category interface should check if category exists");
-        assertTrue(categoryDataAccess.getCategoryCountCalled, "Category interface should check count");
+        // getCategoryCountCalled is no longer needed since we removed the minimum check
         assertTrue(categoryDataAccess.deleteCategoryCalled, "Category interface should delete category");
         
         assertTrue(taskDataAccess.findAvailableTasksCalled, "Task interface should find available tasks");

@@ -2,6 +2,7 @@ package entity.Alex.WellnessLogEntry;
 
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.MoodLabelInterf;
+import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInputData;
 
 import java.time.LocalDateTime;
 
@@ -24,5 +25,14 @@ public interface WellnessLogEntryFactoryInterf {
                             Levels fatigueLevel,
                             MoodLabelInterf moodLabel,
                             String userNote);
+
+    /**
+     * Creates a copy of an existing WellnessLogEntryInterf instance.
+     * Useful for cloning or rebuilding an entry.
+     *
+     * @param entry the entry to clone
+     * @return a new copy of the entry
+     */
+    WellnessLogEntryInterf from(WellnessLogEntryInterf entry);
 }
 

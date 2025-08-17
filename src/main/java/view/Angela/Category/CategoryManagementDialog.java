@@ -129,7 +129,7 @@ public class CategoryManagementDialog extends JDialog implements PropertyChangeL
         }
     }
 
-    private void loadCategories() {
+    public void loadCategories() {
         tableModel.setRowCount(0);
         for (Category category : categoryGateway.getAllCategories()) {
             tableModel.addRow(new Object[]{category.getName(), category});

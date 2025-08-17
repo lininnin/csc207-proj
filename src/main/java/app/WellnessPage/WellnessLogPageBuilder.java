@@ -54,6 +54,21 @@ import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellne
 
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
+import view.Angela.TodaySoFarView;
+import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
+import interface_adapter.Angela.task.overdue.OverdueTasksController;
+import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
+import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
+import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
+import use_case.Angela.task.overdue.OverdueTasksInteractor;
+import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInteractor;
+import data_access.InMemoryTaskGateway;
+import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,6 +76,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WellnessLogPageBuilder {
+    
+    // Today So Far panel fields
+    private TodaySoFarController todaySoFarController;
+    private OverdueTasksController overdueTasksController;
 
     public JPanel build() {
 
@@ -68,14 +87,14 @@ public class WellnessLogPageBuilder {
         AddWellnessLogViewModel addLogViewModel = new AddWellnessLogViewModel();
         TodaysWellnessLogViewModel todaysLogViewModel = new TodaysWellnessLogViewModel();
 
-        // --- DAO + Factory ---
-        DailyWellnessLogFactoryInterf factory = new DailyWellnessLogFactory();
-        TodaysWellnessLogDataAccessObject wellnessLogDAO = new TodaysWellnessLogDataAccessObject(factory);
+        // --- Use shared DAO ---
+        TodaysWellnessLogDataAccessObject wellnessLogDAO = 
+            app.SharedDataAccess.getInstance().getWellnessDataAccess();
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 
         // --- Add Log Controller ---
-        AddWellnessLogOutputBoundary presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
+        AddWellnessLogPresenter presenter = new AddWellnessLogPresenter(addLogViewModel, todaysLogViewModel);
         AddWellnessLogInputBoundary interactor = new AddWellnessLogInteractor(wellnessLogDAO, wellnessLogEntryFactory, presenter);
         AddWellnessLogController addLogController = new AddWellnessLogController(interactor);
 
@@ -152,25 +171,27 @@ public class WellnessLogPageBuilder {
         fixedHeightWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
 
         // --- Today's Log View ---
+        DeleteWellnessLogPresenter deletePresenter = new DeleteWellnessLogPresenter(
+                new DeleteWellnessLogViewModel(),
+                todaysLogViewModel,
+                wellnessLogDAO
+        );
+        
+        EditWellnessLogPresenter editPresenter = new EditWellnessLogPresenter(
+                new EditWellnessLogViewModel(),
+                todaysLogViewModel,
+                wellnessLogDAO
+        );
+        
         TodaysWellnessLogView todaysLogView = new TodaysWellnessLogView(
                 todaysLogViewModel,
                 new DeleteWellnessLogController(
-                        new DeleteWellnessLogInteractor(wellnessLogDAO,
-                                new DeleteWellnessLogPresenter(
-                                        new DeleteWellnessLogViewModel(),
-                                        todaysLogViewModel,
-                                        wellnessLogDAO
-                                )
-                        )
+                        new DeleteWellnessLogInteractor(wellnessLogDAO, deletePresenter)
                 ),
                 new EditWellnessLogController(
                         new EditWellnessLogInteractor(
                                 wellnessLogDAO,
-                                new EditWellnessLogPresenter(
-                                        new EditWellnessLogViewModel(),
-                                        todaysLogViewModel,
-                                        wellnessLogDAO
-                                ),
+                                editPresenter,
                                 new WellnessLogEntryFactory(), // ✅ 新增工厂
                                 new MoodLabelFactory()         // ✅ 新增工厂
                         )
@@ -182,7 +203,6 @@ public class WellnessLogPageBuilder {
                 deleteLabelController,
                 moodLabelFactory
         );
-
 
         JPanel lowerPart = new JPanel(new BorderLayout());
         lowerPart.setBorder(BorderFactory.createTitledBorder("Today's Wellness Log"));
@@ -197,13 +217,39 @@ public class WellnessLogPageBuilder {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(verticalSplit, BorderLayout.CENTER);
 
+        // --- Set up Today So Far Panel ---
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
+        
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        
+        // Set Today So Far controller on wellness presenters that need to refresh
+        presenter.setTodaySoFarController(todaySoFarController);
+        deletePresenter.setTodaySoFarController(todaySoFarController);
+        editPresenter.setTodaySoFarController(todaySoFarController);
+        
+        // Trigger initial data load
+        sharedTodaySoFar.refresh();
+
+        // Wrap Today So Far in a panel with flexible sizing
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(500, 0));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(todaySoFarView, BorderLayout.CENTER);
+        rightPanel.setMinimumSize(new Dimension(250, 0));
+        // Remove preferred size to allow flexible sizing
+
+        // Create horizontal split pane for resizable layout
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, rightPanel);
+        mainSplitPane.setDividerLocation(800);
+        mainSplitPane.setContinuousLayout(true);
+        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerSize(8);
+        mainSplitPane.setResizeWeight(0.75);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER);
 
         return mainPanel;
     }

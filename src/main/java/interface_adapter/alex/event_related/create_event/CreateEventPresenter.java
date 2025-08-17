@@ -3,6 +3,7 @@ package interface_adapter.alex.event_related.create_event;
 import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
+import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.event_related.create_event.CreateEventOutputBoundary;
 import use_case.alex.event_related.create_event.CreateEventOutputData;
 import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
@@ -20,6 +21,7 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
     private final CreatedEventViewModel createdEventViewModel;
     private final AvailableEventViewModel availableEventViewModel;
     private final CreateEventDataAccessInterface dataAccess;
+    private TodaySoFarController todaySoFarController;
 
     public CreateEventPresenter(CreatedEventViewModel createdEventViewModel,
                                 AvailableEventViewModel availableEventViewModel,
@@ -27,6 +29,10 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
         this.createdEventViewModel = createdEventViewModel;
         this.availableEventViewModel = availableEventViewModel;
         this.dataAccess = dataAccess;
+    }
+    
+    public void setTodaySoFarController(TodaySoFarController controller) {
+        this.todaySoFarController = controller;
     }
 
     @Override
@@ -51,6 +57,11 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
         availableEventViewModel.setState(newState);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
         System.out.println("CreateEventPresenter triggered");
+        
+        // Refresh Today So Far panel if controller is available
+        if (todaySoFarController != null) {
+            todaySoFarController.refresh();
+        }
     }
 
 

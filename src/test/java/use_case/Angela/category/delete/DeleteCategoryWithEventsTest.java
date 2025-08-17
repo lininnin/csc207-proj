@@ -96,21 +96,23 @@ class DeleteCategoryWithEventsTest {
     }
     
     @Test
-    void testDeleteCategoryMinimumCheck() {
-        // Remove one category to have exactly 3
+    void testDeleteLastCategory() {
+        // Remove all but one category
+        dataAccess.removeCategory("2");
+        dataAccess.removeCategory("3");
         dataAccess.removeCategory("4");
         
-        // Try to delete another category
+        // Delete the last category (should succeed with new business rule)
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("1");
         interactor.execute(inputData);
         
-        // Verify failure due to minimum requirement
-        assertFalse(outputBoundary.successCalled);
-        assertTrue(outputBoundary.failureCalled);
-        assertEquals("Cannot delete category: minimum 3 categories required", outputBoundary.errorMessage);
+        // Verify success - users can have 0 categories
+        assertTrue(outputBoundary.successCalled);
+        assertFalse(outputBoundary.failureCalled);
         
-        // Verify category still exists
-        assertNotNull(dataAccess.getCategoryById("1"));
+        // Verify category was deleted
+        assertNull(dataAccess.getCategoryById("1"));
+        assertEquals(0, dataAccess.categories.size());
     }
     
     @Test

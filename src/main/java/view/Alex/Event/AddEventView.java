@@ -95,4 +95,11 @@ public class AddEventView extends JPanel implements ActionListener, PropertyChan
     public String getViewName() {
         return viewModel.getViewName();
     }
+    
+    /**
+     * Force refresh the dropdown to get latest events.
+     */
+    public void forceRefresh() {
+        refreshComboBox();
+    }
 }
