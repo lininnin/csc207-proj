@@ -6,30 +6,29 @@ import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
 // Import view models
-import entity.info.Info;
 import data_access.InMemoryTaskGateway;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
-import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
-import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
-import interface_adapter.Sophia.order_goal.OrderedGoalViewModel;
+import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
+import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalViewModel;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.order_goal.OrderedGoalViewModel;
 
 // Import controllers
-import interface_adapter.Sophia.available_goals.AvailableGoalsController;
-import interface_adapter.Sophia.create_goal.CreateGoalController;
-import interface_adapter.Sophia.delete_goal.DeleteGoalController;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalController;
-import interface_adapter.Sophia.today_goal.TodayGoalController;
-import interface_adapter.Sophia.order_goal.OrderGoalController;
+import interface_adapter.sophia.available_goals.AvailableGoalsController;
+import interface_adapter.sophia.create_goal.CreateGoalController;
+import interface_adapter.sophia.delete_goal.DeleteGoalController;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalController;
+import interface_adapter.sophia.today_goal.TodayGoalController;
+import interface_adapter.sophia.order_goal.OrderGoalController;
 
 // Import presenters
-import interface_adapter.Sophia.available_goals.AvailableGoalsPresenter;
-import interface_adapter.Sophia.create_goal.CreateGoalPresenter;
-import interface_adapter.Sophia.delete_goal.DeleteGoalPresenter;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalPresenter;
-import interface_adapter.Sophia.today_goal.TodayGoalPresenter;
-import interface_adapter.Sophia.order_goal.OrderGoalPresenter;
+import interface_adapter.sophia.available_goals.AvailableGoalsPresenter;
+import interface_adapter.sophia.create_goal.CreateGoalPresenter;
+import interface_adapter.sophia.delete_goal.DeleteGoalPresenter;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalPresenter;
+import interface_adapter.sophia.today_goal.TodayGoalPresenter;
+import interface_adapter.sophia.order_goal.OrderGoalPresenter;
 
 // Import use case interactors and boundaries
 import use_case.goalManage.available_goals.*;
@@ -51,9 +50,7 @@ import view.Angela.TodaySoFarView;
 import javax.swing.*;
 import javax.swing.DefaultListCellRenderer;
 import java.awt.*;
-import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

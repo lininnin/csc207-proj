@@ -1,9 +1,9 @@
 package views;
 
 import entity.Sophia.Goal;
-import interface_adapter.Sophia.today_goal.TodayGoalController;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
-import interface_adapter.Sophia.today_goal.TodaysGoalsState;
+import interface_adapter.sophia.today_goal.TodayGoalController;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.today_goal.TodaysGoalsState;
 
 import javax.swing.*;
 import java.awt.*;

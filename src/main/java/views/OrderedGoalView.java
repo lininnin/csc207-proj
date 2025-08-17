@@ -1,6 +1,6 @@
 package views;
 
-import interface_adapter.Sophia.order_goal.OrderedGoalViewModel;
+import interface_adapter.sophia.order_goal.OrderedGoalViewModel;
 import javax.swing.*;
 import java.awt.*;
 

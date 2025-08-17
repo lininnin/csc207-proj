@@ -1,26 +1,38 @@
-// Updated DeleteGoalPresenter.java
-package interface_adapter.Sophia.delete_goal;
+package interface_adapter.sophia.delete_goal;
 
-import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
+import javax.swing.JOptionPane;
+
+import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
 import use_case.goalManage.delete_goal.DeleteGoalOutputBoundary;
 import use_case.goalManage.delete_goal.DeleteGoalOutputData;
 
-import javax.swing.*;
-
+/**
+ * Presenter for handling the presentation logic of goal deletion results.
+ * Updates views and shows appropriate dialogs based on deletion outcomes.
+ */
 public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
     private final AvailableGoalsViewModel availableGoalsViewModel;
     private final TodayGoalsViewModel todayGoalsViewModel;
 
+    /**
+     * Constructs a DeleteGoalPresenter with the specified view models.
+     * @param availableGoalsViewModel ViewModel for available goals
+     * @param todayGoalsViewModel ViewModel for today's goals
+     */
     public DeleteGoalPresenter(AvailableGoalsViewModel availableGoalsViewModel,
                                TodayGoalsViewModel todayGoalsViewModel) {
         this.availableGoalsViewModel = availableGoalsViewModel;
         this.todayGoalsViewModel = todayGoalsViewModel;
     }
 
+    /**
+     * Prepares the success view after goal deletion.
+     * @param outputData Contains details of the deleted goal
+     */
     @Override
     public void prepareSuccessView(DeleteGoalOutputData outputData) {
-        String goalName = outputData.getGoalName();
+        final String goalName = outputData.getGoalName();
 
         availableGoalsViewModel.removeGoalByName(goalName);
         availableGoalsViewModel.firePropertyChanged();
@@ -36,6 +48,10 @@ public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
         );
     }
 
+    /**
+     * Prepares the failure view when goal deletion fails.
+     * @param error The error message to display
+     */
     @Override
     public void prepareFailView(String error) {
         JOptionPane.showMessageDialog(
@@ -46,6 +62,10 @@ public class DeleteGoalPresenter implements DeleteGoalOutputBoundary {
         );
     }
 
+    /**
+     * Prepares the confirmation view before goal deletion.
+     * @param outputData Contains the confirmation message
+     */
     @Override
     public void prepareConfirmationView(DeleteGoalOutputData outputData) {
         // Optional confirmation dialog (not used in automatic controller call)

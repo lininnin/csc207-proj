@@ -1,21 +1,15 @@
 package views;
 
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
-import interface_adapter.Sophia.delete_goal.DeleteGoalController;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalController;
-import interface_adapter.Sophia.today_goal.TodayGoalController;
-import interface_adapter.Sophia.order_goal.OrderGoalController;
-import use_case.goalManage.delete_goal.DeleteGoalInputData;
-import use_case.goalManage.edit_todays_goal.EditTodaysGoalInputData;
-import use_case.goalManage.order_goal.OrderGoalsInputData;
-import use_case.goalManage.today_goal.TodayGoalInputData;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalViewModel;
+import interface_adapter.sophia.delete_goal.DeleteGoalController;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalController;
+import interface_adapter.sophia.today_goal.TodayGoalController;
+import interface_adapter.sophia.order_goal.OrderGoalController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.time.LocalDate;
 import java.util.List;
 
 public class EditTodayGoalView extends JPanel implements PropertyChangeListener {

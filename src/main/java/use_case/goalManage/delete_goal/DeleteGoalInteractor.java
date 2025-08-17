@@ -2,7 +2,6 @@ package use_case.goalManage.delete_goal;
 
 import entity.Sophia.Goal;
 import data_access.GoalRepository;
-import interface_adapter.Sophia.delete_goal.DeleteGoalPresenter;
 
 import java.util.Optional;
 

@@ -1,8 +1,8 @@
 package views;
 
-import interface_adapter.Sophia.available_goals.AvailableGoalsController;
-import interface_adapter.Sophia.available_goals.AvailableGoalsState;
-import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
+import interface_adapter.sophia.available_goals.AvailableGoalsController;
+import interface_adapter.sophia.available_goals.AvailableGoalsState;
+import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
 import entity.Sophia.Goal;
 import javax.swing.*;
 import java.awt.*;

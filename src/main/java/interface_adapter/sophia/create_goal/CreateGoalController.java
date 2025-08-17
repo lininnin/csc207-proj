@@ -1,20 +1,30 @@
-package interface_adapter.Sophia.create_goal;
+package interface_adapter.sophia.create_goal;
 
-import entity.Angela.Task.Task;
-import use_case.goalManage.create_goal.CreateGoalInputBoundary;
-import use_case.goalManage.create_goal.CreateGoalInputData;
-import entity.Sophia.Goal;
 import java.time.LocalDate;
 
+import entity.Angela.Task.Task;
+import entity.Sophia.Goal;
+import use_case.goalManage.create_goal.CreateGoalInputBoundary;
+import use_case.goalManage.create_goal.CreateGoalInputData;
+
+/**
+ * Controller for handling goal creation in the system.
+ * Orchestrates the creation of new goals by converting user input
+ * into the appropriate format for the use case.
+ */
 public class CreateGoalController {
     private final CreateGoalInputBoundary createGoalUseCase;
 
+    /**
+     * Constructs a CreateGoalController with the specified use case interactor.
+     * @param createGoalUseCase The goal creation use case interactor
+     */
     public CreateGoalController(CreateGoalInputBoundary createGoalUseCase) {
         this.createGoalUseCase = createGoalUseCase;
     }
 
     /**
-     * Executes goal creation with all required parameters
+     * Executes goal creation with all required parameters.
      * @param goalName Name of the goal
      * @param goalDescription Description of the goal
      * @param targetAmount Target amount for the goal
@@ -23,12 +33,13 @@ public class CreateGoalController {
      * @param endDate End date of the goal period
      * @param timePeriod Time period type (WEEK or MONTH)
      * @param frequency Target frequency of completions
+     * @param targetTask The target task associated with the goal
      */
     public void execute(String goalName, String goalDescription,
                         double targetAmount, double currentAmount,
                         LocalDate startDate, LocalDate endDate,
                         Goal.TimePeriod timePeriod, int frequency, Task targetTask) {
-        CreateGoalInputData inputData = new CreateGoalInputData(
+        final CreateGoalInputData inputData = new CreateGoalInputData(
                 goalName,
                 goalDescription,
                 targetAmount,
@@ -41,5 +52,4 @@ public class CreateGoalController {
         );
         createGoalUseCase.execute(inputData);
     }
-
 }
