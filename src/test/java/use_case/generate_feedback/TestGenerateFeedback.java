@@ -14,7 +14,6 @@ public class TestGenerateFeedback {
     public static void main(String[] args) {
         // 1. Fake logs for the week
         InMemoryDailyLogRepo dailyRepo = new InMemoryDailyLogRepo();
-        LocalDate today = LocalDate.now();
         List<DailyLog> logs = DailyLogGenerator.generateFakeLogs();
         for (DailyLog log: logs) {
             dailyRepo.save(log);
