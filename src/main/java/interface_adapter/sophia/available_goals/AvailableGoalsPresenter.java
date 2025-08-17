@@ -35,3 +35,4 @@ public class AvailableGoalsPresenter implements AvailableGoalsOutputBoundary {
         viewModel.firePropertyChanged();
     }
 }
+
