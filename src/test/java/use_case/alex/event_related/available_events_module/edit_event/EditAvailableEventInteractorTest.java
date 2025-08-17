@@ -1,9 +1,8 @@
-package use_case.alex.event_related.available_event_module;
+package use_case.alex.event_related.available_events_module.edit_event;
 
 import entity.info.Info;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.alex.event_related.avaliable_events_module.edit_event.*;
 
 import java.util.Arrays;
 import java.util.Collections;

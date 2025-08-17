@@ -6,8 +6,8 @@ import entity.info.Info;
 import entity.info.InfoInterf;
 import use_case.alex.event_related.add_event.ReadAvailableEventDataAccessInterf;
 import use_case.alex.event_related.create_event.CreateEventDataAccessInterface;
-import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventDataAccessInterf;
-import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventDataAccessInterf;
+import use_case.alex.event_related.available_events_module.delete_event.DeleteEventDataAccessInterf;
+import use_case.alex.event_related.available_events_module.edit_event.EditEventDataAccessInterf;
 import use_case.Angela.category.delete.DeleteCategoryEventDataAccessInterface;
 
 import java.util.List;

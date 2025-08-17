@@ -2,6 +2,7 @@ package use_case.alex.event_related.create_event;
 
 import entity.info.Info;
 import entity.info.InfoFactory;
+import entity.info.InfoFactoryInterf;
 import entity.info.InfoInterf;
 
 import java.util.List;
@@ -9,11 +10,11 @@ import java.util.List;
 public class CreateEventInteractor implements CreateEventInputBoundary {
     private final CreateEventDataAccessInterface eventInfoDataAccessObject;
     private final CreateEventOutputBoundary eventInfoPresenter;
-    private final InfoFactory eventInfoFactory;
+    private final InfoFactoryInterf eventInfoFactory;
 
     public CreateEventInteractor(CreateEventDataAccessInterface createEventDataAccessInterface,
                                  CreateEventOutputBoundary createEventOutputBoundary,
-                                 InfoFactory eventInfoFactory) {
+                                 InfoFactoryInterf eventInfoFactory) {
         this.eventInfoDataAccessObject = createEventDataAccessInterface;
         this.eventInfoPresenter = createEventOutputBoundary;
         this.eventInfoFactory = eventInfoFactory;

@@ -1,14 +1,12 @@
 package interface_adapter.alex.event_related.available_event_module.edit_event;
 
-import entity.info.Info;
 import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventState;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
-import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
-import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
-import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventOutputData;
+import use_case.alex.event_related.available_events_module.edit_event.EditEventOutputBoundary;
+import use_case.alex.event_related.available_events_module.edit_event.EditEventOutputData;
 
 import java.util.List;
 

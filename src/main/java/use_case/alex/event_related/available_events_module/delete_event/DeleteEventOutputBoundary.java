@@ -1,4 +1,4 @@
-package use_case.alex.event_related.avaliable_events_module.delete_event;
+package use_case.alex.event_related.available_events_module.delete_event;
 
 /**
  * Output boundary for the DeleteAvailableEvent use case.

@@ -6,8 +6,8 @@ import interface_adapter.alex.event_related.available_event_module.available_eve
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
-import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventOutputBoundary;
-import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventOutputData;
+import use_case.alex.event_related.available_events_module.delete_event.DeleteEventOutputBoundary;
+import use_case.alex.event_related.available_events_module.delete_event.DeleteEventOutputData;
 
 import java.util.ArrayList;
 import java.util.List;

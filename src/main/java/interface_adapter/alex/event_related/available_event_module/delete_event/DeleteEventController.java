@@ -1,7 +1,7 @@
 package interface_adapter.alex.event_related.available_event_module.delete_event;
 
-import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventInputBoundary;
-import use_case.alex.event_related.avaliable_events_module.delete_event.DeleteEventInputData;
+import use_case.alex.event_related.available_events_module.delete_event.DeleteEventInputBoundary;
+import use_case.alex.event_related.available_events_module.delete_event.DeleteEventInputData;
 
 /**
  * Controller for the DeleteAvailableEvent use case.

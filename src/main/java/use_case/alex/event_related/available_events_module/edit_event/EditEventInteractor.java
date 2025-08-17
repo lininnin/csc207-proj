@@ -1,6 +1,5 @@
-package use_case.alex.event_related.avaliable_events_module.edit_event;
+package use_case.alex.event_related.available_events_module.edit_event;
 
-import entity.info.Info;
 import entity.info.InfoInterf;
 
 public class EditEventInteractor implements EditEventInputBoundary {

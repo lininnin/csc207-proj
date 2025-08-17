@@ -1,7 +1,7 @@
 package interface_adapter.alex.event_related.available_event_module.edit_event;
 
-import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventInputBoundary;
-import use_case.alex.event_related.avaliable_events_module.edit_event.EditEventInputData;
+import use_case.alex.event_related.available_events_module.edit_event.EditEventInputBoundary;
+import use_case.alex.event_related.available_events_module.edit_event.EditEventInputData;
 
 public class EditEventController {
 

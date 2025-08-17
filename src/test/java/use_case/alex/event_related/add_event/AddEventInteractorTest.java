@@ -1,4 +1,4 @@
-package use_case.alex.event_related;
+package use_case.alex.event_related.add_event;
 
 import data_access.EventAvailableDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
@@ -16,7 +16,6 @@ import interface_adapter.alex.event_related.add_event.AddEventPresenter;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.alex.event_related.add_event.*;
 
 import java.time.LocalDate;
 

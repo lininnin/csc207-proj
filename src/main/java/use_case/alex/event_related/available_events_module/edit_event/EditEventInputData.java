@@ -1,4 +1,4 @@
-package use_case.alex.event_related.avaliable_events_module.edit_event;
+package use_case.alex.event_related.available_events_module.edit_event;
 
 public class EditEventInputData {
     private final String id;

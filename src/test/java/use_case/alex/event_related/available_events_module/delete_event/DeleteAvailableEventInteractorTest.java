@@ -1,4 +1,4 @@
-package use_case.alex.event_related.available_event_module;
+package use_case.alex.event_related.available_events_module.delete_event;
 
 import data_access.EventAvailableDataAccessObject;
 import entity.Alex.EventAvailable.EventAvailableFactory;
@@ -12,7 +12,6 @@ import interface_adapter.alex.event_related.add_event.AddedEventViewModel;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.alex.event_related.avaliable_events_module.delete_event.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
