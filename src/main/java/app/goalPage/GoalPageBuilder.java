@@ -42,10 +42,9 @@ import use_case.goalManage.today_goal.*;
 import data_access.FileGoalRepository;
 
 // Import views
-import view.Sophia.AvailableGoalsView;
-import view.Sophia.EditTodayGoalView;
-import view.Sophia.TodayGoalView;
-import view.CollapsibleSidebarView;
+import view.sophia.AvailableGoalsView;
+import view.sophia.EditTodayGoalView;
+import view.sophia.TodayGoalView;
 import view.Angela.TodaySoFarView;
 
 // Import Java/Swing components

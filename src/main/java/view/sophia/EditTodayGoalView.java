@@ -1,4 +1,4 @@
-package view.Sophia;
+package view.sophia;
 
 import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalViewModel;
 import interface_adapter.sophia.delete_goal.DeleteGoalController;

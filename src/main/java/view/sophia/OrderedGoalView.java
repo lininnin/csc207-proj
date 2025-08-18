@@ -1,4 +1,4 @@
-package view.Sophia;
+package view.sophia;
 
 import interface_adapter.sophia.order_goal.OrderedGoalViewModel;
 import javax.swing.*;
