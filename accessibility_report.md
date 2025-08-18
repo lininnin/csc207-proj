@@ -17,43 +17,42 @@ The interface is structured to support daily task management, wellness logging, 
 
 ---
 
-## Users Who May Struggle with Access
+## Users Who May Struggle with Access (E3I Analysis)
 
-Using an **E3I framework**, we identify a group that may face specific barriers when interacting with MindTrack:  
-**users with physical disabilities, particularly those with visual impairments (blindness or low vision).**
+We identify two overlapping groups who may encounter difficulties using MindTrack:
 
-### Group: Users with Visual Impairments
+- Users with visual impairments (blind or low vision)
+- Users who are non-native English speakers (ESL)
 
-### E3I Analysis:
+### E3I Analysis
 
 **Equity**:  
-Visually impaired users require alternative modes of perceiving information (e.g., screen readers, keyboard navigation). A system designed purely for visual interaction (buttons, charts, color-coding) fails to meet their needs equitably.  
-Providing visual-only UI assumes all users can see and navigate with a mouse, which creates structural disadvantage.
+Both groups face systemic barriers: visually impaired users require screen reader compatibility, while ESL users may struggle with English-only labels and unclear terminology. Treating all users as fully sighted, fluent English speakers leads to unequal access.
 
 **Empowerment**:  
-Without screen reader compatibility, clearly labeled elements, and keyboard-accessible navigation, users with low vision cannot interact confidently or independently. This undermines their control over wellness tracking, goal setting, and data review—core functions of the app.
+Lack of labeled buttons, inaccessible charts, or culturally unfamiliar terms can make both groups feel disempowered. If users cannot understand or control the system, they are less likely to engage with daily logging, feedback, or goal tracking.
 
 **Inclusion**:  
-MindTrack’s current interface may unintentionally exclude users who depend on audio or tactile feedback by relying heavily on visual indicators (e.g., colored charts, icon-only buttons, modals without focus control). Without inclusive design, the app risks being inaccessible to a portion of its intended user base.
+MindTrack relies heavily on visual layout and English text. This excludes users who depend on audio, alternative input methods, or who are more fluent in other languages. Tooltips, error messages, and wellness insights may not be understandable or accessible.
 
 **Intersectionality**:  
-A visually impaired user may also face additional marginalizations—such as being an older adult with limited tech literacy or someone managing chronic mental health conditions (e.g., anxiety or depression). These overlapping identities amplify accessibility barriers unless the system is inclusively designed across all layers.
+A user may simultaneously be visually impaired and not fluent in English. For example, an international student who is blind may face compounded challenges navigating the interface, understanding instructions, or interpreting chart-based analytics.
 
-### Barriers Identified:
-- Lack of screen reader-friendly labels for buttons, charts, and input fields
-- Heavy reliance on visual layout without supporting text alternatives
-- Modal windows or popups may trap keyboard focus
-- No auditory feedback or accessible visual contrast for low-vision users
-- No alternative to chart-based data in textual summary form
+### Identified Barriers
+- No screen reader labels for form inputs, buttons, or data tables
+- No multilingual support or simplified language options
+- Chart-only feedback with no plain-text summaries
+- Cultural assumptions in emotion/mood labels
+- Focus traps in modals or unannounced popups
 
-### Suggested Improvements:
-- Add accessible ARIA labels and roles for all interactive elements
-- Ensure full keyboard navigation support throughout the UI
-- Provide text-based summaries in addition to visual analytics
-- Follow WCAG guidelines for color contrast and focus indicators
-- Test the interface using screen reader tools (e.g., NVDA, VoiceOver)
+### Recommendations
+- Add ARIA labels for accessibility
+- Support alternate text summaries for wellness analytics
+- Offer multilingual UI or icon + text pairing for ESL users
+- Use plain, consistent language in instructions and labels
+- Validate usability using screen readers and ESL feedback
 
-By addressing these issues, MindTrack can become more inclusive, usable, and empowering for users with physical disabilities such as visual impairments.
+Improving these areas would make MindTrack more inclusive and usable for diverse populations, aligning with equity and accessibility principles.
 
 
 ---
