@@ -1,4 +1,4 @@
-package use_case.Sophia.goal;
+package use_case.goalManage.available_goals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,9 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import static org.mockito.Mockito.*;
 
-import use_case.goalManage.available_goals.AvailableGoalsInteractor;
-import use_case.goalManage.available_goals.AvailableGoalsOutputBoundary;
-import use_case.goalManage.available_goals.AvailableGoalsOutputData;
+import use_case.goalManage.available_goals.AvailableGoalInteractorTest.AvailableGoalsOutputBoundary;
+import use_case.goalManage.available_goals.AvailableGoalInteractorTest.AvailableGoalsOutputData;
 import data_access.GoalRepository;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
@@ -20,16 +19,16 @@ import entity.BeginAndDueDates.BeginAndDueDates;
  * Test class for AvailableGoalsInteractor.
  * Tests the behavior of the interactor for managing available goals.
  */
-class available{
+class AvailableGoalInteractorTest {
 
     private GoalRepository goalRepository;
-    private AvailableGoalsOutputBoundary presenter;
+    private use_case.goalManage.available_goals.AvailableGoalsOutputBoundary presenter;
     private AvailableGoalsInteractor interactor;
 
     @BeforeEach
     void setUp() {
         goalRepository = mock(GoalRepository.class);
-        presenter = mock(AvailableGoalsOutputBoundary.class);
+        presenter = mock(use_case.goalManage.available_goals.AvailableGoalsOutputBoundary.class);
         interactor = new AvailableGoalsInteractor(goalRepository, presenter);
     }
 
@@ -77,7 +76,7 @@ class available{
 
         // Assert
         verify(goalRepository).findAvailableGoals();
-        verify(presenter).presentAvailableGoals(any(AvailableGoalsOutputData.class));
+        verify(presenter).presentAvailableGoals(any(use_case.goalManage.available_goals.AvailableGoalsOutputData.class));
     }
 
     @Test
