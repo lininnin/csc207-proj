@@ -66,7 +66,8 @@ public class BigMain {
         final JPanel eventPanel = eventBuilder.build();
         final JPanel goalPanel = new GoalPageBuilder().build();
         final JPanel wellnessPanel = new WellnessLogPageBuilder().build();
-        final JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
+        final FeedbackPageBuilder feedbackPageBuilder = new FeedbackPageBuilder(feedbackRepository);
+        final JPanel feedbackPage = feedbackPageBuilder.build();
         final JPanel settingPage = new SettingsPageBuilder().build();
 
         centrePanel.add(taskPanel, "Tasks");
