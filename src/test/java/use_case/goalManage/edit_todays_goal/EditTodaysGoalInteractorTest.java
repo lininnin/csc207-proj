@@ -1,4 +1,4 @@
-package use_case.Sophia.goal;
+package use_case.goalManage.edit_todays_goal;
 
 import data_access.GoalRepository;
 import entity.BeginAndDueDates.BeginAndDueDates;
@@ -7,25 +7,22 @@ import entity.Sophia.GoalInfo;
 import entity.info.Info;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.goalManage.edit_todays_goal.EditTodaysGoalInputData;
-import use_case.goalManage.edit_todays_goal.EditTodaysGoalInteractor;
-import use_case.goalManage.edit_todays_goal.EditTodaysGoalOutputBoundary;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-class editToday {
+class EditTodaysGoalInteractorTest {
     private GoalRepository goalRepository;
     private EditTodaysGoalOutputBoundary presenter;
-    private EditTodaysGoalInteractor interactor;
+    private use_case.goalManage.edit_todays_goal.EditTodaysGoalInteractor interactor;
 
     @BeforeEach
     void setUp() {
         goalRepository = mock(GoalRepository.class);
         presenter = mock(EditTodaysGoalOutputBoundary.class);
-        interactor = new EditTodaysGoalInteractor(goalRepository, presenter);
+        interactor = new use_case.goalManage.edit_todays_goal.EditTodaysGoalInteractor(goalRepository, presenter);
     }
 
     @Test

@@ -1,12 +1,9 @@
-package use_case.Sophia.goal;
+package use_case.goalManage.today_goal;
 
 import data_access.GoalRepository;
 import entity.Sophia.Goal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.goalManage.today_goal.TodayGoalInputData;
-import use_case.goalManage.today_goal.TodayGoalInteractor;
-import use_case.goalManage.today_goal.TodayGoalOutputBoundary;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +11,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-class todayGoals {
+class TodayGoalInteractorTest {
     private GoalRepository goalRepository;
     private TodayGoalOutputBoundary outputBoundary;
     private TodayGoalInteractor interactor;

@@ -1,27 +1,24 @@
-package use_case.Sophia.goal;
+package use_case.goalManage.delete_goal;
 
 import data_access.GoalRepository;
 import entity.Sophia.Goal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.goalManage.delete_goal.DeleteGoalInputData;
-import use_case.goalManage.delete_goal.DeleteGoalInteractor;
-import use_case.goalManage.delete_goal.DeleteGoalOutputBoundary;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-class delete {
+class DeleteGoalInteractorTest {
     private GoalRepository goalRepository;
     private DeleteGoalOutputBoundary outputBoundary;
-    private DeleteGoalInteractor interactor;
+    private use_case.goalManage.delete_goal.DeleteGoalInteractor interactor;
 
     @BeforeEach
     void setUp() {
         goalRepository = mock(GoalRepository.class);
         outputBoundary = mock(DeleteGoalOutputBoundary.class);
-        interactor = new DeleteGoalInteractor(goalRepository, outputBoundary);
+        interactor = new use_case.goalManage.delete_goal.DeleteGoalInteractor(goalRepository, outputBoundary);
     }
 
     @Test
