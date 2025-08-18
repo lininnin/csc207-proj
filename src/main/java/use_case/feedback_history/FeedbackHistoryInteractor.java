@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import entity.feedback_entry.FeedbackEntryInterf;
 import use_case.repository.FeedbackRepository;
 
 public class FeedbackHistoryInteractor implements FeedbackHistoryInputBoundary {
@@ -17,8 +18,8 @@ public class FeedbackHistoryInteractor implements FeedbackHistoryInputBoundary {
 
     @Override
     public void loadFeedbackHistory() {
-        final List<entity.feedback_entry.FeedbackEntry> history = repo.loadAll().stream()
-                .sorted(Comparator.comparing(entity.feedback_entry.FeedbackEntry::getDate).reversed())
+        final List<FeedbackEntryInterf> history = repo.loadAll().stream()
+                .sorted(Comparator.comparing(FeedbackEntryInterf::getDate).reversed())
                 .collect(Collectors.toList());
         presenter.present(new FeedbackHistoryOutputData(history));
     }

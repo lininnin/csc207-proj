@@ -15,7 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import constants.Constants;
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
 import interface_adapter.feedback_entry.FeedbackEntryView;
 
 /*
@@ -52,7 +52,7 @@ public class FeedbackEntryPanel extends JPanel implements FeedbackEntryView {
     }
 
     @Override
-    public void displayEntry(final FeedbackEntry entry) {
+    public void displayEntry(final FeedbackEntryInterf entry) {
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
         header.setText("Feedback on " + dateTimeFormatter
                 .format(entry.getDate()));
