@@ -6,27 +6,27 @@ import entity.Sophia.GoalFactory;         // Factory for creating goals
 
 // Import view models
 import entity.info.Info;
-import interface_adapter.Sophia.available_goals.AvailableGoalsViewModel;
-import interface_adapter.Sophia.create_goal.CreatedGoalViewModel;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalViewModel;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
-import interface_adapter.Sophia.order_goal.OrderedGoalViewModel;
+import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
+import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalViewModel;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.order_goal.OrderedGoalViewModel;
 
 // Import controllers
-import interface_adapter.Sophia.available_goals.AvailableGoalsController;
-import interface_adapter.Sophia.create_goal.CreateGoalController;
-import interface_adapter.Sophia.delete_goal.DeleteGoalController;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalController;
-import interface_adapter.Sophia.today_goal.TodayGoalController;
-import interface_adapter.Sophia.order_goal.OrderGoalController;
+import interface_adapter.sophia.available_goals.AvailableGoalsController;
+import interface_adapter.sophia.create_goal.CreateGoalController;
+import interface_adapter.sophia.delete_goal.DeleteGoalController;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalController;
+import interface_adapter.sophia.today_goal.TodayGoalController;
+import interface_adapter.sophia.order_goal.OrderGoalController;
 
 // Import presenters
-import interface_adapter.Sophia.available_goals.AvailableGoalsPresenter;
-import interface_adapter.Sophia.create_goal.CreateGoalPresenter;
-import interface_adapter.Sophia.delete_goal.DeleteGoalPresenter;
-import interface_adapter.Sophia.edit_todays_goal.EditTodaysGoalPresenter;
-import interface_adapter.Sophia.today_goal.TodayGoalPresenter;
-import interface_adapter.Sophia.order_goal.OrderGoalPresenter;
+import interface_adapter.sophia.available_goals.AvailableGoalsPresenter;
+import interface_adapter.sophia.create_goal.CreateGoalPresenter;
+import interface_adapter.sophia.delete_goal.DeleteGoalPresenter;
+import interface_adapter.sophia.edit_todays_goal.EditTodaysGoalPresenter;
+import interface_adapter.sophia.today_goal.TodayGoalPresenter;
+import interface_adapter.sophia.order_goal.OrderGoalPresenter;
 
 // Import use case interactors and boundaries
 import use_case.goalManage.available_goals.*;
@@ -41,8 +41,9 @@ import data_access.FileGoalRepository;  // File-based goal repository
 import data_access.GoalRepository;     // Goal repository interface
 
 // Import views
-import views.*;
-import view.CollapsibleSidebarView;    // Collapsible sidebar component
+import view.Sophia.AvailableGoalsView;
+import view.Sophia.EditTodayGoalView;
+import view.Sophia.TodayGoalView;
 
 // Import Java/Swing components
 import javax.swing.*;
@@ -157,12 +158,6 @@ public class GoalPageBuilder {
                 goalRepository, todayGoalPresenter);
         todayGoalController = new TodayGoalController((TodayGoalInteractor) todayGoalInteractor);
 
-        // Goal Ordering Setup
-        OrderGoalsOutputBoundary orderGoalPresenter = new OrderGoalPresenter();
-        OrderGoalsInputBoundary orderGoalInteractor = new OrderGoalsInteractor(
-                goalRepository, orderGoalPresenter);
-        orderGoalController = new OrderGoalController(orderGoalInteractor);
-
         // Available Goals Management Setup
         AvailableGoalsOutputBoundary availableGoalsPresenter = new AvailableGoalsPresenter(availableGoalsViewModel);
         AvailableGoalsInputBoundary availableGoalsInteractor = new AvailableGoalsInteractor(
@@ -170,8 +165,15 @@ public class GoalPageBuilder {
         availableGoalsController = new AvailableGoalsController(
                 availableGoalsInteractor,
                 todayGoalInteractor,
-                deleteGoalInteractor
+                deleteGoalInteractor,
+                orderGoalController
         );
+        // Goal Ordering Setup
+        OrderGoalsOutputBoundary orderGoalPresenter = new OrderGoalPresenter();
+        OrderGoalsInputBoundary orderGoalInteractor = new OrderGoalsInteractor(
+                goalRepository, orderGoalPresenter,
+                availableGoalsPresenter);
+        orderGoalController = new OrderGoalController(orderGoalInteractor);
     }
 
     private JButton createAddButtonForAvailableGoals() {
