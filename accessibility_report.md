@@ -19,15 +19,42 @@ The interface is structured to support daily task management, wellness logging, 
 
 ## Users Who May Struggle with Access
 
-Using an **E3I framework**, we recognize that certain users may face disproportionate challenges interacting with the system:
+Using an **E3I framework**, we identify a group that may face specific barriers when interacting with MindTrack:  
+**users with physical disabilities, particularly those with visual impairments (blindness or low vision).**
 
-**Group**: Users with cognitive disabilities (e.g., ADHD, anxiety disorders, short-term memory limitations)
+### Group: Users with Visual Impairments
 
-**E3I Analysis**:
-- **Equity**: These users may not have equal access to focus-sustaining tools (e.g., clear task workflows or input validation).
-- **Empowerment**: The complexity of some UI sections (like multiple task panels or repeated fields) may undermine users' sense of control.
-- **Inclusion**: Without sufficient visual cues, auditory alerts, or reminders, these users may miss key interactions (e.g., logging wellness entries or completing overdue tasks).
-- **Intersectionality**: A student who has anxiety and is also managing multiple part-time jobs may struggle due to time fragmentation and higher cognitive load.
+### E3I Analysis:
+
+**Equity**:  
+Visually impaired users require alternative modes of perceiving information (e.g., screen readers, keyboard navigation). A system designed purely for visual interaction (buttons, charts, color-coding) fails to meet their needs equitably.  
+Providing visual-only UI assumes all users can see and navigate with a mouse, which creates structural disadvantage.
+
+**Empowerment**:  
+Without screen reader compatibility, clearly labeled elements, and keyboard-accessible navigation, users with low vision cannot interact confidently or independently. This undermines their control over wellness tracking, goal setting, and data review—core functions of the app.
+
+**Inclusion**:  
+MindTrack’s current interface may unintentionally exclude users who depend on audio or tactile feedback by relying heavily on visual indicators (e.g., colored charts, icon-only buttons, modals without focus control). Without inclusive design, the app risks being inaccessible to a portion of its intended user base.
+
+**Intersectionality**:  
+A visually impaired user may also face additional marginalizations—such as being an older adult with limited tech literacy or someone managing chronic mental health conditions (e.g., anxiety or depression). These overlapping identities amplify accessibility barriers unless the system is inclusively designed across all layers.
+
+### Barriers Identified:
+- Lack of screen reader-friendly labels for buttons, charts, and input fields
+- Heavy reliance on visual layout without supporting text alternatives
+- Modal windows or popups may trap keyboard focus
+- No auditory feedback or accessible visual contrast for low-vision users
+- No alternative to chart-based data in textual summary form
+
+### Suggested Improvements:
+- Add accessible ARIA labels and roles for all interactive elements
+- Ensure full keyboard navigation support throughout the UI
+- Provide text-based summaries in addition to visual analytics
+- Follow WCAG guidelines for color contrast and focus indicators
+- Test the interface using screen reader tools (e.g., NVDA, VoiceOver)
+
+By addressing these issues, MindTrack can become more inclusive, usable, and empowering for users with physical disabilities such as visual impairments.
+
 
 ---
 
