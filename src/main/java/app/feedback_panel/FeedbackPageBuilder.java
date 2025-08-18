@@ -2,6 +2,7 @@ package app.feedback_panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
@@ -24,15 +25,18 @@ public final class FeedbackPageBuilder {
 
     private final FeedbackRepository repo;
 
-    /** Prefer injecting the repo so tests can pass an in-memory one. */
     public FeedbackPageBuilder(FeedbackRepository repo) {
         this.repo = repo;
     }
 
-    /** Build and return the composed feedback page panel. */
+    /**
+     * Build and return the composed feedback page panel.
+     * @return return feedback (AI analysis) page panel
+     */
     public JPanel build() {
         // --- ViewModel
         final FeedbackHistoryViewModel historyVm = new FeedbackHistoryViewModel();
+        historyVm.setEntries(repo.loadAll());
 
         // --- Presenter & Interactor
         final FeedbackHistoryOutputBoundary presenter = new FeedbackHistoryPresenter(historyVm);
@@ -48,7 +52,8 @@ public final class FeedbackPageBuilder {
                 entryPanel::displayEntry
         );
         historyPanel.setPreferredSize(new Dimension(Constants.TWO_SIXTY, 0));
-        historyPanel.setBorder(BorderFactory.createEmptyBorder(Constants.EIGHT, Constants.EIGHT, Constants.EIGHT, Constants.EIGHT));
+        historyPanel.setBorder(BorderFactory
+                .createEmptyBorder(Constants.EIGHT, Constants.EIGHT, Constants.EIGHT, Constants.EIGHT));
 
         // --- Compose page
         final JPanel page = new JPanel(new BorderLayout(Constants.SIXTEEN, 0));
