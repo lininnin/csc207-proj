@@ -1,67 +1,142 @@
-# Universal Design Evaluation of MindTrack UI
+# Accessibility Report for MindTrack
 
-This document evaluates the MindTrack application interface design against two key principles of Universal Design:
-
-- Principle 3: Simple and Intuitive Use  
-- Principle 5: Tolerance for Error
-
-The analysis is based on the project blueprint and UI mockups.
+This document provides an accessibility evaluation of **MindTrack**, a wellness and productivity tracking application, through the lens of the **7 Principles of Universal Design**, as well as E3I-based inclusivity analysis.
 
 ---
 
-## Principle 3: Simple and Intuitive Use
+## Target Users
 
-### Definition
-"Use of the design is easy to understand, regardless of the user’s experience, knowledge, language skills, or current concentration level."
+MindTrack is designed for:
 
-### Strengths
-The current UI design includes several strengths in promoting intuitive usage:
-- The sidebar navigation is logically structured, with clearly labeled modules such as Tasks, Events, Goals, and Wellness Log.
-- Input areas for creating tasks are well organized, with fields like Name, Category, and Create Task clearly laid out.
-- The wellness logging interface uses familiar parameters like mood, stress, energy, and fatigue, which are easily understood by most users.
+- University students and working professionals
+- Individuals managing mental wellness alongside daily productivity
+- Users who want to identify correlations between mood, tasks, and events
+- People who value goal-setting, habit formation, and data-driven feedback
 
-### Identified Issues
-However, several areas could be improved:
-1. The UI includes multiple panels (e.g., Today’s Tasks and Events) that use nearly identical layouts, which may overwhelm users and create confusion due to repeated elements like Name, Category, Edit, and Delete columns.
-2. Some buttons have unclear purposes. For example, “Export Selected” and “Test: Add with Yesterday” do not include tooltips or contextual descriptions, making them potentially confusing for new users.
-3. The separation between “Create New Task” and “Add Task to Today” is not obvious. It may be unclear to users whether they need to perform both steps or just one.
-4. In the history view, past entries are listed only by date, without any preview or summary of the logged content, making it harder to locate relevant records.
-
-### Recommendations
-To address the above issues:
-- Consider merging similar task/event panels into a single combined table or a tabbed layout to reduce redundancy.
-- Add hover tooltips or help icons to explain unclear buttons and labels.
-- Merge task creation and scheduling into one unified form, allowing the user to optionally “Add to Today” during creation.
-- Include short summaries next to each historical date entry, such as “2 tasks, 1 wellness entry,” to enhance usability.
+The interface is structured to support daily task management, wellness logging, event journaling, and AI-based productivity feedback. These users often prefer systems that are intuitive, minimally disruptive, and support long-term mental health tracking.
 
 ---
 
-## Principle 5: Tolerance for Error
+## Users Who May Struggle with Access
 
-### Definition
-"The design minimizes hazards and the adverse consequences of accidental or unintended actions."
+Using an **E3I framework**, we recognize that certain users may face disproportionate challenges interacting with the system:
 
-### Strengths
-The application incorporates some elements that support safe interaction:
-- Delete buttons are clearly separated from other controls, reducing the likelihood of accidental deletion.
-- The presence of a “Clear” button in the task creation area allows users to reset forms easily if they make mistakes.
+**Group**: Users with cognitive disabilities (e.g., ADHD, anxiety disorders, short-term memory limitations)
 
-### Identified Issues
-Several areas may lead to user errors:
-1. There is no confirmation dialog before deleting a task or event, and no option to undo an accidental deletion.
-2. A button labeled “Test: Add with Yesterday” is present in the UI and active, which may confuse users or cause unintended behavior.
-3. The current date input relies on free text fields, which can result in invalid or improperly formatted input (e.g., impossible dates).
-4. Overdue tasks are not visually highlighted or flagged in the UI, and users receive no notification about tasks that have missed their deadlines.
+**E3I Analysis**:
+- **Equity**: These users may not have equal access to focus-sustaining tools (e.g., clear task workflows or input validation).
+- **Empowerment**: The complexity of some UI sections (like multiple task panels or repeated fields) may undermine users' sense of control.
+- **Inclusion**: Without sufficient visual cues, auditory alerts, or reminders, these users may miss key interactions (e.g., logging wellness entries or completing overdue tasks).
+- **Intersectionality**: A student who has anxiety and is also managing multiple part-time jobs may struggle due to time fragmentation and higher cognitive load.
 
-### Recommendations
-To improve error tolerance:
-- Implement confirmation dialogs for all delete actions, and provide a temporary undo option (e.g., a dismissible notification).
-- Disable or hide developer/test functions such as “Test: Add with Yesterday” in the production UI.
-- Use date pickers or controlled date fields with format validation to prevent invalid input.
-- Add visual indicators for overdue tasks, along with suggestions to reschedule or mark them complete.
+---
+
+## Evaluation: The 7 Principles of Universal Design
+
+### 1. Equitable Use
+
+**Definition**: The design is useful and accessible to people with diverse abilities, without stigmatization.
+
+**Implementation in MindTrack**:
+- Wellness logging, goal tracking, and task editing are available to all users equally.
+- No "separate" experience for people with disabilities, and the system avoids language or design that stigmatizes users.
+
+**Opportunities**:
+- Add a high-contrast mode or dyslexia-friendly font for better visual accessibility.
+- Add keyboard navigation and screen reader compatibility for users with motor or visual impairments.
+
+---
+
+### 2. Flexibility in Use
+
+**Definition**: The design accommodates a wide range of individual preferences and abilities.
+
+**Implementation in MindTrack**:
+- Tasks and wellness entries can be edited, deleted, or re-logged at different times of day.
+- Users can customize their notification times to suit different daily routines.
+
+**Opportunities**:
+- Allow users to choose between visual (chart-based) or textual summaries of wellness history.
+- Add alternative interaction methods (e.g., voice logging or reminder tones).
+
+---
+
+### 3. Simple and Intuitive Use
+
+**Definition**: The use of the design is easy to understand, regardless of the user’s experience or concentration level.
+
+**Implementation in MindTrack**:
+- Modules are clearly labeled (Tasks, Events, Goals, Wellness Log).
+- Input fields are intuitive: users can create/edit/delete without needing a tutorial.
+- Mood tracking uses familiar categories like “Energy,” “Stress,” “Fatigue.”
+
+**Opportunities**:
+- Combine overlapping UI sections (e.g., separate panels for “Add Task” and “Create Task”) to reduce confusion.
+- Add tooltips or short guides for buttons like “Export” or “Add with Yesterday.”
+
+---
+
+### 4. Perceptible Information
+
+**Definition**: The design communicates information effectively to all users regardless of sensory abilities.
+
+**Implementation in MindTrack**:
+- Text-based notifications and field labels are visible and structured.
+- Mood and task categories are visually distinct.
+
+**Opportunities**:
+- Introduce redundant cues (e.g., icons + text + color coding).
+- Support text-to-speech or screen reader labels on input fields.
+
+---
+
+### 5. Tolerance for Error
+
+**Definition**: The design minimizes hazards and the consequences of accidental actions.
+
+**Implementation in MindTrack**:
+- All major objects (task, event, goal, wellness entry) include an **Edit** function to correct mistakes.
+- The `Clear` button allows users to reset forms before submission.
+
+**Opportunities**:
+- Add confirmation dialogs for destructive actions like “Delete.”
+- Provide an "Undo" snackbar for accidental removals or edits.
+
+**Discussion Focus**:  
+This principle is especially relevant to users with anxiety, ADHD, or memory-related conditions. The ability to recover from errors increases user confidence and reduces stress.
+
+---
+
+### 6. Low Physical Effort
+
+**Definition**: The design can be used efficiently and comfortably with minimal fatigue.
+
+**Implementation in MindTrack**:
+- UI allows most actions with few clicks.
+- Wellness logging is limited to three quick entries per day.
+
+**Opportunities**:
+- Add keyboard shortcuts for common actions.
+- Reduce scrolling by collapsing sections not in use.
+
+---
+
+### 7. Size and Space for Approach and Use
+
+**Definition**: Appropriate size and space are provided for interaction regardless of user’s posture, mobility, or device.
+
+**Implementation in MindTrack**:
+- Buttons are adequately spaced and clickable.
+- UI is desktop-optimized with clear layout zones.
+
+**Opportunities**:
+- Improve mobile or tablet responsiveness.
+- Ensure resizable windows and components for assistive tech users.
 
 ---
 
 ## Conclusion
 
-MindTrack demonstrates a strong foundation in interface design but can be improved by enhancing clarity, feedback, and error prevention. Applying these universal design principles will ensure a more inclusive, intuitive, and resilient experience for all users.
+MindTrack demonstrates strong alignment with universal design values through editable components, intuitive structures, and flexible routines. However, future iterations can better support cognitive diversity by minimizing visual redundancy, confirming destructive actions, and incorporating accessible design components.
+
+This evaluation encourages inclusive development practices aligned with both Universal Design and E3I principles, supporting a broader and more equitable user base.
