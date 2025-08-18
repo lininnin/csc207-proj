@@ -20,7 +20,7 @@ public final class RecommendationPromptBuilder {
     public static String buildPrompt(String analysisJson) {
         final JSONObject obj = new JSONObject(analysisJson);
         final String analysisTxt = obj.optString("analysis", "(no analysis)");
-        final String dataGapsTxt = obj.optString("extra_notes", "");
+        final String dataGapsTxt = obj.optString("extra_notes", "None");
 
         return """
 You are a productivity & wellness coach.  Provide concise, concrete advice only.

@@ -2,16 +2,16 @@ package use_case.feedback_history;
 
 import java.util.List;
 
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
 
 public class FeedbackHistoryOutputData {
-    private final List<FeedbackEntry> entries;
+    private final List<FeedbackEntryInterf> entries;
 
-    public FeedbackHistoryOutputData(List<FeedbackEntry> entries) {
+    public FeedbackHistoryOutputData(List<FeedbackEntryInterf> entries) {
         this.entries = entries;
     }
 
-    public List<FeedbackEntry> getEntries() {
+    public List<FeedbackEntryInterf> getEntries() {
         return entries;
     }
 }

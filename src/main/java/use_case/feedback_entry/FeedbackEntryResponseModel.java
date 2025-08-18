@@ -1,15 +1,15 @@
 package use_case.feedback_entry;
 
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
 
 public class FeedbackEntryResponseModel {
-    private final FeedbackEntry entry;
+    private final FeedbackEntryInterf entry;
 
-    public FeedbackEntryResponseModel(FeedbackEntry entry) {
+    public FeedbackEntryResponseModel(FeedbackEntryInterf entry) {
         this.entry = entry;
     }
 
-    public FeedbackEntry getEntry() {
+    public FeedbackEntryInterf getEntry() {
         return entry;
     }
 }

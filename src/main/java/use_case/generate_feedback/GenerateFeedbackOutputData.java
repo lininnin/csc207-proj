@@ -1,15 +1,15 @@
 package use_case.generate_feedback;
 
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
 
 public class GenerateFeedbackOutputData {
-    private final FeedbackEntry feedbackEntry;
+    private final FeedbackEntryInterf feedbackEntry;
 
-    public GenerateFeedbackOutputData(FeedbackEntry feedbackEntry) {
+    public GenerateFeedbackOutputData(FeedbackEntryInterf feedbackEntry) {
         this.feedbackEntry = feedbackEntry;
     }
 
-    public FeedbackEntry getFeedbackEntry() {
+    public FeedbackEntryInterf getFeedbackEntry() {
         return feedbackEntry;
     }
 }

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import entity.feedback_entry.FeedbackEntryFactory;
+import entity.feedback_entry.FeedbackEntryFactoryInterf;
+import entity.feedback_entry.FeedbackEntryInterf;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -21,7 +24,7 @@ public class FileFeedbackRepository implements FeedbackRepository {
     private static final String FILE_PATH = "feedback_cache.json";
 
     @Override
-    public void save(FeedbackEntry entry) {
+    public void save(FeedbackEntryInterf entry) {
         try {
             final Path path = Paths.get(FILE_PATH);
             final JSONObject root;
@@ -35,7 +38,7 @@ public class FileFeedbackRepository implements FeedbackRepository {
 
             final JSONObject obj = new JSONObject();
             obj.put(Constants.ANALYSIS, entry.getAiAnalysis());
-            obj.put("correlationData", entry.getCorrelationData());
+            obj.put(Constants.CORRELATION, entry.getCorrelationData());
             obj.put(Constants.RECOMMENDATIONS, entry.getRecommendations());
 
             root.put(entry.getDate().toString(), obj);
@@ -47,7 +50,7 @@ public class FileFeedbackRepository implements FeedbackRepository {
     }
 
     @Override
-    public FeedbackEntry loadByDate(LocalDate date) {
+    public FeedbackEntryInterf loadByDate(LocalDate date) {
         try {
             final Path path = Paths.get(FILE_PATH);
             if (!Files.exists(path) || Files.size(path) == 0) {
@@ -60,9 +63,8 @@ public class FileFeedbackRepository implements FeedbackRepository {
                 return null;
             }
             final JSONObject obj = root.getJSONObject(key);
-            return new FeedbackEntry(
-                    date,
-                    obj.optString(Constants.ANALYSIS, null),
+            final FeedbackEntryFactoryInterf factory = new FeedbackEntryFactory();
+            return factory.create(date, obj.optString(Constants.ANALYSIS, null),
                     obj.optString(Constants.CORRELATION, null),
                     obj.optString(Constants.RECOMMENDATIONS, null)
             );
@@ -73,8 +75,8 @@ public class FileFeedbackRepository implements FeedbackRepository {
     }
 
     @Override
-    public List<FeedbackEntry> loadAll() {
-        final List<FeedbackEntry> list = new ArrayList<>();
+    public List<FeedbackEntryInterf> loadAll() {
+        final List<FeedbackEntryInterf> list = new ArrayList<>();
         final Path path = Paths.get(FILE_PATH);
 
         if (!Files.exists(path)) {
@@ -88,11 +90,12 @@ public class FileFeedbackRepository implements FeedbackRepository {
 
             final String content = Files.readString(path, StandardCharsets.UTF_8);
             final JSONObject root = new JSONObject(new JSONTokener(content));
+            final FeedbackEntryFactoryInterf factory = new FeedbackEntryFactory();
 
             for (String key : root.keySet()) {
                 final LocalDate date = LocalDate.parse(key);
                 final JSONObject obj = root.getJSONObject(key);
-                list.add(new FeedbackEntry(
+                list.add(factory.create(
                         date,
                         obj.optString(Constants.ANALYSIS, null),
                         obj.optString(Constants.CORRELATION, null),
@@ -104,7 +107,7 @@ public class FileFeedbackRepository implements FeedbackRepository {
             throw new RuntimeException("Failed to load feedback entries", exception);
         }
 
-        list.sort(Comparator.comparing(FeedbackEntry::getDate).reversed());
+        list.sort(Comparator.comparing(FeedbackEntryInterf::getDate).reversed());
         return List.copyOf(list);
     }
 }

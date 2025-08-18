@@ -5,6 +5,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
+import entity.feedback_entry.FeedbackEntryFactory;
+import entity.feedback_entry.FeedbackEntryFactoryInterf;
+import entity.feedback_entry.FeedbackEntryInterf;
 import org.json.JSONObject;
 
 import entity.Angela.DailyLog;
@@ -47,7 +50,7 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final LocalDate today = LocalDate.now();
             final LocalDate monday = today.with(DayOfWeek.MONDAY);
 
-            final FeedbackEntry cached = feedbackRepo.loadByDate(monday);
+            final FeedbackEntryInterf cached = feedbackRepo.loadByDate(monday);
             if (cached != null) {
                 outputBoundary.present(new GenerateFeedbackOutputData(cached));
                 return;
@@ -79,11 +82,9 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
                 combinedAnalysis = analysisText + "\n\nNotes: " + extraNotes;
             }
 
-            final FeedbackEntry entry = new FeedbackEntry(
-                    monday,
-                    combinedAnalysis,
-                    correlationJson,
-                    recText);
+            final FeedbackEntryFactoryInterf factory = new FeedbackEntryFactory();
+
+            final FeedbackEntryInterf entry = factory.create(monday, combinedAnalysis, correlationJson, recText);
             feedbackRepo.save(entry);
 
             outputBoundary.present(new GenerateFeedbackOutputData(entry));
