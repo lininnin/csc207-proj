@@ -109,7 +109,8 @@ public class BigMain {
     }
 
     @NotNull
-    private static JButton configureButton(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
+    private static JButton configureButton(String item, JPanel centrePanel,
+                                           TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final JButton btn = new JButton(item);
         btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FORTY));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -147,7 +148,8 @@ public class BigMain {
         return new WeeklyFeedbackScheduler(feedbackInputBoundary);
     }
 
-    private static void menuSelection(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
+    private static void menuSelection(String item, JPanel centrePanel,
+                                      TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final CardLayout cl = (CardLayout) centrePanel.getLayout();
         switch (item) {
             case "📋 Tasks" -> {
