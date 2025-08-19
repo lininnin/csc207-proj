@@ -1,10 +1,10 @@
 package interface_adapter.gpt;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
-import entity.Angela.DailyLog;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.Angela.DailyLog;
 
 /**
  * Builds a Bayesian‑correlation prompt for the last 7 days.
@@ -54,7 +54,8 @@ public final class BayesCorrelationPromptBuilder {
                 .append("OUTPUT JSON SCHEMA:\n")
                 .append("{\n")
                 .append("  \"effect_summary\": [\n")
-                .append("    {\"variable\":\"Stress\",\"direction\":\"Positive|Negative|None\",\"confidence\":0.0‑1.0},\n")
+                .append("    {\"variable\":\"Stress\",\"direction\":\"Positive|Negative|None\","
+                        + "\"confidence\":0.0‑1.0},\n")
                 .append("    {\"variable\":\"Energy\", ...},\n")
                 .append("    {\"variable\":\"Fatigue\", ...}\n")
                 .append("  ],\n")
@@ -65,7 +66,7 @@ public final class BayesCorrelationPromptBuilder {
 
     private static String toWeekVectorJson(List<DailyLog> logs) {
         return logs.stream().map(dailyLog -> {
-            double completion = dailyLog.getDailyTaskSummary() == null
+            final double completion = dailyLog.getDailyTaskSummary() == null
                     ? Double.NaN : dailyLog.getDailyTaskSummary().getCompletionRate();
 
             // average wellness levels for the day

@@ -1,19 +1,24 @@
 package use_case.feedback_entry;
 
-import entity.feedback_entry.FeedbackEntry;
+import java.time.LocalDate;
+
+import entity.feedback_entry.FeedbackEntryInterf;
+import use_case.repository.FeedbackRepository;
 
 public class FeedbackEntryInteractor implements FeedbackEntryInputBoundary {
-    private final FeedbackEntryRepository repository;
-    private final FeedbackEntryOutputBoundary presenter;
+    private final FeedbackRepository repo;
+    private final FeedbackEntryOutputBoundary output;
 
-    public FeedbackEntryInteractor(FeedbackEntryRepository repo, FeedbackEntryOutputBoundary presenter) {
-        this.repository = repo;
-        this.presenter = presenter;
+    public FeedbackEntryInteractor(FeedbackRepository repo, FeedbackEntryOutputBoundary output) {
+        this.repo = repo;
+        this.output = output;
     }
 
     @Override
     public void viewEntry(FeedbackEntryRequestModel request) {
-        final FeedbackEntry entry = repository.getByDate(request.getDate());
-        presenter.present(new FeedbackEntryResponseModel(entry));
+        final LocalDate date = request.getDate();
+        final FeedbackEntryInterf entry = repo.loadByDate(date);
+        final FeedbackEntryResponseModel response = new FeedbackEntryResponseModel(entry);
+        output.present(response);
     }
 }

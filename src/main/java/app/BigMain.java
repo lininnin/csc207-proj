@@ -66,7 +66,8 @@ public class BigMain {
         final JPanel eventPanel = eventBuilder.build();
         final JPanel goalPanel = new GoalPageBuilder().build();
         final JPanel wellnessPanel = new WellnessLogPageBuilder().build();
-        final JPanel feedbackPage = FeedbackPageBuilder.build(feedbackRepository.loadAll());
+        final FeedbackPageBuilder feedbackPageBuilder = new FeedbackPageBuilder(feedbackRepository);
+        final JPanel feedbackPage = feedbackPageBuilder.build();
         final JPanel settingPage = new SettingsPageBuilder().build();
 
         centrePanel.add(taskPanel, "Tasks");
@@ -109,7 +110,8 @@ public class BigMain {
     }
 
     @NotNull
-    private static JButton configureButton(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
+    private static JButton configureButton(String item, JPanel centrePanel,
+                                           TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final JButton btn = new JButton(item);
         btn.setMaximumSize(new Dimension(Constants.TWO_HUNDRED, Constants.FORTY));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -147,7 +149,8 @@ public class BigMain {
         return new WeeklyFeedbackScheduler(feedbackInputBoundary);
     }
 
-    private static void menuSelection(String item, JPanel centrePanel, TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
+    private static void menuSelection(String item, JPanel centrePanel,
+                                      TaskPageBuilder taskBuilder, EventPageBuilder eventBuilder) {
         final CardLayout cl = (CardLayout) centrePanel.getLayout();
         switch (item) {
             case "📋 Tasks" -> {

@@ -30,12 +30,13 @@ public class GoalInputValidator {
      */
     public static int validatePositiveInteger(String input, String fieldName) {
         try {
-            int value = Integer.parseInt(input);
+            final int value = Integer.parseInt(input);
             if (value < 0) {
                 throw new IllegalArgumentException(fieldName + " must be a positive integer.");
             }
             return value;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException ex) {
             throw new IllegalArgumentException("Invalid format for " + fieldName + ". Please enter an integer.");
         }
     }
@@ -51,7 +52,8 @@ public class GoalInputValidator {
     public static LocalDate validateDate(String input, String fieldName) {
         try {
             return LocalDate.parse(input);
-        } catch (DateTimeParseException e) {
+        }
+        catch (DateTimeParseException ex) {
             throw new IllegalArgumentException("Invalid date format for " + fieldName + ". Please use YYYY-MM-DD.");
         }
     }

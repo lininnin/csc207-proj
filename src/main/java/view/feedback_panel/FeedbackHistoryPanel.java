@@ -15,17 +15,36 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import constants.Constants;
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 
 public class FeedbackHistoryPanel extends JPanel {
-    public FeedbackHistoryPanel(
-            FeedbackHistoryViewModel viewModel,
-            Consumer<FeedbackEntry> onViewEntry
-    ) {
+
+    private final FeedbackHistoryViewModel viewModel;
+    private final Consumer<FeedbackEntryInterf> onViewEntry;
+
+    public FeedbackHistoryPanel(FeedbackHistoryViewModel viewModel,
+                                Consumer<FeedbackEntryInterf> onViewEntry) {
+        this.viewModel = viewModel;
+        this.onViewEntry = onViewEntry;
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(Constants.TWELVE, Constants.TWELVE,
-                Constants.TWELVE, Constants.TWELVE));
+        setBorder(BorderFactory.createEmptyBorder(
+                Constants.TWELVE, Constants.TWELVE, Constants.TWELVE, Constants.TWELVE));
+
+        // initial build
+        rebuild();
+
+        // observe VM updates
+        this.viewModel.addPropertyChangeListener(evt -> {
+            if ("entries".equals(evt.getPropertyName())) {
+                rebuild();
+            }
+        });
+    }
+
+    private void rebuild() {
+        removeAll();
 
         final JLabel header = new JLabel("Feedback History");
         header.setFont(header.getFont().deriveFont(Font.BOLD, Constants.F20));
@@ -33,12 +52,17 @@ public class FeedbackHistoryPanel extends JPanel {
         header.setBorder(BorderFactory.createEmptyBorder(0, 0, Constants.SIXTEEN, 0));
         add(header);
 
-        List<FeedbackEntry> entries = viewModel.getEntries();
-        if (entries == null) {
-            entries = List.of();
+        final List<FeedbackEntryInterf> entries = viewModel.getEntries();
+        if (entries == null || entries.isEmpty()) {
+            final JLabel empty = new JLabel("No feedback entry on record.");
+            empty.setForeground(Color.GRAY);
+            add(empty);
+            revalidate();
+            repaint();
+            return;
         }
 
-        for (FeedbackEntry entry : entries) {
+        for (FeedbackEntryInterf entry : entries) {
             final JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, Constants.TWELVE, 0));
             row.setAlignmentX(Component.LEFT_ALIGNMENT);
             row.setMaximumSize(new Dimension(Constants.FIVE_FIFTY, Constants.FORTY));
@@ -47,20 +71,14 @@ public class FeedbackHistoryPanel extends JPanel {
             dateLabel.setPreferredSize(new Dimension(Constants.HUNDRED, Constants.TWENTY_TWO));
 
             final JButton viewBtn = new JButton("View");
-            viewBtn.setBackground(new Color(Constants.TWO_FIFTY_FIVE,
-                    Constants.TWO_FIFTY_FIVE, Constants.TWO_FIFTY_FIVE));
-            viewBtn.addActionListener(view -> onViewEntry.accept(entry));
+            viewBtn.addActionListener(event -> onViewEntry.accept(entry));
 
             row.add(dateLabel);
             row.add(viewBtn);
             add(row);
         }
 
-        // If there are no entries, show a message
-        if (entries.isEmpty()) {
-            final JLabel emptyLabel = new JLabel("No feedback entry on record.");
-            emptyLabel.setForeground(Color.GRAY);
-            add(emptyLabel);
-        }
+        revalidate();
+        repaint();
     }
 }
