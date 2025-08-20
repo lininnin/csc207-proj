@@ -4,6 +4,7 @@ import data_access.in_memory_repo.InMemoryDailyLogRepo;
 import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
+import entity.feedback_entry.FeedbackEntryInterf;
 import interface_adapter.gpt.OpenAiApiAdapter;
 import entity.feedback_entry.FeedbackEntry;
 
@@ -27,7 +28,7 @@ public class TestGenerateFeedback {
 
         // 4. OutputBoundary: print to console
         GenerateFeedbackOutputBoundary output = data -> {
-            FeedbackEntry entry = data.getFeedbackEntry();
+            FeedbackEntryInterf entry = data.getFeedbackEntry();
             System.out.println("Analysis: " + entry.getAiAnalysis());
             System.out.println("Correlation: " + entry.getCorrelationData());
             System.out.println("Recommendation: " + entry.getRecommendations());
