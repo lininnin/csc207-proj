@@ -131,8 +131,8 @@ Return STRICT JSON only, no markdown.  Use this schema exactly:
             for (WellnessLogEntryInterf entry : wellnessLog.getEntries()) {
                 prompt.append("---")
                         .append("Stress level: ").append(entry.getStressLevel()).append(",")
-                        .append("Energy level: ").append(entry.getStressLevel()).append(",")
-                        .append("Fatigue level: ").append(entry.getStressLevel()).append(",")
+                        .append("Energy level: ").append(entry.getEnergyLevel()).append(",")
+                        .append("Fatigue level: ").append(entry.getFatigueLevel()).append(",")
                         .append("Mood: ").append(entry.getMoodLabel().getName())
                         .append(", analyze how this mood may influence the above wellness levels and completion rate.");
                 if (entry.getUserNote() != null && !entry.getUserNote().isBlank()) {
