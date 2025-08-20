@@ -5,10 +5,8 @@ import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.gpt.OpenAiApiAdapter;
-import entity.feedback_entry.FeedbackEntry;
+import interface_adapter.generate_feedback.gateway.OpenAiApiAdapter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class TestGenerateFeedback {

@@ -1,4 +1,4 @@
-package interface_adapter.gpt;
+package interface_adapter.generate_feedback.mapping;
 
 import org.json.JSONObject;
 

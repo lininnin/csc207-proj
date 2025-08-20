@@ -1,4 +1,4 @@
-package interface_adapter.gpt;
+package interface_adapter.generate_feedback.gateway;
 
 import java.io.IOException;
 import java.time.Duration;

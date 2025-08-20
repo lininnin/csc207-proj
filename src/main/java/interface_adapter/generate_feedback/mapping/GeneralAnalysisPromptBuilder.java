@@ -1,4 +1,4 @@
-package interface_adapter.gpt;
+package interface_adapter.generate_feedback.mapping;
 
 import java.util.List;
 import java.util.stream.Collectors;

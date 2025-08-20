@@ -11,9 +11,9 @@ import entity.Angela.DailyLog;
 import entity.feedback_entry.FeedbackEntryFactory;
 import entity.feedback_entry.FeedbackEntryFactoryInterf;
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.gpt.BayesCorrelationPromptBuilder;
-import interface_adapter.gpt.GeneralAnalysisPromptBuilder;
-import interface_adapter.gpt.RecommendationPromptBuilder;
+import interface_adapter.generate_feedback.mapping.BayesCorrelationPromptBuilder;
+import interface_adapter.generate_feedback.mapping.GeneralAnalysisPromptBuilder;
+import interface_adapter.generate_feedback.mapping.RecommendationPromptBuilder;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 /**
