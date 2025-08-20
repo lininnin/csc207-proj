@@ -5,13 +5,12 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
-import entity.feedback_entry.FeedbackEntryFactory;
-import entity.feedback_entry.FeedbackEntryFactoryInterf;
-import entity.feedback_entry.FeedbackEntryInterf;
 import org.json.JSONObject;
 
 import entity.Angela.DailyLog;
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryFactory;
+import entity.feedback_entry.FeedbackEntryFactoryInterf;
+import entity.feedback_entry.FeedbackEntryInterf;
 import interface_adapter.gpt.BayesCorrelationPromptBuilder;
 import interface_adapter.gpt.GeneralAnalysisPromptBuilder;
 import interface_adapter.gpt.RecommendationPromptBuilder;
