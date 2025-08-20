@@ -36,7 +36,6 @@ public final class BayesCorrelationPromptBuilder {
         sb.append("SYSTEM:\n")
                 .append("You are a statistician performing a simple Bayesian regression\n")
                 .append("to relate wellness metrics to task‑completion rate.\n\n")
-
                 .append("USER:\n")
                 .append("For each of the last 7 days you get:\n")
                 .append("  date, completion_rate (0‑1), avg_stress, avg_energy, avg_fatigue.\n")
