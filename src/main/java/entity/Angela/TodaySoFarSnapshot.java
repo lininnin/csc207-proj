@@ -2,7 +2,7 @@ package entity.Angela;
 
 import entity.Angela.Task.Task;
 import entity.info.Info;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

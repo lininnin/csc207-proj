@@ -1,7 +1,7 @@
 package view.Angela;
 
-import entity.Alex.Event.Event;
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.Event;
+import entity.alex.Event.EventInterf;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.info.Info;
 import interface_adapter.Angela.task.today.TodayTasksState;
@@ -15,7 +15,7 @@ import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
 import interface_adapter.sophia.today_goal.TodaysGoalsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
-import view.Alex.Event.TodaysEventsView;
+import view.alex.Event.TodaysEventsView;
 import view.Angela.Task.TodaysTasksView;
 import view.sophia.TodayGoalView;
 

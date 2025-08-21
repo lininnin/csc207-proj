@@ -3,6 +3,7 @@ package data_access;
 import data_access.alex.TodaysEventDataAccessObject;
 import data_access.alex.TodaysWellnessLogDataAccessObject;
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.alex.Event.EventInterf;
 import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;

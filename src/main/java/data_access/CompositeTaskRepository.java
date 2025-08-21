@@ -5,8 +5,8 @@ import entity.Angela.Task.TaskAvailableInterf;
 import entity.Sophia.GoalInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.util.List;
 import java.util.ArrayList;
