@@ -1,6 +1,6 @@
 package use_case.Angela.category.delete;
 
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import data_access.InMemoryTaskGateway;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DeleteCategoryInteractorTest {
 
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryDataAccess;
     private InMemoryTaskGateway taskGateway;
     private TestDeleteCategoryPresenter testPresenter;
     private DeleteCategoryInteractor interactor;
@@ -26,11 +26,11 @@ class DeleteCategoryInteractorTest {
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestDeleteCategoryPresenter();
         // Use the new constructor with segregated interfaces
         interactor = new DeleteCategoryInteractor(
-            categoryGateway,  // implements DeleteCategoryCategoryDataAccessInterface
+            categoryDataAccess,  // implements DeleteCategoryCategoryDataAccessInterface
             taskGateway,      // implements DeleteCategoryTaskDataAccessInterface  
             null,             // no event data access needed for this test
             testPresenter
@@ -40,14 +40,14 @@ class DeleteCategoryInteractorTest {
     @Test
     void testSuccessfulDeleteWithoutTasks() {
         // Create enough categories to allow deletion (minimum 3 required)
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
         
         // Create a category to delete
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(category);
+        categoryDataAccess.save(category);
 
         // Delete the category
         DeleteCategoryInputData inputData = new DeleteCategoryInputData(categoryId);
@@ -60,20 +60,20 @@ class DeleteCategoryInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify category was deleted
-        assertNull(categoryGateway.getCategoryById(categoryId));
+        assertNull(categoryDataAccess.getCategoryById(categoryId));
     }
 
     @Test
     void testSuccessfulDeleteWithTasks() {
         // Create enough categories to allow deletion (minimum 3 required)
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
         
         // Create a category to delete
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(category);
+        categoryDataAccess.save(category);
 
         // Create tasks with this category
         Info info1 = new Info.Builder("Task 1")
@@ -97,7 +97,7 @@ class DeleteCategoryInteractorTest {
         assertTrue(testPresenter.lastOutputData.getMessage() != null);
 
         // Verify category was deleted
-        assertNull(categoryGateway.getCategoryById(categoryId));
+        assertNull(categoryDataAccess.getCategoryById(categoryId));
 
         // Verify tasks have empty category
         List<Info> tasks = taskGateway.getAllAvailableTasks();
@@ -111,7 +111,7 @@ class DeleteCategoryInteractorTest {
     void testDeleteLastCategory() {
         // Test that users can delete all categories (no minimum requirement)
         String categoryId1 = UUID.randomUUID().toString();
-        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
 
         // Delete the only category (should succeed with new business rule)
         DeleteCategoryInputData inputData = new DeleteCategoryInputData(categoryId1);
@@ -123,7 +123,7 @@ class DeleteCategoryInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify category was deleted
-        assertEquals(0, categoryGateway.getAllCategories().size());
+        assertEquals(0, categoryDataAccess.getAllCategories().size());
     }
 
     @Test
@@ -134,10 +134,10 @@ class DeleteCategoryInteractorTest {
         String categoryId3 = UUID.randomUUID().toString();
         String categoryId4 = UUID.randomUUID().toString();
         
-        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
-        categoryGateway.save(new Category(categoryId3, "Urgent", "#FF0000"));
-        categoryGateway.save(new Category(categoryId4, "Extra", "#FFFF00"));
+        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryDataAccess.save(new Category(categoryId2, "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(categoryId3, "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(categoryId4, "Extra", "#FFFF00"));
 
         // Delete one category (should succeed)
         DeleteCategoryInputData inputData = new DeleteCategoryInputData(categoryId4);
@@ -148,15 +148,15 @@ class DeleteCategoryInteractorTest {
         // Category name not in output data
 
         // Verify correct number of categories remain
-        assertEquals(3, categoryGateway.getAllCategories().size());
+        assertEquals(3, categoryDataAccess.getAllCategories().size());
     }
 
     @Test
     void testFailureCategoryNotFound() {
         // Create some categories
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Work", "#0000FF"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Work", "#0000FF"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
 
         // Try to delete non-existent category
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("non-existent-id");
@@ -200,10 +200,10 @@ class DeleteCategoryInteractorTest {
         String categoryId3 = UUID.randomUUID().toString();
         String categoryId4 = UUID.randomUUID().toString();
         
-        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
-        categoryGateway.save(new Category(categoryId3, "Urgent", "#FF0000"));
-        categoryGateway.save(new Category(categoryId4, "Extra", "#FFFF00"));
+        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryDataAccess.save(new Category(categoryId2, "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(categoryId3, "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(categoryId4, "Extra", "#FFFF00"));
 
         // Create tasks with different categories
         Info info1 = new Info.Builder("Work Task")
@@ -243,10 +243,10 @@ class DeleteCategoryInteractorTest {
     void testDeleteCategoryWithMixedTasks() {
         // Create categories
         String categoryId = UUID.randomUUID().toString();
-        categoryGateway.save(new Category(categoryId, "Work", "#0000FF"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
-        categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
+        categoryDataAccess.save(new Category(categoryId, "Work", "#0000FF"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
+        categoryDataAccess.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
 
         // Create tasks - some with category, some without
         Info info1 = new Info.Builder("Task with category")

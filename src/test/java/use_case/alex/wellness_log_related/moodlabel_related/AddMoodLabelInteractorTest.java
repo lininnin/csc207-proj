@@ -1,6 +1,7 @@
 package use_case.alex.wellness_log_related.moodlabel_related;
 
 import entity.Alex.MoodLabel.MoodLabel;
+import entity.Alex.MoodLabel.Type;
 import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,10 @@ public class AddMoodLabelInteractorTest {
         String name = "Joyful";
         String type = "Positive";
         AddMoodLabelInputData input = new AddMoodLabelInputData(name, type);
-        MoodLabel newLabel = new MoodLabel.Builder(name).type(MoodLabel.Type.Positive).build();
+        MoodLabel newLabel = new MoodLabel.Builder(name).type(Type.Positive).build();
 
         when(mockDAO.getAllLabels()).thenReturn(new ArrayList<>());
-        when(mockFactory.create(name, MoodLabel.Type.Positive)).thenReturn(newLabel);
+        when(mockFactory.create(name, Type.Positive)).thenReturn(newLabel);
 
         // Act
         interactor.execute(input);
@@ -72,7 +73,7 @@ public class AddMoodLabelInteractorTest {
     @Test
     void testExecute_duplicateName_shouldCallFailView() {
         String name = "Sad";
-        MoodLabel existing = new MoodLabel.Builder(name).type(MoodLabel.Type.Negative).build();
+        MoodLabel existing = new MoodLabel.Builder(name).type(Type.Negative).build();
 
         when(mockDAO.getAllLabels()).thenReturn(List.of(existing));
 

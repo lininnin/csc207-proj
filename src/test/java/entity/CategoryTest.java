@@ -41,16 +41,7 @@ class CategoryTest {
         assertEquals("", category.getColor());
     }
 
-    @Test
-    void testSetName() {
-        String id = UUID.randomUUID().toString();
-        Category category = new Category(id, "Original", "#FF0000");
-
-        category.setName("Updated");
-        assertEquals("Updated", category.getName());
-        assertEquals(id, category.getId());  // ID should not change
-        assertEquals("#FF0000", category.getColor());  // Color should not change
-    }
+    // Test removed - Category is now immutable, no setName method
 
     // Test removed - setColor method doesn't exist, color is final
 
@@ -119,11 +110,7 @@ class CategoryTest {
         // ID should remain the same
         assertEquals(originalId, category.getId());
         
-        // After name change
-        category.setName("Personal");
-        assertEquals(originalId, category.getId());
-        
-        // Color is final, cannot be changed
+        // Category is immutable - cannot change name or color
         assertEquals("#0000FF", category.getColor());
     }
 
@@ -153,20 +140,7 @@ class CategoryTest {
         }
     }
 
-    @Test
-    void testSetNameToNull() {
-        String id = UUID.randomUUID().toString();
-        Category category = new Category(id, "Work", "#0000FF");
-
-        // Test if setting name to null is allowed
-        try {
-            category.setName(null);
-            assertNull(category.getName());
-        } catch (Exception e) {
-            // If it doesn't allow null, original name should remain
-            assertEquals("Work", category.getName());
-        }
-    }
+    // Test removed - Category is now immutable, no setName method
 
     // Test removed - setColor method doesn't exist, color is final
 

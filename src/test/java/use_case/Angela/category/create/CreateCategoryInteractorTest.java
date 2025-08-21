@@ -1,10 +1,11 @@
 package use_case.Angela.category.create;
 
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,15 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CreateCategoryInteractorTest {
 
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryDataAccess;
     private TestCreateCategoryPresenter testPresenter;
     private CreateCategoryInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestCreateCategoryPresenter();
-        interactor = new CreateCategoryInteractor(categoryGateway, testPresenter);
+        interactor = new CreateCategoryInteractor(categoryDataAccess, testPresenter, new entity.CommonCategoryFactory());
     }
 
     @Test
@@ -41,7 +42,7 @@ class CreateCategoryInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify category was saved
-        List<Category> categories = categoryGateway.getAllCategories();
+        List<Category> categories = categoryDataAccess.getAllCategories();
         assertEquals(1, categories.size());
         Category savedCategory = categories.get(0);
         assertEquals("Work", savedCategory.getName());
@@ -63,7 +64,7 @@ class CreateCategoryInteractorTest {
         interactor.execute(inputData3);
 
         // Verify all categories were created
-        List<Category> categories = categoryGateway.getAllCategories();
+        List<Category> categories = categoryDataAccess.getAllCategories();
         assertTrue(categories.size() >= 3);
     }
 
@@ -90,7 +91,7 @@ class CreateCategoryInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateCategoryPresenter();
-        interactor = new CreateCategoryInteractor(categoryGateway, testPresenter);
+        interactor = new CreateCategoryInteractor(categoryDataAccess, testPresenter, new entity.CommonCategoryFactory());
 
         // Try to create category with same name (case-insensitive)
         CreateCategoryInputData inputData2 = new CreateCategoryInputData("work");
@@ -102,7 +103,7 @@ class CreateCategoryInteractorTest {
         assertEquals("The category name already exists", testPresenter.lastError);
 
         // Verify still has categories from previous tests
-        assertTrue(categoryGateway.getAllCategories().size() >= 1);
+        assertTrue(categoryDataAccess.getAllCategories().size() >= 1);
     }
 
     @Test
@@ -117,7 +118,7 @@ class CreateCategoryInteractorTest {
         assertEquals("Category name cannot be empty", testPresenter.lastError);
 
         // Verify no category was created
-        assertTrue(categoryGateway.getAllCategories().isEmpty());
+        assertTrue(categoryDataAccess.getAllCategories().isEmpty());
     }
 
     @Test
@@ -132,7 +133,7 @@ class CreateCategoryInteractorTest {
         assertEquals("Category name cannot be empty", testPresenter.lastError);
 
         // Verify no category was created
-        assertTrue(categoryGateway.getAllCategories().isEmpty());
+        assertTrue(categoryDataAccess.getAllCategories().isEmpty());
     }
 
     @Test
@@ -147,7 +148,7 @@ class CreateCategoryInteractorTest {
         assertEquals("Category name cannot be empty", testPresenter.lastError);
 
         // Verify no category was created
-        assertTrue(categoryGateway.getAllCategories().isEmpty());
+        assertTrue(categoryDataAccess.getAllCategories().isEmpty());
     }
 
     @Test
@@ -160,7 +161,7 @@ class CreateCategoryInteractorTest {
         assertNotNull(testPresenter.lastOutputData);
         assertEquals("  Work  ", testPresenter.lastOutputData.getCategoryName());
 
-        Category savedCategory = categoryGateway.getCategoryByName("  Work  ");
+        Category savedCategory = categoryDataAccess.getCategoryByName("  Work  ");
         assertNotNull(savedCategory);
         assertEquals("  Work  ", savedCategory.getName());
     }
@@ -174,7 +175,7 @@ class CreateCategoryInteractorTest {
         interactor.execute(inputData1);
 
         testPresenter = new TestCreateCategoryPresenter();
-        interactor = new CreateCategoryInteractor(categoryGateway, testPresenter);
+        interactor = new CreateCategoryInteractor(categoryDataAccess, testPresenter, new entity.CommonCategoryFactory());
 
         // Try different case variations
         CreateCategoryInputData inputData2 = new CreateCategoryInputData("WORK");
@@ -182,7 +183,7 @@ class CreateCategoryInteractorTest {
         assertNotNull(testPresenter.lastError);
 
         testPresenter = new TestCreateCategoryPresenter();
-        interactor = new CreateCategoryInteractor(categoryGateway, testPresenter);
+        interactor = new CreateCategoryInteractor(categoryDataAccess, testPresenter, new entity.CommonCategoryFactory());
 
         CreateCategoryInputData inputData3 = new CreateCategoryInputData("work");
         interactor.execute(inputData3);
@@ -190,7 +191,7 @@ class CreateCategoryInteractorTest {
 
         // Should still only have one category
         int categoryCount = 0;
-        for (Category cat : categoryGateway.getAllCategories()) {
+        for (Category cat : categoryDataAccess.getAllCategories()) {
             if (cat.getName().equalsIgnoreCase("work")) {
                 categoryCount++;
             }
@@ -211,7 +212,7 @@ class CreateCategoryInteractorTest {
         assertEquals("The name of category cannot exceed 20 letters", testPresenter.lastError);
 
         // Verify no category was created
-        assertTrue(categoryGateway.getAllCategories().isEmpty());
+        assertTrue(categoryDataAccess.getAllCategories().isEmpty());
     }
     
     @Test
@@ -232,7 +233,7 @@ class CreateCategoryInteractorTest {
         // Create a gateway that throws exception on save
         TestExceptionCategoryGateway exceptionGateway = new TestExceptionCategoryGateway();
         testPresenter = new TestCreateCategoryPresenter();
-        interactor = new CreateCategoryInteractor(exceptionGateway, testPresenter);
+        interactor = new CreateCategoryInteractor(exceptionGateway, testPresenter, new entity.CommonCategoryFactory());
         
         CreateCategoryInputData inputData = new CreateCategoryInputData("TestCategory");
         interactor.execute(inputData);
@@ -266,45 +267,25 @@ class CreateCategoryInteractorTest {
     /**
      * Test gateway that throws exception on save to test error handling.
      */
-    private static class TestExceptionCategoryGateway implements use_case.Angela.category.CategoryGateway {
+    private static class TestExceptionCategoryGateway implements CreateCategoryDataAccessInterface {
         @Override
-        public void saveCategory(Category category) {
+        public void save(Category category) {
             throw new RuntimeException("Database connection failed");
         }
         
         @Override
-        public Category getCategoryById(String id) {
-            return null;
+        public boolean existsByName(String name) {
+            return false;
         }
         
         @Override
         public List<Category> getAllCategories() {
-            return new java.util.ArrayList<>();
+            return new ArrayList<>();
         }
         
         @Override
-        public Category getCategoryByName(String name) {
-            return null;
-        }
-        
-        @Override
-        public boolean updateCategory(Category category) {
-            return false;
-        }
-        
-        @Override
-        public boolean deleteCategory(String categoryId) {
-            return false;
-        }
-        
-        @Override
-        public boolean categoryNameExists(String name) {
-            return false;
-        }
-        
-        @Override
-        public String getNextCategoryId() {
-            return "test-id";
+        public int getCategoryCount() {
+            return 0;
         }
     }
 }

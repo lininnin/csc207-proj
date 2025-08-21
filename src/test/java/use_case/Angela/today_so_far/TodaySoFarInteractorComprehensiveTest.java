@@ -15,7 +15,7 @@ import entity.Sophia.GoalInterface.TimePeriod;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Category;
 import entity.info.Info;
-import use_case.Angela.category.CategoryGateway;
+// Removed CategoryGateway import - will use CategoryReadDataAccessInterface
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -455,7 +455,7 @@ class TodaySoFarInteractorComprehensiveTest {
     /**
      * Comprehensive test category gateway.
      */
-    private static class ComprehensiveTestCategoryGateway implements CategoryGateway {
+    private static class ComprehensiveTestCategoryGateway implements CategoryReadDataAccessInterface {
         private Map<String, Category> categories = new HashMap<>();
         
         void addCategory(Category category) {
@@ -463,48 +463,8 @@ class TodaySoFarInteractorComprehensiveTest {
         }
         
         @Override
-        public void saveCategory(Category category) {
-            categories.put(category.getId(), category);
-        }
-        
-        @Override
         public Category getCategoryById(String id) {
             return categories.get(id);
-        }
-        
-        @Override
-        public List<Category> getAllCategories() {
-            return new ArrayList<>(categories.values());
-        }
-        
-        @Override
-        public Category getCategoryByName(String name) {
-            return categories.values().stream()
-                .filter(c -> c.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-        }
-        
-        @Override
-        public boolean updateCategory(Category category) {
-            categories.put(category.getId(), category);
-            return true;
-        }
-        
-        @Override
-        public boolean deleteCategory(String categoryId) {
-            return categories.remove(categoryId) != null;
-        }
-        
-        @Override
-        public boolean categoryNameExists(String name) {
-            return categories.values().stream()
-                .anyMatch(c -> c.getName().equals(name));
-        }
-        
-        @Override
-        public String getNextCategoryId() {
-            return "cat" + (categories.size() + 1);
         }
     }
 }

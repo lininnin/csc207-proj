@@ -5,7 +5,7 @@ import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
+// Removed CategoryGateway import - will use CategoryReadDataAccessInterface
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -214,49 +214,11 @@ class TodaySoFarInteractorTest {
     /**
      * Test implementation of category gateway.
      */
-    private static class TestCategoryGateway implements CategoryGateway {
-        @Override
-        public void saveCategory(Category category) {
-            // Test implementation - no-op
-        }
-        
+    private static class TestCategoryGateway implements CategoryReadDataAccessInterface {
         @Override
         public Category getCategoryById(String id) {
             if (id == null || id.isEmpty()) return null;
             return new Category("test-id", "Test Category", null);
-        }
-        
-        @Override
-        public List<Category> getAllCategories() { 
-            return new ArrayList<>(); 
-        }
-        
-        @Override
-        public Category getCategoryByName(String name) {
-            if ("Test Category".equals(name)) {
-                return new Category("test-id", "Test Category", null);
-            }
-            return null;
-        }
-        
-        @Override
-        public boolean updateCategory(Category category) {
-            return true;
-        }
-        
-        @Override
-        public boolean deleteCategory(String categoryId) {
-            return true;
-        }
-        
-        @Override
-        public boolean categoryNameExists(String name) { 
-            return false; 
-        }
-        
-        @Override
-        public String getNextCategoryId() { 
-            return "test-id"; 
         }
     }
 }

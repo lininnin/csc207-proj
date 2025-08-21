@@ -1,7 +1,7 @@
 package use_case.Angela.task.create;
 
 import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.info.Info;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,16 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateTaskInteractorTest {
 
     private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryDataAccess;
     private TestCreateTaskPresenter testPresenter;
     private CreateTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
     }
 
     @Test
@@ -35,7 +35,7 @@ class CreateTaskInteractorTest {
         // Create a category first
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(category);
+        categoryDataAccess.save(category);
 
         // Create input data for a new task
         CreateTaskInputData inputData = new CreateTaskInputData(
@@ -135,7 +135,7 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
 
         // Try to create task with same name and category (case-insensitive check)
         CreateTaskInputData inputData2 = new CreateTaskInputData(
@@ -315,8 +315,8 @@ class CreateTaskInteractorTest {
         String categoryId2 = UUID.randomUUID().toString();
         Category category1 = new Category(categoryId1, "Work", "#0000FF");
         Category category2 = new Category(categoryId2, "Personal", "#00FF00");
-        categoryGateway.save(category1);
-        categoryGateway.save(category2);
+        categoryDataAccess.save(category1);
+        categoryDataAccess.save(category2);
 
         // Create first task with category1
         CreateTaskInputData inputData1 = new CreateTaskInputData(
@@ -329,7 +329,7 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
 
         // Create second task with same name but different category
         CreateTaskInputData inputData2 = new CreateTaskInputData(

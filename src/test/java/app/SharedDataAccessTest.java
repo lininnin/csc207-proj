@@ -40,7 +40,7 @@ class SharedDataAccessTest {
         
         // Verify all DAOs are initialized
         assertNotNull(sharedData.getTaskGateway(), "Task gateway should be initialized");
-        assertNotNull(sharedData.getCategoryGateway(), "Category gateway should be initialized");
+        assertNotNull(sharedData.getCategoryDataAccess(), "Category data access should be initialized");
         assertNotNull(sharedData.getEventDataAccess(), "Event data access should be initialized");
         assertNotNull(sharedData.getWellnessDataAccess(), "Wellness data access should be initialized");
         assertNotNull(sharedData.getGoalRepository(), "Goal repository should be initialized");
@@ -54,8 +54,8 @@ class SharedDataAccessTest {
         InMemoryTaskGateway taskGateway1 = sharedData.getTaskGateway();
         InMemoryTaskGateway taskGateway2 = sharedData.getTaskGateway();
         
-        InMemoryCategoryGateway categoryGateway1 = sharedData.getCategoryGateway();
-        InMemoryCategoryGateway categoryGateway2 = sharedData.getCategoryGateway();
+        InMemoryCategoryDataAccessObject categoryDataAccess1 = sharedData.getCategoryDataAccess();
+        InMemoryCategoryDataAccessObject categoryDataAccess2 = sharedData.getCategoryDataAccess();
         
         TodaysEventDataAccessObject eventDAO1 = sharedData.getEventDataAccess();
         TodaysEventDataAccessObject eventDAO2 = sharedData.getEventDataAccess();
@@ -68,7 +68,7 @@ class SharedDataAccessTest {
         
         // Verify same instances are returned
         assertSame(taskGateway1, taskGateway2, "Should return same task gateway instance");
-        assertSame(categoryGateway1, categoryGateway2, "Should return same category gateway instance");
+        assertSame(categoryDataAccess1, categoryDataAccess2, "Should return same category data access instance");
         assertSame(eventDAO1, eventDAO2, "Should return same event DAO instance");
         assertSame(wellnessDAO1, wellnessDAO2, "Should return same wellness DAO instance");
         assertSame(goalRepo1, goalRepo2, "Should return same goal repository instance");

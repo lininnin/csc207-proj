@@ -1,7 +1,7 @@
 package use_case.Angela.task.edit_available;
 
 import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
 import entity.info.Info;
@@ -19,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class EditAvailableTaskInteractorTest {
 
     private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryDataAccess;
     private TestEditAvailableTaskPresenter testPresenter;
     private EditAvailableTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestEditAvailableTaskPresenter();
-        interactor = new EditAvailableTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new EditAvailableTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
     }
 
     @Test
@@ -44,7 +44,7 @@ class EditAvailableTaskInteractorTest {
         // Create a category for the edit
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(category);
+        categoryDataAccess.save(category);
 
         // Edit the task
         EditAvailableTaskInputData inputData = new EditAvailableTaskInputData(
@@ -105,7 +105,7 @@ class EditAvailableTaskInteractorTest {
         // Create task with category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(category);
+        categoryDataAccess.save(category);
 
         Info info = new Info.Builder("Task with Category")
                 .category(categoryId)

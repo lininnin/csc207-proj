@@ -1,7 +1,7 @@
 package use_case.Angela.task.overdue;
 
 import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class OverdueTasksInteractorTest {
 
     private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryDataAccess;
     private TestOverdueTasksPresenter testPresenter;
     private OverdueTasksInteractor interactor;
 
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestOverdueTasksPresenter();
-        interactor = new OverdueTasksInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new OverdueTasksInteractor(taskGateway, categoryDataAccess, testPresenter);
     }
 
     @Test
@@ -50,7 +50,7 @@ class OverdueTasksInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category workCategory = new Category(categoryId, "Work", "#0000FF");
-        categoryGateway.save(workCategory);
+        categoryDataAccess.save(workCategory);
 
         // Create available tasks and add them to today with past due dates
         LocalDate yesterday = LocalDate.now().minusDays(1);
