@@ -12,9 +12,9 @@ import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 import entity.Angela.DailyTaskSummary;
 import entity.Angela.Task.Task;
-import use_case.generate_feedback.GptPrompt;
+import use_case.generate_feedback.GptPromptPort;
 
-public class GptPromptAdapter implements GptPrompt {
+public class GptPromptPortAdapter implements GptPromptPort {
     /**
      * Build a prompt asking GPT to perform a general wellness/productivity analysis based on listed weekly information.
      * @param logs daily logs for the past week (last monday to sunday)
@@ -82,9 +82,9 @@ Return STRICT JSON only, no markdown.  Use this schema exactly:
      */
     @Override
     public String buildCorrelation(List<DailyLog> logs) {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder prompt = new StringBuilder();
 
-        sb.append("SYSTEM:\n")
+        prompt.append("SYSTEM:\n")
                 .append("You are a statistician performing a simple Bayesian regression\n")
                 .append("to relate wellness metrics to task‑completion rate.\n\n")
                 .append("USER:\n")
@@ -111,7 +111,7 @@ Return STRICT JSON only, no markdown.  Use this schema exactly:
                 .append("  ],\n")
                 .append("}\n");
 
-        return sb.toString();
+        return prompt.toString();
     }
 
     /**

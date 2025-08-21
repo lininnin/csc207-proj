@@ -8,7 +8,7 @@ import entity.Angela.DailyLog;
  * Port that defines how the Generate Feedback use case can request
  * GPT-ready prompts to be constructed from domain data.
  */
-public interface GptPrompt {
+public interface GptPromptPort {
 
     /**
      * Builds a prompt for general weekly analysis.

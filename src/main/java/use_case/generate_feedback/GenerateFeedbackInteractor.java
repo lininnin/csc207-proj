@@ -11,7 +11,7 @@ import entity.Angela.DailyLog;
 import entity.feedback_entry.FeedbackEntryFactory;
 import entity.feedback_entry.FeedbackEntryFactoryInterf;
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.generate_feedback.GptPromptAdapter;
+import interface_adapter.generate_feedback.GptPromptPortAdapter;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 /**
@@ -57,7 +57,7 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final LocalDate to = monday.minusDays(1);
             final List<DailyLog> weekLogs = dailyRepo.loadBetween(from, to);
 
-            final GptPrompt promptBuilder = new GptPromptAdapter();
+            final GptPromptPort promptBuilder = new GptPromptPortAdapter();
 
             final String promptAnalysis = promptBuilder.buildAnalysis(weekLogs);
             final String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
