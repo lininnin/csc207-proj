@@ -3,7 +3,6 @@ package use_case.Angela.task.create;
 import entity.info.Info;
 import entity.Angela.Task.TaskAvailable;
 import use_case.Angela.task.TaskGateway;
-import use_case.Angela.category.CategoryGateway;
 
 /**
  * Interactor for the create task use case.
@@ -11,14 +10,14 @@ import use_case.Angela.category.CategoryGateway;
  */
 public class CreateTaskInteractor implements CreateTaskInputBoundary {
     private final CreateTaskDataAccessInterface dataAccess;
-    private final CategoryGateway categoryGateway;
+    private final CreateTaskCategoryDataAccessInterface categoryDataAccess;
     private final CreateTaskOutputBoundary outputBoundary;
 
     public CreateTaskInteractor(CreateTaskDataAccessInterface dataAccess,
-                                CategoryGateway categoryGateway,
+                                CreateTaskCategoryDataAccessInterface categoryDataAccess,
                                 CreateTaskOutputBoundary outputBoundary) {
         this.dataAccess = dataAccess;
-        this.categoryGateway = categoryGateway;
+        this.categoryDataAccess = categoryDataAccess;
         this.outputBoundary = outputBoundary;
     }
 
@@ -48,7 +47,7 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
         String categoryId = inputData.getCategoryId();
         String categoryName = "";
         if (categoryId != null && !categoryId.isEmpty()) {
-            var category = categoryGateway.getCategoryById(categoryId);
+            var category = categoryDataAccess.getCategoryById(categoryId);
             if (category == null) {
                 outputBoundary.presentError("Invalid category selected");
                 return;

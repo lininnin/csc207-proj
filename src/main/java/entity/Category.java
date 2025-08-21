@@ -6,7 +6,7 @@ package entity;
  */
 public class Category {
     private final String id;
-    private String name;
+    private final String name;
     private final String color; // Optional color for UI display
 
     /**
@@ -48,21 +48,6 @@ public class Category {
         return name;
     }
 
-    /**
-     * Sets a new name for this category.
-     *
-     * @param name The new name (max 20 chars)
-     * @throws IllegalArgumentException if name is invalid
-     */
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Category name cannot be null or empty");
-        }
-        if (name.length() > 20) {
-            throw new IllegalArgumentException("Category name cannot exceed 20 characters");
-        }
-        this.name = name;  // Don't trim - keep spaces as-is
-    }
 
     /**
      * Gets the color code for this category.

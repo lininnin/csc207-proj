@@ -5,7 +5,6 @@ import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -20,14 +19,14 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
     
     private final TodaySoFarDataAccessInterface dataAccess;
     private final TodaySoFarOutputBoundary outputBoundary;
-    private final CategoryGateway categoryGateway;
+    private final CategoryReadDataAccessInterface categoryReadDataAccess;
     
     public TodaySoFarInteractor(TodaySoFarDataAccessInterface dataAccess,
                                 TodaySoFarOutputBoundary outputBoundary,
-                                CategoryGateway categoryGateway) {
+                                CategoryReadDataAccessInterface categoryReadDataAccess) {
         this.dataAccess = dataAccess;
         this.outputBoundary = outputBoundary;
-        this.categoryGateway = categoryGateway;
+        this.categoryReadDataAccess = categoryReadDataAccess;
     }
     
     @Override
@@ -116,7 +115,7 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
         if (categoryId == null || categoryId.isEmpty()) {
             return "-";
         }
-        Category category = categoryGateway.getCategoryById(categoryId);
+        Category category = categoryReadDataAccess.getCategoryById(categoryId);
         return (category != null) ? category.getName() : "-";
     }
     
