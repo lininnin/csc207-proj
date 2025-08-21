@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import data_access.files.FileDailyLogRepository;
 import org.jetbrains.annotations.NotNull;
 
 import app.WellnessPage.WellnessLogPageBuilder;
@@ -23,7 +24,6 @@ import app.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
 import constants.Constants;
 import data_access.files.FileFeedbackRepository;
-import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
 import interface_adapter.generate_feedback.OpenAiApiAdapter;
@@ -135,7 +135,7 @@ public class RunApp {
 
     @NotNull
     private static WeeklyFeedbackScheduler getWeeklyFeedbackScheduler(FeedbackRepository feedbackRepository) {
-        final DailyLogRepository dailyLogRepository = new InMemoryDailyLogRepository();
+        final DailyLogRepository dailyLogRepository = new FileDailyLogRepository();
         final GptService analyzer = new OpenAiApiAdapter();
         final FeedbackHistoryViewModel viewModel = new FeedbackHistoryViewModel();
         final GenerateFeedbackOutputBoundary presenter = new GenerateFeedbackPresenter(viewModel);
