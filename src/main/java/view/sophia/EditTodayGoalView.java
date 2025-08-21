@@ -20,7 +20,7 @@ import interface_adapter.sophia.order_goal.OrderGoalController;
  * and updates the goal list accordingly. It also holds references
  * to controllers for goal-related operations such as deleting,
  * editing, reordering, and marking today's goals.
- *
+ */
 public class EditTodayGoalView extends JPanel implements PropertyChangeListener {
     private final EditTodaysGoalViewModel viewModel;
     private final JList<String> goalList = new JList<>();
