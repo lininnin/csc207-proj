@@ -1,7 +1,7 @@
 package use_case.Angela.task.edit_available;
 
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryDataAccessObject;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryGateway;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
 import entity.info.Info;
@@ -18,17 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EditAvailableTaskInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryDataAccessObject categoryDataAccess;
+    private InMemoryTaskDataAccessObject taskGateway;
+    private InMemoryCategoryGateway categoryGateway;
     private TestEditAvailableTaskPresenter testPresenter;
     private EditAvailableTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
-        categoryDataAccess = new InMemoryCategoryDataAccessObject();
+        taskGateway = new InMemoryTaskDataAccessObject();
+        categoryGateway = new InMemoryCategoryGateway();
         testPresenter = new TestEditAvailableTaskPresenter();
-        interactor = new EditAvailableTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
+        interactor = new EditAvailableTaskInteractor(taskGateway, categoryGateway, testPresenter);
     }
 
     @Test
@@ -44,7 +44,7 @@ class EditAvailableTaskInteractorTest {
         // Create a category for the edit
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Edit the task
         EditAvailableTaskInputData inputData = new EditAvailableTaskInputData(
@@ -105,7 +105,7 @@ class EditAvailableTaskInteractorTest {
         // Create task with category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         Info info = new Info.Builder("Task with Category")
                 .category(categoryId)

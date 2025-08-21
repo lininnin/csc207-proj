@@ -147,7 +147,7 @@ public class InMemoryCategoryDataAccessObject implements
     public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
         // This implementation returns empty list since InMemoryCategoryGateway
         // no longer has direct access to task data (follows SRP and DIP)
-        // The actual implementation is in InMemoryTaskGateway
+        // The actual implementation is in InMemoryTaskDataAccessObject
         return new ArrayList<>();
     }
 
@@ -155,7 +155,7 @@ public class InMemoryCategoryDataAccessObject implements
     public List<Task> findTodaysTasksByCategory(String categoryId) {
         // This implementation returns empty list since InMemoryCategoryGateway
         // no longer has direct access to task data (follows SRP and DIP)
-        // The actual implementation is in InMemoryTaskGateway
+        // The actual implementation is in InMemoryTaskDataAccessObject
         return new ArrayList<>();
     }
 
@@ -163,7 +163,7 @@ public class InMemoryCategoryDataAccessObject implements
     public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
         // This implementation returns false since InMemoryCategoryGateway
         // no longer has direct access to task data (follows SRP and DIP)
-        // The actual implementation is in InMemoryTaskGateway
+        // The actual implementation is in InMemoryTaskDataAccessObject
         return false;
     }
 
@@ -171,7 +171,7 @@ public class InMemoryCategoryDataAccessObject implements
     public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
         // This implementation returns false since InMemoryCategoryGateway
         // no longer has direct access to task data (follows SRP and DIP)
-        // The actual implementation is in InMemoryTaskGateway
+        // The actual implementation is in InMemoryTaskDataAccessObject
         return false;
     }
 

@@ -1,6 +1,6 @@
 package app;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 import data_access.TodaysWellnessLogDataAccessObject;
@@ -13,13 +13,13 @@ import interface_adapter.Angela.category.CategoryManagementViewModel;
 import java.io.File;
 
 /**
- * Factory for creating data access objects and shared view models.
- * Follows Dependency Injection pattern instead of Singleton.
- * This centralizes DAO creation while avoiding the Singleton anti-pattern.
+ * Singleton factory for creating data access objects and shared view models.
+ * This ensures all pages use the same data access instances.
  */
 public class AppDataAccessFactory {
+    private static AppDataAccessFactory instance;
     
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
@@ -29,11 +29,11 @@ public class AppDataAccessFactory {
     private final CategoryManagementViewModel categoryManagementViewModel;
     
     /**
-     * Creates a new factory with all data access objects initialized.
+     * Private constructor - use getInstance() instead.
      */
-    public AppDataAccessFactory() {
+    private AppDataAccessFactory() {
         // Initialize data access objects
-        this.taskGateway = new InMemoryTaskGateway();
+        this.taskGateway = new InMemoryTaskDataAccessObject();
         this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
         
         // Initialize shared ViewModels
@@ -57,8 +57,19 @@ public class AppDataAccessFactory {
             new GoalFactory()
         );
         
-        // Inject goal repository into task gateway for goal-task relationship checking
+        // Inject goal repository into task data access object for goal-task relationship checking
         this.taskGateway.setGoalRepository(this.goalRepository);
+    }
+    
+    /**
+     * Gets the singleton instance.
+     * @return The shared instance
+     */
+    public static synchronized AppDataAccessFactory getInstance() {
+        if (instance == null) {
+            instance = new AppDataAccessFactory();
+        }
+        return instance;
     }
     
     /**
@@ -78,7 +89,7 @@ public class AppDataAccessFactory {
      * Gets the task gateway.
      * @return The task gateway
      */
-    public InMemoryTaskGateway getTaskGateway() {
+    public InMemoryTaskDataAccessObject getTaskGateway() {
         return taskGateway;
     }
     

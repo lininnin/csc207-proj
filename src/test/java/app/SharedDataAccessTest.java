@@ -51,8 +51,8 @@ class SharedDataAccessTest {
         SharedDataAccess sharedData = SharedDataAccess.getInstance();
         
         // Get DAOs multiple times
-        InMemoryTaskGateway taskGateway1 = sharedData.getTaskGateway();
-        InMemoryTaskGateway taskGateway2 = sharedData.getTaskGateway();
+        InMemoryTaskDataAccessObject taskGateway1 = sharedData.getTaskGateway();
+        InMemoryTaskDataAccessObject taskGateway2 = sharedData.getTaskGateway();
         
         InMemoryCategoryDataAccessObject categoryDataAccess1 = sharedData.getCategoryDataAccess();
         InMemoryCategoryDataAccessObject categoryDataAccess2 = sharedData.getCategoryDataAccess();

@@ -1,6 +1,6 @@
 package use_case.Angela.task.delete;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DeleteTaskInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestDeleteTaskPresenter testPresenter;
     private DeleteTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestDeleteTaskPresenter();
         interactor = new DeleteTaskInteractor(taskGateway, testPresenter);
     }

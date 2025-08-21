@@ -1,6 +1,6 @@
 package use_case.Angela.task.add_to_today;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AddTaskToTodayInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestAddTaskToTodayPresenter testPresenter;
     private AddTaskToTodayInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestAddTaskToTodayPresenter();
         interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
     }
@@ -456,7 +456,7 @@ class AddTaskToTodayInteractorTest {
         assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
         
         // Now add a task with a past date
-        // Note: The InMemoryTaskGateway adjusts dates to allow testing overdue tasks
+        // Note: The InMemoryTaskDataAccessObject adjusts dates to allow testing overdue tasks
         LocalDate pastDate = LocalDate.now().minusDays(1);
         Task overdueTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, pastDate);
         

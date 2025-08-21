@@ -66,7 +66,7 @@ import use_case.Angela.task.overdue.OverdueTasksInteractor;
 import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInteractor;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.InMemoryTodaySoFarDataAccess;
 
@@ -89,7 +89,7 @@ public class WellnessLogPageBuilder {
 
         // --- Use shared DAO ---
         TodaysWellnessLogDataAccessObject wellnessLogDAO = 
-            app.SharedDataAccess.getInstance().getWellnessDataAccess();
+            app.AppDataAccessFactory.getInstance().getWellnessDataAccess();
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 

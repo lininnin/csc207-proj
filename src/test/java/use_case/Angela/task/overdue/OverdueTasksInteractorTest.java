@@ -1,7 +1,7 @@
 package use_case.Angela.task.overdue;
 
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryDataAccessObject;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryGateway;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -20,17 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class OverdueTasksInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryDataAccessObject categoryDataAccess;
+    private InMemoryTaskDataAccessObject taskGateway;
+    private InMemoryCategoryGateway categoryGateway;
     private TestOverdueTasksPresenter testPresenter;
     private OverdueTasksInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
-        categoryDataAccess = new InMemoryCategoryDataAccessObject();
+        taskGateway = new InMemoryTaskDataAccessObject();
+        categoryGateway = new InMemoryCategoryGateway();
         testPresenter = new TestOverdueTasksPresenter();
-        interactor = new OverdueTasksInteractor(taskGateway, categoryDataAccess, testPresenter);
+        interactor = new OverdueTasksInteractor(taskGateway, categoryGateway, testPresenter);
     }
 
     @Test
@@ -50,7 +50,7 @@ class OverdueTasksInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category workCategory = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(workCategory);
+        categoryGateway.save(workCategory);
 
         // Create available tasks and add them to today with past due dates
         LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -134,7 +134,7 @@ class OverdueTasksInteractorTest {
         taskGateway.saveTaskAvailable(template);
         
         // Add to today with past due date
-        Task completedTask = (Task) taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
+        Task completedTask = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
         
         // Mark as completed
         completedTask.markComplete();

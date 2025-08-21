@@ -212,6 +212,25 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         return result;
     }
 
+    @Override
+    public boolean updateEventsCategoryToNull(String categoryId) {
+        try {
+            // Find all today's events with the given category
+            List<Info> eventsWithCategory = findTodaysEventsByCategory(categoryId);
+            
+            // Clear the category for each event
+            for (Info event : eventsWithCategory) {
+                if (!clearTodaysEventCategory(event.getId())) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Clears all data from this data access object for testing purposes.
      * WARNING: This will delete all events and should only be used in tests!

@@ -1,7 +1,7 @@
 package use_case.Angela.category.edit;
 
-import data_access.InMemoryCategoryDataAccessObject;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EditCategoryInteractorTest {
 
-    private InMemoryCategoryDataAccessObject categoryDataAccess;
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestEditCategoryPresenter testPresenter;
     private EditCategoryInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        categoryDataAccess = new InMemoryCategoryDataAccessObject();
-        taskGateway = new InMemoryTaskGateway();
+        categoryGateway = new InMemoryCategoryGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestEditCategoryPresenter();
-        interactor = new EditCategoryInteractor(categoryDataAccess, taskGateway, testPresenter, new entity.CommonCategoryFactory());
+        interactor = new EditCategoryInteractor(categoryGateway, taskGateway, testPresenter);
     }
 
     @Test
@@ -33,7 +33,7 @@ class EditCategoryInteractorTest {
         // Create a category to edit
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Edit the category
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -50,7 +50,7 @@ class EditCategoryInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify category was updated
-        Category updatedCategory = categoryDataAccess.getCategoryById(categoryId);
+        Category updatedCategory = categoryGateway.getCategoryById(categoryId);
         assertEquals("Updated Work", updatedCategory.getName());
     }
 
@@ -59,7 +59,7 @@ class EditCategoryInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Original", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Edit only the name
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -95,7 +95,7 @@ class EditCategoryInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Try to edit with empty name
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -111,7 +111,7 @@ class EditCategoryInteractorTest {
         assertEquals("Category name cannot be empty", testPresenter.lastError);
 
         // Verify category was not changed
-        Category unchangedCategory = categoryDataAccess.getCategoryById(categoryId);
+        Category unchangedCategory = categoryGateway.getCategoryById(categoryId);
         assertEquals("Work", unchangedCategory.getName());
     }
 
@@ -120,7 +120,7 @@ class EditCategoryInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Try to edit with null name
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -142,8 +142,8 @@ class EditCategoryInteractorTest {
         String categoryId1 = UUID.randomUUID().toString();
         String categoryId2 = UUID.randomUUID().toString();
         
-        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryDataAccess.save(new Category(categoryId2, "Personal", "#00FF00"));
+        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
 
         // Try to rename Personal to Work (duplicate)
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -159,7 +159,7 @@ class EditCategoryInteractorTest {
         assertEquals("The category name already exists", testPresenter.lastError);
 
         // Verify category was not changed
-        Category unchangedCategory = categoryDataAccess.getCategoryById(categoryId2);
+        Category unchangedCategory = categoryGateway.getCategoryById(categoryId2);
         assertEquals("Personal", unchangedCategory.getName());
     }
 
@@ -200,7 +200,7 @@ class EditCategoryInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Work", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Edit to same name (should succeed)
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -221,8 +221,8 @@ class EditCategoryInteractorTest {
         String categoryId1 = UUID.randomUUID().toString();
         String categoryId2 = UUID.randomUUID().toString();
         
-        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryDataAccess.save(new Category(categoryId2, "Personal", "#00FF00"));
+        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
 
         // Try to rename Personal to WORK (different case)
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -243,7 +243,7 @@ class EditCategoryInteractorTest {
         // Create a category
         String categoryId = UUID.randomUUID().toString();
         Category category = new Category(categoryId, "Original", "#0000FF");
-        categoryDataAccess.save(category);
+        categoryGateway.save(category);
 
         // Edit with whitespace around name
         EditCategoryInputData inputData = new EditCategoryInputData(
@@ -257,7 +257,7 @@ class EditCategoryInteractorTest {
         assertNotNull(testPresenter.lastOutputData);
         assertEquals("  Updated Name  ", testPresenter.lastOutputData.getNewName());
 
-        Category updatedCategory = categoryDataAccess.getCategoryById(categoryId);
+        Category updatedCategory = categoryGateway.getCategoryById(categoryId);
         assertEquals("  Updated Name  ", updatedCategory.getName());
     }
 
@@ -268,9 +268,9 @@ class EditCategoryInteractorTest {
         String categoryId2 = UUID.randomUUID().toString();
         String categoryId3 = UUID.randomUUID().toString();
         
-        categoryDataAccess.save(new Category(categoryId1, "Work", "#0000FF"));
-        categoryDataAccess.save(new Category(categoryId2, "Personal", "#00FF00"));
-        categoryDataAccess.save(new Category(categoryId3, "Urgent", "#FF0000"));
+        categoryGateway.save(new Category(categoryId1, "Work", "#0000FF"));
+        categoryGateway.save(new Category(categoryId2, "Personal", "#00FF00"));
+        categoryGateway.save(new Category(categoryId3, "Urgent", "#FF0000"));
 
         // Edit first category
         EditCategoryInputData inputData1 = new EditCategoryInputData(
@@ -281,7 +281,7 @@ class EditCategoryInteractorTest {
 
         // Edit second category
         testPresenter = new TestEditCategoryPresenter();
-        interactor = new EditCategoryInteractor(categoryDataAccess, taskGateway, testPresenter, new entity.CommonCategoryFactory());
+        interactor = new EditCategoryInteractor(categoryGateway, taskGateway, testPresenter);
         
         EditCategoryInputData inputData2 = new EditCategoryInputData(
                 categoryId2,
@@ -290,9 +290,9 @@ class EditCategoryInteractorTest {
         interactor.execute(inputData2);
 
         // Verify both edits succeeded
-        Category cat1 = categoryDataAccess.getCategoryById(categoryId1);
-        Category cat2 = categoryDataAccess.getCategoryById(categoryId2);
-        Category cat3 = categoryDataAccess.getCategoryById(categoryId3);
+        Category cat1 = categoryGateway.getCategoryById(categoryId1);
+        Category cat2 = categoryGateway.getCategoryById(categoryId2);
+        Category cat3 = categoryGateway.getCategoryById(categoryId3);
 
         assertEquals("Business", cat1.getName());
         assertEquals("Home", cat2.getName());

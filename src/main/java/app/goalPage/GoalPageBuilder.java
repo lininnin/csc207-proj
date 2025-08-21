@@ -1,6 +1,5 @@
 package app.goalPage;
 import app.AppDataAccessFactory;
-import app.TodaySoFarComponentsFactory;
 import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
@@ -10,7 +9,7 @@ import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
 // Import view models
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
@@ -71,9 +70,8 @@ public class GoalPageBuilder {
     private final AppDataAccessFactory dataAccessFactory;
     private final FileGoalRepository goalRepository;
     private final GoalFactory goalFactory;
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
-    private final TodaySoFarComponentsFactory todaySoFarFactory;
 
     // Form reference for goal creation
     private JPanel createGoalForm;
@@ -104,12 +102,11 @@ public class GoalPageBuilder {
      * @param dataAccessFactory The factory for creating data access objects
      */
     public GoalPageBuilder(AppDataAccessFactory dataAccessFactory) {
-        this.dataAccessFactory = dataAccessFactory;
-        this.goalRepository = dataAccessFactory.getGoalRepository();
+        this.dataAccessFactory = AppDataAccessFactory.getInstance(); // Use singleton
+        this.goalRepository = this.dataAccessFactory.getGoalRepository();
         this.goalFactory = new GoalFactory();
-        this.taskGateway = dataAccessFactory.getTaskGateway();
-        this.categoryDataAccess = dataAccessFactory.getCategoryDataAccess();
-        this.todaySoFarFactory = new TodaySoFarComponentsFactory(dataAccessFactory);
+        this.taskGateway = this.dataAccessFactory.getTaskGateway();
+        this.categoryDataAccess = this.dataAccessFactory.getCategoryDataAccess();
     }
     
     /**
@@ -117,7 +114,7 @@ public class GoalPageBuilder {
      * For backward compatibility.
      */
     public GoalPageBuilder() {
-        this(new AppDataAccessFactory());
+        this(AppDataAccessFactory.getInstance());
     }
 
     /**
@@ -537,15 +534,17 @@ public class GoalPageBuilder {
     }
 
     private TodaySoFarView createTodaySoFarPanel() {
-        TodaySoFarView todaySoFarView = todaySoFarFactory.createTodaySoFarView();
-        TodaySoFarController todaySoFarController = todaySoFarFactory.getTodaySoFarController();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
+        TodaySoFarController todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         if (createGoalPresenter != null) {
             createGoalPresenter.setTodaySoFarController(todaySoFarController);
         }
         if (todayGoalPresenter != null) {
             todayGoalPresenter.setTodaySoFarController(todaySoFarController);
         }
-        todaySoFarFactory.refresh();
+        sharedTodaySoFar.refresh();
         return todaySoFarView;
     }
 

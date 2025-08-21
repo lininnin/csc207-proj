@@ -247,4 +247,23 @@ public class EventAvailableDataAccessObject implements
         // This will be handled by TodaysEventDataAccessObject
         return new ArrayList<>();
     }
+    
+    @Override
+    public boolean updateEventsCategoryToNull(String categoryId) {
+        try {
+            // Find all available events with the given category
+            List<Info> eventsWithCategory = findAvailableEventsByCategory(categoryId);
+            
+            // Clear the category for each event
+            for (Info event : eventsWithCategory) {
+                if (!clearAvailableEventCategory(event.getId())) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

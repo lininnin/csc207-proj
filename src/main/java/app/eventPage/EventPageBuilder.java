@@ -1,7 +1,6 @@
 package app.eventPage;
 
 import app.AppDataAccessFactory;
-import app.TodaySoFarComponentsFactory;
 import entity.CategoryFactory;
 import entity.CommonCategoryFactory;
 import entity.Alex.EventAvailable.EventAvailableFactory;
@@ -74,7 +73,7 @@ import use_case.Angela.task.overdue.OverdueTasksInteractor;
 import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInteractor;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
@@ -88,7 +87,6 @@ public class EventPageBuilder {
     // Data Access - Injected via constructor
     private final AppDataAccessFactory dataAccessFactory;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
-    private final TodaySoFarComponentsFactory todaySoFarFactory;
     private final CategoryManagementViewModel categoryManagementViewModel; // Shared across pages
     private CategoryManagementDialog categoryDialog;
     private CreateEventView createEventView;
@@ -107,10 +105,9 @@ public class EventPageBuilder {
      * @param dataAccessFactory The factory for creating data access objects
      */
     public EventPageBuilder(AppDataAccessFactory dataAccessFactory) {
-        this.dataAccessFactory = dataAccessFactory;
-        this.categoryDataAccess = dataAccessFactory.getCategoryDataAccess();
-        this.categoryManagementViewModel = dataAccessFactory.getCategoryManagementViewModel();
-        this.todaySoFarFactory = new TodaySoFarComponentsFactory(dataAccessFactory);
+        this.dataAccessFactory = AppDataAccessFactory.getInstance(); // Use singleton
+        this.categoryDataAccess = this.dataAccessFactory.getCategoryDataAccess();
+        this.categoryManagementViewModel = this.dataAccessFactory.getCategoryManagementViewModel();
     }
     
     /**
@@ -118,7 +115,7 @@ public class EventPageBuilder {
      * For backward compatibility.
      */
     public EventPageBuilder() {
-        this(new AppDataAccessFactory());
+        this(AppDataAccessFactory.getInstance());
     }
     
     /**
@@ -253,15 +250,16 @@ public class EventPageBuilder {
         centerPanel.add(bottomBox, BorderLayout.SOUTH);
 
         // --- Set up Today So Far Panel ---
-        // Get Today So Far components from factory
-        overdueTasksController = todaySoFarFactory.getOverdueTasksController();
-        todaySoFarController = todaySoFarFactory.getTodaySoFarController();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
-        // Create Today So Far view using factory
-        TodaySoFarView todaySoFarView = todaySoFarFactory.createTodaySoFarView();
+        // Create Today So Far view using shared components
+        TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         
         // Trigger initial data load
-        todaySoFarFactory.refresh();
+        sharedTodaySoFar.refresh();
         
         // Set Today So Far controller on event presenters that need to refresh
         if (createEventPresenter instanceof CreateEventPresenter) {
@@ -327,6 +325,8 @@ public class EventPageBuilder {
                 categoryPresenter.setTodaysEventsViewModel(todaysEventsViewModel);
                 // Wire up Today So Far controller for auto-refresh when categories change
                 categoryPresenter.setTodaySoFarController(todaySoFarController);
+                // Wire up overdue tasks controller for auto-refresh when categories change
+                categoryPresenter.setOverdueTasksController(overdueTasksController);
                 
                 CategoryFactory categoryFactory = new CommonCategoryFactory();
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
@@ -400,6 +400,12 @@ public class EventPageBuilder {
                         // No tasks in event context
                         return new ArrayList<>();
                     }
+                    
+                    @Override
+                    public boolean updateTasksCategoryToNull(String categoryId) {
+                        // No tasks in event context
+                        return true;
+                    }
                 };
                 
                 // Also create an event adapter for clearing event categories
@@ -432,6 +438,16 @@ public class EventPageBuilder {
                     @Override
                     public List<entity.info.Info> findTodaysEventsWithEmptyCategory() {
                         return todaysEventDAO.findTodaysEventsWithEmptyCategory();
+                    }
+                    
+                    @Override
+                    public boolean updateEventsCategoryToNull(String categoryId) {
+                        try {
+                            return commonDao.updateEventsCategoryToNull(categoryId) && 
+                                   todaysEventDAO.updateEventsCategoryToNull(categoryId);
+                        } catch (Exception e) {
+                            return false;
+                        }
                     }
                 };
                 
