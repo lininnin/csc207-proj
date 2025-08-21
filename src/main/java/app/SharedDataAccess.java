@@ -2,8 +2,8 @@ package app;
 
 import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
-import data_access.TodaysEventDataAccessObject;
-import data_access.TodaysWellnessLogDataAccessObject;
+import data_access.alex.TodaysEventDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
 import data_access.FileGoalRepository;
 import entity.alex.DailyEventLog.DailyEventLogFactory;
 import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;

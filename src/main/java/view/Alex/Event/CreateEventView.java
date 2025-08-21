@@ -23,8 +23,7 @@ import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import entity.info.Info;
-import data_access.EventAvailableDataAccessObject;
+import data_access.alex.EventAvailableDataAccessObject;
 
 public class CreateEventView extends JPanel implements PropertyChangeListener, CreateEventViewModelUpdateListener {
 

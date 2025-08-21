@@ -1,4 +1,4 @@
-package data_access;
+package data_access.alex;
 
 import entity.alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
 import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;

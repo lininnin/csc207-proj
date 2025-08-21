@@ -1,6 +1,6 @@
 package app.settingsPage;
 
-import data_access.NotificationTimeDataAccessObject;
+import data_access.alex.NotificationTimeDataAccessObject;
 
 import entity.alex.NotificationTime.NotificationTimeFactory;
 import entity.alex.NotificationTime.NotificationTimeFactoryInterf;

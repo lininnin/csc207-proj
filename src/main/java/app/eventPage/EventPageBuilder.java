@@ -52,8 +52,8 @@ import use_case.alex.event_related.avaliable_events_module.edit_event.*;
 import use_case.alex.event_related.todays_events_module.delete_todays_event.*;
 import use_case.alex.event_related.todays_events_module.edit_todays_event.*;
 
-import data_access.EventAvailableDataAccessObject;
-import data_access.TodaysEventDataAccessObject;
+import data_access.alex.EventAvailableDataAccessObject;
+import data_access.alex.TodaysEventDataAccessObject;
 import entity.info.InfoFactory;
 
 import view.Alex.Event.*;

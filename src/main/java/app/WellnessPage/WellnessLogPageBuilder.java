@@ -1,7 +1,7 @@
 package app.WellnessPage;
 
-import data_access.TodaysWellnessLogDataAccessObject;
-import data_access.MoodAvailableDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
+import data_access.alex.MoodAvailableDataAccessObject;
 import entity.alex.AvalibleMoodLabel.AvaliableMoodLabelFactory;
 import entity.alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
 import entity.alex.MoodLabel.MoodLabelFactory;

@@ -1,12 +1,12 @@
 package use_case.generate_feedback;
 
-import entity.Alex.MoodLabel.Type;
-import entity.Alex.WellnessLogEntry.Levels;
+import entity.alex.MoodLabel.Type;
+import entity.alex.WellnessLogEntry.Levels;
 import entity.Angela.DailyLog;
 import entity.Angela.Task.Task;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.Event.Event;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.MoodLabel.MoodLabel;
+import entity.alex.Event.Event;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
 
