@@ -43,6 +43,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
         if (taskGateway != null) {
             return taskGateway.getTodaysTasks().stream()
                     .filter(Task::isCompleted)
+                    .filter(task -> !task.isOverdue())
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();

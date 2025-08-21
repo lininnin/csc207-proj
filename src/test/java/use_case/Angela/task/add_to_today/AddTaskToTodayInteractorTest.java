@@ -361,11 +361,11 @@ class AddTaskToTodayInteractorTest {
         testPresenter = new TestAddTaskToTodayPresenter();
         interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
 
-        // Try to add the same task again without isTestingOverdue flag
+        // Try to add the same task again with identical priority and due date
         AddTaskToTodayInputData duplicateInput = new AddTaskToTodayInputData(
                 availableTask.getId(),
-                Task.Priority.HIGH,
-                LocalDate.now().plusDays(5)
+                Task.Priority.MEDIUM,  // Same priority as first add
+                futureDate              // Same due date as first add
         );
         interactor.execute(duplicateInput);
 
