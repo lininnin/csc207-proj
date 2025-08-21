@@ -2,9 +2,7 @@ package app.feedback_panel;
 
 import constants.Constants;
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import use_case.repository.FeedbackRepository;
 
 import javax.swing.*;
@@ -86,10 +84,10 @@ class FeedbackPageBuilderTest {
 
         // Verify composition
         assertTrue(page.getLayout() instanceof BorderLayout);
-        JSplitPaneAware assertEntryHeader = new JSplitPaneAware(page);
+        JSplitPaneAware helper = new JSplitPaneAware(page);
 
-        // Header in entry panel should reflect the auto-selected d1
-        JLabel header = assertEntryHeader.findEntryHeader();
+        // 🔁 Wait for the async presenter to update the entry header
+        JLabel header = waitForHeaderText(helper, "Feedback on " + d1, 800);
         assertNotNull(header, "Entry header label should exist");
         assertEquals("Feedback on " + d1, header.getText(),
                 "Entry header should show selected date");
@@ -120,6 +118,21 @@ class FeedbackPageBuilderTest {
         return null;
     }
 
+    /** Polls until the entry header text equals expected, or times out (ms). */
+    private static JLabel waitForHeaderText(JSplitPaneAware helper, String expected, long timeoutMs) {
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (System.currentTimeMillis() < deadline) {
+            JLabel hdr = helper.findEntryHeader();
+            if (hdr != null) {
+                String text = onEdtGet(hdr::getText);
+                if (expected.equals(text)) return hdr;
+            }
+            try { Thread.sleep(15); } catch (InterruptedException ignored) {}
+        }
+        // final attempt (will likely fail assertions right after)
+        return helper.findEntryHeader();
+    }
+
     /**
      * Helper that knows the structure of the page built by FeedbackPageBuilder:
      * BorderLayout with CENTER = FeedbackEntryPanel (header is its NORTH component).
@@ -134,13 +147,10 @@ class FeedbackPageBuilderTest {
             assertNotNull(center, "CENTER must exist");
             assertTrue(center instanceof Container, "CENTER must be a container");
 
-            // In FeedbackEntryPanel: header label is the NORTH component (index 0)
             Container entryPanel = (Container) center;
-            // Try to fetch first component and check if it's a JLabel header
             if (entryPanel.getComponentCount() > 0 && entryPanel.getComponent(0) instanceof JLabel lbl) {
                 return lbl;
             }
-            // Fallback: search tree for first JLabel
             return findAnyLabel(entryPanel);
         }
 
