@@ -5,21 +5,17 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
-import entity.feedback_entry.FeedbackEntryFactory;
-import entity.feedback_entry.FeedbackEntryFactoryInterf;
-import entity.feedback_entry.FeedbackEntryInterf;
 import org.json.JSONObject;
 
 import entity.Angela.DailyLog;
-import entity.feedback_entry.FeedbackEntry;
-import interface_adapter.gpt.BayesCorrelationPromptBuilder;
-import interface_adapter.gpt.GeneralAnalysisPromptBuilder;
-import interface_adapter.gpt.RecommendationPromptBuilder;
+import entity.feedback_entry.FeedbackEntryFactory;
+import entity.feedback_entry.FeedbackEntryFactoryInterf;
+import entity.feedback_entry.FeedbackEntryInterf;
+import interface_adapter.generate_feedback.GptPromptPortAdapter;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 /**
- * Generates the weekly feedback entry. The scheduler triggers this use‑case only during monday midnight,
- * so we no longer perform an explicit Day‑of‑Week check here—if the caller invokes it, generation proceeds.
+ * Generates the weekly feedback entry.
  * Workflow
  *  1. Determine this week’s Monday and see if it is already cached → return if yes.
  *  2. Load the last 7 days of DailyLogs (last Mon‑Sun inclusive).
@@ -45,7 +41,7 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
     }
 
     @Override
-    public void execute(GenerateFeedbackInputData inputData) {
+    public void execute() {
         try {
             final LocalDate today = LocalDate.now();
             final LocalDate monday = today.with(DayOfWeek.MONDAY);
@@ -60,7 +56,9 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final LocalDate to = monday.minusDays(1);
             final List<DailyLog> weekLogs = dailyRepo.loadBetween(from, to);
 
-            final String promptAnalysis = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
+            final GptPromptPort promptBuilder = new GptPromptPortAdapter();
+
+            final String promptAnalysis = promptBuilder.buildAnalysis(weekLogs);
             final String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
             final JSONObject analysisJson = new JSONObject(analysisJsonStr);
 
@@ -68,11 +66,25 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final String analysisText = analysisJson.optString("analysis", "(no analysis)");
             final String extraNotes = analysisJson.optString("extra_notes", "");
             // Correlation
-            final String promptCorr = BayesCorrelationPromptBuilder.buildPrompt(weekLogs);
+            final String promptCorr = promptBuilder.buildCorrelation(weekLogs);
             final String correlationJson = gpt.callCorrelationBayes(promptCorr);
             // Recommendation
-            final String promptRec = RecommendationPromptBuilder.buildPrompt(analysisJsonStr);
+            final String promptRec = promptBuilder.buildRecommendation(analysisJsonStr);
             final String recText = gpt.callRecommendation(promptRec);
+
+//            final String promptAnalysis = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
+//            final String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
+//            final JSONObject analysisJson = new JSONObject(analysisJsonStr);
+//
+//            // Analysis
+//            final String analysisText = analysisJson.optString("analysis", "(no analysis)");
+//            final String extraNotes = analysisJson.optString("extra_notes", "");
+//            // Correlation
+//            final String promptCorr = BayesCorrelationPromptBuilder.buildPrompt(weekLogs);
+//            final String correlationJson = gpt.callCorrelationBayes(promptCorr);
+//            // Recommendation
+//            final String promptRec = RecommendationPromptBuilder.buildPrompt(analysisJsonStr);
+//            final String recText = gpt.callRecommendation(promptRec);
 
             final String combinedAnalysis;
             if (extraNotes.isBlank()) {

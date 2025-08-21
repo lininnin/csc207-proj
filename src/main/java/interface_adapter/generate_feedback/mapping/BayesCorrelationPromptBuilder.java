@@ -1,9 +1,9 @@
-//package interface_adapter.gpt;
+//package interface_adapter.generate_feedback.mapping;
 //
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
-//import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
+//import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 //import entity.Angela.DailyLog;
 //
 ///**
@@ -36,7 +36,6 @@
 //        sb.append("SYSTEM:\n")
 //                .append("You are a statistician performing a simple Bayesian regression\n")
 //                .append("to relate wellness metrics to task‑completion rate.\n\n")
-//
 //                .append("USER:\n")
 //                .append("For each of the last 7 days you get:\n")
 //                .append("  date, completion_rate (0‑1), avg_stress, avg_energy, avg_fatigue.\n")

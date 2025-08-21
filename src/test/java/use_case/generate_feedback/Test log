@@ -115,3 +115,47 @@ Recommendation: 1. Prioritize wellness by incorporating daily stress-reduction t
 
 Extra note for this test: i guess wellness logs are pretty fixed since completion rate is constant but we randomized the wellness levels
 
+Test 10:
+Analysis: Throughout the week, there is a consistent completion rate of approximately 66.67% for tasks, with a slight increase to 75% on the last two days. The completion of tasks appears to correlate with mood changes; higher completion rates align with happier moods (notably on August 12, 14, and 16), while lower completion rates coincide with stressed moods (notably on August 11, 13, and 15). The number of scheduled events remains consistent at one per day, which may indicate that a stable event schedule helps maintain productivity levels despite fluctuating wellness states. The stress levels appear to peak on August 13 and 17, coinciding with lower levels of task completion, suggesting a potential negative impact of high stress on productivity. The wellness levels, particularly energy and fatigue, fluctuate in tandem with mood, indicating a correlation between overall wellness and task completion. Overall, the data suggests that mood and stress levels significantly influence productivity, with happier moods leading to higher task completion rates.
+Correlation: {
+  "effect_summary": [
+    {"variable":"Stress","direction":"Negative","confidence":0.85},
+    {"variable":"Energy","direction":"Negative","confidence":0.85},
+    {"variable":"Fatigue","direction":"Negative","confidence":0.85}
+  ]
+}
+Recommendation: 1. Schedule one enjoyable activity each day to boost your mood and enhance task completion.
+2. Implement a brief mindfulness or relaxation practice before tackling tasks to reduce stress levels.
+3. Set specific, achievable goals for each day to maintain focus and motivation.
+4. Review your task list in the morning and prioritize the most important tasks to tackle when your energy is highest.
+5. Reflect on your mood at the end of each day to identify patterns and adjust your strategies accordingly.
+
+Test 11:
+
+Analysis: Throughout the week, a consistent completion rate of 66.67% was observed for the first four days, while the last three days exhibited an increased completion rate of 75%. The mood varied from stressed to happy, with higher completion rates correlating with happier moods, particularly on August 12 and August 14, where stress levels were lower. The number of scheduled tasks remained stable at three for most days, except for August 16 and August 17, which had four scheduled tasks. Despite the increase in tasks on these two days, the completion rate improved, suggesting a possible correlation between task variety and productivity. Events scheduled remained constant at one per day, indicating that the number of events did not significantly impact productivity levels but may have contributed to overall wellness.
+Correlation: {
+  "effect_summary": [
+    {
+      "variable": "Stress",
+      "direction": "Negative",
+      "confidence": 0.85
+    },
+    {
+      "variable": "Energy",
+      "direction": "Positive",
+      "confidence": 0.75
+    },
+    {
+      "variable": "Fatigue",
+      "direction": "Negative",
+      "confidence": 0.80
+    }
+  ]
+}
+Recommendation: 1. Increase the number of scheduled tasks to four each day to explore the potential benefits of task variety on productivity.
+2. Prioritize tasks on days when your mood is lower to maintain a completion rate above 75%.
+3. Incorporate brief wellness activities between tasks to help manage stress and enhance overall mood.
+4. Reflect on your mood daily and adjust your task load accordingly to maintain high motivation levels.
+5. Continue scheduling one event per day to support your overall wellness without overwhelming your task list.
+
+correlation analysis output has been weird.

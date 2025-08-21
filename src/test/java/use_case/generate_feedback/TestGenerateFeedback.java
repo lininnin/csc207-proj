@@ -4,10 +4,9 @@ import data_access.in_memory_repo.InMemoryDailyLogRepo;
 import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
-import interface_adapter.gpt.OpenAiApiAdapter;
-import entity.feedback_entry.FeedbackEntry;
+import entity.feedback_entry.FeedbackEntryInterf;
+import interface_adapter.generate_feedback.OpenAiApiAdapter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class TestGenerateFeedback {
@@ -27,7 +26,7 @@ public class TestGenerateFeedback {
 
         // 4. OutputBoundary: print to console
         GenerateFeedbackOutputBoundary output = data -> {
-            FeedbackEntry entry = data.getFeedbackEntry();
+            FeedbackEntryInterf entry = data.getFeedbackEntry();
             System.out.println("Analysis: " + entry.getAiAnalysis());
             System.out.println("Correlation: " + entry.getCorrelationData());
             System.out.println("Recommendation: " + entry.getRecommendations());
@@ -37,6 +36,6 @@ public class TestGenerateFeedback {
         GenerateFeedbackInteractor interactor = new GenerateFeedbackInteractor(
                 dailyRepo, feedbackRepo, adapter, output
         );
-        interactor.execute(new GenerateFeedbackInputData());
+        interactor.execute();
     }
 }

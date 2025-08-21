@@ -1,14 +1,15 @@
-//package interface_adapter.gpt;
+//package interface_adapter.generate_feedback.mapping;
 //
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
-//import entity.alex.DailyEventLog.DailyEventLogInterf;
-//import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;
-//import entity.alex.Event.EventInterf;
-//import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
+//import entity.Alex.DailyEventLog.DailyEventLogInterf;
+//import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
+//import entity.Alex.Event.EventInterf;
+//import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 //import entity.Angela.DailyLog;
 //import entity.Angela.DailyTaskSummary;
+//import entity.Angela.Task.Task;
 //
 ///**
 // * Output a JSON regarding users weekly productivity.
@@ -32,8 +33,11 @@
 //        prompt.append("You are an analyst and coach. "
 //                        + "Analyse the 7-day report below, DO NOT ANALYZE ANY OTHER DAYS OUTSIDE OF THE 7 DAYS"
 //                        + "summarize productivity patterns trends, correlations between amount of completed tasks, "
-//                        + "average wellness changes: \n "
-//                        + "Only give one sentence discussing missing data across the week if there are. "
+//                        + "average wellness changes: \n ")
+//                .append("Analyze which scheduled tasks are completed more "
+//                        + "and how that may relate to productivity/wellness/mood. \n")
+//                .append("Analyze how number of events scheduled could affect productivity. \n")
+//                .append("Only give one sentence discussing missing data across the week if there are. "
 //                        + "Must focus on productivity trend and wellness")
 //                .append("Rules for missing data: If any day's data (tasks, wellness, or events) is missing or partial,"
 //                        + " explicitly flag it as MISSING.\n")
@@ -55,17 +59,9 @@
 //            extractWellnessLog(log, prompt);
 //
 //            // ------ Event logs ------
-//            prompt.append("Events: ");
-//            final DailyEventLogInterf events = log.getDailyEventLog();
-//            if (events != null && events.getActualEvents() != null && !events.getActualEvents().isEmpty()) {
-//                for (EventInterf event : events.getActualEvents()) {
-//                    prompt.append("- ").append(event.getInfo().getName()).append('\n');
-//                }
-//            }
-//            else {
-//                prompt.append("No Events data for this date.");
-//            }
-//            prompt.append('\n');
+//            extractEvents(log, prompt);
+//
+//            //
 //        }
 //        prompt.append("WEEK DATA END.");
 //
@@ -82,16 +78,36 @@
 //        return prompt.toString();
 //    }
 //
+//    private static void extractEvents(DailyLog log, StringBuilder prompt) {
+//        final DailyEventLogInterf events = log.getDailyEventLog();
+//        final int numEvents = events.getActualEvents().size();
+//        prompt.append("Events amount: ").append(numEvents);
+//        prompt.append(", Events scheduled: ");
+//        if (events != null && events.getActualEvents() != null && !events.getActualEvents().isEmpty()) {
+//            for (EventInterf event : events.getActualEvents()) {
+//                prompt.append("- ").append(event.getInfo().getName()).append('\n');
+//            }
+//        }
+//        else {
+//            prompt.append("No Events data for this date.");
+//        }
+//        prompt.append('\n');
+//    }
+//
 //    private static void extractTaskSummaries(DailyLog log, StringBuilder prompt) {
 //        prompt.append("Task summary: \n");
 //        final DailyTaskSummary summary = log.getDailyTaskSummary();
 //        if (summary != null) {
 //            final int scheduled = summary.getScheduledTasks().size();
+//            final List<Task> scheduledTasks = summary.getScheduledTasks();
 //            final int completed = summary.getCompletedTasks().size();
+//            final List<Task> completedTasks = summary.getCompletedTasks();
 //            final int overdue = scheduled - completed;
 //
 //            prompt.append("Tasks Scheduled: ").append(scheduled)
-//                    .append(", Completed: ").append(completed)
+//                    .append(", Scheduled tasks: ").append(scheduledTasks)
+//                    .append(", Completed amount: ").append(completed)
+//                    .append(", Completed task list:").append(completedTasks)
 //                    .append(", Overdue: ").append(overdue)
 //                    .append("Completion rate:").append(summary.getCompletionRate())
 //                    .append("\n");
@@ -115,10 +131,10 @@
 //            for (WellnessLogEntryInterf entry : wellnessLog.getEntries()) {
 //                prompt.append("---")
 //                        .append("Stress level: ").append(entry.getStressLevel()).append(",")
-//                        .append("Energy level: ").append(entry.getStressLevel()).append(",")
-//                        .append("Fatigue level: ").append(entry.getStressLevel()).append(",")
+//                        .append("Energy level: ").append(entry.getEnergyLevel()).append(",")
+//                        .append("Fatigue level: ").append(entry.getFatigueLevel()).append(",")
 //                        .append("Mood: ").append(entry.getMoodLabel().getName())
-//                        .append(", analyze how this mood may influence the above wellness levels.");
+//                        .append(", analyze how this mood may influence the above wellness levels and completion rate.");
 //                if (entry.getUserNote() != null && !entry.getUserNote().isBlank()) {
 //                    prompt.append("Note: ").append(entry.getUserNote());
 //                }
