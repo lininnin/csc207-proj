@@ -2,8 +2,8 @@ package data_access;
 
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskInterf;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInterface;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +29,10 @@ class InMemoryTodaySoFarDataAccessTest {
     private InMemoryTaskDataAccessObject mockTaskGateway;
     
     @Mock
-    private TodaysEventDataAccessObject mockEventDataAccess;
+    private data_access.alex.TodaysEventDataAccessObject mockEventDataAccess;
     
     @Mock
-    private TodaysWellnessLogDataAccessObject mockWellnessDataAccess;
+    private data_access.alex.TodaysWellnessLogDataAccessObject mockWellnessDataAccess;
     
     @Mock
     private GoalRepository mockGoalRepository;

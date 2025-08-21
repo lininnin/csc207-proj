@@ -4,7 +4,7 @@ import entity.Angela.TodaySoFarSnapshot;
 import entity.Angela.Task.Task;
 import entity.info.Info;
 import entity.Sophia.Goal;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
 import use_case.Angela.view_history.ViewHistoryDataAccessInterface;
 import app.SharedDataAccess;
 

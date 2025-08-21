@@ -3,7 +3,7 @@ package use_case.Angela.view_history;
 import entity.Angela.Task.Task;
 import entity.info.Info;
 import entity.Angela.TodaySoFarSnapshot;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
 
 import java.time.LocalDate;
 import java.util.List;
