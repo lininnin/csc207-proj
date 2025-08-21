@@ -1,4 +1,4 @@
-package entityTest;
+package entity;
 
 import entity.Sophia.GoalInfo;
 import entity.info.Info;

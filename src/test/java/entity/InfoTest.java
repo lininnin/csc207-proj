@@ -1,4 +1,4 @@
-package entityTest;
+package entity;
 
 import entity.info.Info;
 import entity.info.InfoInterf;

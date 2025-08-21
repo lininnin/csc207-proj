@@ -1,6 +1,5 @@
-package entityTest;
+package entity.feedback_entry;
 
-import entity.feedback_entry.FeedbackEntry;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
