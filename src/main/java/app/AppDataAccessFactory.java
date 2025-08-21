@@ -13,11 +13,11 @@ import interface_adapter.Angela.category.CategoryManagementViewModel;
 import java.io.File;
 
 /**
- * Factory for creating data access objects and shared view models.
- * Follows Dependency Injection pattern instead of Singleton.
- * This centralizes DAO creation while avoiding the Singleton anti-pattern.
+ * Singleton factory for creating data access objects and shared view models.
+ * This ensures all pages use the same data access instances.
  */
 public class AppDataAccessFactory {
+    private static AppDataAccessFactory instance;
     
     private final InMemoryTaskGateway taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
@@ -29,9 +29,9 @@ public class AppDataAccessFactory {
     private final CategoryManagementViewModel categoryManagementViewModel;
     
     /**
-     * Creates a new factory with all data access objects initialized.
+     * Private constructor - use getInstance() instead.
      */
-    public AppDataAccessFactory() {
+    private AppDataAccessFactory() {
         // Initialize data access objects
         this.taskGateway = new InMemoryTaskGateway();
         this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
@@ -59,6 +59,17 @@ public class AppDataAccessFactory {
         
         // Inject goal repository into task gateway for goal-task relationship checking
         this.taskGateway.setGoalRepository(this.goalRepository);
+    }
+    
+    /**
+     * Gets the singleton instance.
+     * @return The shared instance
+     */
+    public static synchronized AppDataAccessFactory getInstance() {
+        if (instance == null) {
+            instance = new AppDataAccessFactory();
+        }
+        return instance;
     }
     
     /**

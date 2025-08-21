@@ -1,7 +1,6 @@
 package app.taskPage;
 
 import app.AppDataAccessFactory;
-import app.TodaySoFarComponentsFactory;
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
@@ -72,7 +71,6 @@ public class TaskPageBuilder {
     private final InMemoryTaskGateway taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final AppDataAccessFactory dataAccessFactory;
-    private final TodaySoFarComponentsFactory todaySoFarFactory;
 
     // View Models
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
@@ -102,11 +100,10 @@ public class TaskPageBuilder {
      * @param dataAccessFactory The factory for creating data access objects
      */
     public TaskPageBuilder(AppDataAccessFactory dataAccessFactory) {
-        this.dataAccessFactory = dataAccessFactory;
-        this.taskGateway = dataAccessFactory.getTaskGateway();
-        this.categoryDataAccess = dataAccessFactory.getCategoryDataAccess();
-        this.categoryManagementViewModel = dataAccessFactory.getCategoryManagementViewModel();
-        this.todaySoFarFactory = new TodaySoFarComponentsFactory(dataAccessFactory);
+        this.dataAccessFactory = AppDataAccessFactory.getInstance(); // Use singleton
+        this.taskGateway = this.dataAccessFactory.getTaskGateway();
+        this.categoryDataAccess = this.dataAccessFactory.getCategoryDataAccess();
+        this.categoryManagementViewModel = this.dataAccessFactory.getCategoryManagementViewModel();
     }
     
     /**
@@ -114,7 +111,7 @@ public class TaskPageBuilder {
      * For backward compatibility.
      */
     public TaskPageBuilder() {
-        this(new AppDataAccessFactory());
+        this(AppDataAccessFactory.getInstance());
     }
     
     /**
@@ -308,15 +305,16 @@ public class TaskPageBuilder {
         // Set the controller on the today's tasks view
         todaysTasksView.setRemoveFromTodayController(removeFromTodayController);
 
-        // Get Today So Far components from factory
-        overdueTasksController = todaySoFarFactory.getOverdueTasksController();
-        todaySoFarController = todaySoFarFactory.getTodaySoFarController();
+        // Get shared Today So Far components
+        app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
+        overdueTasksController = sharedTodaySoFar.getOverdueTasksController();
+        todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
-        // Create Today So Far view using factory
-        todaySoFarView = todaySoFarFactory.createTodaySoFarView();
+        // Create Today So Far view using shared components
+        todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         
         // Trigger initial data load (no sample data - user will input real data)
-        todaySoFarFactory.refresh();
+        sharedTodaySoFar.refresh();
         
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);

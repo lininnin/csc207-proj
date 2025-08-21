@@ -89,7 +89,7 @@ public class WellnessLogPageBuilder {
 
         // --- Use shared DAO ---
         TodaysWellnessLogDataAccessObject wellnessLogDAO = 
-            app.SharedDataAccess.getInstance().getWellnessDataAccess();
+            app.AppDataAccessFactory.getInstance().getWellnessDataAccess();
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 

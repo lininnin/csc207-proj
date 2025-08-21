@@ -61,8 +61,8 @@ public class BigMain {
         // --- Main Content Area ---
         final JPanel centrePanel = new JPanel(new CardLayout());
         
-        // Create shared data access factory so all pages share the same data and view models
-        final AppDataAccessFactory dataAccessFactory = new AppDataAccessFactory();
+        // Get shared data access factory so all pages share the same data and view models
+        final AppDataAccessFactory dataAccessFactory = AppDataAccessFactory.getInstance();
         
         final TaskPageBuilder taskBuilder = new TaskPageBuilder(dataAccessFactory);
         final JPanel taskPanel = taskBuilder.build();
