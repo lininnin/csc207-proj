@@ -1,4 +1,4 @@
-package app.WellnessPage;
+package app.alex.WellnessPage;
 
 import data_access.alex.TodaysWellnessLogDataAccessObject;
 import data_access.alex.MoodAvailableDataAccessObject;

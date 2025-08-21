@@ -1,4 +1,4 @@
-package app.settingsPage;
+package app.alex.settingsPage;
 
 import data_access.alex.NotificationTimeDataAccessObject;
 

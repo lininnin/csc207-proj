@@ -1,7 +1,7 @@
 package app;
 
-import app.Notification_related.NotificationSystemRunner;
-import app.eventPage.EventPageRunner;
+import app.alex.Notification_related.NotificationSystemRunner;
+import app.alex.eventPage.EventPageRunner;
 
 class MainApp {
     public static void main(String[] args) {

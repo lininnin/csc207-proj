@@ -1,20 +1,18 @@
-package app.settingsPage;
-
-import app.settingsPage.SettingsPageBuilder;
+package app.alex.WellnessPage;
 
 import javax.swing.*;
 
-public class SettingsPageRunner {
+public class WellnessLogPageRunner {
     /**
-     * Call this method from your main program to launch the Settings page.
+     * Call this method from your main program to launch the Wellness Log page.
      */
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MindTrack - Settings Page");
+            JFrame frame = new JFrame("MindTrack - Wellness Log");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 700);
 
-            SettingsPageBuilder builder = new SettingsPageBuilder();  // ✅ 修改名称
+            WellnessLogPageBuilder builder = new WellnessLogPageBuilder();
             JPanel mainPanel = builder.build();
 
             frame.setContentPane(mainPanel);

@@ -1,6 +1,4 @@
-package app.eventPage;
-
-import app.eventPage.EventPageBuilder;
+package app.alex.eventPage;
 
 import javax.swing.*;
 

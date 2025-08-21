@@ -1,4 +1,4 @@
-package app.Notification_related;
+package app.alex.Notification_related;
 
 import data_access.alex.NotificationTimeDataAccessObject;
 import entity.alex.NotificationTime.NotificationTimeFactory;

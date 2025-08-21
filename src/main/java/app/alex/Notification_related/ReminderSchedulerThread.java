@@ -1,4 +1,4 @@
-package app.Notification_related;
+package app.alex.Notification_related;
 
 import interface_adapter.alex.Notification_related.NotificationController;
 

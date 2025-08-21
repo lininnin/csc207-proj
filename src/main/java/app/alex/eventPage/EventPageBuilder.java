@@ -1,4 +1,4 @@
-package app.eventPage;
+package app.alex.eventPage;
 
 import entity.alex.EventAvailable.EventAvailableFactory;
 import entity.alex.EventAvailable.EventAvailableFactoryInterf;
