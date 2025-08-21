@@ -44,10 +44,11 @@ public class BeginAndDueDates implements BeginAndDueDatesInterf {
 
     /**
      * Sets the begin date.
-     *
+     * @deprecated Use {@link #withBeginDate(LocalDate)} for immutable updates
      * @param beginDate The new begin date
      * @throws IllegalArgumentException if it would be after due date
      */
+    @Deprecated
     public void setBeginDate(LocalDate beginDate) {
         if (beginDate != null && dueDate != null && beginDate.isAfter(dueDate)) {
             throw new IllegalArgumentException("Begin date cannot be after due date");
@@ -66,10 +67,11 @@ public class BeginAndDueDates implements BeginAndDueDatesInterf {
 
     /**
      * Sets the due date.
-     *
+     * @deprecated Use {@link #withDueDate(LocalDate)} for immutable updates
      * @param dueDate The new due date
      * @throws IllegalArgumentException if it would be before begin date
      */
+    @Deprecated
     public void setDueDate(LocalDate dueDate) {
         if (beginDate != null && dueDate != null && beginDate.isAfter(dueDate)) {
             throw new IllegalArgumentException("Due date cannot be before begin date");
@@ -125,6 +127,54 @@ public class BeginAndDueDates implements BeginAndDueDatesInterf {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    // Immutable update methods for Clean Architecture compliance
+    
+    /**
+     * Creates a new BeginAndDueDates instance with the specified begin date.
+     * This follows the immutable entity pattern.
+     * 
+     * @param beginDate The new begin date
+     * @return A new BeginAndDueDates instance with the updated begin date
+     * @throws IllegalArgumentException if begin date would be after due date
+     */
+    public BeginAndDueDates withBeginDate(LocalDate beginDate) {
+        if (beginDate != null && this.dueDate != null && beginDate.isAfter(this.dueDate)) {
+            throw new IllegalArgumentException("Begin date cannot be after due date");
+        }
+        return new BeginAndDueDates(beginDate, this.dueDate);
+    }
+    
+    /**
+     * Creates a new BeginAndDueDates instance with the specified due date.
+     * This follows the immutable entity pattern.
+     * 
+     * @param dueDate The new due date
+     * @return A new BeginAndDueDates instance with the updated due date
+     * @throws IllegalArgumentException if due date would be before begin date
+     */
+    public BeginAndDueDates withDueDate(LocalDate dueDate) {
+        if (this.beginDate != null && dueDate != null && this.beginDate.isAfter(dueDate)) {
+            throw new IllegalArgumentException("Due date cannot be before begin date");
+        }
+        return new BeginAndDueDates(this.beginDate, dueDate);
+    }
+    
+    /**
+     * Creates a new BeginAndDueDates instance with both dates updated.
+     * This follows the immutable entity pattern.
+     * 
+     * @param beginDate The new begin date
+     * @param dueDate The new due date
+     * @return A new BeginAndDueDates instance with updated dates
+     * @throws IllegalArgumentException if begin date would be after due date
+     */
+    public BeginAndDueDates withDates(LocalDate beginDate, LocalDate dueDate) {
+        if (beginDate != null && dueDate != null && beginDate.isAfter(dueDate)) {
+            throw new IllegalArgumentException("Begin date cannot be after due date");
+        }
+        return new BeginAndDueDates(beginDate, dueDate);
     }
 
     @Override

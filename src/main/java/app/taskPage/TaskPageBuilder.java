@@ -42,6 +42,8 @@ import view.Angela.TodaySoFarView;
 import view.FontUtil;
 
 import entity.info.Info;
+import entity.info.InfoFactory;
+import entity.Angela.Task.TaskAvailableFactory;
 import entity.CategoryFactory;
 import entity.CommonCategoryFactory;
 import entity.Alex.Event.Event;
@@ -176,10 +178,16 @@ public class TaskPageBuilder {
         // Connect AddTaskToTodayViewModel so dropdown refreshes when new tasks are created
         createTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
+        // Create factories for CreateTaskInteractor
+        InfoFactory infoFactory = new InfoFactory();
+        TaskAvailableFactory taskAvailableFactory = new TaskAvailableFactory();
+        
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
                 taskGateway, // InMemoryTaskGateway implements CreateTaskDataAccessInterface
                 categoryDataAccess,
-                createTaskPresenter
+                createTaskPresenter,
+                infoFactory,
+                taskAvailableFactory
         );
 
         CreateTaskController createTaskController = new CreateTaskController(createTaskInteractor);

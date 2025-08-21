@@ -1,6 +1,6 @@
 package use_case.Angela.task.edit_today;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 
 /**
  * Interactor for the Edit Today Task use case.
@@ -33,7 +33,7 @@ public class EditTodayTaskInteractor implements EditTodayTaskInputBoundary {
         }
 
         // Get the task to edit
-        Task task = taskDataAccess.getTodayTaskById(inputData.getTaskId());
+        TaskInterf task = taskDataAccess.getTodayTaskById(inputData.getTaskId());
         if (task == null) {
             outputBoundary.prepareFailView("Task not found in today's list");
             return;

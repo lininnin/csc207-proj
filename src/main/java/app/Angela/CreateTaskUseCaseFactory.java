@@ -10,6 +10,8 @@ import use_case.Angela.task.create.CreateTaskCategoryDataAccessInterface;
 import use_case.Angela.task.create.CreateTaskInputBoundary;
 import use_case.Angela.task.create.CreateTaskInteractor;
 import use_case.Angela.task.create.CreateTaskOutputBoundary;
+import entity.info.InfoFactory;
+import entity.Angela.Task.TaskAvailableFactory;
 
 /**
  * Factory for creating the create_task use case components.
@@ -41,11 +43,17 @@ public class CreateTaskUseCaseFactory {
                 viewManagerModel
         );
 
+        // Create factories
+        InfoFactory infoFactory = new InfoFactory();
+        TaskAvailableFactory taskAvailableFactory = new TaskAvailableFactory();
+        
         // Create the input boundary (interactor)
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
                 dataAccess,
                 categoryDataAccess,
-                createTaskPresenter
+                createTaskPresenter,
+                infoFactory,
+                taskAvailableFactory
         );
 
         // Create and return the controller

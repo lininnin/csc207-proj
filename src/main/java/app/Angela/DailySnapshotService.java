@@ -125,7 +125,6 @@ public class DailySnapshotService {
         
         // Get today's events
         List<Info> todaysEvents = new ArrayList<>();
-        // TODO: Convert EventInterf to Info or change snapshot to use EventInterf
         
         // Get current goals with progress
         List<TodaySoFarSnapshot.GoalProgress> goalProgress = new ArrayList<>();
@@ -151,7 +150,6 @@ public class DailySnapshotService {
         
         // Get wellness entries for today
         List<WellnessLogEntry> wellnessEntries = new ArrayList<>();
-        // TODO: Convert WellnessLogEntryInterf to WellnessLogEntry
         
         // Create and save the snapshot
         TodaySoFarSnapshot snapshot = new TodaySoFarSnapshot(

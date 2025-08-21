@@ -15,9 +15,11 @@ public interface BeginAndDueDatesInterf {
 
     /**
      * Sets the begin date.
+     * @deprecated Use immutable update methods instead
      * @param beginDate The new begin date
      * @throws IllegalArgumentException if it would be after due date
      */
+    @Deprecated
     void setBeginDate(LocalDate beginDate);
 
     /**
@@ -27,9 +29,11 @@ public interface BeginAndDueDatesInterf {
 
     /**
      * Sets the due date.
+     * @deprecated Use immutable update methods instead
      * @param dueDate The new due date
      * @throws IllegalArgumentException if it would be before begin date
      */
+    @Deprecated
     void setDueDate(LocalDate dueDate);
 
     /**

@@ -1,9 +1,9 @@
 package use_case.Angela.today_so_far;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
-import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import entity.Category;
 
 import java.time.LocalTime;
@@ -35,13 +35,15 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
         try {
             // Collect Goals data
             List<TodaySoFarOutputData.GoalProgress> goalProgressList = new ArrayList<>();
-            List<Goal> activeGoals = dataAccess.getActiveGoals();
+            List<GoalInterface> activeGoals = dataAccess.getActiveGoals();
             System.out.println("DEBUG: Active goals count: " + (activeGoals != null ? activeGoals.size() : 0));
             if (activeGoals != null) {
-                for (Goal goal : activeGoals) {
-                    String name = goal.getGoalInfo().getInfo().getName();
-                    String period = formatPeriod(goal);
-                    String progress = formatProgress(goal);
+                for (GoalInterface goal : activeGoals) {
+                    // Cast to concrete type for method access - this is cross-module compatibility issue
+                    GoalInterface concreteGoal = goal;
+                    String name = concreteGoal.getGoalInfo().getInfo().getName();
+                    String period = formatPeriod(concreteGoal);
+                    String progress = formatProgress(concreteGoal);
                     System.out.println("DEBUG: Adding goal to Today So Far - Name: " + name + 
                                       ", Period: " + period + ", Progress: " + progress);
                     goalProgressList.add(new TodaySoFarOutputData.GoalProgress(name, period, progress));
@@ -52,10 +54,10 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             List<TodaySoFarOutputData.CompletedItem> completedItems = new ArrayList<>();
             
             // Add completed tasks
-            List<Task> completedTasks = dataAccess.getCompletedTasksForToday();
+            List<TaskInterf> completedTasks = dataAccess.getCompletedTasksForToday();
             System.out.println("DEBUG: Completed tasks count: " + (completedTasks != null ? completedTasks.size() : 0));
             if (completedTasks != null) {
-                for (Task task : completedTasks) {
+                for (TaskInterf task : completedTasks) {
                     String name = task.getInfo().getName();
                     String categoryName = getCategoryName(task.getInfo().getCategory());
                     completedItems.add(new TodaySoFarOutputData.CompletedItem("Task", name, categoryName));
@@ -119,7 +121,7 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
         return (category != null) ? category.getName() : "-";
     }
     
-    private String formatPeriod(Goal goal) {
+    private String formatPeriod(GoalInterface goal) {
         // Format the goal period based on the goal's time period type
         if (goal.getTimePeriod() != null) {
             switch (goal.getTimePeriod()) {
@@ -139,7 +141,7 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
         return "Ongoing";
     }
     
-    private String formatProgress(Goal goal) {
+    private String formatProgress(GoalInterface goal) {
         // Format goal progress (e.g., "2/3 completed")
         int current = goal.getCurrentProgress();
         int required = goal.getFrequency();

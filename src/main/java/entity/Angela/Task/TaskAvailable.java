@@ -1,6 +1,7 @@
 package entity.Angela.Task;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
  * - Can have a planned due date that persists user planning
  * - No priority or completion status (those belong to Today's instances)
  */
-public class TaskAvailable {
+public class TaskAvailable implements TaskAvailableInterf {
     private final String id;
     private Info info; // Made non-final for compatibility
     private String plannedDueDate; // ISO date string or null
@@ -76,7 +77,8 @@ public class TaskAvailable {
      *
      * @return The immutable task info
      */
-    public Info getInfo() {
+    @Override
+    public InfoInterf getInfo() {
         return info;
     }
 
@@ -92,9 +94,11 @@ public class TaskAvailable {
     /**
      * Sets the planned due date.
      * This is updated when user sets a due date in Today's task.
-     *
+     * 
+     * @deprecated Use {@link #withPlannedDueDate(String)} for immutable updates
      * @param plannedDueDate The due date in ISO format, or null to clear
      */
+    @Deprecated
     public void setPlannedDueDate(String plannedDueDate) {
         this.plannedDueDate = plannedDueDate;
     }
@@ -119,11 +123,37 @@ public class TaskAvailable {
 
     /**
      * Sets whether this is a one-time task.
-     *
+     * 
+     * @deprecated Use {@link #withOneTimeFlag(boolean)} for immutable updates
      * @param oneTime true for one-time task
      */
+    @Deprecated
     public void setOneTime(boolean oneTime) {
         this.isOneTime = oneTime;
+    }
+
+    // Immutable update methods for Clean Architecture compliance
+    
+    /**
+     * Creates a new TaskAvailable instance with the specified planned due date.
+     * This follows the immutable entity pattern.
+     * 
+     * @param plannedDueDate The new planned due date in ISO format, or null
+     * @return A new TaskAvailable instance with the updated planned due date
+     */
+    public TaskAvailable withPlannedDueDate(String plannedDueDate) {
+        return new TaskAvailable(this.id, this.info, plannedDueDate, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new TaskAvailable instance with the specified one-time flag.
+     * This follows the immutable entity pattern.
+     * 
+     * @param oneTime The new one-time flag value
+     * @return A new TaskAvailable instance with the updated one-time flag
+     */
+    public TaskAvailable withOneTimeFlag(boolean oneTime) {
+        return new TaskAvailable(this.id, this.info, this.plannedDueDate, oneTime);
     }
 
     /**

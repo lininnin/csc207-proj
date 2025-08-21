@@ -2,11 +2,12 @@ package data_access;
 
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
+import entity.Angela.Task.TaskInterf;
 import entity.info.Info;
 import entity.info.InfoInterf;
 import entity.Sophia.Goal;
 import data_access.GoalRepository;
-import use_case.Angela.task.TaskGateway;
 import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
@@ -29,7 +30,6 @@ import java.util.Objects;
  * Following Alex's pattern: one concrete implementation implements multiple interfaces.
  */
 public class InMemoryTaskGateway implements 
-        TaskGateway,
         CreateTaskDataAccessInterface,
         DeleteTaskDataAccessInterface,
         EditAvailableTaskDataAccessInterface,
@@ -53,7 +53,6 @@ public class InMemoryTaskGateway implements
         this.goalRepository = goalRepository;
     }
 
-    @Override
     public String saveAvailableTask(Info info) {
         String taskId = info.getId(); // Info already has an ID
         System.out.println("DEBUG: saveAvailableTask (legacy) called - ID: " + taskId + ", Name: " + info.getName());
@@ -62,18 +61,15 @@ public class InMemoryTaskGateway implements
         return taskId;
     }
 
-    @Override
     public List<Info> getAllAvailableTasks() {
         return new ArrayList<>(availableTasks.values());
     }
 
-    @Override
     public boolean availableTaskNameExists(String name) {
         return availableTasks.values().stream()
                 .anyMatch(info -> info.getName().equalsIgnoreCase(name));
     }
 
-    @Override
     public boolean updateAvailableTask(Info info) {
         if (availableTasks.containsKey(info.getId())) {
             availableTasks.put(info.getId(), info);
@@ -82,21 +78,18 @@ public class InMemoryTaskGateway implements
         return false;
     }
 
-    @Override
     public boolean deleteFromAvailable(String taskId) {
         return availableTasks.remove(taskId) != null;
     }
 
-    @Override
     public Task addToToday(String taskId, Task.Priority priority, LocalDate dueDate) {
-        TaskAvailable taskAvailable = getTaskAvailableById(taskId);
+        TaskAvailableInterf taskAvailable = getTaskAvailableById(taskId);
         if (taskAvailable == null) {
             throw new IllegalArgumentException("Task not found: " + taskId);
         }
-        return addTaskToToday(taskAvailable, priority, dueDate);
+        return (Task) addTaskToToday(taskAvailable, priority, dueDate);
     }
 
-    @Override
     public List<Task> getTodaysTasks() {
         List<Task> tasks = new ArrayList<>(todaysTasks.values());
         
@@ -113,7 +106,6 @@ public class InMemoryTaskGateway implements
         return tasks;
     }
 
-    @Override
     public boolean updateTodaysTask(Task task) {
         if (task == null || task.getId() == null) {
             return false;
@@ -134,34 +126,28 @@ public class InMemoryTaskGateway implements
         return true;
     }
 
-    @Override
     public boolean removeFromToday(String taskId) {
         return todaysTasks.remove(taskId) != null;
     }
 
-    @Override
     public boolean markTaskComplete(String taskId) {
         // Implementation for demo
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
     public boolean unmarkTaskComplete(String taskId) {
         // Implementation for demo
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
     public boolean existsInAvailable(String taskId) {
         return availableTasks.containsKey(taskId);
     }
 
-    @Override
     public boolean existsInToday(String taskId) {
         return todaysTasks.containsKey(taskId);
     }
 
-    @Override
     public String getTaskName(String taskId) {
         InfoInterf info = availableTasks.get(taskId);
         if (info != null) {
@@ -174,26 +160,22 @@ public class InMemoryTaskGateway implements
         return null;
     }
 
-    @Override
     public List<Task> getTasksWithDueDates() {
         // For demo purposes, return empty list
         return new ArrayList<>();
     }
 
-    @Override
     public List<Task> getOverdueTasks() {
         // For demo purposes, return empty list
         return new ArrayList<>();
     }
 
-    @Override
     public List<Task> getCompletedTasksToday() {
         return todaysTasks.values().stream()
                 .filter(Task::isCompleted)
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    @Override
     public double getTodaysCompletionRate() {
         // Filter out overdue tasks - they shouldn't count in today's completion rate
         List<Task> actualTodayTasks = todaysTasks.values().stream()
@@ -218,13 +200,13 @@ public class InMemoryTaskGateway implements
     // ===== CreateTaskDataAccessInterface methods =====
 
     @Override
-    public String saveTaskAvailable(TaskAvailable taskAvailable) {
+    public String saveTaskAvailable(TaskAvailableInterf taskAvailable) {
         String taskId = taskAvailable.getId();
         System.out.println("DEBUG: saveTaskAvailable called - ID: " + taskId + ", Name: " + taskAvailable.getInfo().getName());
         
-        availableTaskTemplates.put(taskId, taskAvailable);
+        availableTaskTemplates.put(taskId, (TaskAvailable) taskAvailable);
         // Also save to legacy storage for backward compatibility
-        availableTasks.put(taskId, taskAvailable.getInfo());
+        availableTasks.put(taskId, (Info) taskAvailable.getInfo());
         
         System.out.println("DEBUG: After save - availableTaskTemplates size: " + availableTaskTemplates.size());
         System.out.println("DEBUG: After save - availableTasks size: " + availableTasks.size());
@@ -270,12 +252,17 @@ public class InMemoryTaskGateway implements
     }
 
     @Override
-    public List<TaskAvailable> getAllAvailableTaskTemplates() {
-        return new ArrayList<>(availableTaskTemplates.values());
+    public List<TaskAvailableInterf> getAllAvailableTaskTemplates() {
+        List<TaskAvailableInterf> result = new ArrayList<>();
+        for (TaskAvailable task : availableTaskTemplates.values()) {
+            result.add(task);
+        }
+        return result;
     }
 
+
     @Override
-    public TaskAvailable getTaskAvailableById(String taskId) {
+    public TaskAvailableInterf getTaskAvailableById(String taskId) {
         // First check the new storage
         TaskAvailable taskAvailable = availableTaskTemplates.get(taskId);
         if (taskAvailable != null) {
@@ -299,24 +286,24 @@ public class InMemoryTaskGateway implements
     }
 
     @Override
-    public boolean exists(TaskAvailable taskAvailable) {
+    public boolean exists(TaskAvailableInterf taskAvailable) {
         return availableTaskTemplates.containsKey(taskAvailable.getId());
     }
 
     // ===== DeleteTaskDataAccessInterface methods =====
 
     @Override
-    public Task getTodaysTaskById(String taskId) {
+    public TaskInterf getTodaysTaskById(String taskId) {
         return todaysTasks.get(taskId);
     }
 
     @Override
-    public boolean existsInAvailable(TaskAvailable taskAvailable) {
+    public boolean existsInAvailable(TaskAvailableInterf taskAvailable) {
         return availableTaskTemplates.containsKey(taskAvailable.getId());
     }
 
     @Override
-    public boolean existsInToday(Task task) {
+    public boolean existsInToday(TaskInterf task) {
         return todaysTasks.containsKey(task.getInfo().getId());
     }
 
@@ -327,7 +314,7 @@ public class InMemoryTaskGateway implements
     }
 
     @Override
-    public boolean deleteFromAvailable(TaskAvailable taskAvailable) {
+    public boolean deleteFromAvailable(TaskAvailableInterf taskAvailable) {
         boolean removedFromNew = availableTaskTemplates.remove(taskAvailable.getId()) != null;
         boolean removedFromLegacy = availableTasks.remove(taskAvailable.getId()) != null;
         return removedFromNew || removedFromLegacy;
@@ -348,15 +335,22 @@ public class InMemoryTaskGateway implements
     }
 
     @Override
-    public List<Task> getTodaysTasksByTemplate(String templateTaskId) {
-        return todaysTasks.values().stream()
-                .filter(task -> templateTaskId.equals(task.getTemplateTaskId()))
-                .collect(java.util.stream.Collectors.toList());
+    public List<TaskInterf> getTodaysTasksByTemplate(String templateTaskId) {
+        List<TaskInterf> result = new ArrayList<>();
+        for (Task task : todaysTasks.values()) {
+            if (templateTaskId.equals(task.getTemplateTaskId())) {
+                result.add(task);
+            }
+        }
+        return result;
     }
 
     @Override
-    public List<Task> getAllTodaysTasks() {
-        List<Task> tasks = new ArrayList<>(todaysTasks.values());
+    public List<TaskInterf> getAllTodaysTasks() {
+        List<TaskInterf> tasks = new ArrayList<>();
+        for (Task task : todaysTasks.values()) {
+            tasks.add(task);
+        }
         
         // Sort tasks alphabetically by name (case-insensitive)
         tasks.sort((a, b) -> {
@@ -385,7 +379,7 @@ public class InMemoryTaskGateway implements
             Info taskInfo = null;
             
             if (taskTemplate != null) {
-                taskInfo = taskTemplate.getInfo();
+                taskInfo = (Info) taskTemplate.getInfo();
             } else {
                 // Fall back to legacy storage
                 taskInfo = availableTasks.get(taskId);
@@ -497,7 +491,7 @@ public class InMemoryTaskGateway implements
         }
 
         // Update the existing Info object using setters
-        Info info = existingTask.getInfo();
+        Info info = (Info) existingTask.getInfo();
         info.setName(newName);
         info.setDescription(newDescription != null ? newDescription : "");
         info.setCategory(newCategoryId != null ? newCategoryId : "");
@@ -577,15 +571,17 @@ public class InMemoryTaskGateway implements
     }
 
     @Override
-    public List<TaskAvailable> getAllAvailableTasksWithDetails() {
-        List<TaskAvailable> allTasks = new ArrayList<>();
+    public List<TaskAvailableInterf> getAllAvailableTasksWithDetails() {
+        List<TaskAvailableInterf> allTasks = new ArrayList<>();
         
         System.out.println("DEBUG: getAllAvailableTasksWithDetails called");
         System.out.println("DEBUG: availableTaskTemplates size: " + availableTaskTemplates.size());
         System.out.println("DEBUG: availableTasks size: " + availableTasks.size());
         
         // Add all tasks from the new storage
-        allTasks.addAll(availableTaskTemplates.values());
+        for (TaskAvailable task : availableTaskTemplates.values()) {
+            allTasks.add(task);
+        }
         
         // Add any tasks that only exist in legacy storage
         for (Map.Entry<String, Info> entry : availableTasks.entrySet()) {
@@ -609,7 +605,7 @@ public class InMemoryTaskGateway implements
         });
         
         System.out.println("DEBUG: Total tasks returned (sorted alphabetically): " + allTasks.size());
-        for (TaskAvailable task : allTasks) {
+        for (TaskAvailableInterf task : allTasks) {
             System.out.println("DEBUG: Task - ID: " + task.getId() + ", Name: " + task.getInfo().getName());
         }
         
@@ -621,20 +617,23 @@ public class InMemoryTaskGateway implements
      * @return List of all available task templates
      */
     public List<TaskAvailable> getAvailableTaskTemplates() {
-        return getAllAvailableTasksWithDetails();
+        // For backward compatibility, convert interface list to concrete list
+        return getAllAvailableTasksWithDetails().stream()
+                .map(task -> (TaskAvailable) task)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // ===== AddToTodayDataAccessInterface methods =====
 
     @Override
-    public TaskAvailable getAvailableTaskById(String taskId) {
+    public TaskAvailableInterf getAvailableTaskById(String taskId) {
         return getTaskAvailableById(taskId); // Reuse existing method
     }
 
     @Override
-    public Task addTaskToToday(TaskAvailable taskAvailable, Task.Priority priority, java.time.LocalDate dueDate) {
+    public TaskInterf addTaskToToday(TaskAvailableInterf taskAvailable, Task.Priority priority, java.time.LocalDate dueDate) {
         // Create a new Task instance from the TaskAvailable template
-        Info templateInfo = taskAvailable.getInfo();
+        Info templateInfo = (Info) taskAvailable.getInfo();
         
         // Create a new Info instance for today's task (clone the template)
         Info todayInfo = new Info.Builder(templateInfo.getName())
@@ -727,7 +726,7 @@ public class InMemoryTaskGateway implements
     // ===== MarkTaskCompleteDataAccessInterface methods =====
 
     @Override
-    public Task getTodayTaskById(String taskId) {
+    public TaskInterf getTodayTaskById(String taskId) {
         return todaysTasks.get(taskId);
     }
 
@@ -908,74 +907,82 @@ public class InMemoryTaskGateway implements
     // ===== OverdueTasksDataAccessInterface methods =====
 
     @Override
-    public List<Task> getOverdueTasks(int daysBack) {
+    public List<TaskInterf> getOverdueTasks(int daysBack) {
         LocalDate cutoffDate = LocalDate.now().minusDays(daysBack);
         LocalDate today = LocalDate.now();
         
-        List<Task> overdueTasks = todaysTasks.values().stream()
-            .filter(task -> {
-                if (task.isCompleted()) {
-                    return false;
-                }
-                LocalDate dueDate = task.getDates().getDueDate();
-                if (dueDate == null) {
-                    return false;
-                }
-                // Task is overdue if due date is before today
-                // and due date is not before our cutoff (within range)
-                return dueDate.isBefore(today) && !dueDate.isBefore(cutoffDate);
-            })
-            .sorted((t1, t2) -> {
-                // Sort by due date - most overdue first (earliest date first)
-                LocalDate date1 = t1.getDates().getDueDate();
-                LocalDate date2 = t2.getDates().getDueDate();
-                int dateComparison = date1.compareTo(date2);
-                
-                // If same due date, sort alphabetically by task name
-                if (dateComparison == 0) {
-                    String name1 = t1.getInfo().getName();
-                    String name2 = t2.getInfo().getName();
-                    if (name1 == null && name2 == null) return 0;
-                    if (name1 == null) return 1;
-                    if (name2 == null) return -1;
-                    return name1.compareToIgnoreCase(name2);
-                }
-                
-                return dateComparison;
-            })
-            .collect(Collectors.toList());
+        List<TaskInterf> overdueTasks = new ArrayList<>();
+        for (Task task : todaysTasks.values()) {
+            if (task.isCompleted()) {
+                continue;
+            }
+            LocalDate dueDate = task.getBeginAndDueDates().getDueDate();
+            if (dueDate == null) {
+                continue;
+            }
+            // Task is overdue if due date is before today
+            // and due date is not before our cutoff (within range)
+            if (dueDate.isBefore(today) && !dueDate.isBefore(cutoffDate)) {
+                overdueTasks.add(task);
+            }
+        }
+        
+        // Sort by due date - most overdue first (earliest date first)
+        overdueTasks.sort((t1, t2) -> {
+            LocalDate date1 = t1.getBeginAndDueDates().getDueDate();
+            LocalDate date2 = t2.getBeginAndDueDates().getDueDate();
+            int dateComparison = date1.compareTo(date2);
+            
+            // If same due date, sort alphabetically by task name
+            if (dateComparison == 0) {
+                String name1 = t1.getInfo().getName();
+                String name2 = t2.getInfo().getName();
+                if (name1 == null && name2 == null) return 0;
+                if (name1 == null) return 1;
+                if (name2 == null) return -1;
+                return name1.compareToIgnoreCase(name2);
+            }
+            
+            return dateComparison;
+        });
             
         return overdueTasks;
     }
 
-    @Override
-    public List<Task> getAllOverdueTasks() {
-        List<Task> overdueTasks = todaysTasks.values().stream()
-            .filter(task -> task.isOverdue())
-            .sorted((t1, t2) -> {
-                // Sort by due date - most overdue first (earliest date first)
-                LocalDate date1 = t1.getDates().getDueDate();
-                LocalDate date2 = t2.getDates().getDueDate();
-                if (date1 == null || date2 == null) {
-                    return 0;
-                }
-                int dateComparison = date1.compareTo(date2);
-                
-                // If same due date, sort alphabetically by task name
-                if (dateComparison == 0) {
-                    String name1 = t1.getInfo().getName();
-                    String name2 = t2.getInfo().getName();
-                    if (name1 == null && name2 == null) return 0;
-                    if (name1 == null) return 1;
-                    if (name2 == null) return -1;
-                    return name1.compareToIgnoreCase(name2);
-                }
-                
-                return dateComparison;
-            })
-            .collect(Collectors.toList());
+    @Override  
+    public List<TaskInterf> getAllOverdueTasks() {
+        List<TaskInterf> overdueTasks = new ArrayList<>();
+        for (Task task : todaysTasks.values()) {
+            if (task.isOverdue()) {
+                overdueTasks.add(task);
+            }
+        }
+        
+        // Sort by due date - most overdue first (earliest date first)
+        overdueTasks.sort((t1, t2) -> {
+            LocalDate date1 = t1.getBeginAndDueDates().getDueDate();
+            LocalDate date2 = t2.getBeginAndDueDates().getDueDate();
+            if (date1 == null || date2 == null) {
+                return 0;
+            }
+            int dateComparison = date1.compareTo(date2);
+            
+            // If same due date, sort alphabetically by task name
+            if (dateComparison == 0) {
+                String name1 = t1.getInfo().getName();
+                String name2 = t2.getInfo().getName();
+                if (name1 == null && name2 == null) return 0;
+                if (name1 == null) return 1;
+                if (name2 == null) return -1;
+                return name1.compareToIgnoreCase(name2);
+            }
+            
+            return dateComparison;
+        });
             
         return overdueTasks;
     }
-
+    
+    // Additional methods to satisfy interface requirements after refactoring
+    
 }

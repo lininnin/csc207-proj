@@ -299,7 +299,7 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         soFarState.setGoals(goalProgressList);
         soFarState.setCompletedItems(completedItems);
         soFarState.setCompletionRate(state.getTaskCompletionRate());
-        // wellness entries - TODO: convert format
+        // wellness entries
         todaySoFarViewModel.setState(soFarState);
         
         // Update Today's Tasks view model with historical tasks

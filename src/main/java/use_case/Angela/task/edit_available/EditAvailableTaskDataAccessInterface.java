@@ -1,6 +1,6 @@
 package use_case.Angela.task.edit_available;
 
-import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 
 /**
  * Data access interface for editing available tasks.
@@ -24,9 +24,9 @@ public interface EditAvailableTaskDataAccessInterface {
      * Gets an available task by its ID.
      *
      * @param taskId The task ID
-     * @return The TaskAvailable object, or null if not found
+     * @return The TaskAvailableInterf object, or null if not found
      */
-    TaskAvailable getTaskAvailableById(String taskId);
+    TaskAvailableInterf getTaskAvailableById(String taskId);
 
     /**
      * Checks if a task with the given name exists in the same category.
@@ -43,7 +43,7 @@ public interface EditAvailableTaskDataAccessInterface {
      * Gets all available tasks with their complete information including isOneTime flag.
      * Needed for the view to display the One Time column.
      *
-     * @return List of all TaskAvailable objects
+     * @return List of all TaskAvailableInterf objects
      */
-    java.util.List<TaskAvailable> getAllAvailableTasksWithDetails();
+    java.util.List<TaskAvailableInterf> getAllAvailableTasksWithDetails();
 }
