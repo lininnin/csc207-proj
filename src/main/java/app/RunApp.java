@@ -39,7 +39,7 @@ import view.FontUtil;
 /**
  * App constructing.
  */
-public class BigMain {
+public class RunApp {
 
     /**
      *  Launch MinkTrack application UI.
