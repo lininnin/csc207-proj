@@ -80,21 +80,11 @@ class GoalPageBuilderTest {
         assertNotNull(form, "Form panel should be created");
         assertTrue(form.getLayout() instanceof BoxLayout, "Form uses BoxLayout Y_AXIS");
 
-        // Amounts panel at index 6 -> [targetAmountPanel, currentAmountPanel]
-        JPanel amountPanel = (JPanel) form.getComponent(6);
-        JPanel targetAmountPanel = (JPanel) amountPanel.getComponent(0);
-        JTextField targetAmountField = (JTextField) targetAmountPanel.getComponent(1);
-        assertEquals("0", targetAmountField.getText(), "Default target amount should be 0");
-
-        JPanel currentAmountPanel = (JPanel) amountPanel.getComponent(1);
-        JTextField currentAmountField = (JTextField) currentAmountPanel.getComponent(1);
-        assertEquals("0", currentAmountField.getText(), "Default current amount should be 0");
-
-        // Date panel at index 8 -> [startDatePanel, endDatePanel]; text fields at component index 1
+        // Date panel at index 6 -> [startDatePanel, endDatePanel]; text fields at component index 1
         LocalDate today = LocalDate.now();
         LocalDate in7 = today.plusDays(7);
 
-        JPanel datePanel = (JPanel) form.getComponent(8);
+        JPanel datePanel = (JPanel) form.getComponent(6);
         JPanel startDatePanel = (JPanel) datePanel.getComponent(0);
         JTextField startDateField = (JTextField) startDatePanel.getComponent(1);
         assertEquals(today.toString(), startDateField.getText(), "Start date defaults to today");
@@ -103,8 +93,8 @@ class GoalPageBuilderTest {
         JTextField endDateField = (JTextField) endDatePanel.getComponent(1);
         assertEquals(in7.toString(), endDateField.getText(), "End date defaults to +7 days");
 
-        // Time/frequency panel at index 10
-        JPanel timeFreqPanel = (JPanel) form.getComponent(10);
+        // Time/frequency panel at index 8
+        JPanel timeFreqPanel = (JPanel) form.getComponent(8);
         JPanel timePeriodPanel = (JPanel) timeFreqPanel.getComponent(0);
         JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
         assertEquals(2, timePeriodBox.getItemCount(), "Time period has WEEK and MONTH");

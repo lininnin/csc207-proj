@@ -382,14 +382,26 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("DEBUG TodaySoFarView: Property change received: " + evt.getPropertyName());
         if (TodaySoFarViewModel.TODAY_SO_FAR_STATE_PROPERTY.equals(evt.getPropertyName())) {
+            System.out.println("DEBUG TodaySoFarView: Correct property name matched, updating display");
             TodaySoFarState state = (TodaySoFarState) evt.getNewValue();
             updateDisplay(state);
+        } else {
+            System.out.println("DEBUG TodaySoFarView: Property name didn't match. Expected: " + TodaySoFarViewModel.TODAY_SO_FAR_STATE_PROPERTY);
         }
     }
     
     private void updateDisplay(TodaySoFarState state) {
-        if (state == null) return;
+        if (state == null) {
+            System.out.println("DEBUG TodaySoFarView: updateDisplay called with null state");
+            return;
+        }
+        
+        System.out.println("DEBUG TodaySoFarView: updateDisplay called with state containing " + 
+                          state.getGoals().size() + " goals, " + 
+                          state.getCompletedItems().size() + " completed items, " + 
+                          state.getCompletionRate() + "% completion rate");
         
         // Update Goals section
         updateGoalsPanel(state.getGoals());

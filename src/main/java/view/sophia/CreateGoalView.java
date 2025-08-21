@@ -39,7 +39,7 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
 
     // Constants for magic numbers, grouped by data type
     private static final int TEXT_FIELD_COLUMNS = 15;
-    private static final int GRID_ROWS = 8;
+    private static final int GRID_ROWS = 6;
     private static final int GRID_COLS = 2;
     private static final int GRID_GAP = 5;
     private static final int VERTICAL_STRUT_SIZE = 10;
@@ -49,14 +49,9 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
     private static final int FREQUENCY_MIN = 1;
     private static final int FREQUENCY_MAX = 100;
 
-    private static final double DEFAULT_CURRENT_AMOUNT = 0.0;
-
-    private static final String DEFAULT_CURRENT_AMOUNT_TEXT = "0.0";
     private static final String TITLE_TEXT = "Create New Goal";
     private static final String GOAL_NAME_LABEL = "Goal Name:";
     private static final String DESCRIPTION_LABEL = "Description:";
-    private static final String TARGET_AMOUNT_LABEL = "Target Amount:";
-    private static final String CURRENT_AMOUNT_LABEL = "Current Amount:";
     private static final String START_DATE_LABEL = "Start Date (YYYY-MM-DD):";
     private static final String END_DATE_LABEL = "End Date (YYYY-MM-DD):";
     private static final String TIME_PERIOD_LABEL = "Time Period:";
@@ -64,13 +59,10 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
     private static final String TARGET_TASK_LABEL = "Target Task:";
     private static final String CREATE_BUTTON_TEXT = "Create Goal";
     private static final String ERROR_DIALOG_TITLE = "Error";
-    private static final String NUMBER_FORMAT_ERROR_MESSAGE = "Please enter valid numbers for amounts";
 
     // Form fields
     private final JTextField goalNameField = new JTextField(TEXT_FIELD_COLUMNS);
     private final JTextField goalDescriptionField = new JTextField(TEXT_FIELD_COLUMNS);
-    private final JTextField targetAmountField = new JTextField(TEXT_FIELD_COLUMNS);
-    private final JTextField currentAmountField = new JTextField(TEXT_FIELD_COLUMNS);
     private final JTextField startDateField = new JTextField(TEXT_FIELD_COLUMNS);
     private final JTextField endDateField = new JTextField(TEXT_FIELD_COLUMNS);
     private final JComboBox<Goal.TimePeriod> timePeriodCombo = new JComboBox<>(Goal.TimePeriod.values());
@@ -115,10 +107,6 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
         fields.add(goalNameField);
         fields.add(new JLabel(DESCRIPTION_LABEL));
         fields.add(goalDescriptionField);
-        fields.add(new JLabel(TARGET_AMOUNT_LABEL));
-        fields.add(targetAmountField);
-        fields.add(new JLabel(CURRENT_AMOUNT_LABEL));
-        fields.add(currentAmountField);
         fields.add(new JLabel(START_DATE_LABEL));
         fields.add(startDateField);
         fields.add(new JLabel(END_DATE_LABEL));
@@ -148,9 +136,6 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
         // Styling
         fields.setBorder(BorderFactory.createEmptyBorder(FORM_PADDING, FORM_PADDING, FORM_PADDING, FORM_PADDING));
         this.setBorder(BorderFactory.createEmptyBorder(FRAME_PADDING, FRAME_PADDING, FRAME_PADDING, FRAME_PADDING));
-
-        // Set default current amount to 0
-        currentAmountField.setText(DEFAULT_CURRENT_AMOUNT_TEXT);
     }
 
     /**
@@ -166,33 +151,25 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
             try {
                 String goalName = goalNameField.getText();
                 String goalDescription = goalDescriptionField.getText();
-                double targetAmount = Double.parseDouble(targetAmountField.getText());
-                double currentAmount = Double.parseDouble(currentAmountField.getText());
                 LocalDate startDate = LocalDate.parse(startDateField.getText());
                 LocalDate endDate = LocalDate.parse(endDateField.getText());
                 Goal.TimePeriod timePeriod = (Goal.TimePeriod) timePeriodCombo.getSelectedItem();
                 int frequency = (int) frequencySpinner.getValue();
                 Task selectedTask = (Task) taskComboBox.getSelectedItem();
 
-
                 createGoalController.execute(
                         goalName,
                         goalDescription,
-                        targetAmount,
-                        currentAmount,
                         startDate,
                         endDate,
                         timePeriod,
                         frequency,
                         selectedTask
-
                 );
 
                 // Clear form after successful submission
                 clearFormFields();
 
-            } catch (NumberFormatException e) {
-                showErrorDialog(NUMBER_FORMAT_ERROR_MESSAGE);
             } catch (Exception e) {
                 showErrorDialog("Error creating goal: " + e.getMessage());
             }
@@ -205,8 +182,6 @@ public class CreateGoalView extends JPanel implements ActionListener, PropertyCh
     private void clearFormFields() {
         goalNameField.setText("");
         goalDescriptionField.setText("");
-        targetAmountField.setText("");
-        currentAmountField.setText(DEFAULT_CURRENT_AMOUNT_TEXT);
         startDateField.setText("");
         endDateField.setText("");
         frequencySpinner.setValue(FREQUENCY_DEFAULT);

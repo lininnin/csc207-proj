@@ -40,8 +40,6 @@ class createGoalsInteractorTest {
         CreateGoalInputData inputData = new CreateGoalInputData(
                 "Test Goal",
                 "Test Description",
-                100.0,
-                0.0,
                 LocalDate.now(),
                 timePeriod == Goal.TimePeriod.WEEK ? LocalDate.now().plusWeeks(1) : LocalDate.now().plusMonths(1),
                 timePeriod,
@@ -84,8 +82,6 @@ class createGoalsInteractorTest {
         CreateGoalInputData inputData = new CreateGoalInputData(
                 "Test Goal",
                 null,
-                100.0,
-                0.0,
                 LocalDate.now(),
                 LocalDate.now().plusWeeks(1),
                 Goal.TimePeriod.WEEK,
@@ -112,13 +108,11 @@ class createGoalsInteractorTest {
     }
 
     @Test
-    void execute_WithCurrentAmount_SetsProgress() {
+    void execute_WithValidData_CreatesGoalWithZeroProgress() {
         // Arrange
         CreateGoalInputData inputData = new CreateGoalInputData(
                 "Test Goal",
                 null,
-                100.0,
-                50.0,
                 LocalDate.now(),
                 LocalDate.now().plusWeeks(1),
                 Goal.TimePeriod.WEEK,
@@ -136,7 +130,8 @@ class createGoalsInteractorTest {
         interactor.execute(inputData);
 
         // Assert
-        verify(mockGoal).setCurrentProgress(50);
+        verify(goalRepository).save(mockGoal);
+        verify(presenter).presentSuccess(any(CreateGoalOutputData.class));
     }
 
     @Test
@@ -145,8 +140,6 @@ class createGoalsInteractorTest {
         CreateGoalInputData inputData = new CreateGoalInputData(
                 null,  // Invalid name
                 null,
-                100.0,
-                0.0,
                 LocalDate.now(),
                 LocalDate.now().plusWeeks(1),
                 Goal.TimePeriod.WEEK,
@@ -167,8 +160,6 @@ class createGoalsInteractorTest {
         CreateGoalInputData inputData = new CreateGoalInputData(
                 "Test Goal",
                 null,
-                100.0,
-                0.0,
                 LocalDate.now(),
                 LocalDate.now().plusWeeks(1),
                 Goal.TimePeriod.WEEK,

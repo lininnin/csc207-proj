@@ -20,6 +20,7 @@ import view.Angela.Task.TodaysTasksView;
 import view.Sophia.TodayGoalView;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -30,6 +31,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -75,6 +77,11 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
     
     // Current selected date
     private LocalDate selectedDate;
+    
+    // Historical data panels
+    private JPanel historicalTasksContent;
+    private JPanel historicalEventsContent;
+    private JPanel historicalGoalsContent;
     
     /**
      * Creates a read-only events view for displaying historical events.
@@ -178,7 +185,10 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         mainSplit.setBorder(BorderFactory.createEmptyBorder());
         
         // Top: Today So Far panel (reuse existing component)
-        todaySoFarView = new TodaySoFarView(null, todaySoFarViewModel);
+        // Create a dummy OverdueTasksViewModel for history view (not used but required by constructor)
+        interface_adapter.Angela.task.overdue.OverdueTasksViewModel dummyOverdueVM = 
+            new interface_adapter.Angela.task.overdue.OverdueTasksViewModel();
+        todaySoFarView = new TodaySoFarView(dummyOverdueVM, todaySoFarViewModel);
         JScrollPane todaySoFarScroll = new JScrollPane(todaySoFarView);
         todaySoFarScroll.setBorder(BorderFactory.createTitledBorder("Today So Far"));
         mainSplit.setTopComponent(todaySoFarScroll);
@@ -187,22 +197,20 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // 3 columns with 10px gap
         bottomPanel.setBackground(Color.WHITE);
         
-        // Create scrollable panels for each component
-        todaysTasksView = new TodaysTasksView(todayTasksViewModel);
-        JScrollPane taskScroll = new JScrollPane(todaysTasksView);
-        taskScroll.setBorder(BorderFactory.createTitledBorder("Today's Tasks"));
+        // Create simple historical data display panels instead of using complex views
+        JPanel historicalTasksPanel = createHistoricalTasksPanel();
+        JScrollPane taskScroll = new JScrollPane(historicalTasksPanel);
+        taskScroll.setBorder(BorderFactory.createTitledBorder("Historical Tasks"));
         bottomPanel.add(taskScroll);
         
-        // For history view, we don't need edit/delete controllers since it's read-only
-        // Create a simple panel to display events instead of using TodaysEventsView
-        todaysEventsView = createReadOnlyEventsView();
-        JScrollPane eventScroll = new JScrollPane(todaysEventsView);
-        eventScroll.setBorder(BorderFactory.createTitledBorder("Today's Events"));
+        JPanel historicalEventsPanel = createHistoricalEventsPanel();
+        JScrollPane eventScroll = new JScrollPane(historicalEventsPanel);
+        eventScroll.setBorder(BorderFactory.createTitledBorder("Historical Events"));
         bottomPanel.add(eventScroll);
         
-        todayGoalView = new TodayGoalView(todayGoalsViewModel, null);
-        JScrollPane goalScroll = new JScrollPane(todayGoalView);
-        goalScroll.setBorder(BorderFactory.createTitledBorder("Current Goals"));
+        JPanel historicalGoalsPanel = createHistoricalGoalsPanel();
+        JScrollPane goalScroll = new JScrollPane(historicalGoalsPanel);
+        goalScroll.setBorder(BorderFactory.createTitledBorder("Historical Goals"));
         bottomPanel.add(goalScroll);
         
         mainSplit.setBottomComponent(bottomPanel);
@@ -212,6 +220,54 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         // Initially show empty state
         showEmptyState();
         
+        return panel;
+    }
+    
+    private JPanel createHistoricalTasksPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        
+        historicalTasksContent = new JPanel();
+        historicalTasksContent.setLayout(new BoxLayout(historicalTasksContent, BoxLayout.Y_AXIS));
+        historicalTasksContent.setBackground(Color.WHITE);
+        
+        JLabel emptyLabel = new JLabel("Select a date to view tasks", SwingConstants.CENTER);
+        emptyLabel.setForeground(Color.GRAY);
+        historicalTasksContent.add(emptyLabel);
+        
+        panel.add(historicalTasksContent, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    private JPanel createHistoricalEventsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        
+        historicalEventsContent = new JPanel();
+        historicalEventsContent.setLayout(new BoxLayout(historicalEventsContent, BoxLayout.Y_AXIS));
+        historicalEventsContent.setBackground(Color.WHITE);
+        
+        JLabel emptyLabel = new JLabel("Select a date to view events", SwingConstants.CENTER);
+        emptyLabel.setForeground(Color.GRAY);
+        historicalEventsContent.add(emptyLabel);
+        
+        panel.add(historicalEventsContent, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    private JPanel createHistoricalGoalsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        
+        historicalGoalsContent = new JPanel();
+        historicalGoalsContent.setLayout(new BoxLayout(historicalGoalsContent, BoxLayout.Y_AXIS));
+        historicalGoalsContent.setBackground(Color.WHITE);
+        
+        JLabel emptyLabel = new JLabel("Select a date to view goals", SwingConstants.CENTER);
+        emptyLabel.setForeground(Color.GRAY);
+        historicalGoalsContent.add(emptyLabel);
+        
+        panel.add(historicalGoalsContent, BorderLayout.CENTER);
         return panel;
     }
     
@@ -262,22 +318,48 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         if (todaySoFarViewModel != null) {
             todaySoFarViewModel.setState(new TodaySoFarState());
         }
-        if (todayTasksViewModel != null) {
-            todayTasksViewModel.setState(new TodayTasksState());
+        
+        // Clear historical data panels
+        if (historicalTasksContent != null) {
+            historicalTasksContent.removeAll();
+            JLabel emptyLabel = new JLabel("Select a date to view tasks", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalTasksContent.add(emptyLabel);
+            historicalTasksContent.revalidate();
+            historicalTasksContent.repaint();
         }
-        if (todaysEventsViewModel != null) {
-            todaysEventsViewModel.setState(new TodaysEventsState());
+        
+        if (historicalEventsContent != null) {
+            historicalEventsContent.removeAll();
+            JLabel emptyLabel = new JLabel("Select a date to view events", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalEventsContent.add(emptyLabel);
+            historicalEventsContent.revalidate();
+            historicalEventsContent.repaint();
         }
-        if (todayGoalsViewModel != null) {
-            todayGoalsViewModel.setState(new TodaysGoalsState());
+        
+        if (historicalGoalsContent != null) {
+            historicalGoalsContent.removeAll();
+            JLabel emptyLabel = new JLabel("Select a date to view goals", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalGoalsContent.add(emptyLabel);
+            historicalGoalsContent.revalidate();
+            historicalGoalsContent.repaint();
         }
     }
     
     private void updateHistoricalData(ViewHistoryState state) {
+        System.out.println("DEBUG: updateHistoricalData called, hasData = " + state.hasData());
+        
         if (!state.hasData()) {
+            System.out.println("DEBUG: No data, showing empty state");
             showEmptyState();
             return;
         }
+        
+        System.out.println("DEBUG: Goals count = " + state.getGoalProgress().size());
+        System.out.println("DEBUG: Completed tasks count = " + state.getCompletedTasks().size());
+        System.out.println("DEBUG: Completion rate = " + state.getTaskCompletionRate());
         
         // Update TodaySoFar view model with historical data
         TodaySoFarState soFarState = new TodaySoFarState();
@@ -299,36 +381,138 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         soFarState.setGoals(goalProgressList);
         soFarState.setCompletedItems(completedItems);
         soFarState.setCompletionRate(state.getTaskCompletionRate());
-        // wellness entries
+        soFarState.setWellnessEntries(new ArrayList<>()); // Empty for Angela's scope
+        
+        System.out.println("DEBUG: Setting TodaySoFar state with " + goalProgressList.size() + " goals, " + 
+                          completedItems.size() + " completed items, " + state.getTaskCompletionRate() + "% completion");
+        
         todaySoFarViewModel.setState(soFarState);
+        todaySoFarViewModel.firePropertyChanged();
         
-        // Update Today's Tasks view model with historical tasks
-        TodayTasksState tasksState = new TodayTasksState();
-        // TodayTasksState doesn't store tasks directly, it just triggers refresh
-        tasksState.setRefreshNeeded(true);
-        todayTasksViewModel.setState(tasksState);
+        System.out.println("DEBUG: TodaySoFar view model updated and property change fired");
         
-        // Update Today's Events view model with historical events
-        final TodaysEventsState eventsState = new TodaysEventsState();
-        // Convert Info objects to EventInterf objects
-        final List<EventInterf> events = new ArrayList<>();
-        for (Info info : state.getTodaysEvents()) {
-            // Create a simple Event wrapper with today as the due date (historical data)
-            Event event = new Event.Builder(info)
-                .beginAndDueDates(new BeginAndDueDates(LocalDate.now(), LocalDate.now()))
-                .oneTime(false)
-                .build();
-            events.add(event);
+        // Update historical tasks panel
+        updateHistoricalTasksPanel(state.getTodaysTasks(), state.getCompletedTasks());
+        
+        // Update historical events panel
+        updateHistoricalEventsPanel(state.getTodaysEvents());
+        
+        // Update historical goals panel
+        updateHistoricalGoalsPanel(state.getGoalProgress());
+    }
+    
+    private void updateHistoricalTasksPanel(List<entity.Angela.Task.Task> allTasks, List<entity.Angela.Task.Task> completedTasks) {
+        historicalTasksContent.removeAll();
+        
+        if (allTasks.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No tasks for this date", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalTasksContent.add(emptyLabel);
+        } else {
+            for (entity.Angela.Task.Task task : allTasks) {
+                JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                taskPanel.setBackground(Color.WHITE);
+                taskPanel.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+                
+                // Completion status
+                String status = task.isCompleted() ? "✓" : "○";
+                JLabel statusLabel = new JLabel(status);
+                statusLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+                statusLabel.setForeground(task.isCompleted() ? new Color(34, 139, 34) : Color.GRAY);
+                statusLabel.setPreferredSize(new Dimension(20, 20));
+                
+                // Task name
+                JLabel nameLabel = new JLabel(task.getInfo().getName());
+                nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                if (task.isCompleted()) {
+                    nameLabel.setForeground(Color.GRAY);
+                }
+                
+                // Category
+                JLabel categoryLabel = new JLabel("(" + task.getInfo().getCategory() + ")");
+                categoryLabel.setFont(new Font("SansSerif", Font.ITALIC, 10));
+                categoryLabel.setForeground(Color.BLUE);
+                
+                taskPanel.add(statusLabel);
+                taskPanel.add(nameLabel);
+                taskPanel.add(categoryLabel);
+                historicalTasksContent.add(taskPanel);
+            }
         }
-        eventsState.setTodaysEvents(events);
-        todaysEventsViewModel.setState(eventsState);
         
-        // Update Today's Goals view model
-        final TodaysGoalsState goalsState = new TodaysGoalsState();
-        // Convert goal progress to Goal format if needed
-        // For now, set empty list as we don't have Goal entities in the state
-        goalsState.setTodayGoals(new ArrayList<>());
-        todayGoalsViewModel.setState(goalsState);
+        historicalTasksContent.revalidate();
+        historicalTasksContent.repaint();
+    }
+    
+    private void updateHistoricalEventsPanel(List<Info> events) {
+        historicalEventsContent.removeAll();
+        
+        if (events.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No events for this date", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalEventsContent.add(emptyLabel);
+        } else {
+            for (Info event : events) {
+                JPanel eventPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                eventPanel.setBackground(Color.WHITE);
+                eventPanel.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+                
+                JLabel eventLabel = new JLabel("• " + event.getName());
+                eventLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                
+                JLabel categoryLabel = new JLabel("(" + event.getCategory() + ")");
+                categoryLabel.setFont(new Font("SansSerif", Font.ITALIC, 10));
+                categoryLabel.setForeground(Color.BLUE);
+                
+                eventPanel.add(eventLabel);
+                eventPanel.add(categoryLabel);
+                historicalEventsContent.add(eventPanel);
+            }
+        }
+        
+        historicalEventsContent.revalidate();
+        historicalEventsContent.repaint();
+    }
+    
+    private void updateHistoricalGoalsPanel(List<entity.Angela.TodaySoFarSnapshot.GoalProgress> goals) {
+        historicalGoalsContent.removeAll();
+        
+        if (goals.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No goals for this date", SwingConstants.CENTER);
+            emptyLabel.setForeground(Color.GRAY);
+            historicalGoalsContent.add(emptyLabel);
+        } else {
+            for (entity.Angela.TodaySoFarSnapshot.GoalProgress goal : goals) {
+                JPanel goalPanel = new JPanel(new BorderLayout());
+                goalPanel.setBackground(Color.WHITE);
+                goalPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+                
+                JLabel nameLabel = new JLabel(goal.getGoalName());
+                nameLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+                
+                JLabel progressLabel = new JLabel(goal.getProgressString());
+                progressLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+                progressLabel.setForeground(new Color(34, 139, 34));
+                
+                JLabel periodLabel = new JLabel("(" + goal.getPeriod() + ")");
+                periodLabel.setFont(new Font("SansSerif", Font.ITALIC, 10));
+                periodLabel.setForeground(Color.GRAY);
+                
+                JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+                topPanel.setBackground(Color.WHITE);
+                topPanel.add(nameLabel);
+                topPanel.add(Box.createHorizontalStrut(8));
+                topPanel.add(periodLabel);
+                
+                goalPanel.add(topPanel, BorderLayout.NORTH);
+                goalPanel.add(progressLabel, BorderLayout.CENTER);
+                
+                historicalGoalsContent.add(goalPanel);
+            }
+        }
+        
+        historicalGoalsContent.revalidate();
+        historicalGoalsContent.repaint();
     }
     
     @Override

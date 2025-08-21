@@ -27,8 +27,6 @@ public class CreateGoalController {
      * Executes goal creation with all required parameters.
      * @param goalName Name of the goal
      * @param goalDescription Description of the goal
-     * @param targetAmount Target amount for the goal
-     * @param currentAmount Current progress amount
      * @param startDate Start date of the goal period
      * @param endDate End date of the goal period
      * @param timePeriod Time period type (WEEK or MONTH)
@@ -36,14 +34,11 @@ public class CreateGoalController {
      * @param targetTask The target task associated with the goal
      */
     public void execute(String goalName, String goalDescription,
-                        double targetAmount, double currentAmount,
                         LocalDate startDate, LocalDate endDate,
                         Goal.TimePeriod timePeriod, int frequency, Task targetTask) {
         final CreateGoalInputData inputData = new CreateGoalInputData(
                 goalName,
                 goalDescription,
-                targetAmount,
-                currentAmount,
                 startDate,
                 endDate,
                 timePeriod,
