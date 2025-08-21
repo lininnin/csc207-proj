@@ -30,7 +30,6 @@ public class SharedTodaySoFarComponents {
     private final TodaySoFarController todaySoFarController;
     
     private SharedTodaySoFarComponents() {
-        System.out.println("DEBUG: SharedTodaySoFarComponents constructor called");
         // Get shared data access factory
         AppDataAccessFactory dataAccessFactory = AppDataAccessFactory.getInstance();
         
@@ -74,14 +73,10 @@ public class SharedTodaySoFarComponents {
      * @return A new TodaySoFarView connected to shared components
      */
     public TodaySoFarView createTodaySoFarView() {
-        System.out.println("DEBUG: SharedTodaySoFarComponents.createTodaySoFarView() called");
         TodaySoFarView view = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
-        System.out.println("DEBUG: TodaySoFarView created, about to set controllers");
         view.setOverdueTasksController(overdueTasksController);
         view.setTodaySoFarController(todaySoFarController);
-        System.out.println("DEBUG: Controllers set, about to set shared components");
         view.setSharedComponents(this); // Give view access to shared refresh
-        System.out.println("DEBUG: Shared components set, returning view");
         return view;
     }
     
@@ -105,9 +100,7 @@ public class SharedTodaySoFarComponents {
      * Refreshes the Today So Far panel data.
      */
     public void refresh() {
-        System.out.println("DEBUG: SharedTodaySoFarComponents.refresh() called");
         todaySoFarController.refresh();
-        System.out.println("DEBUG: About to call overdueTasksController.execute(7)");
         overdueTasksController.execute(7);
     }
     

@@ -373,11 +373,9 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
     }
     
     public void setSharedComponents(app.SharedTodaySoFarComponents components) {
-        System.out.println("DEBUG: TodaySoFarView.setSharedComponents() called");
         this.sharedComponents = components;
         // Trigger initial refresh when shared components are set
         if (components != null) {
-            System.out.println("DEBUG: Calling sharedComponents.refresh()");
             components.refresh(); // This will call both controllers
         }
     }

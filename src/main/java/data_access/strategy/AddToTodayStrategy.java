@@ -46,8 +46,9 @@ public class AddToTodayStrategy implements AddToTodayDataAccessInterface {
             template.getInfo().getCategory()
         );
         
-        // Create dates object
-        BeginAndDueDates dates = new BeginAndDueDates(LocalDate.now(), dueDate);
+        // Create dates object - for overdue testing, set begin date to due date if due date is in the past
+        LocalDate beginDate = (dueDate != null && dueDate.isBefore(LocalDate.now())) ? dueDate : LocalDate.now();
+        BeginAndDueDates dates = new BeginAndDueDates(beginDate, dueDate);
         
         // Create new task instance
         Task newTask = new Task(

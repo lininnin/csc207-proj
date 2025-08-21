@@ -248,23 +248,19 @@ public class TaskPageBuilder {
         );
 
         addToTodayView.setAddTaskToTodayController(addToTodayController);
-        System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
         addToTodayView.setDataAccess(taskGateway);
         addToTodayView.setCategoryGateway(categoryDataAccess); // Set category gateway for dropdown display
-        System.out.println("DEBUG: TaskPageBuilder - Continuing after setDataAccess calls");
 
         // Wire up Mark Task Complete Use Case
         MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(
                 todayTasksViewModel
         );
 
-        System.out.println("DEBUG: TaskPageBuilder - About to create MarkTaskCompleteInteractor");
         MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
                 taskGateway, // InMemoryTaskDataAccessObject implements MarkTaskCompleteDataAccessInterface
                 markCompletePresenter,
                 dataAccessFactory.getGoalRepository() // Pass goal repository for updating goal progress
         );
-        System.out.println("DEBUG: TaskPageBuilder - MarkTaskCompleteInteractor created");
 
         MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(
                 markCompleteInteractor
@@ -314,14 +310,10 @@ public class TaskPageBuilder {
         todaySoFarController = sharedTodaySoFar.getTodaySoFarController();
         
         // Create Today So Far view using shared components
-        System.out.println("DEBUG: TaskPageBuilder - About to call sharedTodaySoFar.createTodaySoFarView()");
         todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
-        System.out.println("DEBUG: TaskPageBuilder - TodaySoFarView created: " + todaySoFarView);
         
         // Trigger initial data load (no sample data - user will input real data)
-        System.out.println("DEBUG: TaskPageBuilder - About to call sharedTodaySoFar.refresh()");
         sharedTodaySoFar.refresh();
-        System.out.println("DEBUG: TaskPageBuilder - sharedTodaySoFar.refresh() completed");
         
         // Set overdue controller on presenters that need to refresh overdue tasks
         markCompletePresenter.setOverdueTasksController(overdueTasksController);
