@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import use_case.generate_feedback.GenerateFeedbackInputBoundary;
-import use_case.generate_feedback.GenerateFeedbackInputData;
 
 // style checked
 public class WeeklyFeedbackScheduler {
@@ -38,7 +37,7 @@ public class WeeklyFeedbackScheduler {
     }
 
     private void runFeedbackGeneration() {
-        feedbackUseCase.execute(new GenerateFeedbackInputData());
+        feedbackUseCase.execute();
     }
 
     private long computeInitialDelay() {

@@ -44,7 +44,7 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
     }
 
     @Override
-    public void execute(GenerateFeedbackInputData inputData) {
+    public void execute() {
         try {
             final LocalDate today = LocalDate.now();
             final LocalDate monday = today.with(DayOfWeek.MONDAY);

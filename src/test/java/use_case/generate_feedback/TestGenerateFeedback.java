@@ -36,6 +36,6 @@ public class TestGenerateFeedback {
         GenerateFeedbackInteractor interactor = new GenerateFeedbackInteractor(
                 dailyRepo, feedbackRepo, adapter, output
         );
-        interactor.execute(new GenerateFeedbackInputData());
+        interactor.execute();
     }
 }
