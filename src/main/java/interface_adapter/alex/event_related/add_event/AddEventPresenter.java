@@ -6,7 +6,7 @@ import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import use_case.alex.event_related.add_event.AddEventOutputBoundary;
 import use_case.alex.event_related.add_event.AddEventOutputData;
 import use_case.alex.event_related.add_event.AddEventDataAccessInterf;
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 
 import java.util.List;
 

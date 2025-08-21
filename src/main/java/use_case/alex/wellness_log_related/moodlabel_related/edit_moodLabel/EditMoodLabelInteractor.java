@@ -1,9 +1,8 @@
 package use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.Type;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.Type;
 
 /**
  * Interactor for the EditMoodLabel use case.

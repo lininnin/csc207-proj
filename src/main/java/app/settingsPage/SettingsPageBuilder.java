@@ -2,8 +2,8 @@ package app.settingsPage;
 
 import data_access.NotificationTimeDataAccessObject;
 
-import entity.Alex.NotificationTime.NotificationTimeFactory;
-import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
+import entity.alex.NotificationTime.NotificationTimeFactory;
+import entity.alex.NotificationTime.NotificationTimeFactoryInterf;
 import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
 import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimeController;
 import interface_adapter.alex.Settings_related.edit_notificationTime.EditNotificationTimePresenter;

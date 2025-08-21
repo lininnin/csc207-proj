@@ -1,7 +1,7 @@
 package entity.Angela;
 
-import entity.Alex.DailyEventLog.DailyEventLog;
-import entity.Alex.DailyWellnessLog.DailyWellnessLog;
+import entity.alex.DailyEventLog.DailyEventLog;
+import entity.alex.DailyWellnessLog.DailyWellnessLog;
 import entity.Angela.Task.Task;
 
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
 package use_case.alex.event_related.todays_events_module.edit_todays_event;
 
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 
 /**
  * Interface for data access operations related to editing available events.

@@ -1,6 +1,6 @@
 package use_case.alex.event_related.todays_events_module.delete_todays_event;
 
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 
 /**
  * Interactor for the DeleteAvailableEvent use case.

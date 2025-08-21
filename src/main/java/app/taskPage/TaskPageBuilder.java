@@ -26,35 +26,19 @@ import use_case.Angela.task.add_to_today.*;
 import use_case.Angela.task.mark_complete.*;
 import use_case.Angela.task.edit_today.*;
 import use_case.Angela.task.remove_from_today.*;
-import use_case.Angela.task.overdue.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
-import use_case.Angela.today_so_far.*;
 import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
-import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
-import view.FontUtil;
-
-import entity.info.Info;
-import entity.Alex.Event.Event;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
-import entity.Alex.WellnessLogEntry.Levels;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabelFactory;
-import entity.Alex.MoodLabel.Type;
-import entity.BeginAndDueDates.BeginAndDueDates;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Builder for the Task page following the MindTrack GUI template.

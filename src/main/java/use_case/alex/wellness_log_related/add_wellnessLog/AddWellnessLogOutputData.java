@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.add_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * Output data for AddWellnessLog use case.

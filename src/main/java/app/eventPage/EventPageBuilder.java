@@ -1,9 +1,9 @@
 package app.eventPage;
 
-import entity.Alex.EventAvailable.EventAvailableFactory;
-import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
-import entity.Alex.Event.EventFactory;
-import entity.Alex.Event.EventFactoryInterf;
+import entity.alex.EventAvailable.EventAvailableFactory;
+import entity.alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.alex.Event.EventFactory;
+import entity.alex.Event.EventFactoryInterf;
 import entity.BeginAndDueDates.BeginAndDueDatesFactory;
 import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeleteEventController;
@@ -44,7 +44,6 @@ import use_case.Angela.category.edit.*;
 import view.Angela.Category.CategoryManagementDialog;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import use_case.alex.event_related.add_event.*;
 import use_case.alex.event_related.create_event.*;
@@ -59,19 +58,8 @@ import entity.info.InfoFactory;
 
 import view.Alex.Event.*;
 import view.Angela.TodaySoFarView;
-import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
-import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
-import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
-import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
-import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
-import use_case.Angela.task.overdue.OverdueTasksInteractor;
-import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
-import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
-import use_case.Angela.today_so_far.TodaySoFarInteractor;
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
 import java.awt.*;

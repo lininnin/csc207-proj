@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.util.List;
 

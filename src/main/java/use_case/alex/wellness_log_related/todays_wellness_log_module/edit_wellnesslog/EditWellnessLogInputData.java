@@ -1,7 +1,6 @@
 package use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog;
 
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.Type;
+import entity.alex.MoodLabel.Type;
 
 /**
  * Input data for the EditWellnessLog use case.
