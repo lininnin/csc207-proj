@@ -1,7 +1,7 @@
 package view.feedback_entry;
 
 import entity.feedback_entry.FeedbackEntry;
-import view.feedback_panel.FeedbackEntryPanel;
+import view.feedback_panel.feedback_entry.FeedbackEntryPanel;
 
 import javax.swing.*;
 import java.time.LocalDate;
