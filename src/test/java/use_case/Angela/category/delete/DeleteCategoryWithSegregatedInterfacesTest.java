@@ -309,6 +309,27 @@ class DeleteCategoryWithSegregatedInterfacesTest {
                 .filter(t -> t.getInfo().getCategory() == null || t.getInfo().getCategory().isEmpty())
                 .toList();
         }
+
+        @Override
+        public boolean updateTasksCategoryToNull(String categoryId) {
+            // Update all available tasks
+            for (TaskAvailable task : availableTasks) {
+                if (categoryId.equals(task.getInfo().getCategory())) {
+                    task.getInfo().setCategory("");
+                    updatedAvailableTasks.add(task.getId());
+                }
+            }
+            
+            // Update all today's tasks
+            for (Task task : todayTasks) {
+                if (categoryId.equals(task.getInfo().getCategory())) {
+                    task.getInfo().setCategory("");
+                    updatedTodayTasks.add(task.getId());
+                }
+            }
+            
+            return true;
+        }
     }
 
     /**
@@ -387,6 +408,27 @@ class DeleteCategoryWithSegregatedInterfacesTest {
             return todayEvents.stream()
                 .filter(e -> e.getCategory() == null || e.getCategory().isEmpty())
                 .toList();
+        }
+
+        @Override
+        public boolean updateEventsCategoryToNull(String categoryId) {
+            // Update all available events
+            for (Info event : availableEvents) {
+                if (categoryId.equals(event.getCategory())) {
+                    event.setCategory("");
+                    clearedAvailableEvents.add(event.getName()); // Events don't have IDs, use name
+                }
+            }
+            
+            // Update all today's events
+            for (Info event : todayEvents) {
+                if (categoryId.equals(event.getCategory())) {
+                    event.setCategory("");
+                    clearedTodayEvents.add(event.getName()); // Events don't have IDs, use name
+                }
+            }
+            
+            return true;
         }
     }
 

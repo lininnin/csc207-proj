@@ -4,6 +4,7 @@ import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskInterf;
 import entity.info.Info;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,10 +135,13 @@ class OverdueTasksInteractorTest {
         taskGateway.saveTaskAvailable(template);
         
         // Add to today with past due date
-        Task completedTask = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
+        TaskInterf completedTaskInterf = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
         
-        // Mark as completed
-        completedTask.markComplete();
+        // Mark as completed - need to cast to access the deprecated method for testing
+        if (completedTaskInterf instanceof Task) {
+            Task completedTask = (Task) completedTaskInterf;
+            completedTask.markComplete();
+        }
 
         // Execute the interactor
         OverdueTasksInputData inputData = new OverdueTasksInputData(30);
