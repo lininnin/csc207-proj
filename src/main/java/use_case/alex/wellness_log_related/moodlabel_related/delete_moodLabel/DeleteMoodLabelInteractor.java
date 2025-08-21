@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
 
 /**
  * Interactor for the DeleteMoodLabel use case.

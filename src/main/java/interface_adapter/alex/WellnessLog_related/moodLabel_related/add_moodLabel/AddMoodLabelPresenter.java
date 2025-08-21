@@ -1,7 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
 import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelOutputBoundary;

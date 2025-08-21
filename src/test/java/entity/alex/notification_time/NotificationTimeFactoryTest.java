@@ -1,8 +1,8 @@
 package entity.alex.notification_time;
 
-import entity.Alex.NotificationTime.NotificationTimeFactory;
-import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
-import entity.Alex.NotificationTime.NotificationTimeInterf;
+import entity.alex.NotificationTime.NotificationTimeFactory;
+import entity.alex.NotificationTime.NotificationTimeFactoryInterf;
+import entity.alex.NotificationTime.NotificationTimeInterf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

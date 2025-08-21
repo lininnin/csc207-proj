@@ -1,7 +1,7 @@
 package app;
 
-import app.Notification_related.NotificationSystemRunner;
-import app.eventPage.EventPageRunner;
+import app.alex.Notification_related.NotificationSystemRunner;
+import app.alex.eventPage.EventPageRunner;
 
 class MainApp {
     public static void main(String[] args) {
@@ -59,8 +59,8 @@ class MainApp {
 //import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventInteractor;
 //import use_case.Alex.Event_related.avaliable_events_module.edit_event.EditEventOutputBoundary;
 //
-//import data_access.EventAvailableDataAccessObject;
-//import data_access.TodaysEventDataAccessObject;
+//import data_access.alex.EventAvailableDataAccessObject;
+//import data_access.alex.TodaysEventDataAccessObject;
 //
 //import entity.Info.InfoFactory;
 //import use_case.Alex.Event_related.todays_events_module.delete_todays_event.DeleteTodaysEventDataAccessInterf;

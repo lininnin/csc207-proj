@@ -67,7 +67,10 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
 
     @Override
     public void prepareFailView(String errorMessage) {
-        JOptionPane.showMessageDialog(null, errorMessage, "Create Event Failed", JOptionPane.ERROR_MESSAGE);
+        CreatedEventState state = createdEventViewModel.getState();
+        state.setNameError(errorMessage); // 添加
+        createdEventViewModel.setState(state);
+        //JOptionPane.showMessageDialog(null, errorMessage, "Create Event Failed", JOptionPane.ERROR_MESSAGE);
     }
 
 }

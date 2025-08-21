@@ -1,8 +1,8 @@
 package entity.alex.event_available;
 
-import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
-import entity.Alex.EventAvailable.EventAvailableFactory;
-import entity.Alex.EventAvailable.EventAvailableInterf;
+import entity.alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.alex.EventAvailable.EventAvailableFactory;
+import entity.alex.EventAvailable.EventAvailableInterf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

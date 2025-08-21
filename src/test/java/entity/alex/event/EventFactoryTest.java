@@ -1,9 +1,9 @@
 package entity.alex.event;
 
-import entity.Alex.Event.Event;
-import entity.Alex.Event.EventFactory;
-import entity.Alex.Event.EventFactoryInterf;
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.Event;
+import entity.alex.Event.EventFactory;
+import entity.alex.Event.EventFactoryInterf;
+import entity.alex.Event.EventInterf;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.InfoFactory;

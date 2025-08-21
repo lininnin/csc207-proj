@@ -14,19 +14,19 @@ import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
-import app.WellnessPage.WellnessLogPageBuilder;
-import app.eventPage.EventPageBuilder;
+import app.alex.WellnessPage.WellnessLogPageBuilder;
+import app.alex.eventPage.EventPageBuilder;
 import app.feedback_panel.FeedbackPageBuilder;
 import app.goalPage.GoalPageBuilder;
 import app.scheduler.WeeklyFeedbackScheduler;
-import app.settingsPage.SettingsPageBuilder;
+import app.alex.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
 import constants.Constants;
 import data_access.files.FileFeedbackRepository;
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
-import interface_adapter.gpt.OpenAiApiAdapter;
+import interface_adapter.generate_feedback.OpenAiApiAdapter;
 import use_case.generate_feedback.GenerateFeedbackInputBoundary;
 import use_case.generate_feedback.GenerateFeedbackInteractor;
 import use_case.generate_feedback.GenerateFeedbackOutputBoundary;

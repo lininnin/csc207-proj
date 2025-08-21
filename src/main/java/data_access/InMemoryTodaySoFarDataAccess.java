@@ -1,9 +1,10 @@
 package data_access;
 
+import data_access.alex.TodaysEventDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
 import entity.Angela.Task.Task;
-import entity.Angela.Task.TaskInterf;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInterface;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;

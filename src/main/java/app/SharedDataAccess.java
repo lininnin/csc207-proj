@@ -2,11 +2,11 @@ package app;
 
 import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
-import data_access.TodaysEventDataAccessObject;
-import data_access.TodaysWellnessLogDataAccessObject;
+import data_access.alex.TodaysEventDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
 import data_access.FileGoalRepository;
-import entity.Alex.DailyEventLog.DailyEventLogFactory;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
+import entity.alex.DailyEventLog.DailyEventLogFactory;
+import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Sophia.GoalFactory;
 import java.io.File;
 

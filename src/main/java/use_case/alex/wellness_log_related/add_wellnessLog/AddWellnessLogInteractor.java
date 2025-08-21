@@ -1,7 +1,7 @@
 package use_case.alex.wellness_log_related.add_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 
 /**
  * The interactor for adding a wellness log entry.

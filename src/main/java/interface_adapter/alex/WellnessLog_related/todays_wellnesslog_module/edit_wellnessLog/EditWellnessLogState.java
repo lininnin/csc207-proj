@@ -1,6 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.edit_wellnessLog;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * State object for editing a wellness log entry.

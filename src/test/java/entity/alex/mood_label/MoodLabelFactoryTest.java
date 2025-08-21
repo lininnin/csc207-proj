@@ -1,9 +1,9 @@
 package entity.alex.mood_label;
 
-import entity.Alex.MoodLabel.MoodLabelFactory;
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.MoodLabel.Type;
+import entity.alex.MoodLabel.MoodLabelFactory;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.Type;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

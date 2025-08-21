@@ -1,9 +1,9 @@
 package entity.alex.daily_event_log;
 
-import entity.Alex.DailyEventLog.DailyEventLog;
-import entity.Alex.DailyEventLog.DailyEventLogFactory;
-import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
-import entity.Alex.DailyEventLog.DailyEventLogInterf;
+import entity.alex.DailyEventLog.DailyEventLog;
+import entity.alex.DailyEventLog.DailyEventLogFactory;
+import entity.alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.alex.DailyEventLog.DailyEventLogInterf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

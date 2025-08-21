@@ -1,7 +1,7 @@
 package use_case.alex.wellness_log_related.add_wellnessLog;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.WellnessLogEntry.Levels;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.WellnessLogEntry.Levels;
 
 import java.time.LocalDateTime;
 

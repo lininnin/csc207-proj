@@ -1,9 +1,9 @@
 package entity.alex.user_settings;
 
-import entity.Alex.NotificationTime.NotificationTime;
-import entity.Alex.NotificationTime.NotificationTimeInterf;
-import entity.Alex.UserSettings.UserSettings;
-import entity.Alex.UserSettings.UserSettingsInterf;
+import entity.alex.NotificationTime.NotificationTime;
+import entity.alex.NotificationTime.NotificationTimeInterf;
+import entity.alex.UserSettings.UserSettings;
+import entity.alex.UserSettings.UserSettingsInterf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

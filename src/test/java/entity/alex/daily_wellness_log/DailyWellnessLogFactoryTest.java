@@ -1,9 +1,9 @@
 package entity.alex.daily_wellness_log;
 
-import entity.Alex.DailyWellnessLog.DailyWellnessLog;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLog;
+import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;
+import entity.alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

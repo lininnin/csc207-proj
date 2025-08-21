@@ -1,11 +1,11 @@
 package entity.alex.daily_wellness_log;
 
-import entity.Alex.DailyWellnessLog.DailyWellnessLog;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.Type;
-import entity.Alex.WellnessLogEntry.Levels;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLog;
+import entity.alex.MoodLabel.MoodLabel;
+import entity.alex.MoodLabel.Type;
+import entity.alex.WellnessLogEntry.Levels;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

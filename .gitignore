@@ -7,3 +7,5 @@ homework-5-group/
 homework-5-group/
 .idea/
 *.iml
+/daily_logs.json
+/feedback_cache.json

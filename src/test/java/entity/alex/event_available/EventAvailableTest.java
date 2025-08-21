@@ -1,7 +1,7 @@
 package entity.alex.event_available;
 
-import entity.Alex.EventAvailable.EventAvailableInterf;
-import entity.Alex.EventAvailable.EventAvailable;
+import entity.alex.EventAvailable.EventAvailableInterf;
+import entity.alex.EventAvailable.EventAvailable;
 import entity.info.Info;
 import entity.info.InfoInterf;
 

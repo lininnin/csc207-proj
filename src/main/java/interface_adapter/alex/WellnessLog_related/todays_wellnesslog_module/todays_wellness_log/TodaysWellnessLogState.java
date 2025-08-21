@@ -1,6 +1,6 @@
 package interface_adapter.alex.WellnessLog_related.todays_wellnesslog_module.todays_wellness_log;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package use_case.alex.event_related.available_event_module;
 
-import data_access.EventAvailableDataAccessObject;
-import entity.Alex.EventAvailable.EventAvailableFactory;
-import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
+import data_access.alex.EventAvailableDataAccessObject;
+import entity.alex.EventAvailable.EventAvailableFactory;
+import entity.alex.EventAvailable.EventAvailableFactoryInterf;
 import entity.info.InfoFactory;
 import entity.info.InfoFactoryInterf;
 import entity.info.InfoInterf;
