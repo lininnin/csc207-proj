@@ -7,7 +7,7 @@ import interface_adapter.Angela.view_history.ViewHistoryViewModel;
 import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
 import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
 import use_case.Angela.view_history.ViewHistoryDataAccessInterface;
 import use_case.Angela.view_history.ViewHistoryInteractor;
 import use_case.Angela.view_history.ViewHistoryInputBoundary;

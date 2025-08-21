@@ -11,13 +11,13 @@ import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
 import interface_adapter.Angela.view_history.ViewHistoryController;
 import interface_adapter.Angela.view_history.ViewHistoryState;
 import interface_adapter.Angela.view_history.ViewHistoryViewModel;
-import interface_adapter.Sophia.today_goal.TodayGoalsViewModel;
-import interface_adapter.Sophia.today_goal.TodaysGoalsState;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.today_goal.TodaysGoalsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import view.Alex.Event.TodaysEventsView;
 import view.Angela.Task.TodaysTasksView;
-import views.TodayGoalView;
+import view.sophia.TodayGoalView;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
