@@ -1,4 +1,4 @@
-package view.sophia;
+package view.Sophia;
 
 import entity.Angela.Task.Task;
 import entity.BeginAndDueDates.BeginAndDueDates;

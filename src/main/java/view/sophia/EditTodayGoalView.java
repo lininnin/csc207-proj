@@ -1,4 +1,4 @@
-package view.sophia;
+package view.Sophia;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
