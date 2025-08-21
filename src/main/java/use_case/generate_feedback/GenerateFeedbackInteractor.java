@@ -15,8 +15,7 @@ import interface_adapter.generate_feedback.GptPromptPortAdapter;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 /**
- * Generates the weekly feedback entry. The scheduler triggers this use‑case only during monday midnight,
- * so we no longer perform an explicit Day‑of‑Week check here—if the caller invokes it, generation proceeds.
+ * Generates the weekly feedback entry.
  * Workflow
  *  1. Determine this week’s Monday and see if it is already cached → return if yes.
  *  2. Load the last 7 days of DailyLogs (last Mon‑Sun inclusive).
