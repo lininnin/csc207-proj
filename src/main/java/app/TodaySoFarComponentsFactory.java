@@ -15,11 +15,10 @@ import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.TodaySoFarView;
 
 /**
- * Singleton class to share Today So Far components across all pages.
- * This ensures that all pages show the same Today So Far state.
+ * Factory for creating Today So Far components.
+ * Uses dependency injection instead of singleton pattern.
  */
-public class SharedTodaySoFarComponents {
-    private static SharedTodaySoFarComponents instance;
+public class TodaySoFarComponentsFactory {
     
     // Shared ViewModels
     private final OverdueTasksViewModel overdueTasksViewModel;
@@ -29,9 +28,14 @@ public class SharedTodaySoFarComponents {
     private final OverdueTasksController overdueTasksController;
     private final TodaySoFarController todaySoFarController;
     
-    private SharedTodaySoFarComponents() {
-        // Get shared data access
-        SharedDataAccess sharedData = SharedDataAccess.getInstance();
+    private final AppDataAccessFactory dataAccessFactory;
+    
+    /**
+     * Creates a new factory with the given data access factory.
+     * @param dataAccessFactory The factory for data access objects
+     */
+    public TodaySoFarComponentsFactory(AppDataAccessFactory dataAccessFactory) {
+        this.dataAccessFactory = dataAccessFactory;
         
         // Create shared ViewModels
         this.overdueTasksViewModel = new OverdueTasksViewModel();
@@ -40,35 +44,20 @@ public class SharedTodaySoFarComponents {
         // Wire up Overdue Tasks Use Case
         OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
         OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                sharedData.getTaskGateway(), 
-                sharedData.getCategoryDataAccess(), 
+                dataAccessFactory.getTaskGateway(), 
+                dataAccessFactory.getCategoryDataAccess(), 
                 overdueTasksPresenter);
         this.overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
         
-        // Wire up Today So Far Use Case with all data sources
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
-                sharedData.getTaskGateway(), 
-                sharedData.getEventDataAccess(), 
-                sharedData.getWellnessDataAccess(), 
-                sharedData.getGoalRepository());
+        // Wire up Today So Far Use Case
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = dataAccessFactory.createTodaySoFarDataAccess();
         
         TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
         TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
                 todaySoFarDataAccess, 
                 todaySoFarPresenter, 
-                sharedData.getCategoryDataAccess());
+                dataAccessFactory.getCategoryDataAccess());
         this.todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
-    }
-    
-    /**
-     * Gets the singleton instance.
-     * @return The shared instance
-     */
-    public static synchronized SharedTodaySoFarComponents getInstance() {
-        if (instance == null) {
-            instance = new SharedTodaySoFarComponents();
-        }
-        return instance;
     }
     
     /**

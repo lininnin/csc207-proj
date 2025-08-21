@@ -5,17 +5,19 @@ import data_access.InMemoryCategoryDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 import data_access.TodaysWellnessLogDataAccessObject;
 import data_access.FileGoalRepository;
+import data_access.InMemoryTodaySoFarDataAccess;
 import entity.Alex.DailyEventLog.DailyEventLogFactory;
 import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Sophia.GoalFactory;
+import interface_adapter.Angela.category.CategoryManagementViewModel;
 import java.io.File;
 
 /**
- * Singleton class to share data access objects across all page builders.
- * This ensures that all pages work with the same data and updates are reflected everywhere.
+ * Factory for creating data access objects and shared view models.
+ * Follows Dependency Injection pattern instead of Singleton.
+ * This centralizes DAO creation while avoiding the Singleton anti-pattern.
  */
-public class SharedDataAccess {
-    private static SharedDataAccess instance;
+public class AppDataAccessFactory {
     
     private final InMemoryTaskGateway taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
@@ -23,10 +25,19 @@ public class SharedDataAccess {
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
     private final FileGoalRepository goalRepository;
     
-    private SharedDataAccess() {
-        // Initialize shared data access objects
+    // Shared ViewModels that need to be consistent across pages
+    private final CategoryManagementViewModel categoryManagementViewModel;
+    
+    /**
+     * Creates a new factory with all data access objects initialized.
+     */
+    public AppDataAccessFactory() {
+        // Initialize data access objects
         this.taskGateway = new InMemoryTaskGateway();
         this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
+        
+        // Initialize shared ViewModels
+        this.categoryManagementViewModel = new CategoryManagementViewModel();
         
         // Initialize event data access
         this.eventDataAccess = new TodaysEventDataAccessObject(
@@ -51,18 +62,20 @@ public class SharedDataAccess {
     }
     
     /**
-     * Gets the singleton instance of SharedDataAccess.
-     * @return The shared instance
+     * Creates a configured TodaySoFar data access object.
+     * @return A new InMemoryTodaySoFarDataAccess instance
      */
-    public static synchronized SharedDataAccess getInstance() {
-        if (instance == null) {
-            instance = new SharedDataAccess();
-        }
-        return instance;
+    public InMemoryTodaySoFarDataAccess createTodaySoFarDataAccess() {
+        return new InMemoryTodaySoFarDataAccess(
+            taskGateway,
+            eventDataAccess,
+            wellnessDataAccess,
+            goalRepository
+        );
     }
     
     /**
-     * Gets the shared task gateway.
+     * Gets the task gateway.
      * @return The task gateway
      */
     public InMemoryTaskGateway getTaskGateway() {
@@ -70,34 +83,42 @@ public class SharedDataAccess {
     }
     
     /**
-     * Gets the shared category data access.
-     * @return The category data access
+     * Gets the category data access object.
+     * @return The category data access object
      */
     public InMemoryCategoryDataAccessObject getCategoryDataAccess() {
         return categoryDataAccess;
     }
     
     /**
-     * Gets the shared event data access.
-     * @return The event data access
+     * Gets the event data access object.
+     * @return The event data access object
      */
     public TodaysEventDataAccessObject getEventDataAccess() {
         return eventDataAccess;
     }
     
     /**
-     * Gets the shared wellness data access.
-     * @return The wellness data access
+     * Gets the wellness data access object.
+     * @return The wellness data access object
      */
     public TodaysWellnessLogDataAccessObject getWellnessDataAccess() {
         return wellnessDataAccess;
     }
     
     /**
-     * Gets the shared goal repository.
+     * Gets the goal repository.
      * @return The goal repository
      */
     public FileGoalRepository getGoalRepository() {
         return goalRepository;
+    }
+    
+    /**
+     * Gets the shared category management view model.
+     * @return The category management view model
+     */
+    public CategoryManagementViewModel getCategoryManagementViewModel() {
+        return categoryManagementViewModel;
     }
 }

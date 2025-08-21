@@ -10,23 +10,31 @@ import use_case.Angela.category.create.CreateCategoryDataAccessInterface;
 import use_case.Angela.category.delete.DeleteCategoryDataAccessInterface;
 import use_case.Angela.category.delete.DeleteCategoryCategoryDataAccessInterface;
 import use_case.Angela.category.edit.EditCategoryDataAccessInterface;
+import use_case.Angela.today_so_far.CategoryReadDataAccessInterface;
+import use_case.Angela.task.overdue.OverdueTasksCategoryDataAccessInterface;
+import use_case.Angela.task.edit_available.EditAvailableTaskCategoryDataAccessInterface;
+import use_case.Angela.task.create.CreateTaskCategoryDataAccessInterface;
 import java.util.*;
 
 /**
- * In-memory implementation of CategoryGateway and DataAccessInterfaces for quick demos.
- * Following Alex's pattern: one concrete implementation implements multiple interfaces.
+ * In-memory implementation of DataAccessInterfaces for category operations.
+ * Following the DAO pattern: one concrete implementation implements multiple interfaces.
  * Updated to follow ISP with segregated interfaces for category operations.
  */
-public class InMemoryCategoryGateway implements 
+public class InMemoryCategoryDataAccessObject implements 
         CategoryGateway,
         CreateCategoryDataAccessInterface,
         DeleteCategoryDataAccessInterface,  // Keep for backward compatibility
         DeleteCategoryCategoryDataAccessInterface,  // New segregated interface
-        EditCategoryDataAccessInterface {
+        EditCategoryDataAccessInterface,
+        CategoryReadDataAccessInterface,
+        OverdueTasksCategoryDataAccessInterface,
+        EditAvailableTaskCategoryDataAccessInterface,
+        CreateTaskCategoryDataAccessInterface {
     private final Map<String, Category> categories = Collections.synchronizedMap(new HashMap<>());
     private int nextId = 4; // Start at 4 since we have 3 default categories
 
-    public InMemoryCategoryGateway() {
+    public InMemoryCategoryDataAccessObject() {
         // Don't add default categories - let tests control this
     }
 

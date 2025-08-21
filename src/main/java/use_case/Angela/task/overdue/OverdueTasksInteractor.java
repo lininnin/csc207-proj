@@ -2,7 +2,6 @@ package use_case.Angela.task.overdue;
 
 import entity.Angela.Task.Task;
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -14,14 +13,14 @@ import java.util.List;
  */
 public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
     private final OverdueTasksDataAccessInterface taskDataAccess;
-    private final CategoryGateway categoryGateway;
+    private final OverdueTasksCategoryDataAccessInterface categoryDataAccess;
     private final OverdueTasksOutputBoundary presenter;
     
     public OverdueTasksInteractor(OverdueTasksDataAccessInterface taskDataAccess,
-                                 CategoryGateway categoryGateway,
+                                 OverdueTasksCategoryDataAccessInterface categoryDataAccess,
                                  OverdueTasksOutputBoundary presenter) {
         this.taskDataAccess = taskDataAccess;
-        this.categoryGateway = categoryGateway;
+        this.categoryDataAccess = categoryDataAccess;
         this.presenter = presenter;
     }
     
@@ -40,7 +39,7 @@ public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
                 String categoryName = "";
                 String categoryId = task.getInfo().getCategory();
                 if (categoryId != null && !categoryId.isEmpty()) {
-                    Category category = categoryGateway.getCategoryById(categoryId);
+                    Category category = categoryDataAccess.getCategoryById(categoryId);
                     if (category != null) {
                         categoryName = category.getName();
                     }

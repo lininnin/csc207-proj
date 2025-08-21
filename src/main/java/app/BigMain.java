@@ -60,11 +60,15 @@ public class BigMain {
 
         // --- Main Content Area ---
         final JPanel centrePanel = new JPanel(new CardLayout());
-        final TaskPageBuilder taskBuilder = new TaskPageBuilder();
+        
+        // Create shared data access factory so all pages share the same data and view models
+        final AppDataAccessFactory dataAccessFactory = new AppDataAccessFactory();
+        
+        final TaskPageBuilder taskBuilder = new TaskPageBuilder(dataAccessFactory);
         final JPanel taskPanel = taskBuilder.build();
-        final EventPageBuilder eventBuilder = new EventPageBuilder();
+        final EventPageBuilder eventBuilder = new EventPageBuilder(dataAccessFactory);
         final JPanel eventPanel = eventBuilder.build();
-        final JPanel goalPanel = new GoalPageBuilder().build();
+        final JPanel goalPanel = new GoalPageBuilder(dataAccessFactory).build();
         final JPanel wellnessPanel = new WellnessLogPageBuilder().build();
         final FeedbackPageBuilder feedbackPageBuilder = new FeedbackPageBuilder(feedbackRepository);
         final JPanel feedbackPage = feedbackPageBuilder.build();
