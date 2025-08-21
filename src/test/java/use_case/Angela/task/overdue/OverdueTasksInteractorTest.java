@@ -1,6 +1,6 @@
 package use_case.Angela.task.overdue;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryGateway;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class OverdueTasksInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private InMemoryCategoryGateway categoryGateway;
     private TestOverdueTasksPresenter testPresenter;
     private OverdueTasksInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         categoryGateway = new InMemoryCategoryGateway();
         testPresenter = new TestOverdueTasksPresenter();
         interactor = new OverdueTasksInteractor(taskGateway, categoryGateway, testPresenter);

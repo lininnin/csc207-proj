@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Adapter for InMemoryTaskGateway that implements the new interface types.
- * This adapter converts between interface types and concrete types for the legacy gateway.
- * This is a temporary solution to avoid rewriting the massive InMemoryTaskGateway file.
+ * Adapter for InMemoryTaskDataAccessObject that implements the new interface types.
+ * This adapter converts between interface types and concrete types for the legacy data access object.
+ * This is a temporary solution to avoid rewriting the massive InMemoryTaskDataAccessObject file.
  */
-public class InMemoryTaskGatewayAdapter implements 
+public class InMemoryTaskDataAccessObjectAdapter implements 
         CreateTaskDataAccessInterface,
         EditAvailableTaskDataAccessInterface,
         AddToTodayDataAccessInterface,
@@ -32,9 +32,9 @@ public class InMemoryTaskGatewayAdapter implements
         OverdueTasksDataAccessInterface,
         DeleteTaskDataAccessInterface {
         
-    private final InMemoryTaskGateway gateway;
+    private final InMemoryTaskDataAccessObject gateway;
 
-    public InMemoryTaskGatewayAdapter(InMemoryTaskGateway gateway) {
+    public InMemoryTaskDataAccessObjectAdapter(InMemoryTaskDataAccessObject gateway) {
         this.gateway = gateway;
     }
 

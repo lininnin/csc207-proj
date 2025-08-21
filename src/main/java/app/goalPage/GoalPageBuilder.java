@@ -9,7 +9,7 @@ import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
 // Import view models
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
@@ -70,7 +70,7 @@ public class GoalPageBuilder {
     private final AppDataAccessFactory dataAccessFactory;
     private final FileGoalRepository goalRepository;
     private final GoalFactory goalFactory;
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
 
     // Form reference for goal creation

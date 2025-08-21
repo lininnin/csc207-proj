@@ -32,7 +32,7 @@ import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
 import use_case.Angela.today_so_far.*;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.Task.*;
@@ -68,7 +68,7 @@ import java.time.LocalDateTime;
 public class TaskPageBuilder {
 
     // Data Access - Injected via constructor
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final AppDataAccessFactory dataAccessFactory;
 
@@ -180,7 +180,7 @@ public class TaskPageBuilder {
         TaskAvailableFactory taskAvailableFactory = new TaskAvailableFactory();
         
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements CreateTaskDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements CreateTaskDataAccessInterface
                 categoryDataAccess,
                 createTaskPresenter,
                 infoFactory,
@@ -219,7 +219,7 @@ public class TaskPageBuilder {
         editAvailableTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements EditAvailableTaskDataAccessInterface
                 categoryDataAccess,
                 editAvailableTaskPresenter
         );
@@ -230,7 +230,7 @@ public class TaskPageBuilder {
         
         availableTasksView.setEditAvailableTaskController(editAvailableTaskController);
         availableTasksView.setEditAvailableTaskViewModel(editAvailableTaskViewModel);
-        availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
+        availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskDataAccessObject implements EditAvailableTaskDataAccessInterface
 
         // Wire up Add to Today Use Case
         AddTaskToTodayPresenter addToTodayPresenter = new AddTaskToTodayPresenter(
@@ -239,7 +239,7 @@ public class TaskPageBuilder {
         );
 
         AddTaskToTodayInputBoundary addToTodayInteractor = new AddTaskToTodayInteractor(
-                taskGateway, // InMemoryTaskGateway implements AddToTodayDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements AddToTodayDataAccessInterface
                 addToTodayPresenter
         );
 
@@ -258,7 +258,7 @@ public class TaskPageBuilder {
         );
 
         MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
-                taskGateway, // InMemoryTaskGateway implements MarkTaskCompleteDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements MarkTaskCompleteDataAccessInterface
                 markCompletePresenter,
                 dataAccessFactory.getGoalRepository() // Pass goal repository for updating goal progress
         );
@@ -277,7 +277,7 @@ public class TaskPageBuilder {
         );
 
         EditTodayTaskInputBoundary editTodayInteractor = new EditTodayTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements EditTodayTaskDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements EditTodayTaskDataAccessInterface
                 editTodayPresenter
         );
 
@@ -294,7 +294,7 @@ public class TaskPageBuilder {
         );
 
         RemoveFromTodayInputBoundary removeFromTodayInteractor = new RemoveFromTodayInteractor(
-                taskGateway, // InMemoryTaskGateway implements RemoveFromTodayDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements RemoveFromTodayDataAccessInterface
                 removeFromTodayPresenter
         );
 
@@ -386,8 +386,8 @@ public class TaskPageBuilder {
                 );
 
                 DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        categoryDataAccess, // InMemoryCategoryGateway implements DeleteCategoryCategoryDataAccessInterface
-                        taskGateway,     // InMemoryTaskGateway implements DeleteCategoryTaskDataAccessInterface
+                        categoryDataAccess, // InMemoryCategoryDataAccessObject implements DeleteCategoryCategoryDataAccessInterface
+                        taskGateway,     // InMemoryTaskDataAccessObject implements DeleteCategoryTaskDataAccessInterface
                         null,            // No event data access needed in task context
                         categoryPresenter
                 );
@@ -397,7 +397,7 @@ public class TaskPageBuilder {
 
                 EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
                         categoryDataAccess,  // InMemoryCategoryDataAccessObject implements EditCategoryDataAccessInterface
-                        taskGateway,      // InMemoryTaskGateway implements EditCategoryTaskDataAccessInterface
+                        taskGateway,      // InMemoryTaskDataAccessObject implements EditCategoryTaskDataAccessInterface
                         categoryPresenter,
                         categoryFactory
                 );

@@ -1,6 +1,6 @@
 package use_case.Angela.task.edit_today;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EditTodayTaskInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestEditTodayTaskPresenter testPresenter;
     private EditTodayTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestEditTodayTaskPresenter();
         interactor = new EditTodayTaskInteractor(taskGateway, testPresenter);
     }

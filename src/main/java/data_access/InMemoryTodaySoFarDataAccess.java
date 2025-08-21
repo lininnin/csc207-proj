@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
  */
 public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterface {
     
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
     private final data_access.GoalRepository goalRepository;
     
-    public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway,
+    public InMemoryTodaySoFarDataAccess(InMemoryTaskDataAccessObject taskGateway,
                                         TodaysEventDataAccessObject eventDataAccess,
                                         TodaysWellnessLogDataAccessObject wellnessDataAccess,
                                         data_access.GoalRepository goalRepository) {
@@ -33,7 +33,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     // Constructor with optional parameters for gradual integration
-    public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway) {
+    public InMemoryTodaySoFarDataAccess(InMemoryTaskDataAccessObject taskGateway) {
         this.taskGateway = taskGateway;
         this.eventDataAccess = null;
         this.wellnessDataAccess = null;

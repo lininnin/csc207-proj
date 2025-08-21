@@ -8,7 +8,7 @@ import interface_adapter.Angela.task.delete.DeleteTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskController;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskState;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import entity.Angela.Task.TaskAvailable;
@@ -43,7 +43,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     private DeleteTaskController deleteTaskController;
     private EditAvailableTaskController editAvailableTaskController;
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private CategoryGateway categoryGateway;
     private EditAvailableTaskDataAccessInterface editTaskDataAccess;
 
@@ -211,7 +211,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         }
     }
 
-    public void setTaskGateway(InMemoryTaskGateway taskGateway) {
+    public void setTaskGateway(InMemoryTaskDataAccessObject taskGateway) {
         this.taskGateway = taskGateway;
         refreshTasks(); // Initial load
     }

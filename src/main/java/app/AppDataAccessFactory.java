@@ -1,6 +1,6 @@
 package app;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 import data_access.TodaysWellnessLogDataAccessObject;
@@ -19,7 +19,7 @@ import java.io.File;
 public class AppDataAccessFactory {
     private static AppDataAccessFactory instance;
     
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
@@ -33,7 +33,7 @@ public class AppDataAccessFactory {
      */
     private AppDataAccessFactory() {
         // Initialize data access objects
-        this.taskGateway = new InMemoryTaskGateway();
+        this.taskGateway = new InMemoryTaskDataAccessObject();
         this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
         
         // Initialize shared ViewModels
@@ -57,7 +57,7 @@ public class AppDataAccessFactory {
             new GoalFactory()
         );
         
-        // Inject goal repository into task gateway for goal-task relationship checking
+        // Inject goal repository into task data access object for goal-task relationship checking
         this.taskGateway.setGoalRepository(this.goalRepository);
     }
     
@@ -89,7 +89,7 @@ public class AppDataAccessFactory {
      * Gets the task gateway.
      * @return The task gateway
      */
-    public InMemoryTaskGateway getTaskGateway() {
+    public InMemoryTaskDataAccessObject getTaskGateway() {
         return taskGateway;
     }
     

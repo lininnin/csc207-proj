@@ -1,6 +1,6 @@
 package app;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.TodaysEventDataAccessObject;
 import data_access.TodaysWellnessLogDataAccessObject;
@@ -17,7 +17,7 @@ import java.io.File;
 public class SharedDataAccess {
     private static SharedDataAccess instance;
     
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
@@ -25,7 +25,7 @@ public class SharedDataAccess {
     
     private SharedDataAccess() {
         // Initialize shared data access objects
-        this.taskGateway = new InMemoryTaskGateway();
+        this.taskGateway = new InMemoryTaskDataAccessObject();
         this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
         
         // Initialize event data access
@@ -65,7 +65,7 @@ public class SharedDataAccess {
      * Gets the shared task gateway.
      * @return The task gateway
      */
-    public InMemoryTaskGateway getTaskGateway() {
+    public InMemoryTaskDataAccessObject getTaskGateway() {
         return taskGateway;
     }
     

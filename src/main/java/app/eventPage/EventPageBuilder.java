@@ -73,7 +73,7 @@ import use_case.Angela.task.overdue.OverdueTasksInteractor;
 import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
 import use_case.Angela.today_so_far.TodaySoFarInteractor;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;

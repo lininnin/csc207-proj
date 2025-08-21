@@ -1,7 +1,7 @@
 package use_case.Angela.category.delete;
 
 import data_access.InMemoryCategoryGateway;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
 import entity.info.Info;
@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteCategoryInteractorTest {
 
     private InMemoryCategoryGateway categoryGateway;
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestDeleteCategoryPresenter testPresenter;
     private DeleteCategoryInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         categoryGateway = new InMemoryCategoryGateway();
         testPresenter = new TestDeleteCategoryPresenter();
         // Use the new constructor with segregated interfaces
