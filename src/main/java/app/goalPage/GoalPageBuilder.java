@@ -284,29 +284,6 @@ public class GoalPageBuilder {
         JTextField goalNameField = createLabeledTextField(formPanel, "Goal Name:", "", verticalGap);
         JTextField goalDescriptionField = createLabeledTextField(formPanel, "Description (Optional):", "", verticalGap);
 
-        JPanel amountPanel = new JPanel();
-        amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
-        amountPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JPanel targetAmountPanel = new JPanel();
-        targetAmountPanel.setLayout(new BoxLayout(targetAmountPanel, BoxLayout.Y_AXIS));
-        targetAmountPanel.add(createCompactLabel("Target Amount:"));
-        JTextField targetAmountField = new JTextField("0");
-        targetAmountField.setMaximumSize(new Dimension(150, 25));
-        targetAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        targetAmountPanel.add(targetAmountField);
-        targetAmountPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
-
-        JPanel currentAmountPanel = new JPanel();
-        currentAmountPanel.setLayout(new BoxLayout(currentAmountPanel, BoxLayout.Y_AXIS));
-        currentAmountPanel.add(createCompactLabel("Current Amount:"));
-        JTextField currentAmountField = new JTextField("0");
-        currentAmountField.setMaximumSize(new Dimension(150, 25));
-        currentAmountField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        currentAmountPanel.add(currentAmountField);
-        amountPanel.add(targetAmountPanel);
-        amountPanel.add(currentAmountPanel);
-        formPanel.add(amountPanel);
-        formPanel.add(Box.createRigidArea(new Dimension(0, verticalGap)));
 
         JPanel datePanel = new JPanel();
         datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.X_AXIS));
@@ -447,14 +424,7 @@ public class GoalPageBuilder {
             String goalName = GoalInputValidator.validateString(
                     ((JTextField) createGoalForm.getComponent(1)).getText(), "Goal Name");
             String description = ((JTextField) createGoalForm.getComponent(4)).getText();
-            JPanel amountPanel = (JPanel) createGoalForm.getComponent(6);
-            JPanel targetAmountPanel = (JPanel) amountPanel.getComponent(0);
-            double targetAmount = GoalInputValidator.validatePositiveInteger(
-                    ((JTextField) targetAmountPanel.getComponent(1)).getText(), "Target Amount");
-            JPanel currentAmountPanel = (JPanel) amountPanel.getComponent(1);
-            double currentAmount = GoalInputValidator.validatePositiveInteger(
-                    ((JTextField) currentAmountPanel.getComponent(1)).getText(), "Current Amount");
-            JPanel datePanel = (JPanel) createGoalForm.getComponent(8);
+            JPanel datePanel = (JPanel) createGoalForm.getComponent(6);
             JPanel startDatePanel = (JPanel) datePanel.getComponent(0);
             LocalDate startDate = GoalInputValidator.validateDate(
                     ((JTextField) startDatePanel.getComponent(1)).getText(), "Start Date");
@@ -462,7 +432,7 @@ public class GoalPageBuilder {
             LocalDate endDate = GoalInputValidator.validateDate(
                     ((JTextField) endDatePanel.getComponent(1)).getText(), "End Date");
             GoalInputValidator.validateDateRange(startDate, endDate);
-            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(10);
+            JPanel timeFreqPanel = (JPanel) createGoalForm.getComponent(8);
             JPanel timePeriodPanel = (JPanel) timeFreqPanel.getComponent(0);
             JComboBox<?> timePeriodBox = (JComboBox<?>) timePeriodPanel.getComponent(1);
             Goal.TimePeriod timePeriod = Goal.TimePeriod.valueOf(timePeriodBox.getSelectedItem().toString());
@@ -483,8 +453,6 @@ public class GoalPageBuilder {
             createGoalController.execute(
                     goalName,
                     description,
-                    targetAmount,
-                    currentAmount,
                     startDate,
                     endDate,
                     timePeriod,

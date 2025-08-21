@@ -52,7 +52,7 @@ public class CreateGoalInteractor implements CreateGoalInputBoundary {
             else {
                 // Fallback to default if no target task provided
                 targetTaskInfo = new Info.Builder("TargetTask")
-                        .description(String.valueOf(inputData.getTargetAmount()))
+                        .description("Default target task")
                         .build();
                 System.out.println("DEBUG: CreateGoalInteractor - No target task provided, using default");
             }
@@ -72,10 +72,7 @@ public class CreateGoalInteractor implements CreateGoalInputBoundary {
                     inputData.getFrequency()
             );
 
-            // Set current amount if provided
-            if (inputData.getCurrentAmount() > 0) {
-                goal.setCurrentProgress((int) inputData.getCurrentAmount());
-            }
+            // Goal starts with 0 progress by default
 
             // Save and present results
             goalRepository.save(goal);

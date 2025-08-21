@@ -2,6 +2,7 @@ package view.goal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.contains;
 
 import entity.Angela.Task.Task;
 import entity.Sophia.Goal;
@@ -89,10 +90,8 @@ class CreateGoalViewTest {
             // Locate fields/components
             JTextField nameField        = getNthTextField(view, 0);
             JTextField descField        = getNthTextField(view, 1);
-            JTextField targetAmount     = getNthTextField(view, 2);
-            JTextField currentAmount    = getNthTextField(view, 3);
-            JTextField startDateField   = getNthTextField(view, 4);
-            JTextField endDateField     = getNthTextField(view, 5);
+            JTextField startDateField   = getNthTextField(view, 2);
+            JTextField endDateField     = getNthTextField(view, 3);
             @SuppressWarnings("unchecked")
             JComboBox<Goal.TimePeriod> periodCombo = find(view, JComboBox.class);
             JSpinner freqSpinner       = find(view, JSpinner.class);
@@ -101,8 +100,6 @@ class CreateGoalViewTest {
 
             assertNotNull(nameField);
             assertNotNull(descField);
-            assertNotNull(targetAmount);
-            assertNotNull(currentAmount);
             assertNotNull(startDateField);
             assertNotNull(endDateField);
             assertNotNull(periodCombo);
@@ -112,8 +109,6 @@ class CreateGoalViewTest {
             // Fill inputs (valid)
             nameField.setText("Read");
             descField.setText("Read algorithms");
-            targetAmount.setText("10.5");
-            currentAmount.setText("2.0");
             startDateField.setText("2025-08-20");
             endDateField.setText("2025-08-30");
 
@@ -137,8 +132,6 @@ class CreateGoalViewTest {
             // Assert controller call
             ArgumentCaptor<String> goalNameCap = ArgumentCaptor.forClass(String.class);
             ArgumentCaptor<String> descCap = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<Double> targetCap = ArgumentCaptor.forClass(Double.class);
-            ArgumentCaptor<Double> currentCap = ArgumentCaptor.forClass(Double.class);
             ArgumentCaptor<LocalDate> startCap = ArgumentCaptor.forClass(LocalDate.class);
             ArgumentCaptor<LocalDate> endCap = ArgumentCaptor.forClass(LocalDate.class);
             ArgumentCaptor<Goal.TimePeriod> periodCap = ArgumentCaptor.forClass(Goal.TimePeriod.class);
@@ -148,8 +141,6 @@ class CreateGoalViewTest {
             verify(createGoalController, times(1)).execute(
                     goalNameCap.capture(),
                     descCap.capture(),
-                    targetCap.capture(),
-                    currentCap.capture(),
                     startCap.capture(),
                     endCap.capture(),
                     periodCap.capture(),
@@ -159,8 +150,6 @@ class CreateGoalViewTest {
 
             assertEquals("Read", goalNameCap.getValue());
             assertEquals("Read algorithms", descCap.getValue());
-            assertEquals(10.5, targetCap.getValue(), 1e-9);
-            assertEquals(2.0, currentCap.getValue(), 1e-9);
             assertEquals(LocalDate.parse("2025-08-20"), startCap.getValue());
             assertEquals(LocalDate.parse("2025-08-30"), endCap.getValue());
             assertNotNull(periodCap.getValue());
@@ -170,8 +159,6 @@ class CreateGoalViewTest {
             // Fields cleared
             assertEquals("", nameField.getText());
             assertEquals("", descField.getText());
-            assertEquals("", targetAmount.getText());
-            assertEquals("0.0", currentAmount.getText()); // default reset
             assertEquals("", startDateField.getText());
             assertEquals("", endDateField.getText());
             assertEquals(1, freqSpinner.getValue()); // reset to FREQUENCY_DEFAULT
@@ -184,17 +171,13 @@ class CreateGoalViewTest {
             try (MockedStatic<JOptionPane> jp = Mockito.mockStatic(JOptionPane.class)) {
                 CreateGoalView view = new CreateGoalView(createdGoalViewModel, createGoalController);
 
-                JTextField targetAmount  = getNthTextField(view, 2);
-                JTextField currentAmount = getNthTextField(view, 3);
-                JTextField startDate     = getNthTextField(view, 4);
-                JTextField endDate       = getNthTextField(view, 5);
+                JTextField startDate     = getNthTextField(view, 2);
+                JTextField endDate       = getNthTextField(view, 3);
 
-                // Minimal valid fields + intentionally bad numbers
+                // Minimal valid fields + intentionally bad date format
                 getNthTextField(view, 0).setText("X");
                 getNthTextField(view, 1).setText("Y");
-                targetAmount.setText("not-a-number");      // will cause NumberFormatException
-                currentAmount.setText("also-bad");
-                startDate.setText("2025-08-20");
+                startDate.setText("bad-date");      // will cause DateTimeParseException
                 endDate.setText("2025-08-30");
 
                 JButton createBtn = findButtonByText(view, "Create Goal");
@@ -205,7 +188,7 @@ class CreateGoalViewTest {
                 // Expect an error dialog with the specific message
                 jp.verify(() -> JOptionPane.showMessageDialog(
                         any(),
-                        eq("Please enter valid numbers for amounts"),
+                        contains("Text 'bad-date' could not be parsed"),
                         eq("Error"),
                         eq(JOptionPane.ERROR_MESSAGE)
                 ), times(1));
@@ -241,8 +224,8 @@ class CreateGoalViewTest {
 
     // ---- helpers to find specific fields in the order they were added ----
 
-    /** The view adds six JTextFields in order:
-     * 0: goalName, 1: description, 2: targetAmount, 3: currentAmount, 4: startDate, 5: endDate */
+    /** The view adds four JTextFields in order:
+     * 0: goalName, 1: description, 2: startDate, 3: endDate */
     private static JTextField getNthTextField(Container root, int n) {
         java.util.List<JTextField> list = new java.util.ArrayList<>();
         collectTextFields(root, list);

@@ -14,8 +14,6 @@ import entity.Sophia.Goal;
 public class CreateGoalInputData {
     private final String goalName;
     private final String goalDescription;
-    private final double targetAmount;
-    private final double currentAmount;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Goal.TimePeriod timePeriod;
@@ -27,8 +25,6 @@ public class CreateGoalInputData {
      *
      * @param goalName Name of the goal (must not be null or empty)
      * @param goalDescription Description of the goal (may be empty)
-     * @param targetAmount Target numerical value (must be positive)
-     * @param currentAmount Current progress amount (must be >= 0)
      * @param startDate Start date of goal period (must be before endDate)
      * @param endDate End date of goal period (must be after startDate)
      * @param timePeriod Time period type enum (WEEK or MONTH)
@@ -36,13 +32,10 @@ public class CreateGoalInputData {
      * @param targetTask Associated task (may be null)
      */
     public CreateGoalInputData(String goalName, String goalDescription,
-                               double targetAmount, double currentAmount,
                                LocalDate startDate, LocalDate endDate,
                                Goal.TimePeriod timePeriod, int frequency, Task targetTask) {
         this.goalName = goalName;
         this.goalDescription = goalDescription;
-        this.targetAmount = targetAmount;
-        this.currentAmount = currentAmount;
         this.startDate = startDate;
         this.endDate = endDate;
         this.timePeriod = timePeriod;
@@ -66,21 +59,6 @@ public class CreateGoalInputData {
         return goalDescription;
     }
 
-    /**
-     * Gets the target amount for the goal.
-     * @return The target amount
-     */
-    public double getTargetAmount() {
-        return targetAmount;
-    }
-
-    /**
-     * Gets the current progress amount.
-     * @return The current amount
-     */
-    public double getCurrentAmount() {
-        return currentAmount;
-    }
 
     /**
      * Gets the start date of the goal period.
@@ -121,4 +99,5 @@ public class CreateGoalInputData {
     public int getFrequency() {
         return frequency;
     }
+
 }
