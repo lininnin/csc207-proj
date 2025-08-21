@@ -1,7 +1,7 @@
 package use_case.Angela.task.create;
 
-import entity.Angela.Task.TaskAvailable;
-import entity.info.Info;
+import entity.Angela.Task.TaskAvailableInterf;
+import entity.info.InfoInterf;
 
 import java.util.List;
 
@@ -15,12 +15,12 @@ import java.util.List;
 public interface CreateTaskDataAccessInterface {
 
     /**
-     * Saves the given TaskAvailable to the data store.
+     * Saves the given TaskAvailableInterf to the data store.
      *
-     * @param taskAvailable The TaskAvailable template to save
+     * @param taskAvailable The TaskAvailableInterf template to save
      * @return The ID of the saved task
      */
-    String saveTaskAvailable(TaskAvailable taskAvailable);
+    String saveTaskAvailable(TaskAvailableInterf taskAvailable);
 
     /**
      * Checks if a task template with the given name already exists in the same category (case-insensitive).
@@ -35,15 +35,15 @@ public interface CreateTaskDataAccessInterface {
     /**
      * @return List of all available task templates
      */
-    List<TaskAvailable> getAllAvailableTaskTemplates();
+    List<TaskAvailableInterf> getAllAvailableTaskTemplates();
 
     /**
      * Retrieves a task template by its ID.
      *
      * @param taskId The ID of the task template to find
-     * @return The TaskAvailable if found, null otherwise
+     * @return The TaskAvailableInterf if found, null otherwise
      */
-    TaskAvailable getTaskAvailableById(String taskId);
+    TaskAvailableInterf getTaskAvailableById(String taskId);
 
     /**
      * @return Total count of available task templates
@@ -51,10 +51,10 @@ public interface CreateTaskDataAccessInterface {
     int getAvailableTaskCount();
 
     /**
-     * Checks whether the given TaskAvailable exists in the data store.
+     * Checks whether the given TaskAvailableInterf exists in the data store.
      *
-     * @param taskAvailable The TaskAvailable to check
+     * @param taskAvailable The TaskAvailableInterf to check
      * @return true if present, false otherwise
      */
-    boolean exists(TaskAvailable taskAvailable);
+    boolean exists(TaskAvailableInterf taskAvailable);
 }

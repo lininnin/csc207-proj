@@ -1,9 +1,11 @@
 package data_access;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<Task> getCompletedTasksForToday() {
+    public List<TaskInterf> getCompletedTasksForToday() {
         if (taskGateway != null) {
             return taskGateway.getTodaysTasks().stream()
                     .filter(Task::isCompleted)
@@ -77,7 +79,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<Goal> getActiveGoals() {
+    public List<GoalInterface> getActiveGoals() {
         if (goalRepository != null) {
             try {
                 // Get today's goals (not current/available goals)
@@ -85,7 +87,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
                 List<Goal> todayGoals = goalRepository.getTodayGoals();
                 System.out.println("DEBUG: InMemoryTodaySoFarDataAccess.getActiveGoals() returning " + 
                                    (todayGoals != null ? todayGoals.size() : 0) + " goals");
-                return todayGoals;
+                return new ArrayList<>(todayGoals);
             } catch (Exception e) {
                 System.out.println("DEBUG: Error getting today's goals: " + e.getMessage());
                 return new ArrayList<>();

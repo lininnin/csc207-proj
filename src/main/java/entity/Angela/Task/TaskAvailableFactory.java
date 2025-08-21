@@ -1,10 +1,15 @@
 package entity.Angela.Task;
 
 import entity.info.Info;
+import entity.info.InfoInterf;
+import entity.info.ImmutableInfo;
 
 /**
  * Factory class for creating TaskAvailable instances.
  * Implements the Factory pattern following Clean Architecture principles.
+ * 
+ * Provides methods to create both mutable and immutable TaskAvailable entities.
+ * Uses interface types for dependency inversion compliance.
  */
 public class TaskAvailableFactory {
 
@@ -15,8 +20,10 @@ public class TaskAvailableFactory {
      * @return A new TaskAvailable instance
      * @throws IllegalArgumentException if info is null
      */
-    public TaskAvailable create(Info info) {
-        return new TaskAvailable(info);
+    public TaskAvailableInterf create(InfoInterf info) {
+        // Convert interface to concrete type for TaskAvailable constructor
+        Info concreteInfo = (info instanceof Info) ? (Info) info : ((ImmutableInfo) info).toMutableInfo();
+        return new TaskAvailable(concreteInfo);
     }
 
     /**
@@ -27,10 +34,11 @@ public class TaskAvailableFactory {
      * @return A new TaskAvailable instance
      * @throws IllegalArgumentException if info is null
      */
-    public TaskAvailable create(Info info, boolean isOneTime) {
-        TaskAvailable task = new TaskAvailable(info);
-        task.setOneTime(isOneTime);
-        return task;
+    public TaskAvailableInterf create(InfoInterf info, boolean isOneTime) {
+        // Convert interface to concrete type for TaskAvailable constructor
+        Info concreteInfo = (info instanceof Info) ? (Info) info : ((ImmutableInfo) info).toMutableInfo();
+        TaskAvailable task = new TaskAvailable(concreteInfo);
+        return task.withOneTimeFlag(isOneTime); // Use immutable update method
     }
 
     /**
@@ -43,7 +51,41 @@ public class TaskAvailableFactory {
      * @return A new TaskAvailable instance
      * @throws IllegalArgumentException if required parameters are invalid
      */
-    public TaskAvailable create(String id, Info info, String plannedDueDate, boolean isOneTime) {
-        return new TaskAvailable(id, info, plannedDueDate, isOneTime);
+    public TaskAvailableInterf create(String id, InfoInterf info, String plannedDueDate, boolean isOneTime) {
+        // Convert interface to concrete type for TaskAvailable constructor
+        Info concreteInfo = (info instanceof Info) ? (Info) info : ((ImmutableInfo) info).toMutableInfo();
+        return new TaskAvailable(id, concreteInfo, plannedDueDate, isOneTime);
+    }
+    
+    // Factory methods for immutable entity creation
+    
+    /**
+     * Creates a new available task template using immutable entities.
+     *
+     * @param info Immutable task information
+     * @return A new TaskAvailable instance with immutable components
+     * @throws IllegalArgumentException if info is null
+     */
+    public TaskAvailableInterf createImmutable(ImmutableInfo info) {
+        if (info == null) {
+            throw new IllegalArgumentException("Info cannot be null");
+        }
+        return new TaskAvailable(info.toMutableInfo());
+    }
+    
+    /**
+     * Creates an available task with one-time flag using immutable entities.
+     *
+     * @param info Immutable task information
+     * @param isOneTime Whether this is a one-time task
+     * @return A new TaskAvailable instance with immutable components
+     * @throws IllegalArgumentException if info is null
+     */
+    public TaskAvailableInterf createImmutable(ImmutableInfo info, boolean isOneTime) {
+        if (info == null) {
+            throw new IllegalArgumentException("Info cannot be null");
+        }
+        TaskAvailable task = new TaskAvailable(info.toMutableInfo());
+        return task.withOneTimeFlag(isOneTime); // Use immutable update method
     }
 }

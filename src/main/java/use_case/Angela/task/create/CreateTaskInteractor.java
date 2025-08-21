@@ -1,8 +1,9 @@
 package use_case.Angela.task.create;
 
 import entity.info.Info;
-import entity.Angela.Task.TaskAvailable;
-import use_case.Angela.task.TaskGateway;
+import entity.info.InfoFactory;
+import entity.Angela.Task.TaskAvailableInterf;
+import entity.Angela.Task.TaskAvailableFactory;
 
 /**
  * Interactor for the create task use case.
@@ -12,13 +13,19 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
     private final CreateTaskDataAccessInterface dataAccess;
     private final CreateTaskCategoryDataAccessInterface categoryDataAccess;
     private final CreateTaskOutputBoundary outputBoundary;
+    private final InfoFactory infoFactory;
+    private final TaskAvailableFactory taskAvailableFactory;
 
     public CreateTaskInteractor(CreateTaskDataAccessInterface dataAccess,
                                 CreateTaskCategoryDataAccessInterface categoryDataAccess,
-                                CreateTaskOutputBoundary outputBoundary) {
+                                CreateTaskOutputBoundary outputBoundary,
+                                InfoFactory infoFactory,
+                                TaskAvailableFactory taskAvailableFactory) {
         this.dataAccess = dataAccess;
         this.categoryDataAccess = categoryDataAccess;
         this.outputBoundary = outputBoundary;
+        this.infoFactory = infoFactory;
+        this.taskAvailableFactory = taskAvailableFactory;
     }
 
     @Override
@@ -62,23 +69,11 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
             return;
         }
 
-        // Create task info (no begin date - that's only for Today's tasks)
-        Info.Builder builder = new Info.Builder(taskName);
+        // Create task info using factory (no begin date - that's only for Today's tasks)
+        Info taskInfo = (Info) infoFactory.create(taskName, description, categoryId);
 
-        if (description != null && !description.trim().isEmpty()) {
-            builder.description(description);
-        }
-
-        // CRITICAL: Store category ID, not category name!
-        if (categoryId != null && !categoryId.isEmpty()) {
-            builder.category(categoryId);
-        }
-
-        Info taskInfo = builder.build();
-
-        // Create TaskAvailable and set isOneTime flag
-        TaskAvailable taskAvailable = new TaskAvailable(taskInfo);
-        taskAvailable.setOneTime(inputData.isOneTime());
+        // Create TaskAvailable using factory with immutable approach
+        TaskAvailableInterf taskAvailable = taskAvailableFactory.create(taskInfo, inputData.isOneTime());
         System.out.println("DEBUG: Creating TaskAvailable with isOneTime: " + inputData.isOneTime());
 
         // Save the task using the correct method that handles TaskAvailable

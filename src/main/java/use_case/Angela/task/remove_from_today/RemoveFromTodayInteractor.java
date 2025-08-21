@@ -1,6 +1,6 @@
 package use_case.Angela.task.remove_from_today;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 
 /**
  * Interactor for the remove from today use case.
@@ -21,7 +21,7 @@ public class RemoveFromTodayInteractor implements RemoveFromTodayInputBoundary {
         String taskId = inputData.getTaskId();
 
         // Get the task to verify it exists and get its name for the message
-        Task task = dataAccess.getTodayTaskById(taskId);
+        TaskInterf task = dataAccess.getTodayTaskById(taskId);
         if (task == null) {
             presenter.prepareFailView("Task not found in Today's list");
             return;

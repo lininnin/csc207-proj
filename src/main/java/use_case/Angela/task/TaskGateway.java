@@ -8,7 +8,20 @@ import java.util.List;
 /**
  * Gateway interface for task data access operations.
  * Manages both Available Tasks and Today's Tasks.
+ * 
+ * @deprecated This interface violates ISP. Use specific DataAccessInterface for each use case instead:
+ * - CreateTaskDataAccessInterface for creating tasks
+ * - EditAvailableTaskDataAccessInterface for editing available tasks  
+ * - AddToTodayDataAccessInterface for adding tasks to today
+ * - EditTodayTaskDataAccessInterface for editing today's tasks
+ * - MarkTaskCompleteDataAccessInterface for marking tasks complete
+ * - RemoveFromTodayDataAccessInterface for removing from today
+ * - DeleteTaskDataAccessInterface for deleting tasks
+ * - OverdueTasksDataAccessInterface for overdue tasks
+ * - TodaySoFarDataAccessInterface for today's summary
+ * - ViewHistoryDataAccessInterface for history
  */
+@Deprecated
 public interface TaskGateway {
 
     // Available Tasks operations

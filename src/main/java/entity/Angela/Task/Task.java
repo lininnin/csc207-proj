@@ -146,7 +146,8 @@ public class Task implements TaskInterf {
      *
      * @return The task info
      */
-    public Info getInfo() {
+    @Override
+    public InfoInterf getInfo() {
         return info;
     }
 
@@ -162,9 +163,11 @@ public class Task implements TaskInterf {
     /**
      * Sets the task's priority.
      * Priority is optional for Today's tasks.
-     *
+     * 
+     * @deprecated Use {@link #withPriority(Priority)} for immutable updates
      * @param priority The priority level, or null to clear
      */
+    @Deprecated
     public void setPriority(Priority priority) {
         this.priority = priority;
     }
@@ -218,17 +221,22 @@ public class Task implements TaskInterf {
 
     /**
      * Marks the task as completed with the current timestamp.
+     * 
+     * @deprecated Use {@link #withCompletedStatus()} for immutable updates
      */
+    @Deprecated
     public void markComplete() {
         markComplete(LocalDateTime.now());
     }
 
     /**
      * Marks the task as completed with a specific timestamp.
-     *
+     * 
+     * @deprecated Use {@link #withCompletedStatus(LocalDateTime)} for immutable updates
      * @param completionTime The completion timestamp
      * @throws IllegalArgumentException if completionTime is null
      */
+    @Deprecated
     public void markComplete(LocalDateTime completionTime) {
         if (completionTime == null) {
             throw new IllegalArgumentException("Completion time cannot be null");
@@ -306,11 +314,74 @@ public class Task implements TaskInterf {
 
     /**
      * Sets whether this is a one-time task.
-     *
+     * 
+     * @deprecated Use {@link #withOneTimeFlag(boolean)} for immutable updates
      * @param oneTime true for one-time task
      */
+    @Deprecated
     public void setOneTime(boolean oneTime) {
         this.isOneTime = oneTime;
+    }
+
+    // Immutable update methods for Clean Architecture compliance
+    
+    /**
+     * Creates a new Task instance with the specified priority.
+     * This follows the immutable entity pattern.
+     * 
+     * @param priority The new priority to set
+     * @return A new Task instance with the updated priority
+     */
+    public Task withPriority(Priority priority) {
+        return new Task(this.id, this.templateTaskId, this.info, priority, this.dates,
+                        this.isCompleted, this.completedDateTime, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as completed.
+     * This follows the immutable entity pattern.
+     * 
+     * @return A new Task instance marked as completed
+     */
+    public Task withCompletedStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        true, now, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as completed at a specific time.
+     * This follows the immutable entity pattern.
+     * 
+     * @param completionTime The time when the task was completed
+     * @return A new Task instance marked as completed
+     */
+    public Task withCompletedStatus(LocalDateTime completionTime) {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        true, completionTime, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as uncompleted.
+     * This follows the immutable entity pattern.
+     * 
+     * @return A new Task instance marked as uncompleted
+     */
+    public Task withUncompletedStatus() {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        false, null, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance with the specified one-time flag.
+     * This follows the immutable entity pattern.
+     * 
+     * @param oneTime The new one-time flag value
+     * @return A new Task instance with the updated one-time flag
+     */
+    public Task withOneTimeFlag(boolean oneTime) {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        this.isCompleted, this.completedDateTime, oneTime);
     }
 
     @Override

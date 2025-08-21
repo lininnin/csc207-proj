@@ -1,6 +1,6 @@
 package use_case.Angela.task.overdue;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Category;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -28,13 +28,13 @@ public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
     public void execute(OverdueTasksInputData inputData) {
         try {
             int daysBack = inputData.getDaysBack();
-            List<Task> overdueTasks = taskDataAccess.getOverdueTasks(daysBack);
+            List<TaskInterf> overdueTasks = taskDataAccess.getOverdueTasks(daysBack);
             
             // Convert to output data
             List<OverdueTasksOutputData.OverdueTaskData> overdueDataList = new ArrayList<>();
             LocalDate today = LocalDate.now();
             
-            for (Task task : overdueTasks) {
+            for (TaskInterf task : overdueTasks) {
                 // Get category name
                 String categoryName = "";
                 String categoryId = task.getInfo().getCategory();
@@ -46,7 +46,7 @@ public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
                 }
                 
                 // Calculate days overdue
-                LocalDate dueDate = task.getDates().getDueDate();
+                LocalDate dueDate = task.getBeginAndDueDates().getDueDate();
                 int daysOverdue = 0;
                 if (dueDate != null) {
                     daysOverdue = (int) ChronoUnit.DAYS.between(dueDate, today);

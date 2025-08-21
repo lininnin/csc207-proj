@@ -1,7 +1,8 @@
 package use_case.Angela.task.add_to_today;
 
 import entity.Angela.Task.Task;
-import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskInterf;
+import entity.Angela.Task.TaskAvailableInterf;
 import java.time.LocalDate;
 
 /**
@@ -22,7 +23,7 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
         String taskId = inputData.getTaskId();
 
         // Get the available task
-        TaskAvailable taskAvailable = dataAccess.getAvailableTaskById(taskId);
+        TaskAvailableInterf taskAvailable = dataAccess.getAvailableTaskById(taskId);
         if (taskAvailable == null) {
             outputBoundary.presentError("Task not found in Available Tasks");
             return;
@@ -53,10 +54,10 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
         }
 
         // Add to today
-        Task task = dataAccess.addTaskToToday(taskAvailable, inputData.getPriority(), dueDate);
+        TaskInterf task = dataAccess.addTaskToToday(taskAvailable, inputData.getPriority(), dueDate);
         String taskName = taskAvailable.getInfo().getName();
 
-        AddTaskToTodayOutputData outputData = new AddTaskToTodayOutputData(task, taskName);
+        AddTaskToTodayOutputData outputData = new AddTaskToTodayOutputData((entity.Angela.Task.Task) task, taskName);
         outputBoundary.presentSuccess(outputData);
     }
 }

@@ -8,7 +8,7 @@ import interface_adapter.Angela.task.edit_today.EditTodayTaskViewModel;
 import interface_adapter.Angela.task.remove_from_today.RemoveFromTodayController;
 import entity.Angela.Task.Task;
 import entity.Category;
-import use_case.Angela.task.TaskGateway;
+import data_access.InMemoryTaskGateway;
 import use_case.Angela.category.CategoryGateway;
 import view.DueDatePickerPanel;
 import com.github.lgooddatepicker.components.DatePicker;
@@ -40,7 +40,7 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     private final JLabel messageLabel;
 
     private TodayTasksViewModel viewModel;
-    private TaskGateway taskGateway;
+    private InMemoryTaskGateway taskGateway;
     private CategoryGateway categoryGateway;
     private MarkTaskCompleteController markTaskCompleteController;
     private EditTodayTaskController editTodayTaskController;
@@ -186,7 +186,7 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         editDatePicker.setPreferredSize(new Dimension(120, 25));
     }
 
-    public void setTaskGateway(TaskGateway taskGateway) {
+    public void setTaskGateway(InMemoryTaskGateway taskGateway) {
         this.taskGateway = taskGateway;
         refreshTasks();
     }

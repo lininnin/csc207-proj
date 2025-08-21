@@ -1,6 +1,6 @@
 package use_case.Angela.task.remove_from_today;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 
 /**
  * Data access interface for removing tasks from today's list.
@@ -13,7 +13,7 @@ public interface RemoveFromTodayDataAccessInterface {
      * @param taskId The ID of the task
      * @return The task if found, null otherwise
      */
-    Task getTodayTaskById(String taskId);
+    TaskInterf getTodayTaskById(String taskId);
 
     /**
      * Removes a task from today's list only (soft delete).

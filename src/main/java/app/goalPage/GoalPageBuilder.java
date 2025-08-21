@@ -5,6 +5,7 @@ import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.Info;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
@@ -477,7 +478,7 @@ public class GoalPageBuilder {
                 BeginAndDueDates taskDates = new BeginAndDueDates(LocalDate.now(), endDate);
                 targetTask = new Task(
                         selectedTargetTaskAvailable.getId(),
-                        selectedTargetTaskAvailable.getInfo(),
+                        (Info) selectedTargetTaskAvailable.getInfo(),
                         taskDates,
                         selectedTargetTaskAvailable.isOneTime()
                 );

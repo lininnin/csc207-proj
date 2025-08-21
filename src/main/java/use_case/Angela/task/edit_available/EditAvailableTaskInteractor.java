@@ -1,6 +1,6 @@
 package use_case.Angela.task.edit_available;
 
-import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 
 /**
  * Interactor for the edit available task use case.
@@ -48,7 +48,7 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
         }
 
         // Check if task exists
-        TaskAvailable existingTask = dataAccess.getTaskAvailableById(taskId);
+        TaskAvailableInterf existingTask = dataAccess.getTaskAvailableById(taskId);
         if (existingTask == null) {
             outputBoundary.prepareFailView("Task not found in Available Tasks");
             return;

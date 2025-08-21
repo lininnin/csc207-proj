@@ -8,10 +8,11 @@ import interface_adapter.Angela.task.delete.DeleteTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskController;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskState;
-import use_case.Angela.task.TaskGateway;
+import data_access.InMemoryTaskGateway;
 import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 import entity.info.Info;
 import entity.Category;
 
@@ -42,7 +43,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     private DeleteTaskController deleteTaskController;
     private EditAvailableTaskController editAvailableTaskController;
-    private TaskGateway taskGateway;
+    private InMemoryTaskGateway taskGateway;
     private CategoryGateway categoryGateway;
     private EditAvailableTaskDataAccessInterface editTaskDataAccess;
 
@@ -210,7 +211,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         }
     }
 
-    public void setTaskGateway(TaskGateway taskGateway) {
+    public void setTaskGateway(InMemoryTaskGateway taskGateway) {
         this.taskGateway = taskGateway;
         refreshTasks(); // Initial load
     }
@@ -382,10 +383,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
         if (editTaskDataAccess != null) {
             // Get TaskAvailable objects to access isOneTime through proper interface
-            List<TaskAvailable> taskAvailables = editTaskDataAccess.getAllAvailableTasksWithDetails();
+            List<TaskAvailableInterf> taskAvailables = editTaskDataAccess.getAllAvailableTasksWithDetails();
             
-            for (TaskAvailable taskAvailable : taskAvailables) {
-                Info task = taskAvailable.getInfo();
+            for (TaskAvailableInterf taskAvailable : taskAvailables) {
+                Info task = (Info) taskAvailable.getInfo();
                 
                 // Convert category ID to name for display
                 String categoryDisplay = "";
