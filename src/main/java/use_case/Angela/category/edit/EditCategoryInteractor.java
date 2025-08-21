@@ -1,6 +1,7 @@
 package use_case.Angela.category.edit;
 
 import entity.Category;
+import entity.CategoryFactory;
 import entity.Angela.Task.TaskAvailable;
 import entity.Angela.Task.Task;
 import java.util.List;
@@ -13,13 +14,16 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
     private final EditCategoryDataAccessInterface categoryDataAccess;
     private final EditCategoryTaskDataAccessInterface taskDataAccess;
     private final EditCategoryOutputBoundary outputBoundary;
+    private final CategoryFactory categoryFactory;
 
     public EditCategoryInteractor(EditCategoryDataAccessInterface categoryDataAccess,
                                   EditCategoryTaskDataAccessInterface taskDataAccess,
-                                  EditCategoryOutputBoundary outputBoundary) {
+                                  EditCategoryOutputBoundary outputBoundary,
+                                  CategoryFactory categoryFactory) {
         this.categoryDataAccess = categoryDataAccess;
         this.taskDataAccess = taskDataAccess;
         this.outputBoundary = outputBoundary;
+        this.categoryFactory = categoryFactory;
     }
 
     @Override
@@ -60,9 +64,9 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
             return;
         }
 
-        // Update category - DON'T trim the name
-        category.setName(newName);  // Keep spaces as-is
-        boolean updated = categoryDataAccess.updateCategory(category);
+        // Create new immutable category with updated name - DON'T trim the name
+        Category updatedCategory = categoryFactory.create(categoryId, newName, category.getColor());
+        boolean updated = categoryDataAccess.updateCategory(updatedCategory);
 
         if (updated) {
             // CRITICAL: Update all tasks that use this category

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import data_access.MoodAvailableDataAccessObject;
+import data_access.alex.MoodAvailableDataAccessObject;
 import entity.alex.AvalibleMoodLabel.AvaliableMoodLabelFactory;
 import entity.alex.MoodLabel.MoodLabelFactory;
 import entity.alex.MoodLabel.Type;

@@ -45,7 +45,6 @@ public class DailyLog {
      * Adds a task to the daily log.
      * The task is added to timeLog and to the DailyTaskSummary.
      *
-     * TODO: Will be used when implementing daily planning feature
      * @param task The task to add; must not be null
      * @throws IllegalArgumentException if task is null
      */
@@ -98,7 +97,6 @@ public class DailyLog {
     /**
      * Returns the chronological log of all tasks/events/wellness logs for this day.
      *
-     * TODO: Will be used in Alex's story #2 for showing task/event correlations
      * @return List of all entries in chronological order
      */
     public List<Object> getTimeLog() {

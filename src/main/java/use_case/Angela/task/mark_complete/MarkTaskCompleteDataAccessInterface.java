@@ -1,6 +1,6 @@
 package use_case.Angela.task.mark_complete;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 
 /**
  * Data access interface for marking tasks as complete or incomplete.
@@ -13,7 +13,7 @@ public interface MarkTaskCompleteDataAccessInterface {
      * @param taskId The ID of the task
      * @return The task if found, null otherwise
      */
-    Task getTodayTaskById(String taskId);
+    TaskInterf getTodayTaskById(String taskId);
 
     /**
      * Updates the completion status of a task in today's list.

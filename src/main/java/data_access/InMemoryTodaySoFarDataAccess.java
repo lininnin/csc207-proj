@@ -1,9 +1,13 @@
 package data_access;
 
+import data_access.alex.TodaysEventDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.alex.Event.EventInterf;
 import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
 import use_case.repository.GoalRepository;
 
@@ -16,12 +20,12 @@ import java.util.stream.Collectors;
  */
 public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterface {
     
-    private final InMemoryTaskGateway taskGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
     private final GoalRepository goalRepository;
     
-    public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway,
+    public InMemoryTodaySoFarDataAccess(InMemoryTaskDataAccessObject taskGateway,
                                         TodaysEventDataAccessObject eventDataAccess,
                                         TodaysWellnessLogDataAccessObject wellnessDataAccess,
                                         GoalRepository goalRepository) {
@@ -32,7 +36,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     // Constructor with optional parameters for gradual integration
-    public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway) {
+    public InMemoryTodaySoFarDataAccess(InMemoryTaskDataAccessObject taskGateway) {
         this.taskGateway = taskGateway;
         this.eventDataAccess = null;
         this.wellnessDataAccess = null;
@@ -40,10 +44,11 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<Task> getCompletedTasksForToday() {
+    public List<TaskInterf> getCompletedTasksForToday() {
         if (taskGateway != null) {
             return taskGateway.getTodaysTasks().stream()
                     .filter(Task::isCompleted)
+                    .filter(task -> !task.isOverdue())
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -78,7 +83,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     }
     
     @Override
-    public List<Goal> getActiveGoals() {
+    public List<GoalInterface> getActiveGoals() {
         if (goalRepository != null) {
             try {
                 // Get today's goals (not current/available goals)
@@ -86,7 +91,7 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
                 List<Goal> todayGoals = goalRepository.getTodayGoals();
                 System.out.println("DEBUG: InMemoryTodaySoFarDataAccess.getActiveGoals() returning " + 
                                    (todayGoals != null ? todayGoals.size() : 0) + " goals");
-                return todayGoals;
+                return new ArrayList<>(todayGoals);
             } catch (Exception e) {
                 System.out.println("DEBUG: Error getting today's goals: " + e.getMessage());
                 return new ArrayList<>();

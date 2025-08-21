@@ -1,7 +1,9 @@
 package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,7 +21,7 @@ import java.util.UUID;
  * - Tracks completion status with timestamp
  * - Original position is session-only (transient)
  */
-public class Task {
+public class Task implements TaskInterf {
     private final String id;
     private final String templateTaskId;
     private Info info; // Made non-final for compatibility
@@ -144,7 +146,8 @@ public class Task {
      *
      * @return The task info
      */
-    public Info getInfo() {
+    @Override
+    public InfoInterf getInfo() {
         return info;
     }
 
@@ -160,9 +163,11 @@ public class Task {
     /**
      * Sets the task's priority.
      * Priority is optional for Today's tasks.
-     *
+     * 
+     * @deprecated Use {@link #withPriority(Priority)} for immutable updates
      * @param priority The priority level, or null to clear
      */
+    @Deprecated
     public void setPriority(Priority priority) {
         this.priority = priority;
     }
@@ -175,6 +180,16 @@ public class Task {
     public BeginAndDueDates getDates() {
         return dates;
     }
+    
+    /**
+     * Gets the task's date range (interface method).
+     * 
+     * @return The BeginAndDueDatesInterf object
+     */
+    @Override
+    public BeginAndDueDatesInterf getBeginAndDueDates() {
+        return dates;
+    }
 
     /**
      * Checks if the task is completed.
@@ -182,6 +197,16 @@ public class Task {
      * @return true if completed
      */
     public boolean isCompleted() {
+        return isCompleted;
+    }
+    
+    /**
+     * Gets the task's completion status (interface method).
+     * 
+     * @return true if completed, false otherwise
+     */
+    @Override
+    public boolean getStatus() {
         return isCompleted;
     }
 
@@ -196,17 +221,22 @@ public class Task {
 
     /**
      * Marks the task as completed with the current timestamp.
+     * 
+     * @deprecated Use {@link #withCompletedStatus()} for immutable updates
      */
+    @Deprecated
     public void markComplete() {
         markComplete(LocalDateTime.now());
     }
 
     /**
      * Marks the task as completed with a specific timestamp.
-     *
+     * 
+     * @deprecated Use {@link #withCompletedStatus(LocalDateTime)} for immutable updates
      * @param completionTime The completion timestamp
      * @throws IllegalArgumentException if completionTime is null
      */
+    @Deprecated
     public void markComplete(LocalDateTime completionTime) {
         if (completionTime == null) {
             throw new IllegalArgumentException("Completion time cannot be null");
@@ -262,6 +292,16 @@ public class Task {
 
         return dueDate.isBefore(LocalDate.now());
     }
+    
+    /**
+     * Checks if the task is overdue (interface method).
+     * 
+     * @return true if overdue, false otherwise
+     */
+    @Override
+    public boolean isOverDue() {
+        return isOverdue();
+    }
 
     /**
      * Checks if this is a one-time task.
@@ -274,11 +314,74 @@ public class Task {
 
     /**
      * Sets whether this is a one-time task.
-     *
+     * 
+     * @deprecated Use {@link #withOneTimeFlag(boolean)} for immutable updates
      * @param oneTime true for one-time task
      */
+    @Deprecated
     public void setOneTime(boolean oneTime) {
         this.isOneTime = oneTime;
+    }
+
+    // Immutable update methods for Clean Architecture compliance
+    
+    /**
+     * Creates a new Task instance with the specified priority.
+     * This follows the immutable entity pattern.
+     * 
+     * @param priority The new priority to set
+     * @return A new Task instance with the updated priority
+     */
+    public Task withPriority(Priority priority) {
+        return new Task(this.id, this.templateTaskId, this.info, priority, this.dates,
+                        this.isCompleted, this.completedDateTime, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as completed.
+     * This follows the immutable entity pattern.
+     * 
+     * @return A new Task instance marked as completed
+     */
+    public Task withCompletedStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        true, now, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as completed at a specific time.
+     * This follows the immutable entity pattern.
+     * 
+     * @param completionTime The time when the task was completed
+     * @return A new Task instance marked as completed
+     */
+    public Task withCompletedStatus(LocalDateTime completionTime) {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        true, completionTime, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance marked as uncompleted.
+     * This follows the immutable entity pattern.
+     * 
+     * @return A new Task instance marked as uncompleted
+     */
+    public Task withUncompletedStatus() {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        false, null, this.isOneTime);
+    }
+    
+    /**
+     * Creates a new Task instance with the specified one-time flag.
+     * This follows the immutable entity pattern.
+     * 
+     * @param oneTime The new one-time flag value
+     * @return A new Task instance with the updated one-time flag
+     */
+    public Task withOneTimeFlag(boolean oneTime) {
+        return new Task(this.id, this.templateTaskId, this.info, this.priority, this.dates,
+                        this.isCompleted, this.completedDateTime, oneTime);
     }
 
     @Override

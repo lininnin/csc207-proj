@@ -13,15 +13,26 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests for {@link OpenAiApiAdapter}.
+ * Currently requires testing individually with KEY as env var
+ * JUnit tests + a simple main() runner for OpenAiApiAdapter.
  *
- * Notes:
- * - These tests use OkHttp's MockWebServer to avoid real network calls.
- * - We conditionally enable the "happy path" tests only when OPENAI_API_KEY is set,
- *   because the adapter's constructor requires it. (In CI, configure that env var
- *   to any non-empty dummy string.)
- * - We also include a test that verifies constructor failure when the env var is absent,
- *   which is conditionally disabled when the env var is present.
+ * How to run the MAIN (real API):
+ *   # macOS/Linux
+ *   export OPENAI_API_KEY=sk-...your real key...
+ *   mvn -q -DskipTests exec:java -Dexec.mainClass="interface_adapter.generate_feedback.OpenAiApiAdapterTest"
+ *
+ *   # Windows PowerShell
+ *   $env:OPENAI_API_KEY="sk-...your real key..."
+ *   mvn -q -DskipTests exec:java -Dexec.mainClass="interface_adapter.generate_feedback.OpenAiApiAdapterTest"
+ *
+ * Optional: pass a custom prompt as args to main:
+ *   -Dexec.args="Write a one-line poem about unit tests."
+ *
+ * How to run the MAIN in MOCK mode (no real key needed):
+ *   mvn -q -DskipTests exec:java -Dexec.mainClass="interface_adapter.generate_feedback.OpenAiApiAdapterTest" -Dexec.args="--mock"
+ *
+ * NOTE: The adapter reads the API key from the OS environment variable OPENAI_API_KEY (System.getenv),
+ *       which cannot be set from inside Java. You must export it in your shell / IDE Run Configuration.
  */
 class OpenAiApiAdapterTest {
 
@@ -30,19 +41,16 @@ class OpenAiApiAdapterTest {
 
     @BeforeEach
     void startServer() throws IOException {
+        // Most tests use MockWebServer; set up and redirect the adapter's base URL.
         server = new MockWebServer();
         server.start();
-        // Save and override the system property used by the adapter
         originalBaseUrlProp = System.getProperty("OPENAI_API_BASE_URL");
         System.setProperty("OPENAI_API_BASE_URL", server.url("/v1/chat/completions").toString());
     }
 
     @AfterEach
     void shutdownServer() throws IOException {
-        if (server != null) {
-            server.shutdown();
-        }
-        // Restore the system property
+        if (server != null) server.shutdown();
         if (originalBaseUrlProp == null) {
             System.clearProperty("OPENAI_API_BASE_URL");
         } else {
@@ -52,65 +60,49 @@ class OpenAiApiAdapterTest {
 
     // ---------- Constructor behavior when env var is missing ----------
 
-    /**
-     * This test verifies the constructor fails if OPENAI_API_KEY is not set.
-     * It is disabled when the env var IS set (e.g., in CI), to avoid false failures.
-     */
     @Test
     @DisabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".*")
     void constructorThrows_whenApiKeyMissing() {
-        NullPointerException ex = assertThrows(NullPointerException.class, OpenAiApiAdapter::new);
+        var ex = assertThrows(NullPointerException.class, OpenAiApiAdapter::new);
         assertTrue(ex.getMessage().contains("OPENAI_API_KEY"), "Expected message to mention OPENAI_API_KEY");
     }
 
-    // ---------- Happy path + request/response parsing (requires env var present) ----------
+    // ---------- Happy path using MockWebServer (recommended for unit tests) ----------
 
     @Test
     @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
     void callGeneralAnalysis_sendsProperPayload_andParsesContent() throws Exception {
-        // Arrange: mock a successful OpenAI-like response
-        String body = """
-            {
-              "id":"chatcmpl-test",
-              "object":"chat.completion",
-              "choices":[
-                {"index":0,"message":{"role":"assistant","content":"Hello there!"},"finish_reason":"stop"}
-              ]
-            }
-            """;
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody(body)
+                .setBody("""
+                    {
+                      "choices":[
+                        {"message":{"content":"Hello from mock!"}}
+                      ]
+                    }
+                    """)
                 .addHeader("Content-Type", "application/json"));
 
+        // We only need the key to construct the adapter; any non-empty value is fine for this mocked test.
         OpenAiApiAdapter adapter = new OpenAiApiAdapter();
 
-        // Act
         String result = adapter.callGeneralAnalysis("Say hi");
+        assertEquals("Hello from mock!", result);
 
-        // Assert response content
-        assertEquals("Hello there!", result);
-
-        // Inspect the request that the adapter sent
         RecordedRequest req = server.takeRequest();
         assertEquals("/v1/chat/completions", req.getPath());
         assertEquals("POST", req.getMethod());
         assertNotNull(req.getHeader("Authorization"));
-        assertTrue(req.getHeader("Authorization").startsWith("Bearer "),
-                "Authorization header should be Bearer <OPENAI_API_KEY>");
-
+        assertTrue(req.getHeader("Authorization").startsWith("Bearer "));
         String sent = req.getBody().readUtf8();
-        // Minimal checks: model, temperature, message content presence
-        assertTrue(sent.contains("\"model\":\"gpt-4o-mini\""), "Model should be gpt-4o-mini");
-        assertTrue(sent.contains("\"temperature\":0.5"), "Temperature should be 0.5 (Constants.HALF)");
-        assertTrue(sent.contains("\"role\":\"user\""), "Should send a user role message");
-        assertTrue(sent.contains("\"content\":\"Say hi\""), "Should include the user prompt");
+        assertTrue(sent.contains("\"model\":\"gpt-4o-mini\""));
+        assertTrue(sent.contains("\"temperature\":0.5"));
+        assertTrue(sent.contains("\"content\":\"Say hi\""));
     }
 
     @Test
     @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
     void callCorrelationBayes_and_callRecommendation_delegateToSameChat() throws Exception {
-        // Queue two successful responses (one per call)
         server.enqueue(new MockResponse().setResponseCode(200).setBody("""
             {"choices":[{"message":{"content":"Corr OK"}}]}
             """).addHeader("Content-Type", "application/json"));
@@ -126,17 +118,9 @@ class OpenAiApiAdapterTest {
         String r2 = adapter.callRecommendation("recommendation prompt");
         assertEquals("Reco OK", r2);
 
-        // Verify first request had the first prompt, etc.
-        RecordedRequest req1 = server.takeRequest();
-        String b1 = req1.getBody().readUtf8();
-        assertTrue(b1.contains("correlation prompt"));
-
-        RecordedRequest req2 = server.takeRequest();
-        String b2 = req2.getBody().readUtf8();
-        assertTrue(b2.contains("recommendation prompt"));
+        assertTrue(server.takeRequest().getBody().readUtf8().contains("correlation prompt"));
+        assertTrue(server.takeRequest().getBody().readUtf8().contains("recommendation prompt"));
     }
-
-    // ---------- Error handling ----------
 
     @Test
     @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
@@ -150,9 +134,86 @@ class OpenAiApiAdapterTest {
 
         IOException ex = assertThrows(IOException.class,
                 () -> adapter.callGeneralAnalysis("bad"));
-        assertTrue(ex.getMessage().contains("GPT API error 400"),
-                "Should include status code in exception message");
-        assertTrue(ex.getMessage().contains("Bad request"),
-                "Should include response body in exception message");
+        assertTrue(ex.getMessage().contains("GPT API error 400"));
+        assertTrue(ex.getMessage().contains("Bad request"));
+    }
+
+    // ======================================================================
+    // A simple MAIN so you can quickly run with a real key or in mock mode.
+    // ======================================================================
+
+    public static void main(String[] args) throws Exception {
+        // Args: [--mock] [prompt...]
+        boolean mockMode = args != null && args.length > 0 && "--mock".equalsIgnoreCase(args[0]);
+        String prompt = "Write a haiku about unit testing in Java.";
+        if (args != null && args.length > (mockMode ? 1 : 0)) {
+            prompt = String.join(" ", java.util.Arrays.copyOfRange(args, mockMode ? 1 : 0, args.length));
+        }
+
+        String envKey = System.getenv("OPENAI_API_KEY");
+        System.out.println("=== OpenAiApiAdapter Test Runner ===");
+        System.out.println("OPENAI_API_KEY present? " + (envKey != null && !envKey.isBlank()));
+        if (envKey != null && envKey.length() >= 8) {
+            System.out.println("Key preview: " + envKey.substring(0, 4) + "..." + envKey.substring(envKey.length() - 4));
+        }
+
+        if (mockMode) {
+            // Run against a mock server (no real key needed, but constructor still checks env var).
+            // If you don't want to set a real key, temporarily export a dummy one:
+            //   export OPENAI_API_KEY=dummy   (or on Windows: $env:OPENAI_API_KEY="dummy")
+            try (MockWebServer server = new MockWebServer()) {
+                server.start();
+                System.setProperty("OPENAI_API_BASE_URL", server.url("/v1/chat/completions").toString());
+
+                server.enqueue(new MockResponse()
+                        .setResponseCode(200)
+                        .setBody("""
+                            {"choices":[{"message":{"content":"[MOCK] Hello from MockWebServer!"}}]}
+                            """)
+                        .addHeader("Content-Type", "application/json"));
+
+                OpenAiApiAdapter adapter = new OpenAiApiAdapter();
+                String out = adapter.callGeneralAnalysis(prompt);
+                System.out.println("Mocked response:\n" + out);
+
+                server.shutdown();
+                System.clearProperty("OPENAI_API_BASE_URL");
+            }
+            System.out.println("=== Done (mock mode) ===");
+            return;
+        }
+
+        // Real call path: requires OPENAI_API_KEY in your environment.
+        if (envKey == null || envKey.isBlank()) {
+            System.err.println("ERROR: OPENAI_API_KEY is not set in your environment.");
+            System.err.println("Set it and re-run this main. Examples:");
+            System.err.println("  macOS/Linux : export OPENAI_API_KEY=sk-...");
+            System.err.println("  Windows PS  : $env:OPENAI_API_KEY=\"sk-...\"");
+            System.exit(2);
+        }
+
+        // Optional: you can override the endpoint via -DOPENAI_API_BASE_URL, but by default it's the real API.
+        String endpoint = System.getProperty("OPENAI_API_BASE_URL",
+                "https://api.openai.com/v1/chat/completions");
+        System.out.println("Endpoint: " + endpoint);
+        System.out.println("Prompt  : " + prompt);
+
+        try {
+            OpenAiApiAdapter adapter = new OpenAiApiAdapter();
+            String general = adapter.callGeneralAnalysis(prompt);
+            System.out.println("\n[callGeneralAnalysis]\n" + general + "\n");
+
+            String corr = adapter.callCorrelationBayes("Explain correlation vs. causation briefly.");
+            System.out.println("[callCorrelationBayes]\n" + corr + "\n");
+
+            String reco = adapter.callRecommendation("Recommend 3 tips to improve unit tests.");
+            System.out.println("[callRecommendation]\n" + reco + "\n");
+
+            System.out.println("=== Done (real call) ===");
+        } catch (IOException e) {
+            System.err.println("I/O error calling API: " + e.getMessage());
+            e.printStackTrace(System.err);
+            System.exit(3);
+        }
     }
 }

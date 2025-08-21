@@ -8,19 +8,24 @@ import interface_adapter.Angela.task.delete.DeleteTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskController;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskViewModel;
 import interface_adapter.Angela.task.edit_available.EditAvailableTaskState;
-import use_case.Angela.task.TaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.task.edit_available.EditAvailableTaskDataAccessInterface;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 import entity.info.Info;
 import entity.Category;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import view.FontUtil;
 
 /**
@@ -38,7 +43,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     private DeleteTaskController deleteTaskController;
     private EditAvailableTaskController editAvailableTaskController;
-    private TaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private CategoryGateway categoryGateway;
     private EditAvailableTaskDataAccessInterface editTaskDataAccess;
 
@@ -48,6 +53,9 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
     // Store components for editing
     private JTextField editNameField;
     private JComboBox<CategoryItem> editCategoryCombo;
+    
+    // Map row index to task ID for sorting functionality
+    private final Map<Integer, String> rowToTaskIdMap = new HashMap<>();
     private JTextField editDescriptionField;
     private JCheckBox editOneTimeCheckbox;
     
@@ -160,6 +168,9 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         taskTable.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer("Delete"));
         taskTable.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor("Delete"));
 
+        // Add table sorting functionality
+        addTableSorting();
+
         // Add scroll pane
         JScrollPane scrollPane = new JScrollPane(taskTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -200,7 +211,7 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         }
     }
 
-    public void setTaskGateway(TaskGateway taskGateway) {
+    public void setTaskGateway(InMemoryTaskDataAccessObject taskGateway) {
         this.taskGateway = taskGateway;
         refreshTasks(); // Initial load
     }
@@ -372,10 +383,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
         if (editTaskDataAccess != null) {
             // Get TaskAvailable objects to access isOneTime through proper interface
-            List<TaskAvailable> taskAvailables = editTaskDataAccess.getAllAvailableTasksWithDetails();
+            List<TaskAvailableInterf> taskAvailables = editTaskDataAccess.getAllAvailableTasksWithDetails();
             
-            for (TaskAvailable taskAvailable : taskAvailables) {
-                Info task = taskAvailable.getInfo();
+            for (TaskAvailableInterf taskAvailable : taskAvailables) {
+                Info task = (Info) taskAvailable.getInfo();
                 
                 // Convert category ID to name for display
                 String categoryDisplay = "";
@@ -727,6 +738,96 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         public boolean stopCellEditing() {
             isPushed = false;
             return super.stopCellEditing();
+        }
+    }
+
+    /**
+     * Adds table sorting functionality to clickable column headers.
+     * Supports sorting by Name, Category, and Description.
+     */
+    private void addTableSorting() {
+        JTableHeader header = taskTable.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            private int lastSortColumn = -1;
+            private boolean ascending = true;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = header.columnAtPoint(e.getPoint());
+                
+                // Only allow sorting on sortable columns (skip One Time, Edit, Delete columns)
+                if (columnIndex == 3 || columnIndex == 4 || columnIndex == 5) {
+                    return;
+                }
+                
+                // Toggle sort order if clicking same column
+                if (columnIndex == lastSortColumn) {
+                    ascending = !ascending;
+                } else {
+                    ascending = true;
+                    lastSortColumn = columnIndex;
+                }
+                
+                sortTableByColumn(columnIndex, ascending);
+            }
+        });
+    }
+
+    /**
+     * Sorts the table by the specified column.
+     */
+    private void sortTableByColumn(int columnIndex, boolean ascending) {
+        // Create list of row data with task IDs for sorting
+        List<RowData> rowDataList = new ArrayList<>();
+        
+        // Collect all rows and their corresponding task IDs
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            Object[] row = new Object[tableModel.getColumnCount()];
+            for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                row[j] = tableModel.getValueAt(i, j);
+            }
+            rowDataList.add(new RowData(row, rowToTaskIdMap.get(i)));
+        }
+        
+        // Sort rows based on the selected column
+        rowDataList.sort((rowData1, rowData2) -> {
+            Object val1 = rowData1.row[columnIndex];
+            Object val2 = rowData2.row[columnIndex];
+            
+            // Handle null values
+            if (val1 == null && val2 == null) return 0;
+            if (val1 == null) return ascending ? -1 : 1;
+            if (val2 == null) return ascending ? 1 : -1;
+            
+            // Sort by string comparison for most columns
+            String str1 = val1.toString();
+            String str2 = val2.toString();
+            
+            int result = str1.compareToIgnoreCase(str2);
+            return ascending ? result : -result;
+        });
+        
+        // Clear and repopulate the table
+        tableModel.setRowCount(0);
+        rowToTaskIdMap.clear();
+        
+        for (int i = 0; i < rowDataList.size(); i++) {
+            RowData rowData = rowDataList.get(i);
+            tableModel.addRow(rowData.row);
+            rowToTaskIdMap.put(i, rowData.taskId);
+        }
+    }
+
+    /**
+     * Helper class to keep row data and task ID together during sorting.
+     */
+    private static class RowData {
+        final Object[] row;
+        final String taskId;
+        
+        RowData(Object[] row, String taskId) {
+            this.row = row;
+            this.taskId = taskId;
         }
     }
 

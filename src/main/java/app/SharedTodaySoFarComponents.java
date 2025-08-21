@@ -30,8 +30,8 @@ public class SharedTodaySoFarComponents {
     private final TodaySoFarController todaySoFarController;
     
     private SharedTodaySoFarComponents() {
-        // Get shared data access
-        SharedDataAccess sharedData = SharedDataAccess.getInstance();
+        // Get shared data access factory
+        AppDataAccessFactory dataAccessFactory = AppDataAccessFactory.getInstance();
         
         // Create shared ViewModels
         this.overdueTasksViewModel = new OverdueTasksViewModel();
@@ -40,23 +40,19 @@ public class SharedTodaySoFarComponents {
         // Wire up Overdue Tasks Use Case
         OverdueTasksOutputBoundary overdueTasksPresenter = new OverdueTasksPresenter(overdueTasksViewModel);
         OverdueTasksInputBoundary overdueTasksInteractor = new OverdueTasksInteractor(
-                sharedData.getTaskGateway(), 
-                sharedData.getCategoryGateway(), 
+                dataAccessFactory.getTaskGateway(), 
+                dataAccessFactory.getCategoryDataAccess(), 
                 overdueTasksPresenter);
         this.overdueTasksController = new OverdueTasksController(overdueTasksInteractor);
         
-        // Wire up Today So Far Use Case with all data sources
-        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = new InMemoryTodaySoFarDataAccess(
-                sharedData.getTaskGateway(), 
-                sharedData.getEventDataAccess(), 
-                sharedData.getWellnessDataAccess(), 
-                sharedData.getGoalRepository());
+        // Wire up Today So Far Use Case using the same data access instances as the pages
+        InMemoryTodaySoFarDataAccess todaySoFarDataAccess = dataAccessFactory.createTodaySoFarDataAccess();
         
         TodaySoFarPresenter todaySoFarPresenter = new TodaySoFarPresenter(todaySoFarViewModel);
         TodaySoFarInputBoundary todaySoFarInteractor = new TodaySoFarInteractor(
                 todaySoFarDataAccess, 
                 todaySoFarPresenter, 
-                sharedData.getCategoryGateway());
+                dataAccessFactory.getCategoryDataAccess());
         this.todaySoFarController = new TodaySoFarController(todaySoFarInteractor);
     }
     
@@ -80,6 +76,7 @@ public class SharedTodaySoFarComponents {
         TodaySoFarView view = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
         view.setOverdueTasksController(overdueTasksController);
         view.setTodaySoFarController(todaySoFarController);
+        view.setSharedComponents(this); // Give view access to shared refresh
         return view;
     }
     
@@ -105,5 +102,13 @@ public class SharedTodaySoFarComponents {
     public void refresh() {
         todaySoFarController.refresh();
         overdueTasksController.execute(7);
+    }
+    
+    /**
+     * Resets the singleton instance for testing purposes.
+     * WARNING: Only use this in tests!
+     */
+    public static synchronized void resetForTesting() {
+        instance = null;
     }
 }

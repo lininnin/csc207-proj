@@ -1,7 +1,7 @@
 package use_case.Angela.category.delete;
 
-import data_access.InMemoryCategoryGateway;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryCategoryDataAccessObject;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
 import entity.info.Info;
@@ -18,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DeleteCategoryInteractorTest {
 
-    private InMemoryCategoryGateway categoryGateway;
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryCategoryDataAccessObject categoryGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestDeleteCategoryPresenter testPresenter;
     private DeleteCategoryInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
+        categoryGateway = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestDeleteCategoryPresenter();
         // Use the new constructor with segregated interfaces
         interactor = new DeleteCategoryInteractor(
@@ -39,7 +39,7 @@ class DeleteCategoryInteractorTest {
 
     @Test
     void testSuccessfulDeleteWithoutTasks() {
-        // Create enough categories to allow deletion (minimum 3 required)
+        // Create some categories for testing
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
@@ -65,7 +65,7 @@ class DeleteCategoryInteractorTest {
 
     @Test
     void testSuccessfulDeleteWithTasks() {
-        // Create enough categories to allow deletion (minimum 3 required)
+        // Create some categories for testing
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));

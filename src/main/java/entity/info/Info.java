@@ -108,6 +108,13 @@ public class Info implements InfoInterf {
 
     // Setters (mutable for compatibility)
 
+    /**
+     * Sets the name of this Info.
+     * @deprecated Use {@link #withName(String)} for immutable updates
+     * @param name The new name (required)
+     * @throws IllegalArgumentException if name is null or empty
+     */
+    @Deprecated
     public void setName(String name) {
         // Name remains required, cannot be empty
         if (name == null || name.trim().isEmpty()) {
@@ -116,13 +123,81 @@ public class Info implements InfoInterf {
         this.name = name.trim();
     }
 
+    /**
+     * Sets the description of this Info.
+     * @deprecated Use {@link #withDescription(String)} for immutable updates
+     * @param description The new description (optional)
+     */
+    @Deprecated
     public void setDescription(String description) {
         // Allow description to be null or empty, normalize to empty string
         this.description = (description == null || description.trim().isEmpty()) ? "" : description.trim();
     }
 
+    /**
+     * Sets the category of this Info.
+     * @deprecated Use {@link #withCategory(String)} for immutable updates
+     * @param category The new category (optional)
+     */
+    @Deprecated
     public void setCategory(String category) {
         // Allow category to be null or empty, normalize to empty string
         this.category = (category == null || category.trim().isEmpty()) ? "" : category.trim();
+    }
+
+    // Immutable update methods for Clean Architecture compliance
+    
+    /**
+     * Creates a new Info instance with the specified name.
+     * This follows the immutable entity pattern.
+     * 
+     * @param name The new name (required)
+     * @return A new Info instance with the updated name
+     * @throws IllegalArgumentException if name is null or empty
+     */
+    public Info withName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        
+        Info newInfo = new Info.Builder(name.trim())
+                .description(this.description)
+                .category(this.category)
+                .build();
+        return newInfo;
+    }
+    
+    /**
+     * Creates a new Info instance with the specified description.
+     * This follows the immutable entity pattern.
+     * 
+     * @param description The new description (optional)
+     * @return A new Info instance with the updated description
+     */
+    public Info withDescription(String description) {
+        String normalizedDescription = (description == null || description.trim().isEmpty()) ? "" : description.trim();
+        
+        Info newInfo = new Info.Builder(this.name)
+                .description(normalizedDescription)
+                .category(this.category)
+                .build();
+        return newInfo;
+    }
+    
+    /**
+     * Creates a new Info instance with the specified category.
+     * This follows the immutable entity pattern.
+     * 
+     * @param category The new category (optional)
+     * @return A new Info instance with the updated category
+     */
+    public Info withCategory(String category) {
+        String normalizedCategory = (category == null || category.trim().isEmpty()) ? "" : category.trim();
+        
+        Info newInfo = new Info.Builder(this.name)
+                .description(this.description)
+                .category(normalizedCategory)
+                .build();
+        return newInfo;
     }
 }

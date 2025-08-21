@@ -1,7 +1,7 @@
 package use_case.alex.event_related.add_event;
 
-import data_access.EventAvailableDataAccessObject;
-import data_access.TodaysEventDataAccessObject;
+import data_access.alex.EventAvailableDataAccessObject;
+import data_access.alex.TodaysEventDataAccessObject;
 import entity.alex.DailyEventLog.DailyEventLogFactory;
 import entity.alex.DailyEventLog.DailyEventLogFactoryInterf;
 import entity.alex.Event.EventFactory;

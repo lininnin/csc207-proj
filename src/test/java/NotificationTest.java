@@ -1,7 +1,7 @@
 
 import interface_adapter.alex.Notification_related.*;
 import use_case.alex.notification_related.*;
-import view.Alex.NotificationView;
+import view.alex.NotificationView;
 
 import javax.swing.*;
 import java.time.LocalTime;

@@ -1,7 +1,6 @@
 package use_case.Angela.task.edit_available;
 
-import entity.Angela.Task.TaskAvailable;
-import use_case.Angela.category.CategoryGateway;
+import entity.Angela.Task.TaskAvailableInterf;
 
 /**
  * Interactor for the edit available task use case.
@@ -9,14 +8,14 @@ import use_case.Angela.category.CategoryGateway;
  */
 public class EditAvailableTaskInteractor implements EditAvailableTaskInputBoundary {
     private final EditAvailableTaskDataAccessInterface dataAccess;
-    private final CategoryGateway categoryGateway;
+    private final EditAvailableTaskCategoryDataAccessInterface categoryDataAccess;
     private final EditAvailableTaskOutputBoundary outputBoundary;
 
     public EditAvailableTaskInteractor(EditAvailableTaskDataAccessInterface dataAccess,
-                                       CategoryGateway categoryGateway,
+                                       EditAvailableTaskCategoryDataAccessInterface categoryDataAccess,
                                        EditAvailableTaskOutputBoundary outputBoundary) {
         this.dataAccess = dataAccess;
-        this.categoryGateway = categoryGateway;
+        this.categoryDataAccess = categoryDataAccess;
         this.outputBoundary = outputBoundary;
     }
 
@@ -49,7 +48,7 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
         }
 
         // Check if task exists
-        TaskAvailable existingTask = dataAccess.getTaskAvailableById(taskId);
+        TaskAvailableInterf existingTask = dataAccess.getTaskAvailableById(taskId);
         if (existingTask == null) {
             outputBoundary.prepareFailView("Task not found in Available Tasks");
             return;
@@ -63,7 +62,7 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
 
         // Validate category if provided
         if (categoryId != null && !categoryId.isEmpty()) {
-            var category = categoryGateway.getCategoryById(categoryId);
+            var category = categoryDataAccess.getCategoryById(categoryId);
             if (category == null) {
                 outputBoundary.prepareFailView("Invalid category selected");
                 return;

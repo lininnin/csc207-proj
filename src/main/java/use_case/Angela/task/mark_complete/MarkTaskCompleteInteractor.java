@@ -1,6 +1,7 @@
 package use_case.Angela.task.mark_complete;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Sophia.Goal;
 import use_case.repository.GoalRepository;
 import java.time.LocalDateTime;
@@ -36,7 +37,7 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
         boolean markAsComplete = inputData.isMarkAsComplete();
 
         // Get the task from today's list
-        Task task = dataAccess.getTodayTaskById(taskId);
+        TaskInterf task = dataAccess.getTodayTaskById(taskId);
         if (task == null) {
             outputBoundary.presentError("Task not found in Today's Tasks");
             return;
@@ -73,7 +74,7 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
      * @param task The task that was marked complete/incomplete
      * @param isCompleted Whether the task was marked as complete (true) or incomplete (false)
      */
-    private void updateGoalProgressForTask(Task task, boolean isCompleted) {
+    private void updateGoalProgressForTask(TaskInterf task, boolean isCompleted) {
         try {
             // Get today's goals
             List<Goal> todayGoals = goalRepository.getTodayGoals();

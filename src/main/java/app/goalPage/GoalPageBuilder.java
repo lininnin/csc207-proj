@@ -1,12 +1,15 @@
 package app.goalPage;
+import app.AppDataAccessFactory;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.info.Info;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
 // Import view models
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.sophia.available_goals.AvailableGoalsViewModel;
 import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
@@ -63,10 +66,12 @@ import java.util.List;
  * - Goal management controls
  */
 public class GoalPageBuilder {
-    // Data access components
-    private FileGoalRepository goalRepository;
-    private GoalFactory goalFactory;
-    private InMemoryTaskGateway taskGateway;
+    // Data access - Injected via constructor
+    private final AppDataAccessFactory dataAccessFactory;
+    private final FileGoalRepository goalRepository;
+    private final GoalFactory goalFactory;
+    private final InMemoryTaskDataAccessObject taskGateway;
+    private final InMemoryCategoryDataAccessObject categoryDataAccess;
 
     // Form reference for goal creation
     private JPanel createGoalForm;
@@ -93,12 +98,31 @@ public class GoalPageBuilder {
     private TodayGoalPresenter todayGoalPresenter;
 
     /**
+     * Creates a new GoalPageBuilder with injected dependencies.
+     * @param dataAccessFactory The factory for creating data access objects
+     */
+    public GoalPageBuilder(AppDataAccessFactory dataAccessFactory) {
+        this.dataAccessFactory = AppDataAccessFactory.getInstance(); // Use singleton
+        this.goalRepository = this.dataAccessFactory.getGoalRepository();
+        this.goalFactory = new GoalFactory();
+        this.taskGateway = this.dataAccessFactory.getTaskGateway();
+        this.categoryDataAccess = this.dataAccessFactory.getCategoryDataAccess();
+    }
+    
+    /**
+     * Creates a new GoalPageBuilder with default data access objects.
+     * For backward compatibility.
+     */
+    public GoalPageBuilder() {
+        this(AppDataAccessFactory.getInstance());
+    }
+
+    /**
      * Main build method that constructs the complete goal page
      * @return JPanel containing the fully assembled UI
      */
     public JPanel build() {
         initializeViewModels();
-        initializeDataAccess();
         initializeUseCases();
         return createMainPanel();
     }
@@ -117,11 +141,6 @@ public class GoalPageBuilder {
     /**
      * Sets up data access layer with file-based persistence
      */
-    private void initializeDataAccess() {
-        goalRepository = app.SharedDataAccess.getInstance().getGoalRepository();
-        goalFactory = new GoalFactory();
-        taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
-    }
 
     /**
      * Configures all use cases with their dependencies
@@ -362,7 +381,19 @@ public class GoalPageBuilder {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof TaskAvailable) {
                     TaskAvailable task = (TaskAvailable) value;
-                    setText(task.getInfo().getName());
+                    String taskName = task.getInfo().getName();
+                    
+                    // Get category name if category ID exists
+                    String categoryDisplay = "";
+                    String categoryId = task.getInfo().getCategory();
+                    if (categoryId != null && !categoryId.isEmpty()) {
+                        entity.Category category = categoryDataAccess.getCategoryById(categoryId);
+                        if (category != null) {
+                            categoryDisplay = " [" + category.getName() + "]";
+                        }
+                    }
+                    
+                    setText(taskName + categoryDisplay);
                 }
                 return this;
             }
@@ -444,7 +475,7 @@ public class GoalPageBuilder {
                 BeginAndDueDates taskDates = new BeginAndDueDates(LocalDate.now(), endDate);
                 targetTask = new Task(
                         selectedTargetTaskAvailable.getId(),
-                        selectedTargetTaskAvailable.getInfo(),
+                        (Info) selectedTargetTaskAvailable.getInfo(),
                         taskDates,
                         selectedTargetTaskAvailable.isOneTime()
                 );
@@ -485,6 +516,8 @@ public class GoalPageBuilder {
             for (TaskAvailable task : availableTasks) {
                 targetTaskBox.addItem(task);
             }
+            
+            // Restore selection if possible
             if (selectedTask != null) {
                 for (int i = 0; i < targetTaskBox.getItemCount(); i++) {
                     TaskAvailable task = targetTaskBox.getItemAt(i);
@@ -494,10 +527,14 @@ public class GoalPageBuilder {
                     }
                 }
             }
+            
+            // Trigger repaint to ensure renderer is applied
+            targetTaskBox.repaint();
         }
     }
 
     private TodaySoFarView createTodaySoFarPanel() {
+        // Get shared Today So Far components
         app.SharedTodaySoFarComponents sharedTodaySoFar = app.SharedTodaySoFarComponents.getInstance();
         TodaySoFarView todaySoFarView = sharedTodaySoFar.createTodaySoFarView();
         TodaySoFarController todaySoFarController = sharedTodaySoFar.getTodaySoFarController();

@@ -28,8 +28,9 @@ public class TodaySoFarPresenter implements TodaySoFarOutputBoundary {
         
         // Update view model
         viewModel.setState(state);
-        System.out.println("DEBUG: Firing property change with " + state.getGoals().size() + " goals, " + 
-                          state.getCompletedItems().size() + " completed items");
+        System.out.println("DEBUG: Firing property change with " + 
+                          (state.getGoals() != null ? state.getGoals().size() : 0) + " goals, " + 
+                          (state.getCompletedItems() != null ? state.getCompletedItems().size() : 0) + " completed items");
         viewModel.firePropertyChanged();
     }
     

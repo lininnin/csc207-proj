@@ -19,6 +19,7 @@ public class OverdueTasksController {
      * @param daysBack Number of days to look back for overdue tasks
      */
     public void execute(int daysBack) {
+        System.out.println("DEBUG: OverdueTasksController.execute() called with daysBack: " + daysBack);
         OverdueTasksInputData inputData = new OverdueTasksInputData(daysBack);
         interactor.execute(inputData);
     }

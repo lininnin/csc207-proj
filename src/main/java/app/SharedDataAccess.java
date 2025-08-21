@@ -1,10 +1,10 @@
 package app;
 
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
-import data_access.TodaysEventDataAccessObject;
-import data_access.TodaysWellnessLogDataAccessObject;
-import data_access.files.FileGoalRepository;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryDataAccessObject;
+import data_access.alex.TodaysEventDataAccessObject;
+import data_access.alex.TodaysWellnessLogDataAccessObject;
+import data_access.FileGoalRepository;
 import entity.alex.DailyEventLog.DailyEventLogFactory;
 import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Sophia.GoalFactory;
@@ -17,16 +17,16 @@ import java.io.File;
 public class SharedDataAccess {
     private static SharedDataAccess instance;
     
-    private final InMemoryTaskGateway taskGateway;
-    private final InMemoryCategoryGateway categoryGateway;
+    private final InMemoryTaskDataAccessObject taskGateway;
+    private final InMemoryCategoryDataAccessObject categoryDataAccess;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
     private final FileGoalRepository goalRepository;
     
     private SharedDataAccess() {
         // Initialize shared data access objects
-        this.taskGateway = new InMemoryTaskGateway();
-        this.categoryGateway = new InMemoryCategoryGateway();
+        this.taskGateway = new InMemoryTaskDataAccessObject();
+        this.categoryDataAccess = new InMemoryCategoryDataAccessObject();
         
         // Initialize event data access
         this.eventDataAccess = new TodaysEventDataAccessObject(
@@ -45,6 +45,9 @@ public class SharedDataAccess {
             new File("today_goal.txt"),
             new GoalFactory()
         );
+        
+        // Inject goal repository into task gateway for goal-task relationship checking
+        this.taskGateway.setGoalRepository(this.goalRepository);
     }
     
     /**
@@ -62,16 +65,16 @@ public class SharedDataAccess {
      * Gets the shared task gateway.
      * @return The task gateway
      */
-    public InMemoryTaskGateway getTaskGateway() {
+    public InMemoryTaskDataAccessObject getTaskGateway() {
         return taskGateway;
     }
     
     /**
-     * Gets the shared category gateway.
-     * @return The category gateway
+     * Gets the shared category data access.
+     * @return The category data access
      */
-    public InMemoryCategoryGateway getCategoryGateway() {
-        return categoryGateway;
+    public InMemoryCategoryDataAccessObject getCategoryDataAccess() {
+        return categoryDataAccess;
     }
     
     /**
@@ -96,5 +99,42 @@ public class SharedDataAccess {
      */
     public FileGoalRepository getGoalRepository() {
         return goalRepository;
+    }
+    
+    /**
+     * Resets the singleton instance for testing purposes.
+     * This clears all data and creates fresh data access objects.
+     * WARNING: Only use this in tests!
+     */
+    public static synchronized void resetForTesting() {
+        instance = null;
+    }
+    
+    /**
+     * Clears all data from the shared data access objects.
+     * This is useful for cleaning up between tests.
+     */
+    public void clearAllData() {
+        // Clear task data
+        if (taskGateway != null) {
+            taskGateway.clearAllData();
+        }
+        
+        // Clear category data  
+        if (categoryDataAccess != null) {
+            categoryDataAccess.clearAllData();
+        }
+        
+        // Clear event data
+        if (eventDataAccess != null) {
+            eventDataAccess.clearAllData();
+        }
+        
+        // Clear wellness data
+        if (wellnessDataAccess != null) {
+            // wellnessDataAccess.clearAllData(); // TODO: Add clear method to TodaysWellnessLogDataAccessObject
+        }
+        
+        // Note: We don't clear file-based goal repository as it persists to disk
     }
 }
