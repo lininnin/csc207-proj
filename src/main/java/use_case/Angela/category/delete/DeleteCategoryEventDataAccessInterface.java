@@ -52,4 +52,13 @@ public interface DeleteCategoryEventDataAccessInterface {
      * @return List of today's events that have empty or null category
      */
     List<Info> findTodaysEventsWithEmptyCategory();
+
+    /**
+     * Updates all events that reference the given category to have null/empty category.
+     * This is a bulk operation used when a category is deleted.
+     *
+     * @param categoryId The category ID whose references should be cleared
+     * @return true if all updates succeeded, false otherwise
+     */
+    boolean updateEventsCategoryToNull(String categoryId);
 }

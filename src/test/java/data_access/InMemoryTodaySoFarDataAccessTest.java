@@ -1,13 +1,16 @@
 package data_access;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import test_utils.TestDataResetUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +68,9 @@ class InMemoryTodaySoFarDataAccessTest {
 
     @BeforeEach
     void setUp() {
+        // Reset all shared singleton data for test isolation
+        TestDataResetUtil.resetAllSharedData();
+        
         MockitoAnnotations.openMocks(this);
     }
 
@@ -98,7 +104,7 @@ class InMemoryTodaySoFarDataAccessTest {
                 mockTaskGateway, mockEventDataAccess, mockWellnessDataAccess, mockGoalRepository
         );
         
-        List<Task> completed = dataAccess.getCompletedTasksForToday();
+        List<TaskInterf> completed = dataAccess.getCompletedTasksForToday();
         
         assertEquals(2, completed.size());
         assertTrue(completed.contains(mockTask1));
@@ -112,7 +118,7 @@ class InMemoryTodaySoFarDataAccessTest {
                 null, mockEventDataAccess, mockWellnessDataAccess, mockGoalRepository
         );
         
-        List<Task> completed = dataAccess.getCompletedTasksForToday();
+        List<TaskInterf> completed = dataAccess.getCompletedTasksForToday();
         
         assertTrue(completed.isEmpty());
     }
@@ -123,7 +129,7 @@ class InMemoryTodaySoFarDataAccessTest {
         
         dataAccess = new InMemoryTodaySoFarDataAccess(mockTaskGateway);
         
-        List<Task> completed = dataAccess.getCompletedTasksForToday();
+        List<TaskInterf> completed = dataAccess.getCompletedTasksForToday();
         
         assertTrue(completed.isEmpty());
     }
@@ -217,7 +223,7 @@ class InMemoryTodaySoFarDataAccessTest {
                 mockTaskGateway, mockEventDataAccess, mockWellnessDataAccess, mockGoalRepository
         );
         
-        List<Goal> activeGoals = dataAccess.getActiveGoals();
+        List<GoalInterface> activeGoals = dataAccess.getActiveGoals();
         
         assertEquals(2, activeGoals.size());
         assertTrue(activeGoals.contains(mockGoal1));
@@ -230,7 +236,7 @@ class InMemoryTodaySoFarDataAccessTest {
                 mockTaskGateway, mockEventDataAccess, mockWellnessDataAccess, null
         );
         
-        List<Goal> goals = dataAccess.getActiveGoals();
+        List<GoalInterface> goals = dataAccess.getActiveGoals();
         
         assertTrue(goals.isEmpty());
     }
@@ -243,7 +249,7 @@ class InMemoryTodaySoFarDataAccessTest {
                 mockTaskGateway, mockEventDataAccess, mockWellnessDataAccess, mockGoalRepository
         );
         
-        List<Goal> goals = dataAccess.getActiveGoals();
+        List<GoalInterface> goals = dataAccess.getActiveGoals();
         
         assertTrue(goals.isEmpty());
     }
@@ -427,7 +433,7 @@ class InMemoryTodaySoFarDataAccessTest {
         when(mockTask1.isOverdue()).thenReturn(false);
         when(mockTask1.isCompleted()).thenReturn(true);
         
-        List<Task> allTasks = Arrays.asList(mockTask1);
+        List<Task> allTasks = Arrays.asList((Task) mockTask1);
         when(mockTaskGateway.getTodaysTasks()).thenReturn(allTasks);
         
         dataAccess = new InMemoryTodaySoFarDataAccess(mockTaskGateway);

@@ -149,6 +149,9 @@ public class TaskFactory {
      * Converts InfoInterf to concrete Info type.
      */
     private Info convertToConcreteInfo(InfoInterf info) {
+        if (info == null) {
+            throw new IllegalArgumentException("Info cannot be null");
+        }
         if (info instanceof Info) {
             return (Info) info;
         } else if (info instanceof ImmutableInfo) {
@@ -162,6 +165,9 @@ public class TaskFactory {
      * Converts BeginAndDueDatesInterf to concrete BeginAndDueDates type.
      */
     private BeginAndDueDates convertToConcreteBeginAndDueDates(BeginAndDueDatesInterf dates) {
+        if (dates == null) {
+            throw new IllegalArgumentException("BeginAndDueDates cannot be null");
+        }
         if (dates instanceof BeginAndDueDates) {
             return (BeginAndDueDates) dates;
         } else if (dates instanceof ImmutableBeginAndDueDates) {

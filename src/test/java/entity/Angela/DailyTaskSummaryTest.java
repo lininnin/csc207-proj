@@ -1,8 +1,10 @@
 package entity.Angela;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Angela.Task.TaskFactory;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 import entity.Angela.Task.TaskAvailableFactory;
 import entity.info.Info;
 import entity.BeginAndDueDates.BeginAndDueDates;
@@ -59,7 +61,7 @@ class DailyTaskSummaryTest {
     void testAddScheduledTask() {
         Info taskInfo = new Info.Builder("Test task").description("A test task").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", taskInfo, dates, false);
+        Task task = (Task) taskFactory.create("template1", taskInfo, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
@@ -72,7 +74,7 @@ class DailyTaskSummaryTest {
     void testAddCompletedTaskUpdatesStats() {
         Info taskInfo = new Info.Builder("Completed task").description("A completed task").category("Work").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", taskInfo, dates, false);
+        Task task = (Task) taskFactory.create("template1", taskInfo, dates, false);
         
         // First add as scheduled
         dailyTaskSummary.addScheduledTask(task);
@@ -97,9 +99,9 @@ class DailyTaskSummaryTest {
         Info info3 = new Info.Builder("Task 3").build();
         
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task1 = taskFactory.create("template1", info1, dates, false);
-        Task task2 = taskFactory.create("template2", info2, dates, false);
-        Task task3 = taskFactory.create("template3", info3, dates, false);
+        Task task1 = (Task) taskFactory.create("template1", info1, dates, false);
+        Task task2 = (Task) taskFactory.create("template2", info2, dates, false);
+        Task task3 = (Task) taskFactory.create("template3", info3, dates, false);
         
         dailyTaskSummary.addScheduledTask(task1);
         dailyTaskSummary.addScheduledTask(task2);
@@ -129,10 +131,10 @@ class DailyTaskSummaryTest {
         Info info4 = new Info.Builder("Task 4").build();
         
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task1 = taskFactory.create("template1", info1, dates, false);
-        Task task2 = taskFactory.create("template2", info2, dates, false);
-        Task task3 = taskFactory.create("template3", info3, dates, false);
-        Task task4 = taskFactory.create("template4", info4, dates, false);
+        Task task1 = (Task) taskFactory.create("template1", info1, dates, false);
+        Task task2 = (Task) taskFactory.create("template2", info2, dates, false);
+        Task task3 = (Task) taskFactory.create("template3", info3, dates, false);
+        Task task4 = (Task) taskFactory.create("template4", info4, dates, false);
         
         // Add scheduled tasks
         dailyTaskSummary.addScheduledTask(task1);
@@ -156,7 +158,7 @@ class DailyTaskSummaryTest {
     void testCompletionRateAllTasksCompleted() {
         Info info = new Info.Builder("Task").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         dailyTaskSummary.markTaskCompleted(task);
@@ -168,7 +170,7 @@ class DailyTaskSummaryTest {
     void testCompletionRateNoTasksCompleted() {
         Info info = new Info.Builder("Task").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
@@ -184,10 +186,10 @@ class DailyTaskSummaryTest {
         Info healthInfo = new Info.Builder("Health task").category("Health").build();
         
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task workTask1 = taskFactory.create("template1", workInfo1, dates, false);
-        Task workTask2 = taskFactory.create("template2", workInfo2, dates, false);
-        Task personalTask = taskFactory.create("template3", personalInfo, dates, false);
-        Task healthTask = taskFactory.create("template4", healthInfo, dates, false);
+        Task workTask1 = (Task) taskFactory.create("template1", workInfo1, dates, false);
+        Task workTask2 = (Task) taskFactory.create("template2", workInfo2, dates, false);
+        Task personalTask = (Task) taskFactory.create("template3", personalInfo, dates, false);
+        Task healthTask = (Task) taskFactory.create("template4", healthInfo, dates, false);
         
         // Add all as scheduled
         dailyTaskSummary.addScheduledTask(workTask1);
@@ -214,9 +216,9 @@ class DailyTaskSummaryTest {
         Info info3 = new Info.Builder("Task 3").category("Work").build();
         
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task1 = taskFactory.create("template1", info1, dates, false);
-        Task task2 = taskFactory.create("template2", info2, dates, false);
-        Task task3 = taskFactory.create("template3", info3, dates, false);
+        Task task1 = (Task) taskFactory.create("template1", info1, dates, false);
+        Task task2 = (Task) taskFactory.create("template2", info2, dates, false);
+        Task task3 = (Task) taskFactory.create("template3", info3, dates, false);
         
         dailyTaskSummary.addScheduledTask(task1);
         dailyTaskSummary.addScheduledTask(task2);
@@ -243,7 +245,7 @@ class DailyTaskSummaryTest {
     void testTaskListEncapsulation() {
         Info info = new Info.Builder("Task").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
@@ -260,7 +262,7 @@ class DailyTaskSummaryTest {
     void testCategoryBreakdownEncapsulation() {
         Info info = new Info.Builder("Task").category("Work").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         dailyTaskSummary.markTaskCompleted(task);
@@ -279,7 +281,7 @@ class DailyTaskSummaryTest {
     void testMarkTaskCompletedOnlyOnce() {
         Info info = new Info.Builder("Task").category("Work").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
@@ -297,7 +299,7 @@ class DailyTaskSummaryTest {
     void testMarkTaskCompletedNotInScheduled() {
         Info info = new Info.Builder("Task").category("Work").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         // Try to mark as completed without adding to scheduled first
         dailyTaskSummary.markTaskCompleted(task);
@@ -316,9 +318,9 @@ class DailyTaskSummaryTest {
         Info healthInfo = new Info.Builder("Morning exercise").category("Health").build();
         
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task workTask = taskFactory.create("template1", workInfo, dates, false);
-        Task personalTask = taskFactory.create("template2", personalInfo, dates, false);
-        Task healthTask = taskFactory.create("template3", healthInfo, dates, false);
+        Task workTask = (Task) taskFactory.create("template1", workInfo, dates, false);
+        Task personalTask = (Task) taskFactory.create("template2", personalInfo, dates, false);
+        Task healthTask = (Task) taskFactory.create("template3", healthInfo, dates, false);
         
         // Add scheduled tasks
         dailyTaskSummary.addScheduledTask(workTask);
@@ -344,7 +346,7 @@ class DailyTaskSummaryTest {
     void testAddDuplicateTaskIgnored() {
         Info info = new Info.Builder("Task").build();
         BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
-        Task task = taskFactory.create("template1", info, dates, false);
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         dailyTaskSummary.addScheduledTask(task); // Try to add same task again

@@ -134,7 +134,7 @@ class OverdueTasksInteractorTest {
         taskGateway.saveTaskAvailable(template);
         
         // Add to today with past due date
-        Task completedTask = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
+        Task completedTask = (Task) taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
         
         // Mark as completed
         completedTask.markComplete();

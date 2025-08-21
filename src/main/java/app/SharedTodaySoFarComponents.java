@@ -106,4 +106,12 @@ public class SharedTodaySoFarComponents {
         todaySoFarController.refresh();
         overdueTasksController.execute(7);
     }
+    
+    /**
+     * Resets the singleton instance for testing purposes.
+     * WARNING: Only use this in tests!
+     */
+    public static synchronized void resetForTesting() {
+        instance = null;
+    }
 }

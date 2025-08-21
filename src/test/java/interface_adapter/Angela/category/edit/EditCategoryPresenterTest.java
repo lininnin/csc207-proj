@@ -10,9 +10,11 @@ import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import use_case.Angela.category.edit.EditCategoryOutputData;
+import test_utils.TestDataResetUtil;
 
 import static org.mockito.Mockito.*;
 
@@ -32,6 +34,9 @@ class EditCategoryPresenterTest {
 
     @BeforeEach
     void setUp() {
+        // Reset all shared singleton data for test isolation
+        TestDataResetUtil.resetAllSharedData();
+        
         mockCategoryViewModel = mock(CategoryManagementViewModel.class);
         mockAvailableTasksViewModel = mock(AvailableTasksViewModel.class);
         mockTodayTasksViewModel = mock(TodayTasksViewModel.class);
@@ -55,6 +60,16 @@ class EditCategoryPresenterTest {
         presenter.setTodaySoFarController(mockTodaySoFarController);
         presenter.setAvailableEventViewModel(mockAvailableEventViewModel);
         presenter.setTodaysEventsViewModel(mockTodaysEventsViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Clear all mocks to ensure no state leakage
+        reset(mockCategoryViewModel, mockAvailableTasksViewModel, mockTodayTasksViewModel,
+              mockOverdueTasksController, mockTodaySoFarController, 
+              mockAvailableEventViewModel, mockTodaysEventsViewModel,
+              mockCategoryState, mockAvailableTasksState, mockTodayTasksState);
+        presenter = null;
     }
 
     @Test

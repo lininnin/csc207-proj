@@ -117,7 +117,18 @@ public class CategoryManager {
         }
 
         // Remove old and add new
-        categories.remove(oldCategory);
+        // First, find and remove the exact entry (considering case-insensitive matching)
+        String actualOldCategory = null;
+        for (String cat : categories) {
+            if (cat.equalsIgnoreCase(oldCategory)) {
+                actualOldCategory = cat;
+                break;
+            }
+        }
+        
+        if (actualOldCategory != null) {
+            categories.remove(actualOldCategory);
+        }
         categories.add(trimmedNew);
 
         // Notify listeners about the change

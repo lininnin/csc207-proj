@@ -100,4 +100,41 @@ public class SharedDataAccess {
     public FileGoalRepository getGoalRepository() {
         return goalRepository;
     }
+    
+    /**
+     * Resets the singleton instance for testing purposes.
+     * This clears all data and creates fresh data access objects.
+     * WARNING: Only use this in tests!
+     */
+    public static synchronized void resetForTesting() {
+        instance = null;
+    }
+    
+    /**
+     * Clears all data from the shared data access objects.
+     * This is useful for cleaning up between tests.
+     */
+    public void clearAllData() {
+        // Clear task data
+        if (taskGateway != null) {
+            taskGateway.clearAllData();
+        }
+        
+        // Clear category data  
+        if (categoryDataAccess != null) {
+            categoryDataAccess.clearAllData();
+        }
+        
+        // Clear event data
+        if (eventDataAccess != null) {
+            eventDataAccess.clearAllData();
+        }
+        
+        // Clear wellness data
+        if (wellnessDataAccess != null) {
+            // wellnessDataAccess.clearAllData(); // TODO: Add clear method to TodaysWellnessLogDataAccessObject
+        }
+        
+        // Note: We don't clear file-based goal repository as it persists to disk
+    }
 }

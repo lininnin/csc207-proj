@@ -1,9 +1,11 @@
 package use_case.Angela.today_so_far;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Alex.Event.EventInterf;
 import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import entity.Category;
 // Removed CategoryGateway import - will use CategoryReadDataAccessInterface
 import org.junit.jupiter.api.BeforeEach;
@@ -147,7 +149,7 @@ class TodaySoFarInteractorTest {
         void setShouldThrowException(boolean should) { this.shouldThrowException = should; }
         
         @Override
-        public List<Task> getCompletedTasksForToday() {
+        public List<TaskInterf> getCompletedTasksForToday() {
             if (shouldThrowException) throw new RuntimeException("Test exception");
             // For simplicity, return empty list - test focuses on flow not data
             return new ArrayList<>();
@@ -168,7 +170,7 @@ class TodaySoFarInteractorTest {
         }
         
         @Override
-        public List<Goal> getActiveGoals() {
+        public List<GoalInterface> getActiveGoals() {
             if (shouldThrowException) throw new RuntimeException("Test exception");
             // For simplicity, return empty list - test focuses on flow not data  
             return new ArrayList<>();

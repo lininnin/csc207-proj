@@ -4,8 +4,10 @@ import interface_adapter.Angela.task.today.TodayTasksViewModel;
 import interface_adapter.Angela.task.today.TodayTasksState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.task.mark_complete.MarkTaskCompleteOutputData;
 import java.time.LocalDateTime;
 
@@ -21,6 +23,7 @@ class MarkTaskCompletePresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockTodayTasksViewModel = mock(TodayTasksViewModel.class);
         mockOverdueTasksController = mock(OverdueTasksController.class);
         mockTodaySoFarController = mock(TodaySoFarController.class);
@@ -31,6 +34,15 @@ class MarkTaskCompletePresenterTest {
         presenter = new MarkTaskCompletePresenter(mockTodayTasksViewModel);
         presenter.setOverdueTasksController(mockOverdueTasksController);
         presenter.setTodaySoFarController(mockTodaySoFarController);
+    }
+
+    @AfterEach
+    void tearDown() {
+        reset(mockTodayTasksViewModel);
+        reset(mockOverdueTasksController);
+        reset(mockTodaySoFarController);
+        reset(mockTodayTasksState);
+        presenter = null;
     }
 
     @Test

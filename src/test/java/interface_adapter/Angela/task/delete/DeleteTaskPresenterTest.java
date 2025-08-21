@@ -8,8 +8,10 @@ import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.task.delete.DeleteTaskOutputData;
 
 import static org.mockito.Mockito.*;
@@ -29,6 +31,7 @@ class DeleteTaskPresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockAvailableTasksViewModel = mock(AvailableTasksViewModel.class);
         mockDeleteTaskViewModel = mock(DeleteTaskViewModel.class);
         mockTodayTasksViewModel = mock(TodayTasksViewModel.class);
@@ -49,6 +52,20 @@ class DeleteTaskPresenterTest {
         presenter.setAddTaskToTodayViewModel(mockAddTaskToTodayViewModel);
         presenter.setOverdueTasksController(mockOverdueTasksController);
         presenter.setTodaySoFarController(mockTodaySoFarController);
+    }
+
+    @AfterEach
+    void tearDown() {
+        reset(mockAvailableTasksViewModel);
+        reset(mockDeleteTaskViewModel);
+        reset(mockTodayTasksViewModel);
+        reset(mockAddTaskToTodayViewModel);
+        reset(mockOverdueTasksController);
+        reset(mockTodaySoFarController);
+        reset(mockAvailableTasksState);
+        reset(mockTodayTasksState);
+        reset(mockAddTaskToTodayState);
+        presenter = null;
     }
 
     @Test

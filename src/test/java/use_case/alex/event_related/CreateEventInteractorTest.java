@@ -37,26 +37,29 @@ public class CreateEventInteractorTest {
                 "Description",
                 "Study", // category
                 LocalDate.now() // createdDate
-        );        when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
-        when(mockFactory.create("Sleep", "Go to bed early", "Routine")).thenReturn(mockInfo);
-        when(mockInfo.getName()).thenReturn("Sleep");
-        when(mockInfo.getCategory()).thenReturn("Routine");
-        when(mockInfo.getDescription()).thenReturn("Go to bed early");
+        );
+        
+        when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
+        when(mockFactory.create("Event Name", "Description", "Study")).thenReturn(mockInfo);
+        when(mockInfo.getName()).thenReturn("Event Name");
+        when(mockInfo.getCategory()).thenReturn("Study");
+        when(mockInfo.getDescription()).thenReturn("Description");
 
         interactor.execute(input);
 
         verify(mockDAO).save(mockInfo);
         verify(mockPresenter).prepareSuccessView(argThat(output ->
-                output.getName().equals("Sleep") &&
-                        output.getCategory().equals("Routine") &&
-                        output.getDescription().equals("Go to bed early") &&
+                output.getName().equals("Event Name") &&
+                        output.getCategory().equals("Study") &&
+                        output.getDescription().equals("Description") &&
                         !output.isFailed()));
     }
 
     @Test
     void testEmptyName() {
-        CreateEventInputData input = new CreateEventInputData(" ", "Routine",
+        CreateEventInputData input = new CreateEventInputData("id123", " ",
                 "desc", "Study", LocalDate.now());
+        when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
         interactor.execute(input);
         verify(mockPresenter).prepareFailView("Event name cannot be empty.");
     }
@@ -64,15 +67,16 @@ public class CreateEventInteractorTest {
     @Test
     void testNameTooLong() {
         String longName = "x".repeat(21);
-        CreateEventInputData input = new CreateEventInputData(longName, "Routine",
+        CreateEventInputData input = new CreateEventInputData("id123", longName,
                 "desc", "Study", LocalDate.now());
+        when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
         interactor.execute(input);
         verify(mockPresenter).prepareFailView("Event name cannot exceed 20 characters.");
     }
 
     @Test
     void testDuplicateName() {
-        CreateEventInputData input = new CreateEventInputData("Sleep", "Routine",
+        CreateEventInputData input = new CreateEventInputData("id123", "Sleep",
                 "desc", "Study", LocalDate.now());
         InfoInterf existing = mock(InfoInterf.class);
         when(existing.getName()).thenReturn("Sleep");
@@ -84,8 +88,8 @@ public class CreateEventInteractorTest {
     @Test
     void testCategoryTooLong() {
         String longCategory = "x".repeat(21);
-        CreateEventInputData input = new CreateEventInputData("Sleep", longCategory,
-                "desc", "Study", LocalDate.now());
+        CreateEventInputData input = new CreateEventInputData("id123", "Sleep",
+                "desc", longCategory, LocalDate.now());
         when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
         interactor.execute(input);
         verify(mockPresenter).prepareFailView("Category cannot exceed 20 characters.");
@@ -94,7 +98,7 @@ public class CreateEventInteractorTest {
     @Test
     void testDescriptionTooLong() {
         String longDescription = "x".repeat(51);
-        CreateEventInputData input = new CreateEventInputData("Sleep", "Routine",
+        CreateEventInputData input = new CreateEventInputData("id123", "Sleep",
                 longDescription, "Study", LocalDate.now());
         when(mockDAO.getAllEvents()).thenReturn(Collections.emptyList());
         interactor.execute(input);

@@ -1,7 +1,9 @@
 package interface_adapter.Angela.today_so_far;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.today_so_far.TodaySoFarOutputData;
 
 import java.util.ArrayList;
@@ -17,11 +19,19 @@ class TodaySoFarPresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockViewModel = mock(TodaySoFarViewModel.class);
         mockState = mock(TodaySoFarState.class);
         when(mockViewModel.getState()).thenReturn(mockState);
         
         presenter = new TodaySoFarPresenter(mockViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        reset(mockViewModel);
+        reset(mockState);
+        presenter = null;
     }
 
     @Test

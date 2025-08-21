@@ -985,4 +985,13 @@ public class InMemoryTaskGateway implements
     
     // Additional methods to satisfy interface requirements after refactoring
     
+    /**
+     * Clears all data from this gateway for testing purposes.
+     * WARNING: This will delete all tasks and should only be used in tests!
+     */
+    public void clearAllData() {
+        availableTasks.clear();
+        availableTaskTemplates.clear();
+        todaysTasks.clear();
+    }
 }

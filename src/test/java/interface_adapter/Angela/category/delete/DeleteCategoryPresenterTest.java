@@ -10,8 +10,10 @@ import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
 import interface_adapter.alex.event_related.available_event_module.available_event.AvailableEventViewModel;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.category.delete.DeleteCategoryOutputData;
 
 import static org.mockito.Mockito.*;
@@ -32,6 +34,7 @@ class DeleteCategoryPresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockCategoryViewModel = mock(CategoryManagementViewModel.class);
         mockAvailableTasksViewModel = mock(AvailableTasksViewModel.class);
         mockTodayTasksViewModel = mock(TodayTasksViewModel.class);
@@ -55,6 +58,21 @@ class DeleteCategoryPresenterTest {
         presenter.setTodaySoFarController(mockTodaySoFarController);
         presenter.setAvailableEventViewModel(mockAvailableEventViewModel);
         presenter.setTodaysEventsViewModel(mockTodaysEventsViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        reset(mockCategoryViewModel);
+        reset(mockAvailableTasksViewModel);
+        reset(mockTodayTasksViewModel);
+        reset(mockOverdueTasksController);
+        reset(mockTodaySoFarController);
+        reset(mockAvailableEventViewModel);
+        reset(mockTodaysEventsViewModel);
+        reset(mockCategoryState);
+        reset(mockAvailableTasksState);
+        reset(mockTodayTasksState);
+        presenter = null;
     }
 
     @Test

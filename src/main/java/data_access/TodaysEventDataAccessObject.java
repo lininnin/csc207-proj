@@ -212,4 +212,15 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         return result;
     }
 
+    /**
+     * Clears all data from this data access object for testing purposes.
+     * WARNING: This will delete all events and should only be used in tests!
+     */
+    public void clearAllData() {
+        if (todayLog != null) {
+            // Clear today's events - need to check the DailyEventLog API
+            // todayLog.clearAllEvents(); // TODO: Add clear method to DailyEventLogInterf
+        }
+    }
+
 }

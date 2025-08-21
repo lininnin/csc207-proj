@@ -3,10 +3,12 @@ package entity.Angela;
 import entity.Alex.DailyEventLog.DailyEventLog;
 import entity.Alex.DailyWellnessLog.DailyWellnessLog;
 import entity.Angela.Task.Task;
+import entity.info.InfoInterf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import test_utils.TestDataResetUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,13 +25,23 @@ class DailyLogTest {
 
     @Mock
     private Task mockTask;
+    
+    @Mock
+    private InfoInterf mockInfo;
 
     private LocalDate testDate;
 
     @BeforeEach
     void setUp() {
+        // Reset all shared singleton data for test isolation
+        TestDataResetUtil.resetAllSharedData();
+        
         MockitoAnnotations.openMocks(this);
         testDate = LocalDate.of(2023, 12, 15);
+        
+        // Setup mock task to return mock info
+        when(mockTask.getInfo()).thenReturn(mockInfo);
+        when(mockInfo.getCategory()).thenReturn("Test Category");
     }
 
     @Test
@@ -204,6 +216,15 @@ class DailyLogTest {
         DailyLog dailyLog = new DailyLog(testDate);
         Task task2 = mock(Task.class);
         Task task3 = mock(Task.class);
+        InfoInterf mockInfo2 = mock(InfoInterf.class);
+        InfoInterf mockInfo3 = mock(InfoInterf.class);
+        
+        // Setup mocks for task2 and task3
+        when(task2.getInfo()).thenReturn(mockInfo2);
+        when(mockInfo2.getCategory()).thenReturn("Category 2");
+        when(task3.getInfo()).thenReturn(mockInfo3);
+        when(mockInfo3.getCategory()).thenReturn("Category 3");
+        
         LocalDateTime completionTime1 = LocalDateTime.of(2023, 12, 15, 9, 0);
         LocalDateTime completionTime2 = LocalDateTime.of(2023, 12, 15, 15, 30);
         

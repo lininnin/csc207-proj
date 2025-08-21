@@ -56,16 +56,16 @@ public class ViewHistoryState {
     // Copy constructor with modifications
     private ViewHistoryState(Builder builder) {
         this.selectedDate = builder.selectedDate;
-        this.availableDates = new ArrayList<>(builder.availableDates);
+        this.availableDates = builder.availableDates != null ? new ArrayList<>(builder.availableDates) : new ArrayList<>();
         this.hasData = builder.hasData;
         this.errorMessage = builder.errorMessage;
-        this.todaysTasks = new ArrayList<>(builder.todaysTasks);
-        this.completedTasks = new ArrayList<>(builder.completedTasks);
+        this.todaysTasks = builder.todaysTasks != null ? new ArrayList<>(builder.todaysTasks) : new ArrayList<>();
+        this.completedTasks = builder.completedTasks != null ? new ArrayList<>(builder.completedTasks) : new ArrayList<>();
         this.taskCompletionRate = builder.taskCompletionRate;
-        this.overdueTasks = new ArrayList<>(builder.overdueTasks);
-        this.todaysEvents = new ArrayList<>(builder.todaysEvents);
-        this.goalProgress = new ArrayList<>(builder.goalProgress);
-        this.wellnessEntries = new ArrayList<>(builder.wellnessEntries);
+        this.overdueTasks = builder.overdueTasks != null ? new ArrayList<>(builder.overdueTasks) : new ArrayList<>();
+        this.todaysEvents = builder.todaysEvents != null ? new ArrayList<>(builder.todaysEvents) : new ArrayList<>();
+        this.goalProgress = builder.goalProgress != null ? new ArrayList<>(builder.goalProgress) : new ArrayList<>();
+        this.wellnessEntries = builder.wellnessEntries != null ? new ArrayList<>(builder.wellnessEntries) : new ArrayList<>();
         this.exportMessage = builder.exportMessage;
     }
     
@@ -86,16 +86,16 @@ public class ViewHistoryState {
         
         public Builder(ViewHistoryState copyFrom) {
             this.selectedDate = copyFrom.selectedDate;
-            this.availableDates = new ArrayList<>(copyFrom.availableDates);
+            this.availableDates = copyFrom.availableDates != null ? new ArrayList<>(copyFrom.availableDates) : new ArrayList<>();
             this.hasData = copyFrom.hasData;
             this.errorMessage = copyFrom.errorMessage;
-            this.todaysTasks = new ArrayList<>(copyFrom.todaysTasks);
-            this.completedTasks = new ArrayList<>(copyFrom.completedTasks);
+            this.todaysTasks = copyFrom.todaysTasks != null ? new ArrayList<>(copyFrom.todaysTasks) : new ArrayList<>();
+            this.completedTasks = copyFrom.completedTasks != null ? new ArrayList<>(copyFrom.completedTasks) : new ArrayList<>();
             this.taskCompletionRate = copyFrom.taskCompletionRate;
-            this.overdueTasks = new ArrayList<>(copyFrom.overdueTasks);
-            this.todaysEvents = new ArrayList<>(copyFrom.todaysEvents);
-            this.goalProgress = new ArrayList<>(copyFrom.goalProgress);
-            this.wellnessEntries = new ArrayList<>(copyFrom.wellnessEntries);
+            this.overdueTasks = copyFrom.overdueTasks != null ? new ArrayList<>(copyFrom.overdueTasks) : new ArrayList<>();
+            this.todaysEvents = copyFrom.todaysEvents != null ? new ArrayList<>(copyFrom.todaysEvents) : new ArrayList<>();
+            this.goalProgress = copyFrom.goalProgress != null ? new ArrayList<>(copyFrom.goalProgress) : new ArrayList<>();
+            this.wellnessEntries = copyFrom.wellnessEntries != null ? new ArrayList<>(copyFrom.wellnessEntries) : new ArrayList<>();
             this.exportMessage = copyFrom.exportMessage;
         }
         

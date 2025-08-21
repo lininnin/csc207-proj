@@ -312,16 +312,16 @@ public class ViewHistoryInteractorTest {
         BeginAndDueDates dates1 = new BeginAndDueDates(LocalDate.now(), LocalDate.now());
         BeginAndDueDates dates2 = new BeginAndDueDates(LocalDate.now(), LocalDate.now());
         
-        Task completedTask = taskFactory.create("task1", "template1", taskInfo1, Task.Priority.HIGH,
+        Task completedTask = (Task) taskFactory.create("task1", "template1", taskInfo1, Task.Priority.HIGH,
             dates1, true, LocalDateTime.now(), false);
         
-        Task incompleteTask = taskFactory.create("task2", "template2", taskInfo2, Task.Priority.MEDIUM,
+        Task incompleteTask = (Task) taskFactory.create("task2", "template2", taskInfo2, Task.Priority.MEDIUM,
             dates2, false, null, false);
         
         // Create overdue task
         Info overdueInfo = (Info) infoFactory.create("Overdue Task", "Overdue", "Work");
         BeginAndDueDates overdueDates = new BeginAndDueDates(LocalDate.now().minusDays(2), LocalDate.now().minusDays(1));
-        Task overdueTask = taskFactory.create("task3", "template3", overdueInfo, Task.Priority.HIGH,
+        Task overdueTask = (Task) taskFactory.create("task3", "template3", overdueInfo, Task.Priority.HIGH,
             overdueDates, false, null, true);
         
         // Create events with different creation times for sorting test

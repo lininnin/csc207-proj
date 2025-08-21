@@ -1,7 +1,9 @@
 package interface_adapter.Angela.view_history;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.view_history.ViewHistoryOutputData;
 
 import java.time.LocalDate;
@@ -18,11 +20,19 @@ class ViewHistoryPresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockViewModel = mock(ViewHistoryViewModel.class);
         mockState = mock(ViewHistoryState.class);
         when(mockViewModel.getState()).thenReturn(mockState);
         
         presenter = new ViewHistoryPresenter(mockViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Clear all mocks to ensure no state leakage
+        reset(mockViewModel, mockState);
+        presenter = null;
     }
 
     @Test

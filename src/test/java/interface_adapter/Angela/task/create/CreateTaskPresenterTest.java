@@ -5,9 +5,11 @@ import interface_adapter.Angela.task.available.AvailableTasksState;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayViewModel;
 import interface_adapter.Angela.task.add_to_today.AddTaskToTodayState;
 import interface_adapter.ViewManagerModel;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import use_case.Angela.task.create.CreateTaskOutputData;
+import test_utils.TestDataResetUtil;
 
 import static org.mockito.Mockito.*;
 
@@ -24,6 +26,9 @@ class CreateTaskPresenterTest {
 
     @BeforeEach
     void setUp() {
+        // Reset all shared singleton data for test isolation
+        TestDataResetUtil.resetAllSharedData();
+        
         mockCreateTaskViewModel = mock(CreateTaskViewModel.class);
         mockAvailableTasksViewModel = mock(AvailableTasksViewModel.class);
         mockViewManagerModel = mock(ViewManagerModel.class);
@@ -39,6 +44,15 @@ class CreateTaskPresenterTest {
         
         presenter = new CreateTaskPresenter(mockCreateTaskViewModel, mockAvailableTasksViewModel, mockViewManagerModel);
         presenter.setAddTaskToTodayViewModel(mockAddTaskToTodayViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Clear all mocks to ensure no state leakage
+        reset(mockCreateTaskViewModel, mockAvailableTasksViewModel, mockViewManagerModel, 
+              mockAddTaskToTodayViewModel, mockCreateTaskState, mockAvailableTasksState,
+              mockAddTaskToTodayState);
+        presenter = null;
     }
 
     @Test

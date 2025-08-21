@@ -36,7 +36,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now().plusDays(1));
         String taskId = todayTask.getId();
 
         // Edit priority
@@ -56,7 +56,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify priority was updated
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(Task.Priority.HIGH, updatedTask.getPriority());
     }
 
@@ -70,7 +70,7 @@ class EditTodayTaskInteractorTest {
         taskGateway.saveTaskAvailable(availableTask);
         
         LocalDate originalDueDate = LocalDate.now().plusDays(3);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, originalDueDate);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, originalDueDate);
         String taskId = todayTask.getId();
 
         // Edit due date
@@ -89,7 +89,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify due date was updated
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(newDueDate, updatedTask.getDates().getDueDate());
         assertFalse(updatedTask.isOverdue());
     }
@@ -103,7 +103,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, LocalDate.now().plusDays(2));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, LocalDate.now().plusDays(2));
         String taskId = todayTask.getId();
         assertFalse(todayTask.isOverdue());
 
@@ -124,7 +124,7 @@ class EditTodayTaskInteractorTest {
         assertEquals("Due date cannot be before today", testPresenter.lastError);
 
         // Task should remain unchanged
-        Task unchangedTask = taskGateway.getTodayTaskById(taskId);
+        Task unchangedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(LocalDate.now().plusDays(2), unchangedTask.getDates().getDueDate());
         assertFalse(unchangedTask.isOverdue());
     }
@@ -139,7 +139,7 @@ class EditTodayTaskInteractorTest {
         taskGateway.saveTaskAvailable(availableTask);
         
         LocalDate pastDate = LocalDate.now().minusDays(2);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, pastDate);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, pastDate);
         String taskId = todayTask.getId();
         assertTrue(todayTask.isOverdue());
 
@@ -159,7 +159,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task is no longer overdue
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(futureDate, updatedTask.getDates().getDueDate());
         assertFalse(updatedTask.isOverdue());
     }
@@ -173,7 +173,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
         String taskId = todayTask.getId();
 
         // Remove due date
@@ -191,7 +191,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify due date was removed
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertNull(updatedTask.getDates().getDueDate());
         assertFalse(updatedTask.isOverdue());
     }
@@ -205,7 +205,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now());
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now());
         String taskId = todayTask.getId();
 
         // Remove priority
@@ -223,7 +223,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify priority was removed
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertNull(updatedTask.getPriority());
     }
 
@@ -236,7 +236,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now().plusDays(1));
         String taskId = todayTask.getId();
 
         // Edit both fields
@@ -255,7 +255,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify both fields were updated
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(Task.Priority.HIGH, updatedTask.getPriority());
         assertEquals(newDueDate, updatedTask.getDates().getDueDate());
     }
@@ -269,7 +269,7 @@ class EditTodayTaskInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, LocalDate.now());
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, LocalDate.now());
         todayTask.markComplete();
         String taskId = todayTask.getId();
 
@@ -288,7 +288,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task remains completed but fields are updated
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertTrue(updatedTask.isCompleted());
         assertEquals(Task.Priority.HIGH, updatedTask.getPriority());
     }
@@ -322,7 +322,7 @@ class EditTodayTaskInteractorTest {
         
         Task.Priority originalPriority = Task.Priority.MEDIUM;
         LocalDate originalDueDate = LocalDate.now().plusDays(3);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, originalPriority, originalDueDate);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, originalPriority, originalDueDate);
         String taskId = todayTask.getId();
 
         // Edit with same values
@@ -340,7 +340,7 @@ class EditTodayTaskInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify nothing changed
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertEquals(originalPriority, updatedTask.getPriority());
         assertEquals(originalDueDate, updatedTask.getDates().getDueDate());
     }

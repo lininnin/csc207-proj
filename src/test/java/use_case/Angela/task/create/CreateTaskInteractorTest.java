@@ -27,7 +27,7 @@ class CreateTaskInteractorTest {
         taskGateway = new InMemoryTaskGateway();
         categoryDataAccess = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter, new entity.info.InfoFactory(), new entity.Angela.Task.TaskAvailableFactory());
     }
 
     @Test
@@ -135,7 +135,7 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter, new entity.info.InfoFactory(), new entity.Angela.Task.TaskAvailableFactory());
 
         // Try to create task with same name and category (case-insensitive check)
         CreateTaskInputData inputData2 = new CreateTaskInputData(
@@ -329,7 +329,7 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryDataAccess, testPresenter, new entity.info.InfoFactory(), new entity.Angela.Task.TaskAvailableFactory());
 
         // Create second task with same name but different category
         CreateTaskInputData inputData2 = new CreateTaskInputData(

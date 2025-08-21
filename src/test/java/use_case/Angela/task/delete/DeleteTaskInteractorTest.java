@@ -66,7 +66,7 @@ class DeleteTaskInteractorTest {
         String templateId = availableTask.getId();
         
         // Add to today's list
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
 
         // Create input data with template ID - deleting from available view
         DeleteTaskInputData inputData = new DeleteTaskInputData(templateId, true);
@@ -123,7 +123,7 @@ class DeleteTaskInteractorTest {
         taskGateway.saveTaskAvailable(availableTask);
         String templateId = availableTask.getId();
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, LocalDate.now());
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, LocalDate.now());
         todayTask.markComplete();
 
         // Delete the completed task from available view
@@ -152,7 +152,7 @@ class DeleteTaskInteractorTest {
         
         // Add with past due date
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
         assertTrue(todayTask.isOverdue());
 
         // Delete the overdue task from available view
@@ -256,7 +256,7 @@ class DeleteTaskInteractorTest {
         taskGateway.saveTaskAvailable(availableTask);
         String templateId = availableTask.getId();
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now());
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now());
 
         // When deleting from today's view with isFromAvailable=false,
         // it actually deletes completely (both from today and available)

@@ -2,8 +2,10 @@ package interface_adapter.Angela.category.create;
 
 import interface_adapter.Angela.category.CategoryManagementViewModel;
 import interface_adapter.Angela.category.CategoryManagementState;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_utils.TestDataResetUtil;
 import use_case.Angela.category.create.CreateCategoryOutputData;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,11 +19,19 @@ class CreateCategoryPresenterTest {
 
     @BeforeEach
     void setUp() {
+        TestDataResetUtil.resetAllSharedData();
         mockViewModel = mock(CategoryManagementViewModel.class);
         mockState = mock(CategoryManagementState.class);
         when(mockViewModel.getState()).thenReturn(mockState);
         
         presenter = new CreateCategoryPresenter(mockViewModel);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Clear all mocks to ensure no state leakage
+        reset(mockViewModel, mockState);
+        presenter = null;
     }
 
     @Test

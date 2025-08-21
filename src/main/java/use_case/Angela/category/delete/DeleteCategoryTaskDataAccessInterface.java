@@ -65,4 +65,13 @@ public interface DeleteCategoryTaskDataAccessInterface {
      * @return List of Task that have empty or null category
      */
     List<Task> findTodaysTasksWithEmptyCategory();
+
+    /**
+     * Updates all tasks that reference the given category to have null/empty category.
+     * This is a bulk operation used when a category is deleted.
+     *
+     * @param categoryId The category ID whose references should be cleared
+     * @return true if all updates succeeded, false otherwise
+     */
+    boolean updateTasksCategoryToNull(String categoryId);
 }

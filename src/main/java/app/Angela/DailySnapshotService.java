@@ -184,4 +184,12 @@ public class DailySnapshotService {
     public void saveCurrentDaySnapshot() {
         createAndSaveSnapshot();
     }
+    
+    /**
+     * Resets the singleton instance for testing purposes.
+     * WARNING: Only use this in tests!
+     */
+    public static synchronized void resetForTesting() {
+        instance = null;
+    }
 }

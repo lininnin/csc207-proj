@@ -1,6 +1,7 @@
 package use_case.Angela.today_so_far;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import entity.Angela.Task.TaskFactory;
 import entity.Alex.Event.Event;
 import entity.Alex.Event.EventInterf;
@@ -10,6 +11,7 @@ import entity.Alex.WellnessLogEntry.Levels;
 import entity.Alex.MoodLabel.MoodLabel;
 import entity.Alex.MoodLabel.Type;
 import entity.Sophia.Goal;
+import entity.Sophia.GoalInterface;
 import entity.Sophia.GoalInfo;
 import entity.Sophia.GoalInterface.TimePeriod;
 import entity.BeginAndDueDates.BeginAndDueDates;
@@ -232,9 +234,9 @@ class TodaySoFarInteractorComprehensiveTest {
             Info taskInfo1 = new Info.Builder("Task 1").category("cat1").build();
             Info taskInfo2 = new Info.Builder("Task 2").category("cat2").build();
             
-            Task task1 = taskFactory.create("t1", "template1", taskInfo1, Task.Priority.HIGH,
+            Task task1 = (Task) taskFactory.create("t1", "template1", taskInfo1, Task.Priority.HIGH,
                 new BeginAndDueDates(LocalDate.now(), LocalDate.now()), true, LocalDateTime.now(), false);
-            Task task2 = taskFactory.create("t2", "template2", taskInfo2, Task.Priority.MEDIUM,
+            Task task2 = (Task) taskFactory.create("t2", "template2", taskInfo2, Task.Priority.MEDIUM,
                 new BeginAndDueDates(LocalDate.now(), LocalDate.now()), true, LocalDateTime.now(), false);
             
             completedTasks.add(task1);
@@ -341,7 +343,7 @@ class TodaySoFarInteractorComprehensiveTest {
         void addTaskWithNullCategory() {
             TaskFactory taskFactory = new TaskFactory();
             Info taskInfo = new Info.Builder("Task No Category").build();
-            Task task = taskFactory.create("t3", "template3", taskInfo, null,
+            Task task = (Task) taskFactory.create("t3", "template3", taskInfo, null,
                 new BeginAndDueDates(LocalDate.now(), LocalDate.now()), true, LocalDateTime.now(), false);
             completedTasks.add(task);
         }
@@ -349,7 +351,7 @@ class TodaySoFarInteractorComprehensiveTest {
         void addTaskWithCategory(String categoryId) {
             TaskFactory taskFactory = new TaskFactory();
             Info taskInfo = new Info.Builder("Task Custom Category").category(categoryId).build();
-            Task task = taskFactory.create("t4", "template4", taskInfo, null,
+            Task task = (Task) taskFactory.create("t4", "template4", taskInfo, null,
                 new BeginAndDueDates(LocalDate.now(), LocalDate.now()), true, LocalDateTime.now(), false);
             completedTasks.add(task);
         }
@@ -394,10 +396,10 @@ class TodaySoFarInteractorComprehensiveTest {
         }
         
         @Override
-        public List<Task> getCompletedTasksForToday() {
+        public List<TaskInterf> getCompletedTasksForToday() {
             if (shouldThrowException) throw new RuntimeException("Test exception");
             if (returnNullCollections) return null;
-            return completedTasks;
+            return new ArrayList<>(completedTasks);
         }
         
         @Override
@@ -415,10 +417,10 @@ class TodaySoFarInteractorComprehensiveTest {
         }
         
         @Override
-        public List<Goal> getActiveGoals() {
+        public List<GoalInterface> getActiveGoals() {
             if (shouldThrowException) throw new RuntimeException("Test exception");
             if (returnNullCollections) return null;
-            return activeGoals;
+            return new ArrayList<>(activeGoals);
         }
         
         @Override

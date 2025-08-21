@@ -183,4 +183,12 @@ public class InMemoryCategoryDataAccessObject implements
                 .anyMatch(c -> !c.getId().equals(excludeCategoryId) && 
                               c.getName().equalsIgnoreCase(name));
     }
+    
+    /**
+     * Clears all data from this data access object for testing purposes.
+     * WARNING: This will delete all categories and should only be used in tests!
+     */
+    public void clearAllData() {
+        categories.clear();
+    }
 }

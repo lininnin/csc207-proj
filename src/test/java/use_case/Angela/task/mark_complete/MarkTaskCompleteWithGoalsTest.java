@@ -44,7 +44,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Exercise").description("Do 30 min workout").build();
-        Task task = taskFactory.create("task1", "template1", taskInfo, Task.Priority.HIGH,
+        Task task = (Task) taskFactory.create("task1", "template1", taskInfo, Task.Priority.HIGH,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -76,7 +76,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Study").description("Study for exam").build();
-        Task task = taskFactory.create("task2", "template2", taskInfo, null,
+        Task task = (Task) taskFactory.create("task2", "template2", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), true, LocalDateTime.now(), false);
         dataAccess.addTask(task);
 
@@ -107,7 +107,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Read").build();
-        Task task = taskFactory.create("task3", "template3", taskInfo, null,
+        Task task = (Task) taskFactory.create("task3", "template3", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -135,7 +135,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Different Task").build();
-        Task task = taskFactory.create("task4", "template4", taskInfo, null,
+        Task task = (Task) taskFactory.create("task4", "template4", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -161,7 +161,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task5", "template5", taskInfo, null,
+        Task task = (Task) taskFactory.create("task5", "template5", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -182,7 +182,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task6", "template6", taskInfo, null,
+        Task task = (Task) taskFactory.create("task6", "template6", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -208,7 +208,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task7", "template7", taskInfo, null,
+        Task task = (Task) taskFactory.create("task7", "template7", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 
@@ -226,7 +226,7 @@ class MarkTaskCompleteWithGoalsTest {
         // Create a task
         TaskFactory taskFactory = new TaskFactory();
         Info taskInfo = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task8", "template8", taskInfo, null,
+        Task task = (Task) taskFactory.create("task8", "template8", taskInfo, null,
             new BeginAndDueDates(LocalDate.now(), LocalDate.now()), false, null, false);
         dataAccess.addTask(task);
 

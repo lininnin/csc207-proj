@@ -6,6 +6,7 @@ import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -481,6 +482,11 @@ class EditAvailableTaskInteractorAdvancedTest {
             }
 
             return updateSuccess;
+        }
+
+        @Override
+        public java.util.List<entity.Angela.Task.TaskAvailableInterf> getAllAvailableTasksWithDetails() {
+            return new ArrayList<>(tasks.values());
         }
     }
 

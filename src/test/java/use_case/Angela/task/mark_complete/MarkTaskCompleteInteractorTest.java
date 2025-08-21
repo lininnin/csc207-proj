@@ -36,7 +36,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
         String taskId = todayTask.getId();
 
         // Create input data to mark complete
@@ -53,7 +53,7 @@ class MarkTaskCompleteInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task is marked complete in storage
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertTrue(updatedTask.isCompleted());
     }
 
@@ -66,7 +66,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, null);
         todayTask.markComplete();  // Mark it complete first
         String taskId = todayTask.getId();
 
@@ -84,7 +84,7 @@ class MarkTaskCompleteInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task is marked incomplete in storage
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertFalse(updatedTask.isCompleted());
     }
 
@@ -97,7 +97,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, null);
         String taskId = todayTask.getId();
 
         // Initially should be incomplete
@@ -107,14 +107,14 @@ class MarkTaskCompleteInteractorTest {
         MarkTaskCompleteInputData inputData1 = new MarkTaskCompleteInputData(taskId, true);
         interactor.execute(inputData1);
         
-        Task updatedTask1 = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask1 = (Task) taskGateway.getTodayTaskById(taskId);
         assertTrue(updatedTask1.isCompleted());
 
         // Mark incomplete again
         MarkTaskCompleteInputData inputData2 = new MarkTaskCompleteInputData(taskId, false);
         interactor.execute(inputData2);
         
-        Task updatedTask2 = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask2 = (Task) taskGateway.getTodayTaskById(taskId);
         assertFalse(updatedTask2.isCompleted());
     }
 
@@ -129,7 +129,7 @@ class MarkTaskCompleteInteractorTest {
         
         // Add with past due date
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
         String taskId = todayTask.getId();
 
         // Verify it's overdue
@@ -144,7 +144,7 @@ class MarkTaskCompleteInteractorTest {
         assertNotNull(testPresenter.lastOutputData.getCompletionTime());
         
         // Completed overdue tasks should still be marked complete
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertTrue(updatedTask.isCompleted());
         // Completed tasks are never overdue
         assertFalse(updatedTask.isOverdue());
@@ -173,7 +173,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now());
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.LOW, LocalDate.now());
         todayTask.markComplete();
         String taskId = todayTask.getId();
 
@@ -187,7 +187,7 @@ class MarkTaskCompleteInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Task should still be completed
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertTrue(updatedTask.isCompleted());
     }
 
@@ -200,7 +200,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, null);
         String taskId = todayTask.getId();
 
         // Try to mark incomplete again (should succeed but no change)
@@ -213,7 +213,7 @@ class MarkTaskCompleteInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Task should still be incomplete
-        Task updatedTask = taskGateway.getTodayTaskById(taskId);
+        Task updatedTask = (Task) taskGateway.getTodayTaskById(taskId);
         assertFalse(updatedTask.isCompleted());
     }
 
@@ -226,7 +226,7 @@ class MarkTaskCompleteInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, null);
         String taskId = todayTask.getId();
 
         // Mark complete

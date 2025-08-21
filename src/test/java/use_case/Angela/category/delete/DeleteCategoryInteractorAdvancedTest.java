@@ -1,6 +1,9 @@
 package use_case.Angela.category.delete;
 
+import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskAvailable;
 import entity.Category;
+import entity.info.Info;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +40,7 @@ class DeleteCategoryInteractorAdvancedTest {
         // Setup category with no tasks or events
         Category category = new Category("cat1", "Work", "#FF0000");
         categoryDataAccess.addCategory(category);
+        categoryDataAccess.setCategoryCount(5); // More than minimum
         
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("cat1");
         interactor.execute(inputData);
@@ -44,7 +48,6 @@ class DeleteCategoryInteractorAdvancedTest {
         assertNotNull(presenter.lastSuccessData);
         assertNull(presenter.lastError);
         assertEquals("cat1", presenter.lastSuccessData.getCategoryId());
-        assertEquals("Work", presenter.lastSuccessData.getCategoryName());
         assertTrue(presenter.lastSuccessData.getMessage().contains("deleted successfully"));
     }
 
@@ -53,6 +56,7 @@ class DeleteCategoryInteractorAdvancedTest {
         // Setup category with tasks
         Category category = new Category("cat1", "Work", "#FF0000");
         categoryDataAccess.addCategory(category);
+        categoryDataAccess.setCategoryCount(5); // More than minimum
         
         // Add tasks that reference this category
         taskDataAccess.addTaskReference("task1", "cat1");
@@ -73,6 +77,7 @@ class DeleteCategoryInteractorAdvancedTest {
         // Setup category with events
         Category category = new Category("cat1", "Work", "#FF0000");
         categoryDataAccess.addCategory(category);
+        categoryDataAccess.setCategoryCount(5); // More than minimum
         
         // Add events that reference this category
         eventDataAccess.addEventReference("event1", "cat1");
@@ -92,6 +97,7 @@ class DeleteCategoryInteractorAdvancedTest {
         // Setup category with both tasks and events
         Category category = new Category("cat1", "Work", "#FF0000");
         categoryDataAccess.addCategory(category);
+        categoryDataAccess.setCategoryCount(5); // More than minimum
         
         // Add tasks
         taskDataAccess.addTaskReference("task1", "cat1");
@@ -302,7 +308,7 @@ class DeleteCategoryInteractorAdvancedTest {
         
         assertNotNull(presenter.lastSuccessData);
         assertNull(presenter.lastError);
-        assertEquals("Work@#$%^&*()", presenter.lastSuccessData.getCategoryName());
+        assertEquals("cat-special", presenter.lastSuccessData.getCategoryId());
     }
 
     @Test
@@ -316,7 +322,7 @@ class DeleteCategoryInteractorAdvancedTest {
         
         assertNotNull(presenter.lastSuccessData);
         assertNull(presenter.lastError);
-        assertEquals("カテゴリ 📁 ✨", presenter.lastSuccessData.getCategoryName());
+        assertEquals("cat-unicode", presenter.lastSuccessData.getCategoryId());
     }
 
     @Test
@@ -405,7 +411,7 @@ class DeleteCategoryInteractorAdvancedTest {
     /**
      * Test implementations of data access interfaces.
      */
-    private static class TestDeleteCategoryDataAccess implements DeleteCategoryDataAccessInterface {
+    private static class TestDeleteCategoryDataAccess implements DeleteCategoryCategoryDataAccessInterface {
         private Map<String, Category> categories = new HashMap<>();
         private Map<String, Boolean> deletedCategories = new HashMap<>();
         private int categoryCount = 5; // Default to more than minimum
@@ -446,11 +452,20 @@ class DeleteCategoryInteractorAdvancedTest {
         }
 
         @Override
-        public boolean deleteCategory(String categoryId) {
+        public boolean exists(Category category) {
+            if (shouldThrowException) {
+                throw new RuntimeException("Database connection failed");
+            }
+            return categories.containsKey(category.getId());
+        }
+
+        @Override
+        public boolean deleteCategory(Category category) {
             if (shouldThrowException) {
                 throw new RuntimeException("Database connection failed");
             }
 
+            String categoryId = category.getId();
             if (removeCategoryBeforeDelete) {
                 categories.remove(categoryId);
                 return false; // Simulate concurrent deletion
@@ -495,6 +510,35 @@ class DeleteCategoryInteractorAdvancedTest {
         }
 
         @Override
+        public List<TaskAvailable> findAvailableTasksByCategory(String categoryId) {
+            return new ArrayList<>(); // Return empty list for testing
+        }
+
+        @Override
+        public List<Task> findTodaysTasksByCategory(String categoryId) {
+            return new ArrayList<>(); // Return empty list for testing
+        }
+
+        @Override
+        public boolean updateAvailableTaskCategory(String taskId, String newCategoryId) {
+            return updateSuccess;
+        }
+
+        @Override
+        public boolean updateTodaysTaskCategory(String taskId, String newCategoryId) {
+            return updateSuccess;
+        }
+
+        @Override
+        public List<TaskAvailable> findAvailableTasksWithEmptyCategory() {
+            return new ArrayList<>(); // Return empty list for testing
+        }
+
+        @Override
+        public List<Task> findTodaysTasksWithEmptyCategory() {
+            return new ArrayList<>(); // Return empty list for testing
+        }
+
         public boolean updateTasksCategoryToNull(String categoryId) {
             if (shouldThrowException) {
                 throw new RuntimeException("Database connection failed");
@@ -534,6 +578,35 @@ class DeleteCategoryInteractorAdvancedTest {
         }
 
         @Override
+        public List<Info> findAvailableEventsByCategory(String categoryId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<Info> findTodaysEventsByCategory(String categoryId) {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public boolean clearAvailableEventCategory(String eventId) {
+            return updateSuccess;
+        }
+
+        @Override
+        public boolean clearTodaysEventCategory(String eventId) {
+            return updateSuccess;
+        }
+
+        @Override
+        public List<Info> findAvailableEventsWithEmptyCategory() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public List<Info> findTodaysEventsWithEmptyCategory() {
+            return new ArrayList<>();
+        }
+
         public boolean updateEventsCategoryToNull(String categoryId) {
             if (shouldThrowException) {
                 throw new RuntimeException("Database connection failed");

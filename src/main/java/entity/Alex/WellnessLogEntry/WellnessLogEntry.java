@@ -88,12 +88,7 @@ public final class WellnessLogEntry implements WellnessLogEntryInterf {
         }
 
         public Builder userNote(final String noteParam) {
-            if (noteParam != null) {
-                String trimmed = noteParam.trim();
-                if (!trimmed.isEmpty()) {
-                    this.userNote = trimmed;
-                }
-            }
+            this.userNote = noteParam;
             return this;
         }
 
