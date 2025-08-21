@@ -3,6 +3,7 @@ package app;
 import data_access.*;
 import data_access.alex.TodaysEventDataAccessObject;
 import data_access.alex.TodaysWellnessLogDataAccessObject;
+import data_access.files.FileGoalRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;

@@ -1,4 +1,4 @@
-package view.feedback_entry;
+package view.feedback_panel.feedback_entry;
 
 import entity.feedback_entry.FeedbackEntry;
 import view.feedback_panel.feedback_entry.FeedbackEntryPanel;

@@ -1,6 +1,9 @@
+<<<<<<<< HEAD:src/test/java/entity/feedback_entry/FeedbackEntryTest.java
+package entity.feedback_entry;
+========
 package entity;
+>>>>>>>> ab587051efdfb3962d7b28411e2d6e192ee37b9b:src/test/java/entity/FeedbackEntryTest.java
 
-import entity.feedback_entry.FeedbackEntry;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

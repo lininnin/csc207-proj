@@ -2,7 +2,7 @@ package use_case.goalManage.delete_goal;
 
 import java.util.Optional;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 
 /**

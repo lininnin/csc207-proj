@@ -3,7 +3,7 @@ package use_case.goalManage.today_goal;
 import java.util.List;
 import java.util.Optional;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 
 /**

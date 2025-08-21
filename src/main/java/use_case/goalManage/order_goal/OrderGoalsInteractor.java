@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 import use_case.goalManage.available_goals.AvailableGoalsOutputBoundary;
 import use_case.goalManage.available_goals.AvailableGoalsOutputData;

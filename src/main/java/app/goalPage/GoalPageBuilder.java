@@ -42,12 +42,12 @@ import use_case.goalManage.order_goal.*;
 import use_case.goalManage.today_goal.*;
 
 // Import data access
-import data_access.FileGoalRepository;
+import data_access.files.FileGoalRepository;
 
 // Import views
-import view.sophia.AvailableGoalsView;
-import view.sophia.EditTodayGoalView;
-import view.sophia.TodayGoalView;
+import view.Sophia.AvailableGoalsView;
+import view.Sophia.EditTodayGoalView;
+import view.Sophia.TodayGoalView;
 import view.Angela.TodaySoFarView;
 
 // Import Java/Swing components

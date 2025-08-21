@@ -2,7 +2,7 @@ package use_case.goalManage.edit_todays_goal;
 
 import entity.Sophia.Goal;
 import entity.BeginAndDueDates.BeginAndDueDates;
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 
 public class EditTodaysGoalInteractor implements EditTodaysGoalInputBoundary {
     private final GoalRepository goalRepository;

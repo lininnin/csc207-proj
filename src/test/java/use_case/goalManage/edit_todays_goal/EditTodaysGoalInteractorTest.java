@@ -1,6 +1,6 @@
 package use_case.goalManage.edit_todays_goal;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;

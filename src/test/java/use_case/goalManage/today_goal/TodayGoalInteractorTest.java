@@ -1,6 +1,6 @@
 package use_case.goalManage.today_goal;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

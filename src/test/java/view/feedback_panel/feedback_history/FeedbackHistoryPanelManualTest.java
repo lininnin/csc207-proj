@@ -1,4 +1,4 @@
-package view.feedback_history;
+package view.feedback_panel.feedback_history;
 
 import entity.feedback_entry.FeedbackEntry;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;

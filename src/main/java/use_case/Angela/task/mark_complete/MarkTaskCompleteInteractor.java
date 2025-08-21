@@ -3,7 +3,7 @@ package use_case.Angela.task.mark_complete;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskInterf;
 import entity.Sophia.Goal;
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 

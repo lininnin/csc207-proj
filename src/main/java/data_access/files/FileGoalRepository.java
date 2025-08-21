@@ -1,4 +1,4 @@
-package data_access;
+package data_access.files;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalFactory;
 
