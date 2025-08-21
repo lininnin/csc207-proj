@@ -203,7 +203,7 @@ class AddTaskToTodayInteractorTest {
         // Verify failure
         assertNull(testPresenter.lastOutputData);
         assertNotNull(testPresenter.lastError);
-        assertEquals("Task is already in Today's Tasks", testPresenter.lastError);
+        assertEquals("This exact task (same priority and due date) is already in Today's Tasks", testPresenter.lastError);
 
         // Verify only one task in today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());
@@ -372,7 +372,7 @@ class AddTaskToTodayInteractorTest {
         // Verify failure
         assertNull(testPresenter.lastOutputData);
         assertNotNull(testPresenter.lastError);
-        assertEquals("Task is already in Today's Tasks", testPresenter.lastError);
+        assertEquals("This exact task (same priority and due date) is already in Today's Tasks", testPresenter.lastError);
         
         // Verify still only one task in today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());

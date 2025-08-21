@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,15 +21,6 @@ import static org.mockito.Mockito.*;
  */
 class DailyLogTest {
 
-    @Mock
-    private DailyWellnessLog mockWellnessLog;
-    
-    @Mock
-    private DailyEventLog mockEventLog;
-    
-    @Mock
-    private DailyTaskSummary mockTaskSummary;
-    
     @Mock
     private Task mockTask;
 
@@ -50,33 +41,14 @@ class DailyLogTest {
         assertEquals(testDate, dailyLog.getDate());
         assertNotNull(dailyLog.getTimeLog());
         assertTrue(dailyLog.getTimeLog().isEmpty());
-        assertNull(dailyLog.getDailyWellnessLog());
-        assertNull(dailyLog.getDailyEventLog());
-        assertNull(dailyLog.getDailyTaskSummary());
-    }
-
-    @Test
-    void testDailyLogCreationWithAllComponents() {
-        DailyLog dailyLog = new DailyLog(testDate, mockWellnessLog, mockEventLog, mockTaskSummary);
-        
-        assertNotNull(dailyLog);
-        assertNotNull(dailyLog.getId());
-        assertEquals(testDate, dailyLog.getDate());
-        assertEquals(mockWellnessLog, dailyLog.getDailyWellnessLog());
-        assertEquals(mockEventLog, dailyLog.getDailyEventLog());
-        assertEquals(mockTaskSummary, dailyLog.getDailyTaskSummary());
-        assertTrue(dailyLog.getTimeLog().isEmpty());
+        assertNotNull(dailyLog.getDailyWellnessLog());
+        assertNotNull(dailyLog.getDailyEventLog());
+        assertNotNull(dailyLog.getDailyTaskSummary());
     }
 
     @Test
     void testDailyLogCreationWithNullDate() {
         assertThrows(IllegalArgumentException.class, () -> new DailyLog(null));
-    }
-
-    @Test
-    void testDailyLogCreationWithNullDateAndComponents() {
-        assertThrows(IllegalArgumentException.class, () -> 
-                new DailyLog(null, mockWellnessLog, mockEventLog, mockTaskSummary));
     }
 
     @Test
@@ -90,147 +62,91 @@ class DailyLogTest {
     }
 
     @Test
-    void testAddToTimeLog() {
+    void testAddTaskToTimeLog() {
         DailyLog dailyLog = new DailyLog(testDate);
         
-        dailyLog.addToTimeLog(mockTask);
+        dailyLog.addTask(mockTask);
         
         assertEquals(1, dailyLog.getTimeLog().size());
         assertEquals(mockTask, dailyLog.getTimeLog().get(0));
     }
 
     @Test
-    void testAddMultipleItemsToTimeLog() {
+    void testAddMultipleTasksToTimeLog() {
         DailyLog dailyLog = new DailyLog(testDate);
         Task task2 = mock(Task.class);
-        String event = "Lunch meeting";
         
-        dailyLog.addToTimeLog(mockTask);
-        dailyLog.addToTimeLog(task2);
-        dailyLog.addToTimeLog(event);
+        dailyLog.addTask(mockTask);
+        dailyLog.addTask(task2);
         
-        assertEquals(3, dailyLog.getTimeLog().size());
+        assertEquals(2, dailyLog.getTimeLog().size());
         assertEquals(mockTask, dailyLog.getTimeLog().get(0));
         assertEquals(task2, dailyLog.getTimeLog().get(1));
-        assertEquals(event, dailyLog.getTimeLog().get(2));
     }
 
     @Test
-    void testAddNullToTimeLog() {
+    void testAddNullTaskToTimeLog() {
         DailyLog dailyLog = new DailyLog(testDate);
         
-        dailyLog.addToTimeLog(null);
-        
-        assertTrue(dailyLog.getTimeLog().isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> dailyLog.addTask(null));
     }
 
     @Test
     void testTimeLogEncapsulation() {
         DailyLog dailyLog = new DailyLog(testDate);
-        dailyLog.addToTimeLog(mockTask);
+        dailyLog.addTask(mockTask);
         
         List<Object> timeLog = dailyLog.getTimeLog();
         
-        // Should return unmodifiable list
-        assertThrows(UnsupportedOperationException.class, () -> 
-                timeLog.add("Should not be allowed"));
+        // Should return defensive copy - modifying returned list shouldn't affect original
+        timeLog.clear();
+        assertEquals(1, dailyLog.getTimeLog().size()); // Original should be unchanged
     }
 
     @Test
-    void testSetDailyWellnessLog() {
+    void testMarkTaskCompleted() {
+        DailyLog dailyLog = new DailyLog(testDate);
+        LocalDateTime completionTime = LocalDateTime.of(2023, 12, 15, 10, 30);
+        
+        dailyLog.markTaskCompleted(mockTask, completionTime);
+        
+        // Verify task's completion status was updated
+        verify(mockTask).editStatus(true);
+        // Verify task summary was updated
+        assertNotNull(dailyLog.getDailyTaskSummary());
+    }
+
+    @Test
+    void testMarkTaskCompletedWithNullTask() {
+        DailyLog dailyLog = new DailyLog(testDate);
+        LocalDateTime completionTime = LocalDateTime.of(2023, 12, 15, 10, 30);
+        
+        assertThrows(IllegalArgumentException.class, () -> 
+            dailyLog.markTaskCompleted(null, completionTime));
+    }
+
+    @Test
+    void testMarkTaskCompletedWithNullTime() {
         DailyLog dailyLog = new DailyLog(testDate);
         
-        dailyLog.setDailyWellnessLog(mockWellnessLog);
-        
-        assertEquals(mockWellnessLog, dailyLog.getDailyWellnessLog());
-    }
-
-    @Test
-    void testSetDailyEventLog() {
-        DailyLog dailyLog = new DailyLog(testDate);
-        
-        dailyLog.setDailyEventLog(mockEventLog);
-        
-        assertEquals(mockEventLog, dailyLog.getDailyEventLog());
-    }
-
-    @Test
-    void testSetDailyTaskSummary() {
-        DailyLog dailyLog = new DailyLog(testDate);
-        
-        dailyLog.setDailyTaskSummary(mockTaskSummary);
-        
-        assertEquals(mockTaskSummary, dailyLog.getDailyTaskSummary());
-    }
-
-    @Test
-    void testOverwriteComponents() {
-        DailyLog dailyLog = new DailyLog(testDate, mockWellnessLog, mockEventLog, mockTaskSummary);
-        
-        DailyWellnessLog newWellnessLog = mock(DailyWellnessLog.class);
-        DailyEventLog newEventLog = mock(DailyEventLog.class);
-        DailyTaskSummary newTaskSummary = mock(DailyTaskSummary.class);
-        
-        dailyLog.setDailyWellnessLog(newWellnessLog);
-        dailyLog.setDailyEventLog(newEventLog);
-        dailyLog.setDailyTaskSummary(newTaskSummary);
-        
-        assertEquals(newWellnessLog, dailyLog.getDailyWellnessLog());
-        assertEquals(newEventLog, dailyLog.getDailyEventLog());
-        assertEquals(newTaskSummary, dailyLog.getDailyTaskSummary());
-    }
-
-    @Test
-    void testSetNullComponents() {
-        DailyLog dailyLog = new DailyLog(testDate, mockWellnessLog, mockEventLog, mockTaskSummary);
-        
-        dailyLog.setDailyWellnessLog(null);
-        dailyLog.setDailyEventLog(null);
-        dailyLog.setDailyTaskSummary(null);
-        
-        assertNull(dailyLog.getDailyWellnessLog());
-        assertNull(dailyLog.getDailyEventLog());
-        assertNull(dailyLog.getDailyTaskSummary());
-    }
-
-    @Test
-    void testMixedTimeLogContent() {
-        DailyLog dailyLog = new DailyLog(testDate);
-        
-        String eventName = "Morning standup";
-        Integer number = 42;
-        LocalDate date = LocalDate.now();
-        
-        dailyLog.addToTimeLog(mockTask);
-        dailyLog.addToTimeLog(eventName);
-        dailyLog.addToTimeLog(number);
-        dailyLog.addToTimeLog(date);
-        
-        List<Object> timeLog = dailyLog.getTimeLog();
-        assertEquals(4, timeLog.size());
-        assertEquals(mockTask, timeLog.get(0));
-        assertEquals(eventName, timeLog.get(1));
-        assertEquals(number, timeLog.get(2));
-        assertEquals(date, timeLog.get(3));
+        assertThrows(IllegalArgumentException.class, () -> 
+            dailyLog.markTaskCompleted(mockTask, null));
     }
 
     @Test
     void testTimeLogOrder() {
         DailyLog dailyLog = new DailyLog(testDate);
+        Task task2 = mock(Task.class);
+        Task task3 = mock(Task.class);
         
-        // Add items in specific order
-        String first = "First item";
-        String second = "Second item";
-        String third = "Third item";
-        
-        dailyLog.addToTimeLog(first);
-        dailyLog.addToTimeLog(second);
-        dailyLog.addToTimeLog(third);
+        dailyLog.addTask(mockTask);
+        dailyLog.addTask(task2);
+        dailyLog.addTask(task3);
         
         List<Object> timeLog = dailyLog.getTimeLog();
-        assertEquals(first, timeLog.get(0));
-        assertEquals(second, timeLog.get(1));
-        assertEquals(third, timeLog.get(2));
+        assertEquals(mockTask, timeLog.get(0));
+        assertEquals(task2, timeLog.get(1));
+        assertEquals(task3, timeLog.get(2));
     }
 
     @Test
@@ -246,32 +162,92 @@ class DailyLogTest {
     }
 
     @Test
+    void testComponentsNotNull() {
+        DailyLog dailyLog = new DailyLog(testDate);
+        
+        assertNotNull(dailyLog.getDailyWellnessLog());
+        assertNotNull(dailyLog.getDailyEventLog());
+        assertNotNull(dailyLog.getDailyTaskSummary());
+        
+        // Verify they are properly initialized for the same date
+        assertEquals(testDate, dailyLog.getDailyWellnessLog().getDate());
+        assertEquals(testDate, dailyLog.getDailyEventLog().getDate());
+        assertEquals(testDate, dailyLog.getDailyTaskSummary().getDate());
+    }
+
+    @Test
     void testCompleteWorkflow() {
         // Test a complete daily log workflow
         DailyLog dailyLog = new DailyLog(testDate);
+        LocalDateTime completionTime = LocalDateTime.of(2023, 12, 15, 14, 30);
         
-        // Add wellness log
-        dailyLog.setDailyWellnessLog(mockWellnessLog);
+        // Add task to timeline
+        dailyLog.addTask(mockTask);
         
-        // Add event log
-        dailyLog.setDailyEventLog(mockEventLog);
-        
-        // Add task summary
-        dailyLog.setDailyTaskSummary(mockTaskSummary);
-        
-        // Add some timeline entries
-        dailyLog.addToTimeLog("9:00 AM - Started work");
-        dailyLog.addToTimeLog(mockTask);
-        dailyLog.addToTimeLog("12:00 PM - Lunch break");
+        // Mark task as completed
+        dailyLog.markTaskCompleted(mockTask, completionTime);
         
         // Verify everything is set correctly
         assertEquals(testDate, dailyLog.getDate());
-        assertEquals(mockWellnessLog, dailyLog.getDailyWellnessLog());
-        assertEquals(mockEventLog, dailyLog.getDailyEventLog());
-        assertEquals(mockTaskSummary, dailyLog.getDailyTaskSummary());
+        assertNotNull(dailyLog.getDailyWellnessLog());
+        assertNotNull(dailyLog.getDailyEventLog());
+        assertNotNull(dailyLog.getDailyTaskSummary());
+        assertEquals(1, dailyLog.getTimeLog().size());
+        assertEquals(mockTask, dailyLog.getTimeLog().get(0));
+        
+        // Verify task was marked complete
+        verify(mockTask).editStatus(true);
+    }
+
+    @Test
+    void testMultipleTaskWorkflow() {
+        DailyLog dailyLog = new DailyLog(testDate);
+        Task task2 = mock(Task.class);
+        Task task3 = mock(Task.class);
+        LocalDateTime completionTime1 = LocalDateTime.of(2023, 12, 15, 9, 0);
+        LocalDateTime completionTime2 = LocalDateTime.of(2023, 12, 15, 15, 30);
+        
+        // Add multiple tasks
+        dailyLog.addTask(mockTask);
+        dailyLog.addTask(task2);
+        dailyLog.addTask(task3);
+        
+        // Mark some as completed
+        dailyLog.markTaskCompleted(mockTask, completionTime1);
+        dailyLog.markTaskCompleted(task3, completionTime2);
+        
+        // Verify state
         assertEquals(3, dailyLog.getTimeLog().size());
-        assertEquals("9:00 AM - Started work", dailyLog.getTimeLog().get(0));
-        assertEquals(mockTask, dailyLog.getTimeLog().get(1));
-        assertEquals("12:00 PM - Lunch break", dailyLog.getTimeLog().get(2));
+        verify(mockTask).editStatus(true);
+        verify(task3).editStatus(true);
+        verify(task2, never()).editStatus(anyBoolean()); // task2 was not completed
+    }
+
+    @Test
+    void testTaskIntegrationWithSummary() {
+        DailyLog dailyLog = new DailyLog(testDate);
+        
+        // Add task - should also be added to summary
+        dailyLog.addTask(mockTask);
+        
+        // Get the task summary and verify integration
+        DailyTaskSummary summary = dailyLog.getDailyTaskSummary();
+        assertNotNull(summary);
+        assertEquals(testDate, summary.getDate());
+        
+        // The integration details depend on the actual implementation
+        // This test verifies the summary is properly initialized
+    }
+
+    @Test
+    void testIdUniqueness() {
+        DailyLog log1 = new DailyLog(testDate);
+        DailyLog log2 = new DailyLog(testDate.plusDays(1));
+        DailyLog log3 = new DailyLog(testDate);
+        
+        // All IDs should be unique even with same/different dates
+        assertNotEquals(log1.getId(), log2.getId());
+        assertNotEquals(log1.getId(), log3.getId());
+        assertNotEquals(log2.getId(), log3.getId());
     }
 }

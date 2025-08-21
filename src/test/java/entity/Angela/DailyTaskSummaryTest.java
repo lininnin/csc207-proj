@@ -2,7 +2,10 @@ package entity.Angela;
 
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskFactory;
+import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableFactory;
 import entity.info.Info;
+import entity.BeginAndDueDates.BeginAndDueDates;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,12 +25,14 @@ class DailyTaskSummaryTest {
     private DailyTaskSummary dailyTaskSummary;
     private LocalDate testDate;
     private TaskFactory taskFactory;
+    private TaskAvailableFactory taskAvailableFactory;
 
     @BeforeEach
     void setUp() {
         testDate = LocalDate.of(2023, 12, 15);
         dailyTaskSummary = new DailyTaskSummary(testDate);
         taskFactory = new TaskFactory();
+        taskAvailableFactory = new TaskAvailableFactory();
     }
 
     @Test
@@ -53,23 +58,36 @@ class DailyTaskSummaryTest {
     @Test
     void testAddScheduledTask() {
         Info taskInfo = new Info.Builder("Test task").description("A test task").build();
-        Task task = taskFactory.create("task1", taskInfo, Task.Priority.MEDIUM, testDate, false, "template1");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", taskInfo, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
         assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
         assertTrue(dailyTaskSummary.getScheduledTasks().contains(task));
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate()); // Not completed yet
     }
 
     @Test
-    void testAddCompletedTask() {
-        Info taskInfo = new Info.Builder("Completed task").description("A completed task").build();
-        Task task = taskFactory.create("task1", taskInfo, Task.Priority.HIGH, testDate, false, "template1");
+    void testAddCompletedTaskUpdatesStats() {
+        Info taskInfo = new Info.Builder("Completed task").description("A completed task").category("Work").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", taskInfo, dates, false);
         
-        dailyTaskSummary.addCompletedTask(task);
+        // First add as scheduled
+        dailyTaskSummary.addScheduledTask(task);
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate());
+        
+        // Then mark as completed
+        dailyTaskSummary.markTaskCompleted(task);
         
         assertEquals(1, dailyTaskSummary.getCompletedTasks().size());
         assertTrue(dailyTaskSummary.getCompletedTasks().contains(task));
+        assertEquals(1.0, dailyTaskSummary.getCompletionRate()); // 100% completion
+        
+        // Check category breakdown
+        Map<String, Integer> breakdown = dailyTaskSummary.getCategoryBreakdown();
+        assertEquals(1, breakdown.get("Work").intValue());
     }
 
     @Test
@@ -78,9 +96,10 @@ class DailyTaskSummaryTest {
         Info info2 = new Info.Builder("Task 2").build();
         Info info3 = new Info.Builder("Task 3").build();
         
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.LOW, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task task3 = taskFactory.create("task3", info3, Task.Priority.HIGH, testDate, false, "template3");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task1 = taskFactory.create("template1", info1, dates, false);
+        Task task2 = taskFactory.create("template2", info2, dates, false);
+        Task task3 = taskFactory.create("template3", info3, dates, false);
         
         dailyTaskSummary.addScheduledTask(task1);
         dailyTaskSummary.addScheduledTask(task2);
@@ -95,7 +114,7 @@ class DailyTaskSummaryTest {
     @Test
     void testAddNullTasksIgnored() {
         dailyTaskSummary.addScheduledTask(null);
-        dailyTaskSummary.addCompletedTask(null);
+        dailyTaskSummary.markTaskCompleted(null);
         
         assertTrue(dailyTaskSummary.getScheduledTasks().isEmpty());
         assertTrue(dailyTaskSummary.getCompletedTasks().isEmpty());
@@ -109,10 +128,11 @@ class DailyTaskSummaryTest {
         Info info3 = new Info.Builder("Task 3").build();
         Info info4 = new Info.Builder("Task 4").build();
         
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task task3 = taskFactory.create("task3", info3, Task.Priority.MEDIUM, testDate, false, "template3");
-        Task task4 = taskFactory.create("task4", info4, Task.Priority.MEDIUM, testDate, false, "template4");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task1 = taskFactory.create("template1", info1, dates, false);
+        Task task2 = taskFactory.create("template2", info2, dates, false);
+        Task task3 = taskFactory.create("template3", info3, dates, false);
+        Task task4 = taskFactory.create("template4", info4, dates, false);
         
         // Add scheduled tasks
         dailyTaskSummary.addScheduledTask(task1);
@@ -120,86 +140,66 @@ class DailyTaskSummaryTest {
         dailyTaskSummary.addScheduledTask(task3);
         dailyTaskSummary.addScheduledTask(task4);
         
-        // Add completed tasks (2 out of 4)
-        dailyTaskSummary.addCompletedTask(task1);
-        dailyTaskSummary.addCompletedTask(task3);
+        // Complete 2 out of 4 tasks
+        dailyTaskSummary.markTaskCompleted(task1);
+        dailyTaskSummary.markTaskCompleted(task3);
         
-        // Calculate completion rate
-        dailyTaskSummary.calculateCompletionRate();
-        
-        assertEquals(50.0, dailyTaskSummary.getCompletionRate());
+        assertEquals(0.5, dailyTaskSummary.getCompletionRate(), 0.001); // 50% completion
     }
 
     @Test
     void testCompletionRateWithNoScheduledTasks() {
-        dailyTaskSummary.calculateCompletionRate();
-        
         assertEquals(0.0, dailyTaskSummary.getCompletionRate());
     }
 
     @Test
     void testCompletionRateAllTasksCompleted() {
         Info info = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task1", info, Task.Priority.MEDIUM, testDate, false, "template1");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
-        dailyTaskSummary.addCompletedTask(task);
-        dailyTaskSummary.calculateCompletionRate();
+        dailyTaskSummary.markTaskCompleted(task);
         
-        assertEquals(100.0, dailyTaskSummary.getCompletionRate());
+        assertEquals(1.0, dailyTaskSummary.getCompletionRate()); // 100%
     }
 
     @Test
     void testCompletionRateNoTasksCompleted() {
         Info info = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task1", info, Task.Priority.MEDIUM, testDate, false, "template1");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
-        dailyTaskSummary.calculateCompletionRate();
         
         assertEquals(0.0, dailyTaskSummary.getCompletionRate());
     }
 
     @Test
-    void testCompletionRateRoundingDown() {
-        // Create 3 scheduled tasks, complete 1 (33.33...)
-        Info info1 = new Info.Builder("Task 1").build();
-        Info info2 = new Info.Builder("Task 2").build();
-        Info info3 = new Info.Builder("Task 3").build();
-        
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task task3 = taskFactory.create("task3", info3, Task.Priority.MEDIUM, testDate, false, "template3");
-        
-        dailyTaskSummary.addScheduledTask(task1);
-        dailyTaskSummary.addScheduledTask(task2);
-        dailyTaskSummary.addScheduledTask(task3);
-        
-        dailyTaskSummary.addCompletedTask(task1);
-        dailyTaskSummary.calculateCompletionRate();
-        
-        assertEquals(33.33, dailyTaskSummary.getCompletionRate(), 0.01);
-    }
-
-    @Test
-    void testCategoryBreakdownCalculation() {
+    void testCategoryBreakdownAutoCalculation() {
         // Create tasks with different categories
         Info workInfo1 = new Info.Builder("Work task 1").category("Work").build();
         Info workInfo2 = new Info.Builder("Work task 2").category("Work").build();
         Info personalInfo = new Info.Builder("Personal task").category("Personal").build();
         Info healthInfo = new Info.Builder("Health task").category("Health").build();
         
-        Task workTask1 = taskFactory.create("task1", workInfo1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task workTask2 = taskFactory.create("task2", workInfo2, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task personalTask = taskFactory.create("task3", personalInfo, Task.Priority.MEDIUM, testDate, false, "template3");
-        Task healthTask = taskFactory.create("task4", healthInfo, Task.Priority.MEDIUM, testDate, false, "template4");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task workTask1 = taskFactory.create("template1", workInfo1, dates, false);
+        Task workTask2 = taskFactory.create("template2", workInfo2, dates, false);
+        Task personalTask = taskFactory.create("template3", personalInfo, dates, false);
+        Task healthTask = taskFactory.create("template4", healthInfo, dates, false);
         
+        // Add all as scheduled
         dailyTaskSummary.addScheduledTask(workTask1);
         dailyTaskSummary.addScheduledTask(workTask2);
         dailyTaskSummary.addScheduledTask(personalTask);
         dailyTaskSummary.addScheduledTask(healthTask);
         
-        dailyTaskSummary.calculateCategoryBreakdown();
+        // Complete them to trigger category breakdown
+        dailyTaskSummary.markTaskCompleted(workTask1);
+        dailyTaskSummary.markTaskCompleted(workTask2);
+        dailyTaskSummary.markTaskCompleted(personalTask);
+        dailyTaskSummary.markTaskCompleted(healthTask);
         
         Map<String, Integer> breakdown = dailyTaskSummary.getCategoryBreakdown();
         assertEquals(2, breakdown.get("Work").intValue());
@@ -208,97 +208,104 @@ class DailyTaskSummaryTest {
     }
 
     @Test
-    void testCategoryBreakdownWithEmptyCategories() {
-        Info info1 = new Info.Builder("Task 1").category("").build();
-        Info info2 = new Info.Builder("Task 2").category(null).build();
+    void testCategoryBreakdownWithNullCategories() {
+        Info info1 = new Info.Builder("Task 1").category(null).build();
+        Info info2 = new Info.Builder("Task 2").category("").build();
         Info info3 = new Info.Builder("Task 3").category("Work").build();
         
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task task3 = taskFactory.create("task3", info3, Task.Priority.MEDIUM, testDate, false, "template3");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task1 = taskFactory.create("template1", info1, dates, false);
+        Task task2 = taskFactory.create("template2", info2, dates, false);
+        Task task3 = taskFactory.create("template3", info3, dates, false);
         
         dailyTaskSummary.addScheduledTask(task1);
         dailyTaskSummary.addScheduledTask(task2);
         dailyTaskSummary.addScheduledTask(task3);
         
-        dailyTaskSummary.calculateCategoryBreakdown();
+        // Only task3 should appear in category breakdown when completed (has non-null category)
+        dailyTaskSummary.markTaskCompleted(task1); // null category - won't be counted
+        dailyTaskSummary.markTaskCompleted(task2); // empty category - won't be counted  
+        dailyTaskSummary.markTaskCompleted(task3); // "Work" category - will be counted
         
         Map<String, Integer> breakdown = dailyTaskSummary.getCategoryBreakdown();
-        assertEquals(2, breakdown.get("Uncategorized").intValue());
         assertEquals(1, breakdown.get("Work").intValue());
+        // Null and empty categories are not counted in breakdown
+        assertNull(breakdown.get(null));
+        assertNull(breakdown.get(""));
     }
 
     @Test
-    void testCategoryBreakdownWithNoTasks() {
-        dailyTaskSummary.calculateCategoryBreakdown();
-        
+    void testCategoryBreakdownWithNoCompletedTasks() {
         assertTrue(dailyTaskSummary.getCategoryBreakdown().isEmpty());
-    }
-
-    @Test
-    void testSetScheduledTasks() {
-        Info info1 = new Info.Builder("Task 1").build();
-        Info info2 = new Info.Builder("Task 2").build();
-        
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        
-        List<Task> tasks = Arrays.asList(task1, task2);
-        dailyTaskSummary.setScheduledTasks(tasks);
-        
-        assertEquals(2, dailyTaskSummary.getScheduledTasks().size());
-        assertTrue(dailyTaskSummary.getScheduledTasks().contains(task1));
-        assertTrue(dailyTaskSummary.getScheduledTasks().contains(task2));
-    }
-
-    @Test
-    void testSetCompletedTasks() {
-        Info info1 = new Info.Builder("Task 1").build();
-        Info info2 = new Info.Builder("Task 2").build();
-        
-        Task task1 = taskFactory.create("task1", info1, Task.Priority.MEDIUM, testDate, false, "template1");
-        Task task2 = taskFactory.create("task2", info2, Task.Priority.MEDIUM, testDate, false, "template2");
-        
-        List<Task> tasks = Arrays.asList(task1, task2);
-        dailyTaskSummary.setCompletedTasks(tasks);
-        
-        assertEquals(2, dailyTaskSummary.getCompletedTasks().size());
-        assertTrue(dailyTaskSummary.getCompletedTasks().contains(task1));
-        assertTrue(dailyTaskSummary.getCompletedTasks().contains(task2));
-    }
-
-    @Test
-    void testSetNullTaskLists() {
-        dailyTaskSummary.setScheduledTasks(null);
-        dailyTaskSummary.setCompletedTasks(null);
-        
-        assertTrue(dailyTaskSummary.getScheduledTasks().isEmpty());
-        assertTrue(dailyTaskSummary.getCompletedTasks().isEmpty());
     }
 
     @Test
     void testTaskListEncapsulation() {
         Info info = new Info.Builder("Task").build();
-        Task task = taskFactory.create("task1", info, Task.Priority.MEDIUM, testDate, false, "template1");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
         
         List<Task> scheduledTasks = dailyTaskSummary.getScheduledTasks();
-        assertThrows(UnsupportedOperationException.class, () -> 
-                scheduledTasks.clear());
+        // Should return a defensive copy
+        int originalSize = scheduledTasks.size();
+        scheduledTasks.clear();
+        
+        // Original list should be unchanged
+        assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
     }
 
     @Test
     void testCategoryBreakdownEncapsulation() {
         Info info = new Info.Builder("Task").category("Work").build();
-        Task task = taskFactory.create("task1", info, Task.Priority.MEDIUM, testDate, false, "template1");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
         
         dailyTaskSummary.addScheduledTask(task);
-        dailyTaskSummary.calculateCategoryBreakdown();
+        dailyTaskSummary.markTaskCompleted(task);
         
         Map<String, Integer> breakdown = dailyTaskSummary.getCategoryBreakdown();
-        assertThrows(UnsupportedOperationException.class, () -> 
-                breakdown.put("Test", 1));
+        // Should return a defensive copy
+        breakdown.put("Test", 99);
+        
+        // Original map should be unchanged
+        Map<String, Integer> originalBreakdown = dailyTaskSummary.getCategoryBreakdown();
+        assertNull(originalBreakdown.get("Test"));
+        assertEquals(1, originalBreakdown.get("Work").intValue());
+    }
+
+    @Test
+    void testMarkTaskCompletedOnlyOnce() {
+        Info info = new Info.Builder("Task").category("Work").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
+        
+        dailyTaskSummary.addScheduledTask(task);
+        
+        // Mark completed multiple times
+        dailyTaskSummary.markTaskCompleted(task);
+        dailyTaskSummary.markTaskCompleted(task);
+        dailyTaskSummary.markTaskCompleted(task);
+        
+        // Should only appear once in completed tasks
+        assertEquals(1, dailyTaskSummary.getCompletedTasks().size());
+        assertEquals(1, dailyTaskSummary.getCategoryBreakdown().get("Work").intValue());
+    }
+
+    @Test
+    void testMarkTaskCompletedNotInScheduled() {
+        Info info = new Info.Builder("Task").category("Work").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
+        
+        // Try to mark as completed without adding to scheduled first
+        dailyTaskSummary.markTaskCompleted(task);
+        
+        // Should not be added to completed tasks
+        assertEquals(0, dailyTaskSummary.getCompletedTasks().size());
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate());
+        assertTrue(dailyTaskSummary.getCategoryBreakdown().isEmpty());
     }
 
     @Test
@@ -308,9 +315,10 @@ class DailyTaskSummaryTest {
         Info personalInfo = new Info.Builder("Grocery shopping").category("Personal").build();
         Info healthInfo = new Info.Builder("Morning exercise").category("Health").build();
         
-        Task workTask = taskFactory.create("task1", workInfo, Task.Priority.HIGH, testDate, false, "template1");
-        Task personalTask = taskFactory.create("task2", personalInfo, Task.Priority.MEDIUM, testDate, false, "template2");
-        Task healthTask = taskFactory.create("task3", healthInfo, Task.Priority.LOW, testDate, false, "template3");
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task workTask = taskFactory.create("template1", workInfo, dates, false);
+        Task personalTask = taskFactory.create("template2", personalInfo, dates, false);
+        Task healthTask = taskFactory.create("template3", healthInfo, dates, false);
         
         // Add scheduled tasks
         dailyTaskSummary.addScheduledTask(workTask);
@@ -318,21 +326,30 @@ class DailyTaskSummaryTest {
         dailyTaskSummary.addScheduledTask(healthTask);
         
         // Complete 2 out of 3 tasks
-        dailyTaskSummary.addCompletedTask(workTask);
-        dailyTaskSummary.addCompletedTask(healthTask);
-        
-        // Calculate statistics
-        dailyTaskSummary.calculateCompletionRate();
-        dailyTaskSummary.calculateCategoryBreakdown();
+        dailyTaskSummary.markTaskCompleted(workTask);
+        dailyTaskSummary.markTaskCompleted(healthTask);
         
         // Verify results
         assertEquals(3, dailyTaskSummary.getScheduledTasks().size());
         assertEquals(2, dailyTaskSummary.getCompletedTasks().size());
-        assertEquals(66.67, dailyTaskSummary.getCompletionRate(), 0.01);
+        assertEquals(2.0/3.0, dailyTaskSummary.getCompletionRate(), 0.001);
         
         Map<String, Integer> breakdown = dailyTaskSummary.getCategoryBreakdown();
         assertEquals(1, breakdown.get("Work").intValue());
-        assertEquals(1, breakdown.get("Personal").intValue());
         assertEquals(1, breakdown.get("Health").intValue());
+        assertNull(breakdown.get("Personal")); // Not completed
+    }
+
+    @Test
+    void testAddDuplicateTaskIgnored() {
+        Info info = new Info.Builder("Task").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = taskFactory.create("template1", info, dates, false);
+        
+        dailyTaskSummary.addScheduledTask(task);
+        dailyTaskSummary.addScheduledTask(task); // Try to add same task again
+        
+        // Should only appear once
+        assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
     }
 }
