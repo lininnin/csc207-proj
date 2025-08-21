@@ -33,10 +33,8 @@ public class EditTodayTaskStrategy implements EditTodayTaskDataAccessInterface {
         // Update priority
         task.setPriority(priority);
         
-        // Update due date
-        if (dueDate != null) {
-            task.getDates().setDueDate(dueDate);
-        }
+        // Update due date (including setting to null)
+        task.getDates().setDueDate(dueDate);
         
         return true;
     }

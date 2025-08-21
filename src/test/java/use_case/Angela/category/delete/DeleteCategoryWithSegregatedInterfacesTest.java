@@ -93,7 +93,7 @@ class DeleteCategoryWithSegregatedInterfacesTest {
         assertTrue(taskDataAccess.updatedTodayTasks.contains(todayTask.getId()));
 
         // Verify events were cleared
-        assertTrue(eventDataAccess.clearedAvailableEvents.contains(eventInfo.getId()));
+        assertTrue(eventDataAccess.clearedAvailableEvents.contains(eventInfo.getName()));
     }
 
     @Test

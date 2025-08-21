@@ -39,7 +39,7 @@ class DeleteCategoryInteractorTest {
 
     @Test
     void testSuccessfulDeleteWithoutTasks() {
-        // Create enough categories to allow deletion (minimum 3 required)
+        // Create some categories for testing
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));
@@ -65,7 +65,7 @@ class DeleteCategoryInteractorTest {
 
     @Test
     void testSuccessfulDeleteWithTasks() {
-        // Create enough categories to allow deletion (minimum 3 required)
+        // Create some categories for testing
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Personal", "#00FF00"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Urgent", "#FF0000"));
         categoryGateway.save(new Category(UUID.randomUUID().toString(), "Extra", "#FFFF00"));

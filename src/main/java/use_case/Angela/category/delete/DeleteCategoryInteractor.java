@@ -137,8 +137,20 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
             return;
         }
         
-        // No minimum category requirement - users can delete all categories
 
+        // Count how many tasks and events will be updated BEFORE updating them
+        List<TaskAvailable> availableTasksToUpdate = taskDataAccess.findAvailableTasksByCategory(categoryId);
+        List<Task> todaysTasksToUpdate = taskDataAccess.findTodaysTasksByCategory(categoryId);
+        
+        int availableEventsToUpdate = 0;
+        int todaysEventsToUpdate = 0;
+        if (eventDataAccess != null) {
+            List<entity.info.Info> availableEvents = eventDataAccess.findAvailableEventsByCategory(categoryId);
+            List<entity.info.Info> todaysEvents = eventDataAccess.findTodaysEventsByCategory(categoryId);
+            availableEventsToUpdate = availableEvents.size();
+            todaysEventsToUpdate = todaysEvents.size();
+        }
+        
         // CRITICAL: Update all tasks that have this category BEFORE deleting the category
         System.out.println("DEBUG: Updating tasks with category: " + category.getName());
         boolean taskUpdateSuccess = taskDataAccess.updateTasksCategoryToNull(categoryId);
@@ -168,7 +180,20 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         System.out.println("DEBUG: Category deletion result: " + deleted);
 
         if (deleted) {
-            String message = "Category deleted successfully. All associated tasks and events have been updated.";
+            String message;
+            if (eventDataAccess != null && (availableEventsToUpdate > 0 || todaysEventsToUpdate > 0)) {
+                message = String.format(
+                    "Category deleted successfully. Updated %d available tasks, %d today's tasks, %d available events, and %d today's events", 
+                    availableTasksToUpdate.size(), todaysTasksToUpdate.size(), 
+                    availableEventsToUpdate, todaysEventsToUpdate
+                );
+            } else {
+                message = String.format(
+                    "Category deleted successfully. Updated %d available tasks and %d today's tasks to have empty category.", 
+                    availableTasksToUpdate.size(), todaysTasksToUpdate.size()
+                );
+            }
+            
             System.out.println("DEBUG: " + message);
             DeleteCategoryOutputData outputData = new DeleteCategoryOutputData(categoryId, message);
             outputBoundary.prepareSuccessView(outputData);

@@ -159,8 +159,8 @@ class DeleteCategoryInteractorAdvancedTest {
     }
 
     @Test
-    void testFailureTooFewCategoriesRemaining() {
-        // Setup exactly 3 categories (minimum required)
+    void testSuccessWithFewCategoriesRemaining() {
+        // Setup exactly 3 categories (should be able to delete any)
         categoryDataAccess.addCategory(new Category("cat1", "Work", "#FF0000"));
         categoryDataAccess.addCategory(new Category("cat2", "Personal", "#00FF00"));
         categoryDataAccess.addCategory(new Category("cat3", "Urgent", "#0000FF"));
@@ -169,9 +169,9 @@ class DeleteCategoryInteractorAdvancedTest {
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("cat1");
         interactor.execute(inputData);
         
-        assertNull(presenter.lastSuccessData);
-        assertNotNull(presenter.lastError);
-        assertEquals("Cannot delete category: minimum 3 categories required", presenter.lastError);
+        assertNotNull(presenter.lastSuccessData);
+        assertNull(presenter.lastError);
+        assertTrue(categoryDataAccess.isDeleted("cat1"));
     }
 
     @Test
@@ -379,19 +379,19 @@ class DeleteCategoryInteractorAdvancedTest {
 
     @Test
     void testBoundaryExactly3Categories() {
-        // Test edge case where we have exactly 3 categories
+        // Test edge case where we have exactly 3 categories - should succeed
         categoryDataAccess.addCategory(new Category("cat1", "Work", "#FF0000"));
         categoryDataAccess.addCategory(new Category("cat2", "Personal", "#00FF00"));
         categoryDataAccess.addCategory(new Category("cat3", "Urgent", "#0000FF"));
-        categoryDataAccess.setCategoryCount(3); // Exactly at minimum
+        categoryDataAccess.setCategoryCount(3);
         
         DeleteCategoryInputData inputData = new DeleteCategoryInputData("cat1");
         interactor.execute(inputData);
         
-        // Should fail - cannot go below 3
-        assertNull(presenter.lastSuccessData);
-        assertNotNull(presenter.lastError);
-        assertEquals("Cannot delete category: minimum 3 categories required", presenter.lastError);
+        // Should succeed - no minimum category requirement
+        assertNotNull(presenter.lastSuccessData);
+        assertNull(presenter.lastError);
+        assertTrue(categoryDataAccess.isDeleted("cat1"));
     }
 
     @Test

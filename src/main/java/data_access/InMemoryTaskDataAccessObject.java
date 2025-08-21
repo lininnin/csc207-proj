@@ -302,7 +302,13 @@ public class InMemoryTaskDataAccessObject implements
      * Legacy method for backward compatibility.
      */
     public List<Info> getAllAvailableTasks() {
-        return new ArrayList<>(availableTasks.values());
+        List<Info> result = new ArrayList<>();
+        for (TaskAvailable task : availableTaskTemplates.values()) {
+            if (task != null && task.getInfo() != null) {
+                result.add((Info) task.getInfo());
+            }
+        }
+        return result;
     }
     
     /**

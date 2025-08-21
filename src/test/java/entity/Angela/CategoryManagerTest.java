@@ -79,14 +79,11 @@ class CategoryManagerTest {
     }
 
     @Test
-    void testDefaultCategories() {
+    void testInitiallyEmpty() {
         Set<String> categories = categoryManager.getCategories();
         
-        assertTrue(categories.contains("Work"));
-        assertTrue(categories.contains("Personal"));
-        assertTrue(categories.contains("Health"));
-        assertTrue(categories.contains("Study"));
-        assertTrue(categories.size() >= 4);
+        assertTrue(categories.isEmpty());
+        assertEquals(0, categories.size());
     }
 
     @Test
@@ -150,6 +147,7 @@ class CategoryManagerTest {
     @Test
     void testRemoveCategory() {
         String category = "Work";
+        categoryManager.addCategory(category); // Add it first since system starts empty
         assertTrue(categoryManager.hasCategory(category));
         
         boolean removed = categoryManager.removeCategory(category);
@@ -180,6 +178,9 @@ class CategoryManagerTest {
         String oldCategory = "Work";
         String newCategory = "Business";
         
+        // Add category first since system starts empty
+        categoryManager.addCategory(oldCategory);
+        
         assertTrue(categoryManager.hasCategory(oldCategory));
         assertFalse(categoryManager.hasCategory(newCategory));
         
@@ -206,6 +207,10 @@ class CategoryManagerTest {
         String category1 = "Work";
         String category2 = "Personal";
         
+        // Add categories first since system starts empty
+        categoryManager.addCategory(category1);
+        categoryManager.addCategory(category2);
+        
         assertTrue(categoryManager.hasCategory(category1));
         assertTrue(categoryManager.hasCategory(category2));
         
@@ -220,6 +225,9 @@ class CategoryManagerTest {
     void testEditCategorySameName() {
         String category = "Work";
         
+        // Add category first since system starts empty
+        categoryManager.addCategory(category);
+        
         boolean edited = categoryManager.editCategory(category, category);
         
         assertTrue(edited); // Should allow same name
@@ -230,6 +238,9 @@ class CategoryManagerTest {
     void testEditCategorySameNameDifferentCase() {
         String category = "Work";
         String sameNameDifferentCase = "work";
+        
+        // Add category first since system starts empty
+        categoryManager.addCategory(category);
         
         boolean edited = categoryManager.editCategory(category, sameNameDifferentCase);
         
@@ -248,6 +259,9 @@ class CategoryManagerTest {
 
     @Test
     void testHasCategory() {
+        // Add category first since system starts empty
+        categoryManager.addCategory("Work");
+        
         assertTrue(categoryManager.hasCategory("Work"));
         assertFalse(categoryManager.hasCategory("NonExistent"));
         assertFalse(categoryManager.hasCategory(null));
@@ -255,9 +269,12 @@ class CategoryManagerTest {
 
     @Test
     void testHasCategoryIgnoresCase() {
-        assertTrue(categoryManager.hasCategory("work"));
-        assertTrue(categoryManager.hasCategory("WORK"));
-        assertTrue(categoryManager.hasCategory("WoRk"));
+        // Add category first since system starts empty
+        categoryManager.addCategory("Work");
+        
+        assertTrue(categoryManager.hasCategoryIgnoreCase("work"));
+        assertTrue(categoryManager.hasCategoryIgnoreCase("WORK"));
+        assertTrue(categoryManager.hasCategoryIgnoreCase("WoRk"));
     }
 
     @Test
@@ -274,6 +291,9 @@ class CategoryManagerTest {
 
     @Test
     void testGetCategoriesListIsModifiable() {
+        // Add a test category first since system starts empty
+        categoryManager.addCategory("Work");
+        
         List<String> categoriesList = categoryManager.getCategoriesList();
         int originalSize = categoriesList.size();
         
@@ -311,24 +331,20 @@ class CategoryManagerTest {
         assertTrue(categoryManager.hasCategory("Art"));
         assertTrue(categoryManager.hasCategory("Travel"));
         
-        // Default categories should still be present
-        assertTrue(categoryManager.hasCategory("Work"));
-        assertTrue(categoryManager.hasCategory("Personal"));
-        assertTrue(categoryManager.hasCategory("Health"));
-        assertTrue(categoryManager.hasCategory("Study"));
+        // No default categories - only loaded categories exist
+        assertEquals(3, categoryManager.getCategories().size());
     }
 
     @Test
     void testLoadCategoriesWithNull() {
-        int originalSize = categoryManager.getCategories().size();
+        // Add some categories first
+        categoryManager.addCategory("TestCategory");
+        assertEquals(1, categoryManager.getCategories().size());
         
         categoryManager.loadCategories(null);
         
-        // Should have at least the default categories
-        assertTrue(categoryManager.hasCategory("Work"));
-        assertTrue(categoryManager.hasCategory("Personal"));
-        assertTrue(categoryManager.hasCategory("Health"));
-        assertTrue(categoryManager.hasCategory("Study"));
+        // Should be empty after loading null
+        assertEquals(0, categoryManager.getCategories().size());
     }
 
     @Test
@@ -345,11 +361,10 @@ class CategoryManagerTest {
         assertTrue(categoryManager.hasCategory("Replacement1"));
         assertTrue(categoryManager.hasCategory("Replacement2"));
         
-        // Default categories should still be present
-        assertTrue(categoryManager.hasCategory("Work"));
-        assertTrue(categoryManager.hasCategory("Personal"));
-        assertTrue(categoryManager.hasCategory("Health"));
-        assertTrue(categoryManager.hasCategory("Study"));
+        // Custom categories should be replaced - only loaded categories exist
+        assertFalse(categoryManager.hasCategory("Custom1"));
+        assertFalse(categoryManager.hasCategory("Custom2"));
+        assertEquals(2, categoryManager.getCategories().size());
     }
 
     @Test
@@ -390,6 +405,10 @@ class CategoryManagerTest {
     @Test
     void testEditCategoryChangeListenerNotifications() {
         categoryManager.addCategoryChangeListener(testListener);
+        
+        // Add category first since system starts empty
+        categoryManager.addCategory("Work");
+        testListener.reset(); // Reset to ignore the add notification
         
         categoryManager.editCategory("Work", "Business");
         
@@ -448,7 +467,7 @@ class CategoryManagerTest {
         
         assertNotSame(instance1, instance2);
         assertFalse(instance2.hasCategory("TestCategory")); // Should not have custom category
-        assertTrue(instance2.hasCategory("Work")); // Should have defaults
+        assertTrue(instance2.getCategories().isEmpty()); // Should start empty
     }
 
     @Test
@@ -456,7 +475,13 @@ class CategoryManagerTest {
         // Add listener
         categoryManager.addCategoryChangeListener(testListener);
         
-        // Add categories
+        // Add initial categories (since system starts empty)
+        assertTrue(categoryManager.addCategory("Work"));
+        assertTrue(categoryManager.addCategory("Personal"));
+        assertTrue(categoryManager.addCategory("Health"));
+        assertTrue(categoryManager.addCategory("Study"));
+        
+        // Add custom categories
         assertTrue(categoryManager.addCategory("Entertainment"));
         assertTrue(categoryManager.addCategory("Finance"));
         
@@ -470,20 +495,22 @@ class CategoryManagerTest {
         categoryManager.loadCategories(Arrays.asList("Music", "Sports"));
         
         // Verify final state
-        // Note: loadCategories replaces existing custom categories
+        // Note: loadCategories replaces all existing categories
         assertFalse(categoryManager.hasCategory("Entertainment")); // Replaced by loadCategories
         assertFalse(categoryManager.hasCategory("Finance")); // Replaced by loadCategories
         assertFalse(categoryManager.hasCategory("Professional")); // Replaced by loadCategories
-        assertFalse(categoryManager.hasCategory("Work")); // Was edited to Professional, then replaced
+        assertFalse(categoryManager.hasCategory("Work")); // Replaced by loadCategories
+        assertFalse(categoryManager.hasCategory("Personal")); // Replaced by loadCategories
+        assertFalse(categoryManager.hasCategory("Health")); // Replaced by loadCategories
+        assertFalse(categoryManager.hasCategory("Study")); // Replaced by loadCategories
         assertTrue(categoryManager.hasCategory("Music")); // From loadCategories
         assertTrue(categoryManager.hasCategory("Sports")); // From loadCategories
         
-        // Default categories should still be present
-        assertTrue(categoryManager.hasCategory("Personal"));
-        assertTrue(categoryManager.hasCategory("Health"));
-        assertTrue(categoryManager.hasCategory("Study"));
-        
         // Verify listener notifications
+        assertTrue(testListener.getAddedCategories().contains("Work"));
+        assertTrue(testListener.getAddedCategories().contains("Personal"));
+        assertTrue(testListener.getAddedCategories().contains("Health"));
+        assertTrue(testListener.getAddedCategories().contains("Study"));
         assertTrue(testListener.getAddedCategories().contains("Entertainment"));
         assertTrue(testListener.getAddedCategories().contains("Finance"));
         assertTrue(testListener.getAddedCategories().contains("Professional"));

@@ -31,6 +31,7 @@ public class OverdueTasksStrategy implements OverdueTasksDataAccessInterface {
                 .filter(task -> task.getBeginAndDueDates().getDueDate() != null)
                 .filter(task -> task.getBeginAndDueDates().getDueDate().isBefore(LocalDate.now()))
                 .filter(task -> !task.getBeginAndDueDates().getDueDate().isBefore(cutoffDate))
+                .filter(task -> !task.isCompleted()) // Exclude completed tasks
                 .map(task -> (TaskInterf) task)
                 .collect(Collectors.toList());
     }
@@ -40,6 +41,7 @@ public class OverdueTasksStrategy implements OverdueTasksDataAccessInterface {
         return todaysTasks.values().stream()
                 .filter(task -> task.getBeginAndDueDates().getDueDate() != null)
                 .filter(task -> task.getBeginAndDueDates().getDueDate().isBefore(LocalDate.now()))
+                .filter(task -> !task.isCompleted()) // Exclude completed tasks
                 .map(task -> (TaskInterf) task)
                 .collect(Collectors.toList());
     }

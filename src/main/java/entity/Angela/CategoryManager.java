@@ -21,9 +21,9 @@ public class CategoryManager {
     }
 
     private CategoryManager() {
-        this.categories = new TreeSet<>(String.CASE_INSENSITIVE_ORDER); // Alphabetical order
+        this.categories = new TreeSet<>(); // Regular alphabetical order, case-sensitive storage
         this.listeners = new ArrayList<>();
-        initializeDefaultCategories();
+        // No default categories - system starts empty
     }
 
     /**
@@ -38,15 +38,6 @@ public class CategoryManager {
         return instance;
     }
 
-    /**
-     * Initializes default categories as per design requirements.
-     */
-    private void initializeDefaultCategories() {
-        categories.add("Work");
-        categories.add("Personal");
-        categories.add("Health");
-        categories.add("Study");
-    }
 
     /**
      * Adds a new category.
@@ -61,6 +52,12 @@ public class CategoryManager {
         }
 
         String trimmedCategory = category.trim();
+        
+        // Check if category already exists (case-insensitive)
+        if (hasCategoryIgnoreCase(trimmedCategory)) {
+            return false;
+        }
+        
         boolean added = categories.add(trimmedCategory);
 
         if (added) {
@@ -82,13 +79,22 @@ public class CategoryManager {
             return false;
         }
 
-        boolean removed = categories.remove(category);
-
-        if (removed) {
-            notifyCategoryRemoved(category);
+        // Find the actual category with matching case-insensitive name
+        String actualCategory = null;
+        for (String cat : categories) {
+            if (cat.equalsIgnoreCase(category)) {
+                actualCategory = cat;
+                break;
+            }
         }
 
-        return removed;
+        if (actualCategory != null) {
+            categories.remove(actualCategory);
+            notifyCategoryRemoved(category);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -106,15 +112,16 @@ public class CategoryManager {
 
         String trimmedNew = newCategory.trim();
 
-        // Check if old category exists
-        if (!categories.contains(oldCategory)) {
+        // Check if old category exists (case-insensitive)
+        if (!hasCategoryIgnoreCase(oldCategory)) {
             return false;
         }
 
         // Check if new category already exists (case-insensitive)
-        if (!oldCategory.equalsIgnoreCase(trimmedNew) && categories.contains(trimmedNew)) {
+        if (!oldCategory.equalsIgnoreCase(trimmedNew) && hasCategoryIgnoreCase(trimmedNew)) {
             return false;
         }
+
 
         // Remove old and add new
         // First, find and remove the exact entry (considering case-insensitive matching)
@@ -139,13 +146,55 @@ public class CategoryManager {
     }
 
     /**
-     * Checks if a category exists.
+     * Checks if a category exists (case-sensitive).
      *
      * @param category The category to check
-     * @return true if category exists (case-insensitive)
+     * @return true if category exists with exact case match
      */
     public boolean hasCategory(String category) {
-        return category != null && categories.contains(category);
+        if (category == null) {
+            return false;
+        }
+        return categories.contains(category);
+    }
+    
+    /**
+     * Checks if a category exists (case-insensitive).
+     *
+     * @param category The category to check
+     * @return true if category exists regardless of case
+     */
+    public boolean hasCategoryIgnoreCase(String category) {
+        if (category == null) {
+            return false;
+        }
+        
+        for (String existingCategory : categories) {
+            if (existingCategory.equalsIgnoreCase(category)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if a category exists with exact case matching.
+     *
+     * @param category The category to check
+     * @return true if category exists with exact case
+     */
+    public boolean hasCategoryExactCase(String category) {
+        if (category == null) {
+            return false;
+        }
+        
+        // Check for exact case match
+        for (String existingCategory : categories) {
+            if (existingCategory.equals(category)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -168,6 +217,8 @@ public class CategoryManager {
 
     /**
      * Loads categories from a collection (used when loading from file).
+     * This replaces all existing categories with the loaded ones.
+     * Default categories are only added if no categories exist at all.
      *
      * @param loadedCategories The categories to load
      */
@@ -177,8 +228,7 @@ public class CategoryManager {
             categories.addAll(loadedCategories);
         }
 
-        // Ensure default categories exist
-        initializeDefaultCategories();
+        // No default categories to restore - system remains with loaded categories only
 
         notifyCategoriesLoaded();
     }
