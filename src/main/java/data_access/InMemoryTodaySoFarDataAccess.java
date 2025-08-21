@@ -5,6 +5,7 @@ import entity.alex.Event.EventInterf;
 import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
+import use_case.repository.GoalRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +19,12 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
     private final InMemoryTaskGateway taskGateway;
     private final TodaysEventDataAccessObject eventDataAccess;
     private final TodaysWellnessLogDataAccessObject wellnessDataAccess;
-    private final data_access.GoalRepository goalRepository;
+    private final GoalRepository goalRepository;
     
     public InMemoryTodaySoFarDataAccess(InMemoryTaskGateway taskGateway,
                                         TodaysEventDataAccessObject eventDataAccess,
                                         TodaysWellnessLogDataAccessObject wellnessDataAccess,
-                                        data_access.GoalRepository goalRepository) {
+                                        GoalRepository goalRepository) {
         this.taskGateway = taskGateway;
         this.eventDataAccess = eventDataAccess;
         this.wellnessDataAccess = wellnessDataAccess;

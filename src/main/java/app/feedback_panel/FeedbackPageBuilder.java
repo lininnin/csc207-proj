@@ -2,14 +2,15 @@ package app.feedback_panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+
 import javax.swing.JPanel;
 
 import constants.Constants;
+import interface_adapter.feedback_entry.FeedbackEntryController;
 import interface_adapter.feedback_entry.FeedbackEntryPresenter;
 import interface_adapter.feedback_history.FeedbackHistoryController;
 import interface_adapter.feedback_history.FeedbackHistoryPresenter;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
-import interface_adapter.feedback_entry.FeedbackEntryController;
 import use_case.feedback_entry.FeedbackEntryInputBoundary;
 import use_case.feedback_entry.FeedbackEntryInteractor;
 import use_case.feedback_entry.FeedbackEntryOutputBoundary;
@@ -17,8 +18,8 @@ import use_case.feedback_history.FeedbackHistoryInputBoundary;
 import use_case.feedback_history.FeedbackHistoryInteractor;
 import use_case.feedback_history.FeedbackHistoryOutputBoundary;
 import use_case.repository.FeedbackRepository;
-import view.feedback_panel.feedback_entry.FeedbackEntryPanel;
 import view.feedback_panel.FeedbackHistoryPanel;
+import view.feedback_panel.feedback_entry.FeedbackEntryPanel;
 
 public final class FeedbackPageBuilder {
     private final FeedbackRepository repo;

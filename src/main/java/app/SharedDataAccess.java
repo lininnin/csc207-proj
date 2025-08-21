@@ -4,7 +4,7 @@ import data_access.InMemoryTaskGateway;
 import data_access.InMemoryCategoryGateway;
 import data_access.TodaysEventDataAccessObject;
 import data_access.TodaysWellnessLogDataAccessObject;
-import data_access.FileGoalRepository;
+import data_access.files.FileGoalRepository;
 import entity.alex.DailyEventLog.DailyEventLogFactory;
 import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Sophia.GoalFactory;

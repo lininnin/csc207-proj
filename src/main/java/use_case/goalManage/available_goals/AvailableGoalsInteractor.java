@@ -2,7 +2,7 @@ package use_case.goalManage.available_goals;
 
 import java.util.List;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 
 /**

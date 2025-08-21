@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.mockito.Mockito.*;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
 import entity.info.Info;
