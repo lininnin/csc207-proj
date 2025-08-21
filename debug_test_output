@@ -1,0 +1,25 @@
+Exception in thread "AWT-EventQueue-0" java.lang.NoClassDefFoundError: okhttp3/MediaType
+	at interface_adapter.gpt.OpenAiApiAdapter.<clinit>(OpenAiApiAdapter.java:21)
+	at app.BigMain.getWeeklyFeedbackScheduler(BigMain.java:143)
+	at app.BigMain.buildGui(BigMain.java:54)
+	at app.BigMain.lambda$main$0(BigMain.java:50)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+Caused by: java.lang.ClassNotFoundException: okhttp3.MediaType
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525)
+	... 17 more
+2025-08-21 13:53:41.579 java[86337:23142117] +[IMKClient subclass]: chose IMKClient_Modern
+2025-08-21 13:53:41.579 java[86337:23142117] +[IMKInputSession subclass]: chose IMKInputSession_Modern

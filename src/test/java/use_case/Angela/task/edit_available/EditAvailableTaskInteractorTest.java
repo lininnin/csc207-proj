@@ -1,7 +1,7 @@
 package use_case.Angela.task.edit_available;
 
 import data_access.InMemoryTaskDataAccessObject;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.TaskAvailable;
 import entity.Category;
 import entity.info.Info;
@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class EditAvailableTaskInteractorTest {
 
     private InMemoryTaskDataAccessObject taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryGateway;
     private TestEditAvailableTaskPresenter testPresenter;
     private EditAvailableTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskDataAccessObject();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryGateway = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestEditAvailableTaskPresenter();
         interactor = new EditAvailableTaskInteractor(taskGateway, categoryGateway, testPresenter);
     }

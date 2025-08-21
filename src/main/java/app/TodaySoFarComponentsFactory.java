@@ -66,9 +66,11 @@ public class TodaySoFarComponentsFactory {
      * @return A new TodaySoFarView connected to shared components
      */
     public TodaySoFarView createTodaySoFarView() {
+        System.out.println("DEBUG: TodaySoFarComponentsFactory.createTodaySoFarView() called");
         TodaySoFarView view = new TodaySoFarView(overdueTasksViewModel, todaySoFarViewModel);
         view.setOverdueTasksController(overdueTasksController);
         view.setTodaySoFarController(todaySoFarController);
+        System.out.println("DEBUG: TodaySoFarComponentsFactory - NOT calling setSharedComponents (this is the problem!)");
         return view;
     }
     

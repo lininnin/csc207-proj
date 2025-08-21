@@ -367,4 +367,22 @@ public class InMemoryTaskDataAccessObject implements
     public List<TaskAvailable> getAvailableTaskTemplates() {
         return new ArrayList<>(availableTaskTemplates.values());
     }
+    
+    /**
+     * Clears all data from this data access object for testing purposes.
+     * WARNING: This will delete all tasks and should only be used in tests!
+     */
+    public void clearAllData() {
+        availableTasks.clear();
+        availableTaskTemplates.clear();
+        todaysTasks.clear();
+    }
+    
+    /**
+     * Removes a task from today's list.
+     * Legacy method for backward compatibility.
+     */
+    public boolean removeFromToday(String taskId) {
+        return removeFromTodayStrategy.removeFromTodaysList(taskId);
+    }
 }

@@ -1,6 +1,6 @@
 package use_case.Angela.category.edit;
 
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import data_access.InMemoryTaskDataAccessObject;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EditCategoryInteractorTest {
 
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryTaskDataAccessObject categoryGateway;
     private InMemoryTaskDataAccessObject taskGateway;
     private TestEditCategoryPresenter testPresenter;
     private EditCategoryInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryGateway = new InMemoryTaskDataAccessObject();
         taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestEditCategoryPresenter();
         interactor = new EditCategoryInteractor(categoryGateway, taskGateway, testPresenter);

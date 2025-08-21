@@ -23,11 +23,14 @@ public class OverdueTasksStrategy implements OverdueTasksDataAccessInterface {
     @Override
     public List<TaskInterf> getOverdueTasks(int daysBack) {
         LocalDate cutoffDate = LocalDate.now().minusDays(daysBack);
+        System.out.println("DEBUG: OverdueTasksStrategy.getOverdueTasks() called with daysBack: " + daysBack);
+        System.out.println("DEBUG: Cutoff date: " + cutoffDate + ", Today: " + LocalDate.now());
+        System.out.println("DEBUG: Total today's tasks to check: " + todaysTasks.size());
         
         return todaysTasks.values().stream()
-                .filter(task -> task.getDates().getDueDate() != null)
-                .filter(task -> task.getDates().getDueDate().isBefore(LocalDate.now()))
-                .filter(task -> !task.getDates().getDueDate().isBefore(cutoffDate))
+                .filter(task -> task.getBeginAndDueDates().getDueDate() != null)
+                .filter(task -> task.getBeginAndDueDates().getDueDate().isBefore(LocalDate.now()))
+                .filter(task -> !task.getBeginAndDueDates().getDueDate().isBefore(cutoffDate))
                 .map(task -> (TaskInterf) task)
                 .collect(Collectors.toList());
     }
@@ -35,8 +38,8 @@ public class OverdueTasksStrategy implements OverdueTasksDataAccessInterface {
     @Override
     public List<TaskInterf> getAllOverdueTasks() {
         return todaysTasks.values().stream()
-                .filter(task -> task.getDates().getDueDate() != null)
-                .filter(task -> task.getDates().getDueDate().isBefore(LocalDate.now()))
+                .filter(task -> task.getBeginAndDueDates().getDueDate() != null)
+                .filter(task -> task.getBeginAndDueDates().getDueDate().isBefore(LocalDate.now()))
                 .map(task -> (TaskInterf) task)
                 .collect(Collectors.toList());
     }

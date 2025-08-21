@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class InMemoryTodaySoFarDataAccessTest {
 
     @Mock
-    private InMemoryTaskGateway mockTaskGateway;
+    private InMemoryTaskDataAccessObject mockTaskGateway;
     
     @Mock
     private TodaysEventDataAccessObject mockEventDataAccess;

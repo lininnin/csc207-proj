@@ -1,7 +1,7 @@
 package use_case.Angela.task.create;
 
 import data_access.InMemoryTaskDataAccessObject;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.info.Info;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateTaskInteractorTest {
 
     private InMemoryTaskDataAccessObject taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryCategoryDataAccessObject categoryGateway;
     private TestCreateTaskPresenter testPresenter;
     private CreateTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
         taskGateway = new InMemoryTaskDataAccessObject();
-        categoryGateway = new InMemoryCategoryGateway();
+        categoryGateway = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestCreateTaskPresenter();
         interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
     }
