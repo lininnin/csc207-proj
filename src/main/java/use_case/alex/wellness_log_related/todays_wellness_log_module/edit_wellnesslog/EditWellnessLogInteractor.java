@@ -1,12 +1,11 @@
 package use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog;
 
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
-import entity.Alex.WellnessLogEntry.Levels;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntry;
+import entity.alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
+import entity.alex.WellnessLogEntry.Levels;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 
 /**
  * Interactor for the EditWellnessLog use case.

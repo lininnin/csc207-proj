@@ -1,6 +1,6 @@
 package use_case.repository;
 
-import entity.Alex.Event.Event;
+import entity.alex.Event.Event;
 import java.util.List;
 
 public interface EventRepository {

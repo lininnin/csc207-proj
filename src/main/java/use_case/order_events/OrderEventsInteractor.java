@@ -3,7 +3,7 @@ package use_case.order_events;
 import java.util.Comparator;
 import java.util.List;
 
-import entity.Alex.Event.Event;
+import entity.alex.Event.Event;
 import use_case.repository.EventRepository;
 
 /**

@@ -1,10 +1,9 @@
 package data_access;
 
-import entity.Alex.DailyEventLog.DailyEventLogFactoryInterf;
-import entity.Alex.DailyEventLog.DailyEventLogInterf;
+import entity.alex.DailyEventLog.DailyEventLogFactoryInterf;
+import entity.alex.DailyEventLog.DailyEventLogInterf;
 
-import entity.Alex.Event.EventInterf;
-import entity.Alex.Event.Event;
+import entity.alex.Event.EventInterf;
 
 import entity.info.Info;
 

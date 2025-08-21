@@ -1,7 +1,7 @@
 package use_case.alex.event_related.add_event;
 
-import entity.Alex.Event.EventFactoryInterf;
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventFactoryInterf;
+import entity.alex.Event.EventInterf;
 import entity.BeginAndDueDates.BeginAndDueDatesFactoryInterf;
 import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.InfoInterf;

@@ -1,9 +1,8 @@
 package view.Alex.WellnessLog;
 
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.Type;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.Type;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelViewModel;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState.MoodLabelEntry;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.add_moodLabel.AddMoodLabelController;

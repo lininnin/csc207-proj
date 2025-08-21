@@ -3,10 +3,10 @@ package interface_adapter.gpt;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import entity.Alex.DailyEventLog.DailyEventLogInterf;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.DailyEventLog.DailyEventLogInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 import entity.Angela.DailyTaskSummary;
 

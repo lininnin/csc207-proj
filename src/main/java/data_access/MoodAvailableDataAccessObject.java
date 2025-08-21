@@ -1,11 +1,10 @@
 package data_access;
 
-import entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.MoodLabel.Type;
+import entity.alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
+import entity.alex.AvalibleMoodLabel.AvaliableMoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.Type;
 import use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel.AddMoodLabelDataAccessInterf;
 import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.DeleteMoodLabelDataAccessInterf;
 import use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel.EditMoodLabelDataAccessInterface;

@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.moodlabel_related.edit_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
 
 /**
  * Interface for data access operations related to editing mood labels.

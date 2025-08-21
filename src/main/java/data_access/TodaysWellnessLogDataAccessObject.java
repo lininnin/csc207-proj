@@ -1,9 +1,8 @@
 package data_access;
 
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntry;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogDataAccessInterf;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogDataAccessInterf;
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogDataAccessInterf;

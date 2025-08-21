@@ -3,7 +3,7 @@ package interface_adapter.gpt;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 
 /**

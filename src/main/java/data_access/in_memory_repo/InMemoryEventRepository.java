@@ -1,6 +1,6 @@
 package data_access.in_memory_repo;
 
-import entity.Alex.Event.Event;
+import entity.alex.Event.Event;
 import use_case.repository.EventRepository;
 import java.util.ArrayList;
 import java.util.List;

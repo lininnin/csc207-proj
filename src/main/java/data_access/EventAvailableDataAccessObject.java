@@ -1,7 +1,7 @@
 package data_access;
 
-import entity.Alex.EventAvailable.EventAvailableFactoryInterf;
-import entity.Alex.EventAvailable.EventAvailableInterf;
+import entity.alex.EventAvailable.EventAvailableFactoryInterf;
+import entity.alex.EventAvailable.EventAvailableInterf;
 import entity.info.Info;
 import entity.info.InfoInterf;
 import use_case.alex.event_related.add_event.ReadAvailableEventDataAccessInterf;

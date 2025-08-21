@@ -1,6 +1,6 @@
 package interface_adapter.alex.event_related.todays_events_module.edit_todays_event;
 
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsState;
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
