@@ -3,7 +3,10 @@ package entity.Angela;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskFactory;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import entity.info.InfoFactory;
+import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesFactory;
 import entity.alex.WellnessLogEntry.WellnessLogEntry;
 import entity.alex.WellnessLogEntry.WellnessLogEntryFactory;
 import entity.alex.MoodLabel.MoodLabel;
@@ -28,6 +31,7 @@ class TodaySoFarSnapshotTest {
 
     private TaskFactory taskFactory;
     private InfoFactory infoFactory;
+    private BeginAndDueDatesFactory datesFactory;
     private WellnessLogEntryFactory wellnessFactory;
     private MoodLabelFactory moodLabelFactory;
     
@@ -35,28 +39,34 @@ class TodaySoFarSnapshotTest {
     private Task task2;
     private Task completedTask;
     private Task overdueTask;
-    private Info event1;
-    private Info event2;
+    private InfoInterf event1;
+    private InfoInterf event2;
     private WellnessLogEntry wellnessEntry;
 
     @BeforeEach
     void setUp() {
         taskFactory = new TaskFactory();
         infoFactory = new InfoFactory();
+        datesFactory = new BeginAndDueDatesFactory();
         wellnessFactory = new WellnessLogEntryFactory();
         moodLabelFactory = new MoodLabelFactory();
         
         // Create test data
-        Info taskInfo1 = infoFactory.create("Task 1", "Description 1", "cat1");
-        Info taskInfo2 = infoFactory.create("Task 2", "Description 2", "cat2");
-        Info completedTaskInfo = infoFactory.create("Completed Task", "Completed description", "cat1");
-        Info overdueTaskInfo = infoFactory.create("Overdue Task", "Overdue description", "cat2");
+        InfoInterf taskInfo1 = infoFactory.create("Task 1", "Description 1", "cat1");
+        InfoInterf taskInfo2 = infoFactory.create("Task 2", "Description 2", "cat2");
+        InfoInterf completedTaskInfo = infoFactory.create("Completed Task", "Completed description", "cat1");
+        InfoInterf overdueTaskInfo = infoFactory.create("Overdue Task", "Overdue description", "cat2");
         
-        task1 = taskFactory.create(taskInfo1, "template1", Task.Priority.HIGH, LocalDate.now().plusDays(1));
-        task2 = taskFactory.create(taskInfo2, "template2", Task.Priority.MEDIUM, LocalDate.now().plusDays(2));
-        completedTask = taskFactory.create(completedTaskInfo, "template3", Task.Priority.LOW, LocalDate.now());
+        var dates1 = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(1));
+        var dates2 = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(2));
+        var dates3 = datesFactory.create(LocalDate.now(), LocalDate.now());
+        var dates4 = datesFactory.create(LocalDate.now(), LocalDate.now().minusDays(1));
+        
+        task1 = (Task) taskFactory.create("template1", taskInfo1, dates1, false);
+        task2 = (Task) taskFactory.create("template2", taskInfo2, dates2, false);
+        completedTask = (Task) taskFactory.create("template3", completedTaskInfo, dates3, false);
         completedTask.markComplete();
-        overdueTask = taskFactory.create(overdueTaskInfo, "template4", Task.Priority.HIGH, LocalDate.now().minusDays(1));
+        overdueTask = (Task) taskFactory.create("template4", overdueTaskInfo, dates4, false);
         
         event1 = infoFactory.create("Event 1", "Event description 1", "eventCat1");
         event2 = infoFactory.create("Event 2", "Event description 2", "eventCat2");
@@ -74,7 +84,7 @@ class TodaySoFarSnapshotTest {
         List<Task> completedTasks = Arrays.asList(completedTask);
         int taskCompletionRate = 33; // 1 out of 3 tasks completed
         List<Task> overdueTasks = Arrays.asList(overdueTask);
-        List<Info> todaysEvents = Arrays.asList(event1, event2);
+        List<InfoInterf> todaysEvents = Arrays.asList(event1, event2);
         List<TodaySoFarSnapshot.GoalProgress> goalProgress = Arrays.asList(
             new TodaySoFarSnapshot.GoalProgress("goal1", "Exercise Goal", "daily", 2, 5)
         );
@@ -231,7 +241,7 @@ class TodaySoFarSnapshotTest {
     @DisplayName("Should preserve event data correctly")
     void testEventDataPreservation() {
         // Given
-        List<Info> todaysEvents = Arrays.asList(event1, event2);
+        List<InfoInterf> todaysEvents = Arrays.asList(event1, event2);
         
         TodaySoFarSnapshot snapshot = new TodaySoFarSnapshot(
             LocalDate.now(),

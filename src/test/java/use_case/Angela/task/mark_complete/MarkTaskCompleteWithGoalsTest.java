@@ -1,6 +1,6 @@
 package use_case.Angela.task.mark_complete;
 
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskFactory;
 import entity.BeginAndDueDates.BeginAndDueDates;

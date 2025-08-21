@@ -1,7 +1,7 @@
 package app.goal;
 
 import app.goalPage.GoalPageBuilder;
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class GoalPageBuilderTest {
 
     @Test
     void createGoalFormPanel_buildsExpectedDefaults_andPopulatesTargetTasks() {
-        InMemoryTaskGateway gateway = mock(InMemoryTaskGateway.class);
+        InMemoryTaskDataAccessObject gateway = mock(InMemoryTaskDataAccessObject.class);
         TaskAvailable t1 = mockTask("T1");
         TaskAvailable t2 = mockTask("T2");
         when(gateway.getAvailableTaskTemplates()).thenReturn(List.of(t1, t2));
@@ -126,7 +126,7 @@ class GoalPageBuilderTest {
 
     @Test
     void refreshTargetTaskDropdown_preservesSelection() {
-        InMemoryTaskGateway gateway = mock(InMemoryTaskGateway.class);
+        InMemoryTaskDataAccessObject gateway = mock(InMemoryTaskDataAccessObject.class);
         TaskAvailable a = mockTask("A");
         TaskAvailable b = mockTask("B");
         TaskAvailable b2 = mockTask("B"); // different instance, same id (should match)

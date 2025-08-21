@@ -7,6 +7,7 @@ import entity.Angela.Task.TaskFactory;
 import entity.Angela.Task.TaskAvailableInterf;
 import entity.Angela.Task.TaskInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import entity.info.InfoFactory;
 import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.BeginAndDueDates.BeginAndDueDatesFactory;
@@ -46,9 +47,8 @@ class InMemoryTaskDataAccessObjectTest {
     @DisplayName("Should save task available and return task ID")
     void testSaveTaskAvailable() {
         // Given
-        Info info = infoFactory.create("Test Task", "Description", "cat1");
-        BeginAndDueDates dates = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(7));
-        TaskAvailable taskAvailable = taskAvailableFactory.create(info, dates, false);
+        InfoInterf info = infoFactory.create("Test Task", "Description", "cat1");
+        TaskAvailable taskAvailable = (TaskAvailable) taskAvailableFactory.create(info, false);
 
         // When
         String taskId = dataAccess.saveTaskAvailable(taskAvailable);
@@ -66,9 +66,8 @@ class InMemoryTaskDataAccessObjectTest {
     @DisplayName("Should detect existing task with same name and category")
     void testTaskExistsWithNameAndCategory() {
         // Given
-        Info info = infoFactory.create("Duplicate Task", "Description", "cat1");
-        BeginAndDueDates dates = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(7));
-        TaskAvailable taskAvailable = taskAvailableFactory.create(info, dates, false);
+        InfoInterf info = infoFactory.create("Duplicate Task", "Description", "cat1");
+        TaskAvailable taskAvailable = (TaskAvailable) taskAvailableFactory.create(info, false);
         dataAccess.saveTaskAvailable(taskAvailable);
 
         // When & Then
@@ -119,9 +118,8 @@ class InMemoryTaskDataAccessObjectTest {
         assertTrue(dataAccess.exists(taskAvailable));
         
         // Create different task that doesn't exist
-        Info differentInfo = infoFactory.create("Different Task", "Description", "cat1");
-        BeginAndDueDates dates = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(7));
-        TaskAvailable differentTask = taskAvailableFactory.create(differentInfo, dates, false);
+        InfoInterf differentInfo = infoFactory.create("Different Task", "Description", "cat1");
+        TaskAvailable differentTask = (TaskAvailable) taskAvailableFactory.create(differentInfo, false);
         assertFalse(dataAccess.exists(differentTask));
     }
 
@@ -142,7 +140,7 @@ class InMemoryTaskDataAccessObjectTest {
         TaskAvailableInterf retrieved = dataAccess.getTaskAvailableById(taskId);
         assertEquals("Updated Task", retrieved.getInfo().getName());
         assertEquals("New Description", retrieved.getInfo().getDescription());
-        assertEquals("cat2", retrieved.getInfo().getCategoryId());
+        assertEquals("cat2", retrieved.getInfo().getCategory());
         assertTrue(retrieved.isOneTime());
     }
 
@@ -175,7 +173,7 @@ class InMemoryTaskDataAccessObjectTest {
         assertNotNull(todayTask);
         assertEquals("Test Task", todayTask.getInfo().getName());
         assertEquals(Task.Priority.HIGH, ((Task) todayTask).getPriority());
-        assertEquals(dueDate, ((Task) todayTask).getDueDate());
+        assertEquals(dueDate, ((Task) todayTask).getDates().getDueDate());
         assertEquals(taskAvailable.getId(), ((Task) todayTask).getTemplateTaskId());
     }
 
@@ -243,7 +241,7 @@ class InMemoryTaskDataAccessObjectTest {
         assertTrue(updated);
         TaskInterf retrievedTask = dataAccess.getTodayTaskById(taskId);
         assertEquals(Task.Priority.HIGH, ((Task) retrievedTask).getPriority());
-        assertEquals(LocalDate.now().plusDays(5), ((Task) retrievedTask).getDueDate());
+        assertEquals(LocalDate.now().plusDays(5), ((Task) retrievedTask).getDates().getDueDate());
     }
 
     @Test
@@ -407,7 +405,7 @@ class InMemoryTaskDataAccessObjectTest {
         // Then
         assertTrue(updated);
         TaskAvailableInterf retrievedTask = dataAccess.getTaskAvailableById(taskId);
-        assertEquals("cat2", retrievedTask.getInfo().getCategoryId());
+        assertEquals("cat2", retrievedTask.getInfo().getCategory());
     }
 
     // ===== DeleteCategoryTaskDataAccessInterface Tests =====
@@ -431,7 +429,7 @@ class InMemoryTaskDataAccessObjectTest {
         
         // Verify cat2 task is unaffected
         TaskAvailableInterf task3Retrieved = dataAccess.getTaskAvailableById(task3.getId());
-        assertEquals("cat2", task3Retrieved.getInfo().getCategoryId());
+        assertEquals("cat2", task3Retrieved.getInfo().getCategory());
     }
 
     // ===== Legacy Methods Tests =====
@@ -440,10 +438,10 @@ class InMemoryTaskDataAccessObjectTest {
     @DisplayName("Should support legacy Info-based operations")
     void testLegacyMethods() {
         // Given
-        Info info = infoFactory.create("Legacy Task", "Description", "cat1");
+        InfoInterf info = infoFactory.create("Legacy Task", "Description", "cat1");
 
         // When
-        String taskId = dataAccess.saveAvailableTask(info);
+        String taskId = dataAccess.saveAvailableTask((Info) info);
 
         // Then
         assertNotNull(taskId);
@@ -452,7 +450,7 @@ class InMemoryTaskDataAccessObjectTest {
 
         // Test update
         info.setName("Updated Legacy Task");
-        assertTrue(dataAccess.updateAvailableTask(info));
+        assertTrue(dataAccess.updateAvailableTask((Info) info));
 
         // Test delete
         assertTrue(dataAccess.deleteFromAvailable(taskId));
@@ -500,9 +498,8 @@ class InMemoryTaskDataAccessObjectTest {
     // ===== Helper Methods =====
 
     private TaskAvailable createAndSaveTaskAvailable(String name, String categoryId) {
-        Info info = infoFactory.create(name, "Description for " + name, categoryId);
-        BeginAndDueDates dates = datesFactory.create(LocalDate.now(), LocalDate.now().plusDays(7));
-        TaskAvailable taskAvailable = taskAvailableFactory.create(info, dates, false);
+        InfoInterf info = infoFactory.create(name, "Description for " + name, categoryId);
+        TaskAvailable taskAvailable = (TaskAvailable) taskAvailableFactory.create(info, false);
         dataAccess.saveTaskAvailable(taskAvailable);
         return taskAvailable;
     }

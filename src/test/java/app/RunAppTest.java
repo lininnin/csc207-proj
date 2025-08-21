@@ -1,6 +1,6 @@
 package app;
 
-import app.eventPage.EventPageBuilder;
+import app.alex.eventPage.EventPageBuilder;
 import app.taskPage.TaskPageBuilder;
 import org.junit.jupiter.api.Test;
 

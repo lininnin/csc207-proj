@@ -38,11 +38,11 @@ class OverdueTasksStateTest {
     void testSetOverdueTasks() {
         // Given
         OverdueTaskData task1 = new OverdueTaskData(
-            "task1", "Overdue Task 1", "Description 1", "cat1", 
+            "task1", "Overdue Task 1", "Description 1", "cat1", "HIGH", 
             LocalDate.now().minusDays(2), 2
         );
         OverdueTaskData task2 = new OverdueTaskData(
-            "task2", "Overdue Task 2", "Description 2", "cat2", 
+            "task2", "Overdue Task 2", "Description 2", "cat2", "LOW", 
             LocalDate.now().minusDays(1), 1
         );
         List<OverdueTaskData> overdueTasks = Arrays.asList(task1, task2);
@@ -130,11 +130,11 @@ class OverdueTasksStateTest {
     void testMultipleUpdates() {
         // Given
         OverdueTaskData task1 = new OverdueTaskData(
-            "task1", "Task 1", "Desc 1", "cat1", 
+            "task1", "Task 1", "Desc 1", "cat1", "MEDIUM", 
             LocalDate.now().minusDays(1), 1
         );
         OverdueTaskData task2 = new OverdueTaskData(
-            "task2", "Task 2", "Desc 2", "cat2", 
+            "task2", "Task 2", "Desc 2", "cat2", "HIGH", 
             LocalDate.now().minusDays(3), 3
         );
 
@@ -166,7 +166,7 @@ class OverdueTasksStateTest {
         LocalDate overdueDate = LocalDate.now().minusDays(3);
         OverdueTaskData task = new OverdueTaskData(
             "task123", "Important Task", "Very important description", 
-            "work", overdueDate, 3
+            "work", "HIGH", overdueDate, 3
         );
 
         // When
@@ -176,8 +176,8 @@ class OverdueTasksStateTest {
         OverdueTaskData retrievedTask = state.getOverdueTasks().get(0);
         assertEquals("task123", retrievedTask.getTaskId());
         assertEquals("Important Task", retrievedTask.getTaskName());
-        assertEquals("Very important description", retrievedTask.getDescription());
-        assertEquals("work", retrievedTask.getCategoryId());
+        assertEquals("Very important description", retrievedTask.getTaskDescription());
+        assertEquals("work", retrievedTask.getCategoryName());
         assertEquals(overdueDate, retrievedTask.getDueDate());
         assertEquals(3, retrievedTask.getDaysOverdue());
     }

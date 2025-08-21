@@ -8,7 +8,7 @@ import entity.alex.WellnessLogEntry.WellnessLogEntry;
 import use_case.Angela.view_history.ViewHistoryDataAccessInterface;
 import app.SharedDataAccess;
 import data_access.InMemoryTaskDataAccessObject;
-import data_access.FileGoalRepository;
+import data_access.files.FileGoalRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
