@@ -1,6 +1,6 @@
 package use_case.Angela.task.add_to_today;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AddTaskToTodayInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestAddTaskToTodayPresenter testPresenter;
     private AddTaskToTodayInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestAddTaskToTodayPresenter();
         interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
     }
@@ -55,7 +55,7 @@ class AddTaskToTodayInteractorTest {
 
         // Verify task was added to today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());
-        Task addedTask = taskGateway.getTodaysTasks().get(0);
+        Task addedTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertEquals("Test Task", addedTask.getInfo().getName());
         assertEquals(Task.Priority.HIGH, addedTask.getPriority());
         assertEquals(futureDueDate, addedTask.getDates().getDueDate());
@@ -90,7 +90,7 @@ class AddTaskToTodayInteractorTest {
 
         // Verify task was added and is marked as overdue
         assertEquals(1, taskGateway.getTodaysTasks().size());
-        Task addedTask = taskGateway.getTodaysTasks().get(0);
+        Task addedTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertEquals("Overdue Test Task", addedTask.getInfo().getName());
         assertEquals(yesterday, addedTask.getDates().getDueDate());
         assertTrue(addedTask.isOverdue());
@@ -121,7 +121,7 @@ class AddTaskToTodayInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task is not overdue (due today)
-        Task addedTask = taskGateway.getTodaysTasks().get(0);
+        Task addedTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertEquals(today, addedTask.getDates().getDueDate());
         assertFalse(addedTask.isOverdue());
     }
@@ -150,7 +150,7 @@ class AddTaskToTodayInteractorTest {
         assertNull(testPresenter.lastError);
 
         // Verify task has no due date and is not overdue
-        Task addedTask = taskGateway.getTodaysTasks().get(0);
+        Task addedTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertNull(addedTask.getDates().getDueDate());
         assertFalse(addedTask.isOverdue());
     }
@@ -203,7 +203,7 @@ class AddTaskToTodayInteractorTest {
         // Verify failure
         assertNull(testPresenter.lastOutputData);
         assertNotNull(testPresenter.lastError);
-        assertEquals("Task is already in Today's Tasks", testPresenter.lastError);
+        assertEquals("This exact task (same priority and due date) is already in Today's Tasks", testPresenter.lastError);
 
         // Verify only one task in today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());
@@ -245,7 +245,7 @@ class AddTaskToTodayInteractorTest {
         assertEquals(1, taskGateway.getTodaysTasks().size());
         
         // Verify the task in today's list is marked as one-time
-        Task addedTask = taskGateway.getTodaysTasks().get(0);
+        Task addedTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertTrue(addedTask.isOneTime());
     }
 
@@ -301,7 +301,7 @@ class AddTaskToTodayInteractorTest {
         
         // Verify task was added
         assertEquals(1, taskGateway.getTodaysTasks().size());
-        Task firstTask = taskGateway.getTodaysTasks().get(0);
+        Task firstTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertFalse(firstTask.isOverdue());
         
         // Reset presenter for next test
@@ -361,18 +361,18 @@ class AddTaskToTodayInteractorTest {
         testPresenter = new TestAddTaskToTodayPresenter();
         interactor = new AddTaskToTodayInteractor(taskGateway, testPresenter);
 
-        // Try to add the same task again without isTestingOverdue flag
+        // Try to add the same task again with identical priority and due date
         AddTaskToTodayInputData duplicateInput = new AddTaskToTodayInputData(
                 availableTask.getId(),
-                Task.Priority.HIGH,
-                LocalDate.now().plusDays(5)
+                Task.Priority.MEDIUM,  // Same priority as first add
+                futureDate              // Same due date as first add
         );
         interactor.execute(duplicateInput);
 
         // Verify failure
         assertNull(testPresenter.lastOutputData);
         assertNotNull(testPresenter.lastError);
-        assertEquals("Task is already in Today's Tasks", testPresenter.lastError);
+        assertEquals("This exact task (same priority and due date) is already in Today's Tasks", testPresenter.lastError);
         
         // Verify still only one task in today's list
         assertEquals(1, taskGateway.getTodaysTasks().size());
@@ -399,7 +399,7 @@ class AddTaskToTodayInteractorTest {
         
         // Verify task was added and is overdue
         assertEquals(1, taskGateway.getTodaysTasks().size());
-        Task overdueTask = taskGateway.getTodaysTasks().get(0);
+        Task overdueTask = (Task) taskGateway.getTodaysTasks().get(0);
         assertTrue(overdueTask.isOverdue());
         assertEquals(pastDate, overdueTask.getDates().getDueDate());
         
@@ -446,7 +446,7 @@ class AddTaskToTodayInteractorTest {
         
         // Add task with future date (not overdue)
         LocalDate futureDate = LocalDate.now().plusDays(2);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, futureDate);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, futureDate);
         
         // Now it should be in today's list and not overdue
         assertTrue(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
@@ -456,9 +456,9 @@ class AddTaskToTodayInteractorTest {
         assertFalse(taskGateway.isTaskInTodaysListAndNotOverdue(availableTask.getId()));
         
         // Now add a task with a past date
-        // Note: The InMemoryTaskGateway adjusts dates to allow testing overdue tasks
+        // Note: The InMemoryTaskDataAccessObject adjusts dates to allow testing overdue tasks
         LocalDate pastDate = LocalDate.now().minusDays(1);
-        Task overdueTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, pastDate);
+        Task overdueTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, pastDate);
         
         // Verify the task was created and is actually overdue
         assertNotNull(overdueTask);

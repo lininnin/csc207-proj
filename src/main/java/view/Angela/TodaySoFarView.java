@@ -25,6 +25,7 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
     private OverdueTasksController overdueTasksController;
     private TodaySoFarController todaySoFarController;
     private TodaySoFarViewModel todaySoFarViewModel;
+    private app.SharedTodaySoFarComponents sharedComponents;
     private JSplitPane mainSplitPane;
     private JPanel contentPanel;
     
@@ -368,9 +369,14 @@ public class TodaySoFarView extends JPanel implements PropertyChangeListener {
     
     public void setTodaySoFarController(TodaySoFarController controller) {
         this.todaySoFarController = controller;
-        // Trigger initial refresh when controller is set
-        if (controller != null) {
-            controller.refresh();
+        // Note: Don't call controller.refresh() here - use shared refresh instead
+    }
+    
+    public void setSharedComponents(app.SharedTodaySoFarComponents components) {
+        this.sharedComponents = components;
+        // Trigger initial refresh when shared components are set
+        if (components != null) {
+            components.refresh(); // This will call both controllers
         }
     }
     

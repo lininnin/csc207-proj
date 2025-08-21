@@ -39,7 +39,8 @@ class EditCategoryWithSegregatedInterfacesTest {
         interactor = new EditCategoryInteractor(
             categoryDataAccess,
             taskDataAccess,
-            testPresenter
+            testPresenter,
+            new entity.CommonCategoryFactory()
         );
     }
 

@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import static org.mockito.Mockito.*;
 
+import use_case.goalManage.available_goals.AvailableGoalsOutputBoundary;
+import use_case.goalManage.available_goals.AvailableGoalsOutputData;
 import data_access.GoalRepository;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;

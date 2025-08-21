@@ -225,4 +225,45 @@ public class EventAvailableDataAccessObject implements
         // This will be handled by TodaysEventDataAccessObject
         return false;
     }
+
+    @Override
+    public List<Info> findAvailableEventsWithEmptyCategory() {
+        List<Info> result = new ArrayList<>();
+        for (InfoInterf event : eventAvailable.getEventAvailable()) {
+            String category = event.getCategory();
+            if (category == null || category.trim().isEmpty()) {
+                // Cast to Info since InfoInterf is implemented by Info
+                if (event instanceof Info) {
+                    result.add((Info) event);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Info> findTodaysEventsWithEmptyCategory() {
+        // Available events DAO doesn't manage today's events
+        // This will be handled by TodaysEventDataAccessObject
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public boolean updateEventsCategoryToNull(String categoryId) {
+        try {
+            // Find all available events with the given category
+            List<Info> eventsWithCategory = findAvailableEventsByCategory(categoryId);
+            
+            // Clear the category for each event
+            for (Info event : eventsWithCategory) {
+                if (!clearAvailableEventCategory(event.getId())) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

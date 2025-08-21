@@ -46,7 +46,7 @@ public class CreateGoalInteractor implements CreateGoalInputBoundary {
             final Info targetTaskInfo;
             if (inputData.getTargetTask() != null && inputData.getTargetTask().getInfo() != null) {
                 // Use the actual task's info
-                targetTaskInfo = inputData.getTargetTask().getInfo();
+                targetTaskInfo = (Info) inputData.getTargetTask().getInfo();
                 System.out.println("DEBUG: CreateGoalInteractor - Using target task: " + targetTaskInfo.getName());
             }
             else {

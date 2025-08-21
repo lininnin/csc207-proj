@@ -9,8 +9,22 @@ public interface InfoInterf {
     String getCategory();
     LocalDate getCreatedDate();
 
+    /**
+     * @deprecated Use immutable update methods instead
+     */
+    @Deprecated
     void setName(String name);
+    
+    /**
+     * @deprecated Use immutable update methods instead
+     */
+    @Deprecated
     void setDescription(String description);
+    
+    /**
+     * @deprecated Use immutable update methods instead
+     */
+    @Deprecated
     void setCategory(String category);
 }
 

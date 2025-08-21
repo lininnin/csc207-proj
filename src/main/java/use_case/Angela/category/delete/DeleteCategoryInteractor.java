@@ -48,69 +48,129 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
             return;
         }
         
-        // No minimum category requirement - users can delete all categories
-
-        // CRITICAL: Find and update all tasks that have this category BEFORE deleting the category
-        // Update available tasks (templates)
-        System.out.println("DEBUG: Finding available tasks with category: " + category.getName());
-        List<TaskAvailable> availableTasks = taskDataAccess.findAvailableTasksByCategory(categoryId);
-        System.out.println("DEBUG: Found " + availableTasks.size() + " available tasks to update");
+        // Check if deleting this category will create duplicate tasks with the same name and empty category
+        // First, get all tasks that currently have this category
+        List<TaskAvailable> tasksWithThisCategory = taskDataAccess.findAvailableTasksByCategory(categoryId);
+        List<Task> todaysTasksWithThisCategory = taskDataAccess.findTodaysTasksByCategory(categoryId);
         
-        int updatedAvailableCount = 0;
-        for (TaskAvailable task : availableTasks) {
-            System.out.println("DEBUG: Updating task '" + task.getInfo().getName() + "' to remove category");
-            if (taskDataAccess.updateAvailableTaskCategory(task.getId(), "")) {
-                updatedAvailableCount++;
-                System.out.println("DEBUG: Successfully updated task: " + task.getId());
-            } else {
-                System.out.println("DEBUG: Failed to update task: " + task.getId());
-            }
-        }
-
-        // Update today's tasks (instances)
-        System.out.println("DEBUG: Finding today's tasks with category: " + category.getName());
-        List<Task> todaysTasks = taskDataAccess.findTodaysTasksByCategory(categoryId);
-        System.out.println("DEBUG: Found " + todaysTasks.size() + " today's tasks to update");
+        // Then check if there are already tasks with empty categories that have the same names
+        List<TaskAvailable> existingEmptyAvailableTasks = taskDataAccess.findAvailableTasksWithEmptyCategory();
+        List<Task> existingEmptyTodaysTasks = taskDataAccess.findTodaysTasksWithEmptyCategory();
         
-        int updatedTodaysCount = 0;
-        for (Task task : todaysTasks) {
-            System.out.println("DEBUG: Updating today's task '" + task.getInfo().getName() + "' to remove category");
-            if (taskDataAccess.updateTodaysTaskCategory(task.getId(), "")) {
-                updatedTodaysCount++;
-                System.out.println("DEBUG: Successfully updated today's task: " + task.getId());
-            } else {
-                System.out.println("DEBUG: Failed to update today's task: " + task.getId());
+        // Check for name conflicts in available tasks
+        int conflictingAvailableTasks = 0;
+        for (TaskAvailable taskWithCategory : tasksWithThisCategory) {
+            String taskName = taskWithCategory.getInfo().getName();
+            for (TaskAvailable emptyTask : existingEmptyAvailableTasks) {
+                if (taskName != null && taskName.equalsIgnoreCase(emptyTask.getInfo().getName())) {
+                    conflictingAvailableTasks++;
+                    break; // Found one conflict for this task name, no need to check more
+                }
             }
         }
         
-        // CRITICAL: Also handle events if we have event data access
-        int updatedAvailableEventsCount = 0;
-        int updatedTodaysEventsCount = 0;
+        // Check for name conflicts in today's tasks
+        int conflictingTodaysTasks = 0;
+        for (Task taskWithCategory : todaysTasksWithThisCategory) {
+            String taskName = taskWithCategory.getInfo().getName();
+            for (Task emptyTask : existingEmptyTodaysTasks) {
+                if (taskName != null && taskName.equalsIgnoreCase(emptyTask.getInfo().getName())) {
+                    conflictingTodaysTasks++;
+                    break; // Found one conflict for this task name, no need to check more
+                }
+            }
+        }
         
-        // Handle events if event data access is provided (follows OCP - no instanceof check)
+        // Check events if available
+        int conflictingAvailableEvents = 0;
+        int conflictingTodaysEvents = 0;
+        
         if (eventDataAccess != null) {
-            // Update available events
-            System.out.println("DEBUG: Finding available events with category: " + category.getName());
-            List<Info> availableEvents = eventDataAccess.findAvailableEventsByCategory(categoryId);
-            System.out.println("DEBUG: Found " + availableEvents.size() + " available events to update");
+            List<Info> eventsWithThisCategory = eventDataAccess.findAvailableEventsByCategory(categoryId);
+            List<Info> todaysEventsWithThisCategory = eventDataAccess.findTodaysEventsByCategory(categoryId);
+            List<Info> existingEmptyAvailableEvents = eventDataAccess.findAvailableEventsWithEmptyCategory();
+            List<Info> existingEmptyTodaysEvents = eventDataAccess.findTodaysEventsWithEmptyCategory();
             
-            for (Info event : availableEvents) {
-                System.out.println("DEBUG: Clearing category for available event: " + event.getName());
-                if (eventDataAccess.clearAvailableEventCategory(event.getId())) {
-                    updatedAvailableEventsCount++;
+            // Check for name conflicts in available events
+            for (Info eventWithCategory : eventsWithThisCategory) {
+                String eventName = eventWithCategory.getName();
+                for (Info emptyEvent : existingEmptyAvailableEvents) {
+                    if (eventName != null && eventName.equalsIgnoreCase(emptyEvent.getName())) {
+                        conflictingAvailableEvents++;
+                        break;
+                    }
                 }
             }
             
-            // Update today's events
-            System.out.println("DEBUG: Finding today's events with category: " + category.getName());
-            List<Info> todaysEvents = eventDataAccess.findTodaysEventsByCategory(categoryId);
-            System.out.println("DEBUG: Found " + todaysEvents.size() + " today's events to update");
-            
-            for (Info event : todaysEvents) {
-                System.out.println("DEBUG: Clearing category for today's event: " + event.getName());
-                if (eventDataAccess.clearTodaysEventCategory(event.getId())) {
-                    updatedTodaysEventsCount++;
+            // Check for name conflicts in today's events
+            for (Info eventWithCategory : todaysEventsWithThisCategory) {
+                String eventName = eventWithCategory.getName();
+                for (Info emptyEvent : existingEmptyTodaysEvents) {
+                    if (eventName != null && eventName.equalsIgnoreCase(emptyEvent.getName())) {
+                        conflictingTodaysEvents++;
+                        break;
+                    }
                 }
+            }
+        }
+        
+        int totalConflictingTasks = conflictingAvailableTasks + conflictingTodaysTasks;
+        int totalConflictingEvents = conflictingAvailableEvents + conflictingTodaysEvents;
+        int totalConflicts = totalConflictingTasks + totalConflictingEvents;
+        
+        if (totalConflicts > 0) {
+            String warningMessage;
+            if (totalConflictingEvents > 0) {
+                warningMessage = String.format(
+                    "Warning: Deleting this category will create %d duplicate task(s) and %d duplicate event(s) " +
+                    "with the same names that already exist with empty categories. Continue?",
+                    totalConflictingTasks, totalConflictingEvents
+                );
+            } else {
+                warningMessage = String.format(
+                    "Warning: Deleting this category will create %d duplicate task(s) " +
+                    "with the same names that already exist with empty categories. Continue?",
+                    totalConflictingTasks
+                );
+            }
+            outputBoundary.prepareFailView(warningMessage);
+            return;
+        }
+        
+
+        // Count how many tasks and events will be updated BEFORE updating them
+        List<TaskAvailable> availableTasksToUpdate = taskDataAccess.findAvailableTasksByCategory(categoryId);
+        List<Task> todaysTasksToUpdate = taskDataAccess.findTodaysTasksByCategory(categoryId);
+        
+        int availableEventsToUpdate = 0;
+        int todaysEventsToUpdate = 0;
+        if (eventDataAccess != null) {
+            List<entity.info.Info> availableEvents = eventDataAccess.findAvailableEventsByCategory(categoryId);
+            List<entity.info.Info> todaysEvents = eventDataAccess.findTodaysEventsByCategory(categoryId);
+            availableEventsToUpdate = availableEvents.size();
+            todaysEventsToUpdate = todaysEvents.size();
+        }
+        
+        // CRITICAL: Update all tasks that have this category BEFORE deleting the category
+        System.out.println("DEBUG: Updating tasks with category: " + category.getName());
+        boolean taskUpdateSuccess = taskDataAccess.updateTasksCategoryToNull(categoryId);
+        System.out.println("DEBUG: Task update result: " + taskUpdateSuccess);
+        
+        if (!taskUpdateSuccess) {
+            outputBoundary.prepareFailView("Failed to delete category");
+            return;
+        }
+        
+        // CRITICAL: Update all events that have this category BEFORE deleting the category
+        boolean eventUpdateSuccess = true;
+        if (eventDataAccess != null) {
+            System.out.println("DEBUG: Updating events with category: " + category.getName());
+            eventUpdateSuccess = eventDataAccess.updateEventsCategoryToNull(categoryId);
+            System.out.println("DEBUG: Event update result: " + eventUpdateSuccess);
+            
+            if (!eventUpdateSuccess) {
+                outputBoundary.prepareFailView("Failed to delete category");
+                return;
             }
         }
 
@@ -121,17 +181,19 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
 
         if (deleted) {
             String message;
-            if (updatedAvailableEventsCount > 0 || updatedTodaysEventsCount > 0) {
+            if (eventDataAccess != null && (availableEventsToUpdate > 0 || todaysEventsToUpdate > 0)) {
                 message = String.format(
-                    "Category deleted successfully. Updated %d available tasks, %d today's tasks, %d available events, and %d today's events to have empty category.",
-                    updatedAvailableCount, updatedTodaysCount, updatedAvailableEventsCount, updatedTodaysEventsCount
+                    "Category deleted successfully. Updated %d available tasks, %d today's tasks, %d available events, and %d today's events", 
+                    availableTasksToUpdate.size(), todaysTasksToUpdate.size(), 
+                    availableEventsToUpdate, todaysEventsToUpdate
                 );
             } else {
                 message = String.format(
-                    "Category deleted successfully. Updated %d available tasks and %d today's tasks to have empty category.",
-                    updatedAvailableCount, updatedTodaysCount
+                    "Category deleted successfully. Updated %d available tasks and %d today's tasks to have empty category.", 
+                    availableTasksToUpdate.size(), todaysTasksToUpdate.size()
                 );
             }
+            
             System.out.println("DEBUG: " + message);
             DeleteCategoryOutputData outputData = new DeleteCategoryOutputData(categoryId, message);
             outputBoundary.prepareSuccessView(outputData);

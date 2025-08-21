@@ -6,7 +6,16 @@ import java.util.List;
 /**
  * Gateway interface for category data access operations.
  * Follows the Clean Architecture pattern to decouple use cases from data persistence.
+ * 
+ * @deprecated This interface violates ISP. Use specific DataAccessInterface for each use case instead:
+ * - CreateCategoryDataAccessInterface for creating categories
+ * - EditCategoryDataAccessInterface for editing categories
+ * - DeleteCategoryDataAccessInterface for deleting categories
+ * - DeleteCategoryTaskDataAccessInterface for task updates during category deletion
+ * - DeleteCategoryEventDataAccessInterface for event updates during category deletion
+ * - CategoryReadDataAccessInterface for category read operations
  */
+@Deprecated
 public interface CategoryGateway {
 
     /**

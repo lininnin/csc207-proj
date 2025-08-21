@@ -1,9 +1,11 @@
 package use_case.Angela.task.create;
 
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.info.Info;
+import entity.info.InfoFactory;
 import entity.Category;
+import entity.Angela.Task.TaskAvailableFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,17 +19,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CreateTaskInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
+    private InMemoryCategoryDataAccessObject categoryGateway;
     private TestCreateTaskPresenter testPresenter;
     private CreateTaskInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
+        categoryGateway = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter, 
+                new InfoFactory(), new TaskAvailableFactory());
     }
 
     @Test
@@ -135,7 +138,8 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter, 
+                new InfoFactory(), new TaskAvailableFactory());
 
         // Try to create task with same name and category (case-insensitive check)
         CreateTaskInputData inputData2 = new CreateTaskInputData(
@@ -329,7 +333,8 @@ class CreateTaskInteractorTest {
 
         // Reset presenter
         testPresenter = new TestCreateTaskPresenter();
-        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter);
+        interactor = new CreateTaskInteractor(taskGateway, categoryGateway, testPresenter, 
+                new InfoFactory(), new TaskAvailableFactory());
 
         // Create second task with same name but different category
         CreateTaskInputData inputData2 = new CreateTaskInputData(

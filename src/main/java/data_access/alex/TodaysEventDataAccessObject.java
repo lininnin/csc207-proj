@@ -187,4 +187,58 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         return false;
     }
 
+    @Override
+    public List<Info> findAvailableEventsWithEmptyCategory() {
+        // Today's events DAO doesn't manage available events
+        // This will be handled by EventAvailableDataAccessObject
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Info> findTodaysEventsWithEmptyCategory() {
+        List<Info> result = new ArrayList<>();
+        for (EventInterf event : todayLog.getActualEvents()) {
+            if (event.getInfo() != null) {
+                String category = event.getInfo().getCategory();
+                if (category == null || category.trim().isEmpty()) {
+                    // Cast to Info since InfoInterf is implemented by Info
+                    if (event.getInfo() instanceof Info) {
+                        result.add((Info) event.getInfo());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean updateEventsCategoryToNull(String categoryId) {
+        try {
+            // Find all today's events with the given category
+            List<Info> eventsWithCategory = findTodaysEventsByCategory(categoryId);
+            
+            // Clear the category for each event
+            for (Info event : eventsWithCategory) {
+                if (!clearTodaysEventCategory(event.getId())) {
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Clears all data from this data access object for testing purposes.
+     * WARNING: This will delete all events and should only be used in tests!
+     */
+    public void clearAllData() {
+        if (todayLog != null) {
+            // Clear today's events - need to check the DailyEventLog API
+            // todayLog.clearAllEvents(); // TODO: Add clear method to DailyEventLogInterf
+        }
+    }
+
 }

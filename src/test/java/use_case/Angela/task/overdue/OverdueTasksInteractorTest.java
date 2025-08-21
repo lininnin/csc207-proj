@@ -1,9 +1,10 @@
 package use_case.Angela.task.overdue;
 
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskInterf;
 import entity.info.Info;
 import entity.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class OverdueTasksInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
-    private InMemoryCategoryGateway categoryGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
+    private InMemoryCategoryDataAccessObject categoryGateway;
     private TestOverdueTasksPresenter testPresenter;
     private OverdueTasksInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
-        categoryGateway = new InMemoryCategoryGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
+        categoryGateway = new InMemoryCategoryDataAccessObject();
         testPresenter = new TestOverdueTasksPresenter();
         interactor = new OverdueTasksInteractor(taskGateway, categoryGateway, testPresenter);
     }
@@ -134,10 +135,13 @@ class OverdueTasksInteractorTest {
         taskGateway.saveTaskAvailable(template);
         
         // Add to today with past due date
-        Task completedTask = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
+        TaskInterf completedTaskInterf = taskGateway.addTaskToToday(template, Task.Priority.HIGH, LocalDate.now().minusDays(1));
         
-        // Mark as completed
-        completedTask.markComplete();
+        // Mark as completed - need to cast to access the deprecated method for testing
+        if (completedTaskInterf instanceof Task) {
+            Task completedTask = (Task) completedTaskInterf;
+            completedTask.markComplete();
+        }
 
         // Execute the interactor
         OverdueTasksInputData inputData = new OverdueTasksInputData(30);

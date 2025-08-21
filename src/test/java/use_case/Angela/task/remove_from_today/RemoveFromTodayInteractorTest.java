@@ -1,6 +1,6 @@
 package use_case.Angela.task.remove_from_today;
 
-import data_access.InMemoryTaskGateway;
+import data_access.InMemoryTaskDataAccessObject;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class RemoveFromTodayInteractorTest {
 
-    private InMemoryTaskGateway taskGateway;
+    private InMemoryTaskDataAccessObject taskGateway;
     private TestRemoveFromTodayPresenter testPresenter;
     private RemoveFromTodayInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        taskGateway = new InMemoryTaskGateway();
+        taskGateway = new InMemoryTaskDataAccessObject();
         testPresenter = new TestRemoveFromTodayPresenter();
         interactor = new RemoveFromTodayInteractor(taskGateway, testPresenter);
     }
@@ -37,7 +37,7 @@ class RemoveFromTodayInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, LocalDate.now().plusDays(1));
         String taskId = todayTask.getId();
 
         // Remove from today
@@ -68,7 +68,7 @@ class RemoveFromTodayInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.MEDIUM, null);
         todayTask.markComplete();
         String taskId = todayTask.getId();
 
@@ -94,7 +94,7 @@ class RemoveFromTodayInteractorTest {
         taskGateway.saveTaskAvailable(availableTask);
         
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        Task todayTask = taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, Task.Priority.HIGH, yesterday);
         String taskId = todayTask.getId();
         assertTrue(todayTask.isOverdue());
 
@@ -120,7 +120,7 @@ class RemoveFromTodayInteractorTest {
         availableTask.setOneTime(true);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, null);
         String taskId = todayTask.getId();
 
         // Remove from today
@@ -146,7 +146,7 @@ class RemoveFromTodayInteractorTest {
         TaskAvailable availableTask = new TaskAvailable(info);
         taskGateway.saveTaskAvailable(availableTask);
         
-        Task todayTask = taskGateway.addTaskToToday(availableTask, null, null);
+        Task todayTask = (Task) taskGateway.addTaskToToday(availableTask, null, null);
         String taskId = todayTask.getId();
 
         // Remove from today
@@ -209,9 +209,9 @@ class RemoveFromTodayInteractorTest {
         taskGateway.saveTaskAvailable(available2);
         taskGateway.saveTaskAvailable(available3);
         
-        Task today1 = taskGateway.addTaskToToday(available1, Task.Priority.HIGH, null);
-        Task today2 = taskGateway.addTaskToToday(available2, Task.Priority.MEDIUM, null);
-        Task today3 = taskGateway.addTaskToToday(available3, Task.Priority.LOW, null);
+        Task today1 = (Task) taskGateway.addTaskToToday(available1, Task.Priority.HIGH, null);
+        Task today2 = (Task) taskGateway.addTaskToToday(available2, Task.Priority.MEDIUM, null);
+        Task today3 = (Task) taskGateway.addTaskToToday(available3, Task.Priority.LOW, null);
         
         // Remove the middle task
         RemoveFromTodayInputData inputData = new RemoveFromTodayInputData(today2.getId());

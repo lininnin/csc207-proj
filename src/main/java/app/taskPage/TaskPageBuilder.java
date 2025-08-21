@@ -1,5 +1,6 @@
 package app.taskPage;
 
+import app.AppDataAccessFactory;
 import interface_adapter.Angela.task.create.*;
 import interface_adapter.Angela.task.delete.*;
 import interface_adapter.Angela.task.available.*;
@@ -29,11 +30,28 @@ import use_case.Angela.task.remove_from_today.*;
 import use_case.Angela.category.create.*;
 import use_case.Angela.category.delete.*;
 import use_case.Angela.category.edit.*;
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
+import use_case.Angela.today_so_far.*;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryDataAccessObject;
+import data_access.InMemoryTodaySoFarDataAccess;
 import view.Angela.Task.*;
 import view.Angela.Category.*;
 import view.Angela.TodaySoFarView;
+import view.FontUtil;
+
+import entity.info.Info;
+import entity.info.InfoFactory;
+import entity.Angela.Task.TaskAvailableFactory;
+import entity.CategoryFactory;
+import entity.CommonCategoryFactory;
+import entity.alex.Event.Event;
+import entity.alex.WellnessLogEntry.WellnessLogEntryFactory;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.WellnessLogEntry.Levels;
+import entity.alex.MoodLabel.MoodLabel;
+import entity.alex.MoodLabel.MoodLabelFactory;
+import entity.alex.MoodLabel.Type;
+import entity.BeginAndDueDates.BeginAndDueDates;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,12 +60,14 @@ import java.beans.PropertyChangeListener;
 
 /**
  * Builder for the Task page following the MindTrack GUI template.
+ * Uses dependency injection instead of singleton pattern.
  */
 public class TaskPageBuilder {
 
-    // Data Access - Use shared instances
-    private final InMemoryTaskGateway taskGateway = app.SharedDataAccess.getInstance().getTaskGateway();
-    private final InMemoryCategoryGateway categoryGateway = app.SharedDataAccess.getInstance().getCategoryGateway();
+    // Data Access - Injected via constructor
+    private final InMemoryTaskDataAccessObject taskGateway;
+    private final InMemoryCategoryDataAccessObject categoryDataAccess;
+    private final AppDataAccessFactory dataAccessFactory;
 
     // View Models
     private final CreateTaskViewModel createTaskViewModel = new CreateTaskViewModel();
@@ -57,7 +77,7 @@ public class TaskPageBuilder {
     private final AddTaskToTodayViewModel addTaskToTodayViewModel = new AddTaskToTodayViewModel();
     private final TodayTasksViewModel todayTasksViewModel = new TodayTasksViewModel();
     private final EditTodayTaskViewModel editTodayTaskViewModel = new EditTodayTaskViewModel();
-    private final CategoryManagementViewModel categoryManagementViewModel = new CategoryManagementViewModel();
+    private final CategoryManagementViewModel categoryManagementViewModel; // Shared across pages
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
 
     // Views
@@ -71,6 +91,25 @@ public class TaskPageBuilder {
     // Controllers
     private OverdueTasksController overdueTasksController;
     private TodaySoFarController todaySoFarController;
+    
+    /**
+     * Creates a new TaskPageBuilder with injected dependencies.
+     * @param dataAccessFactory The factory for creating data access objects
+     */
+    public TaskPageBuilder(AppDataAccessFactory dataAccessFactory) {
+        this.dataAccessFactory = AppDataAccessFactory.getInstance(); // Use singleton
+        this.taskGateway = this.dataAccessFactory.getTaskGateway();
+        this.categoryDataAccess = this.dataAccessFactory.getCategoryDataAccess();
+        this.categoryManagementViewModel = this.dataAccessFactory.getCategoryManagementViewModel();
+    }
+    
+    /**
+     * Creates a new TaskPageBuilder with default data access objects.
+     * For backward compatibility.
+     */
+    public TaskPageBuilder() {
+        this(AppDataAccessFactory.getInstance());
+    }
     
     /**
      * Refreshes all task views to show updated categories and tasks.
@@ -119,7 +158,7 @@ public class TaskPageBuilder {
         // Task updates during category deletion are handled by the interactor
         
         // Create Views
-        createTaskView = new CreateTaskView(createTaskViewModel, categoryGateway);
+        createTaskView = new CreateTaskView(createTaskViewModel, categoryDataAccess);
         availableTasksView = new AvailableTasksView(availableTasksViewModel, deleteTaskViewModel);
         addToTodayView = new AddToTodayView(addTaskToTodayViewModel);
         todaysTasksView = new TodaysTasksView(todayTasksViewModel);
@@ -133,10 +172,16 @@ public class TaskPageBuilder {
         // Connect AddTaskToTodayViewModel so dropdown refreshes when new tasks are created
         createTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
+        // Create factories for CreateTaskInteractor
+        InfoFactory infoFactory = new InfoFactory();
+        TaskAvailableFactory taskAvailableFactory = new TaskAvailableFactory();
+        
         CreateTaskInputBoundary createTaskInteractor = new CreateTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements CreateTaskDataAccessInterface
-                categoryGateway,
-                createTaskPresenter
+                taskGateway, // InMemoryTaskDataAccessObject implements CreateTaskDataAccessInterface
+                categoryDataAccess,
+                createTaskPresenter,
+                infoFactory,
+                taskAvailableFactory
         );
 
         CreateTaskController createTaskController = new CreateTaskController(createTaskInteractor);
@@ -171,8 +216,8 @@ public class TaskPageBuilder {
         editAvailableTaskPresenter.setAddTaskToTodayViewModel(addTaskToTodayViewModel);
 
         EditAvailableTaskInputBoundary editAvailableTaskInteractor = new EditAvailableTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
-                categoryGateway,
+                taskGateway, // InMemoryTaskDataAccessObject implements EditAvailableTaskDataAccessInterface
+                categoryDataAccess,
                 editAvailableTaskPresenter
         );
 
@@ -182,7 +227,7 @@ public class TaskPageBuilder {
         
         availableTasksView.setEditAvailableTaskController(editAvailableTaskController);
         availableTasksView.setEditAvailableTaskViewModel(editAvailableTaskViewModel);
-        availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskGateway implements EditAvailableTaskDataAccessInterface
+        availableTasksView.setEditTaskDataAccess(taskGateway); // InMemoryTaskDataAccessObject implements EditAvailableTaskDataAccessInterface
 
         // Wire up Add to Today Use Case
         AddTaskToTodayPresenter addToTodayPresenter = new AddTaskToTodayPresenter(
@@ -191,7 +236,7 @@ public class TaskPageBuilder {
         );
 
         AddTaskToTodayInputBoundary addToTodayInteractor = new AddTaskToTodayInteractor(
-                taskGateway, // InMemoryTaskGateway implements AddToTodayDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements AddToTodayDataAccessInterface
                 addToTodayPresenter
         );
 
@@ -200,9 +245,8 @@ public class TaskPageBuilder {
         );
 
         addToTodayView.setAddTaskToTodayController(addToTodayController);
-        System.out.println("DEBUG: TaskPageBuilder - Setting dataAccess on addToTodayView with taskGateway: " + taskGateway);
         addToTodayView.setDataAccess(taskGateway);
-        addToTodayView.setCategoryGateway(categoryGateway); // Set category gateway for dropdown display
+        addToTodayView.setCategoryGateway(categoryDataAccess); // Set category gateway for dropdown display
 
         // Wire up Mark Task Complete Use Case
         MarkTaskCompletePresenter markCompletePresenter = new MarkTaskCompletePresenter(
@@ -210,9 +254,9 @@ public class TaskPageBuilder {
         );
 
         MarkTaskCompleteInputBoundary markCompleteInteractor = new MarkTaskCompleteInteractor(
-                taskGateway, // InMemoryTaskGateway implements MarkTaskCompleteDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements MarkTaskCompleteDataAccessInterface
                 markCompletePresenter,
-                app.SharedDataAccess.getInstance().getGoalRepository() // Pass goal repository for updating goal progress
+                dataAccessFactory.getGoalRepository() // Pass goal repository for updating goal progress
         );
 
         MarkTaskCompleteController markCompleteController = new MarkTaskCompleteController(
@@ -229,7 +273,7 @@ public class TaskPageBuilder {
         );
 
         EditTodayTaskInputBoundary editTodayInteractor = new EditTodayTaskInteractor(
-                taskGateway, // InMemoryTaskGateway implements EditTodayTaskDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements EditTodayTaskDataAccessInterface
                 editTodayPresenter
         );
 
@@ -246,7 +290,7 @@ public class TaskPageBuilder {
         );
 
         RemoveFromTodayInputBoundary removeFromTodayInteractor = new RemoveFromTodayInteractor(
-                taskGateway, // InMemoryTaskGateway implements RemoveFromTodayDataAccessInterface
+                taskGateway, // InMemoryTaskDataAccessObject implements RemoveFromTodayDataAccessInterface
                 removeFromTodayPresenter
         );
 
@@ -296,9 +340,9 @@ public class TaskPageBuilder {
 
         // Set the gateways so the views can fetch data
         availableTasksView.setTaskGateway(taskGateway);
-        availableTasksView.setCategoryGateway(categoryGateway);
+        availableTasksView.setCategoryGateway(categoryDataAccess);
         todaysTasksView.setTaskGateway(taskGateway);
-        todaysTasksView.setCategoryGateway(categoryGateway);
+        todaysTasksView.setCategoryGateway(categoryDataAccess);
 
         return buildLayout();
     }
@@ -314,7 +358,7 @@ public class TaskPageBuilder {
             if (categoryDialog == null) {
                 categoryDialog = new CategoryManagementDialog(
                         parentFrame,
-                        categoryGateway,
+                        categoryDataAccess,
                         categoryManagementViewModel
                 );
 
@@ -327,17 +371,19 @@ public class TaskPageBuilder {
                 categoryPresenter.setOverdueTasksController(overdueTasksController);
                 categoryPresenter.setTodaySoFarController(todaySoFarController);
 
+                CategoryFactory categoryFactory = new CommonCategoryFactory();
                 CreateCategoryInputBoundary createCategoryInteractor = new CreateCategoryInteractor(
-                        categoryGateway,
-                        categoryPresenter
+                        categoryDataAccess,
+                        categoryPresenter,
+                        categoryFactory
                 );
                 CreateCategoryController createCategoryController = new CreateCategoryController(
                         createCategoryInteractor
                 );
 
                 DeleteCategoryInputBoundary deleteCategoryInteractor = new DeleteCategoryInteractor(
-                        categoryGateway, // InMemoryCategoryGateway implements DeleteCategoryCategoryDataAccessInterface
-                        taskGateway,     // InMemoryTaskGateway implements DeleteCategoryTaskDataAccessInterface
+                        categoryDataAccess, // InMemoryCategoryDataAccessObject implements DeleteCategoryCategoryDataAccessInterface
+                        taskGateway,     // InMemoryTaskDataAccessObject implements DeleteCategoryTaskDataAccessInterface
                         null,            // No event data access needed in task context
                         categoryPresenter
                 );
@@ -346,9 +392,10 @@ public class TaskPageBuilder {
                 );
 
                 EditCategoryInputBoundary editCategoryInteractor = new EditCategoryInteractor(
-                        categoryGateway,  // InMemoryCategoryGateway implements EditCategoryDataAccessInterface
-                        taskGateway,      // InMemoryTaskGateway implements EditCategoryTaskDataAccessInterface
-                        categoryPresenter
+                        categoryDataAccess,  // InMemoryCategoryDataAccessObject implements EditCategoryDataAccessInterface
+                        taskGateway,      // InMemoryTaskDataAccessObject implements EditCategoryTaskDataAccessInterface
+                        categoryPresenter,
+                        categoryFactory
                 );
                 EditCategoryController editCategoryController = new EditCategoryController(
                         editCategoryInteractor

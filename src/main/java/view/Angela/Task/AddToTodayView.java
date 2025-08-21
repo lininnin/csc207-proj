@@ -7,6 +7,7 @@ import use_case.Angela.task.add_to_today.AddToTodayDataAccessInterface;
 import use_case.Angela.category.CategoryGateway;
 import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskAvailableInterf;
 import entity.Category;
 import view.DueDatePickerPanel;
 
@@ -167,10 +168,10 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
 
         if (dataAccess != null) {
             System.out.println("DEBUG: dataAccess is not null, fetching tasks");
-            List<TaskAvailable> tasks = dataAccess.getAllAvailableTasksWithDetails();
+            List<TaskAvailableInterf> tasks = dataAccess.getAllAvailableTasksWithDetails();
             System.out.println("DEBUG: Number of tasks received: " + tasks.size());
             
-            for (TaskAvailable task : tasks) {
+            for (TaskAvailableInterf task : tasks) {
                 String categoryName = null;
                 // Get category name if category ID exists
                 if (categoryGateway != null && task.getInfo().getCategory() != null) {

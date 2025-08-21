@@ -17,6 +17,8 @@ public class OverdueTasksPresenter implements OverdueTasksOutputBoundary {
     
     @Override
     public void presentOverdueTasks(OverdueTasksOutputData outputData) {
+        System.out.println("DEBUG: OverdueTasksPresenter.presentOverdueTasks() called with " + 
+                          outputData.getOverdueTasks().size() + " tasks");
         OverdueTasksState state = viewModel.getState();
         state.setOverdueTasks(outputData.getOverdueTasks());
         state.setTotalOverdueTasks(outputData.getTotalOverdueTasks());

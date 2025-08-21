@@ -1,6 +1,7 @@
 package use_case.Angela.task.edit_today;
 
 import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import java.time.LocalDate;
 
 /**
@@ -15,7 +16,7 @@ public interface EditTodayTaskDataAccessInterface {
      * @param taskId The ID of the task
      * @return The task if found, null otherwise
      */
-    Task getTodayTaskById(String taskId);
+    TaskInterf getTodayTaskById(String taskId);
 
     /**
      * Updates the priority and due date of a task in today's list.

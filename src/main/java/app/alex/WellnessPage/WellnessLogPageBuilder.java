@@ -53,6 +53,15 @@ import view.alex.WellnessLog.TodaysWellnessLogView;
 import view.Angela.TodaySoFarView;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
+import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
+import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
+import use_case.Angela.task.overdue.OverdueTasksInteractor;
+import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
+import use_case.Angela.today_so_far.TodaySoFarInteractor;
+import data_access.InMemoryTaskDataAccessObject;
+import data_access.InMemoryCategoryDataAccessObject;
+import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,7 +82,7 @@ public class WellnessLogPageBuilder {
 
         // --- Use shared DAO ---
         TodaysWellnessLogDataAccessObject wellnessLogDAO = 
-            app.SharedDataAccess.getInstance().getWellnessDataAccess();
+            app.AppDataAccessFactory.getInstance().getWellnessDataAccess();
         WellnessLogEntryFactoryInterf wellnessLogEntryFactory = new WellnessLogEntryFactory();
         MoodLabelFactoryInterf moodLabelFactory = new MoodLabelFactory();
 

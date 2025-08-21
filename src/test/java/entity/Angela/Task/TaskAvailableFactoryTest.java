@@ -27,7 +27,7 @@ class TaskAvailableFactoryTest {
     @Test
     void testCreateTaskAvailable() {
         // Create TaskAvailable using factory
-        TaskAvailable task = factory.create(testInfo);
+        TaskAvailable task = (TaskAvailable) factory.create(testInfo);
 
         assertNotNull(task);
         assertEquals("Test Task", task.getInfo().getName());
@@ -40,7 +40,7 @@ class TaskAvailableFactoryTest {
     @Test
     void testCreateTaskAvailableWithOneTimeFlag() {
         // Create one-time TaskAvailable
-        TaskAvailable task = factory.create(testInfo, true);
+        TaskAvailable task = (TaskAvailable) factory.create(testInfo, true);
 
         assertNotNull(task);
         assertTrue(task.isOneTime());
@@ -54,9 +54,9 @@ class TaskAvailableFactoryTest {
         Info info2 = new Info.Builder("Task 2").build();
         Info info3 = new Info.Builder("Task 3").build();
         
-        TaskAvailable task1 = factory.create(info1);
-        TaskAvailable task2 = factory.create(info2);
-        TaskAvailable task3 = factory.create(info3);
+        TaskAvailable task1 = (TaskAvailable) factory.create(info1);
+        TaskAvailable task2 = (TaskAvailable) factory.create(info2);
+        TaskAvailable task3 = (TaskAvailable) factory.create(info3);
 
         assertNotNull(task1.getId());
         assertNotNull(task2.getId());
@@ -81,7 +81,7 @@ class TaskAvailableFactoryTest {
         // Test with minimal valid info
         Info minimalInfo = new Info.Builder("A").build();
         
-        TaskAvailable task = factory.create(minimalInfo);
+        TaskAvailable task = (TaskAvailable) factory.create(minimalInfo);
 
         assertNotNull(task);
         assertEquals("A", task.getInfo().getName());
@@ -96,7 +96,7 @@ class TaskAvailableFactoryTest {
         String originalDescription = testInfo.getDescription();
         String originalCategory = testInfo.getCategory();
 
-        TaskAvailable task = factory.create(testInfo);
+        TaskAvailable task = (TaskAvailable) factory.create(testInfo);
 
         // Original info should be unchanged
         assertEquals(originalName, testInfo.getName());
@@ -117,7 +117,7 @@ class TaskAvailableFactoryTest {
                 .category("category-complex")
                 .build();
 
-        TaskAvailable task = factory.create(complexInfo, false);
+        TaskAvailable task = (TaskAvailable) factory.create(complexInfo, false);
 
         assertNotNull(task);
         assertEquals("Complex Task", task.getInfo().getName());
@@ -132,14 +132,14 @@ class TaskAvailableFactoryTest {
         // Test that both factory methods work correctly
         
         // Method 1: create(Info) - defaults to non-one-time
-        TaskAvailable task1 = factory.create(testInfo);
+        TaskAvailable task1 = (TaskAvailable) factory.create(testInfo);
         assertFalse(task1.isOneTime());
 
         // Method 2: create(Info, boolean) - explicit one-time flag
-        TaskAvailable task2 = factory.create(testInfo, true);
+        TaskAvailable task2 = (TaskAvailable) factory.create(testInfo, true);
         assertTrue(task2.isOneTime());
         
-        TaskAvailable task3 = factory.create(testInfo, false);
+        TaskAvailable task3 = (TaskAvailable) factory.create(testInfo, false);
         assertFalse(task3.isOneTime());
     }
 }

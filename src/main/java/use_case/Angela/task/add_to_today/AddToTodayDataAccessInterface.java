@@ -1,7 +1,8 @@
 package use_case.Angela.task.add_to_today;
 
 import entity.Angela.Task.Task;
-import entity.Angela.Task.TaskAvailable;
+import entity.Angela.Task.TaskInterf;
+import entity.Angela.Task.TaskAvailableInterf;
 import java.util.List;
 
 /**
@@ -14,9 +15,9 @@ public interface AddToTodayDataAccessInterface {
      * Gets an available task by its ID.
      * 
      * @param taskId the ID of the task to retrieve
-     * @return the TaskAvailable if found, null otherwise
+     * @return the TaskAvailableInterf if found, null otherwise
      */
-    TaskAvailable getAvailableTaskById(String taskId);
+    TaskAvailableInterf getAvailableTaskById(String taskId);
     
     /**
      * Adds a task to today's list with the specified priority and due date.
@@ -24,9 +25,9 @@ public interface AddToTodayDataAccessInterface {
      * @param taskAvailable the available task template to add
      * @param priority the priority for today's task (optional, can be null)
      * @param dueDate the due date for today's task (optional, can be null)
-     * @return the created Task instance that was added to today's list
+     * @return the created TaskInterf instance that was added to today's list
      */
-    Task addTaskToToday(TaskAvailable taskAvailable, Task.Priority priority, java.time.LocalDate dueDate);
+    TaskInterf addTaskToToday(TaskAvailableInterf taskAvailable, Task.Priority priority, java.time.LocalDate dueDate);
     
     /**
      * Checks if a task with the given template ID already exists in today's list.
@@ -48,7 +49,19 @@ public interface AddToTodayDataAccessInterface {
     /**
      * Gets all available tasks with their full details.
      * 
-     * @return list of all available tasks as TaskAvailable objects
+     * @return list of all available tasks as TaskAvailableInterf objects
      */
-    List<TaskAvailable> getAllAvailableTasksWithDetails();
+    List<TaskAvailableInterf> getAllAvailableTasksWithDetails();
+    
+    /**
+     * Checks if an exact duplicate task already exists in today's list.
+     * Two tasks are considered exact duplicates if they have the same template ID,
+     * priority, and due date.
+     * 
+     * @param templateTaskId the template task ID to check
+     * @param priority the priority to check (can be null)
+     * @param dueDate the due date to check (can be null)
+     * @return true if an exact duplicate exists, false otherwise
+     */
+    boolean isExactDuplicateInTodaysList(String templateTaskId, Task.Priority priority, java.time.LocalDate dueDate);
 }

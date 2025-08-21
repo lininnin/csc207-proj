@@ -32,7 +32,7 @@ class TaskFactoryTest {
     @Test
     void testCreateTaskWithAllParameters() {
         // Create task with all parameters
-        Task task = taskFactory.create("template-123", testInfo, testDates, false);
+        Task task = (Task) taskFactory.create("template-123", testInfo, testDates, false);
 
         assertNotNull(task);
         assertEquals("template-123", task.getTemplateTaskId());
@@ -48,7 +48,7 @@ class TaskFactoryTest {
     @Test
     void testCreateTaskWithOneTimeFlag() {
         // Create one-time task
-        Task task = taskFactory.create("template-456", testInfo, testDates, true);
+        Task task = (Task) taskFactory.create("template-456", testInfo, testDates, true);
 
         assertNotNull(task);
         assertTrue(task.isOneTime());
@@ -90,8 +90,8 @@ class TaskFactoryTest {
     @Test
     void testCreateTaskGeneratesUniqueId() {
         // Create multiple tasks and verify they have unique IDs
-        Task task1 = taskFactory.create("template-1", testInfo, testDates, false);
-        Task task2 = taskFactory.create("template-1", testInfo, testDates, false);
+        Task task1 = (Task) taskFactory.create("template-1", testInfo, testDates, false);
+        Task task2 = (Task) taskFactory.create("template-1", testInfo, testDates, false);
 
         assertNotNull(task1.getId());
         assertNotNull(task2.getId());
@@ -106,7 +106,7 @@ class TaskFactoryTest {
             LocalDate.now().minusDays(1)
         );
         
-        Task task = taskFactory.create("template-past", testInfo, pastDates, false);
+        Task task = (Task) taskFactory.create("template-past", testInfo, pastDates, false);
 
         assertNotNull(task);
         assertTrue(task.isOverdue());
@@ -117,7 +117,7 @@ class TaskFactoryTest {
         // Test with no due date
         BeginAndDueDates noDueDate = new BeginAndDueDates(LocalDate.now(), null);
         
-        Task task = taskFactory.create("template-no-due", testInfo, noDueDate, false);
+        Task task = (Task) taskFactory.create("template-no-due", testInfo, noDueDate, false);
 
         assertNotNull(task);
         assertFalse(task.isOverdue()); // Tasks without due dates are never overdue
@@ -130,7 +130,7 @@ class TaskFactoryTest {
         String originalDescription = testInfo.getDescription();
         String originalCategory = testInfo.getCategory();
 
-        Task task = taskFactory.create("template-test", testInfo, testDates, false);
+        Task task = (Task) taskFactory.create("template-test", testInfo, testDates, false);
 
         // Original info should be unchanged
         assertEquals(originalName, testInfo.getName());

@@ -1,6 +1,6 @@
 package use_case.Angela.task.overdue;
 
-import entity.Angela.Task.Task;
+import entity.Angela.Task.TaskInterf;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,12 +15,12 @@ public interface OverdueTasksDataAccessInterface {
      * @param daysBack Number of days to look back for overdue tasks (e.g., 7 for last week)
      * @return List of overdue tasks sorted by most overdue first
      */
-    List<Task> getOverdueTasks(int daysBack);
+    List<TaskInterf> getOverdueTasks(int daysBack);
     
     /**
      * Gets all overdue tasks from Today's list regardless of time range.
      * 
      * @return List of all overdue tasks sorted by most overdue first
      */
-    List<Task> getAllOverdueTasks();
+    List<TaskInterf> getAllOverdueTasks();
 }

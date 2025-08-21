@@ -1,20 +1,23 @@
 package use_case.Angela.category.create;
 
 import entity.Category;
-import use_case.Angela.category.CategoryGateway;
+import entity.CategoryFactory;
 
 /**
  * Interactor for the create category use case.
  * Implements the business logic for creating a new category.
  */
 public class CreateCategoryInteractor implements CreateCategoryInputBoundary {
-    private final CategoryGateway categoryGateway;
+    private final CreateCategoryDataAccessInterface categoryDataAccess;
     private final CreateCategoryOutputBoundary outputBoundary;
+    private final CategoryFactory categoryFactory;
 
-    public CreateCategoryInteractor(CategoryGateway categoryGateway,
-                                    CreateCategoryOutputBoundary outputBoundary) {
-        this.categoryGateway = categoryGateway;
+    public CreateCategoryInteractor(CreateCategoryDataAccessInterface categoryDataAccess,
+                                    CreateCategoryOutputBoundary outputBoundary,
+                                    CategoryFactory categoryFactory) {
+        this.categoryDataAccess = categoryDataAccess;
         this.outputBoundary = outputBoundary;
+        this.categoryFactory = categoryFactory;
     }
 
     @Override
@@ -33,17 +36,19 @@ public class CreateCategoryInteractor implements CreateCategoryInputBoundary {
         }
 
         // Check if category name already exists
-        if (categoryGateway.categoryNameExists(categoryName)) {
+        if (categoryDataAccess.existsByName(categoryName)) {
             outputBoundary.prepareFailView("The category name already exists");
             return;
         }
 
-        // Create and save new category
-        String categoryId = categoryGateway.getNextCategoryId();
-        Category category = new Category(categoryId, categoryName, null);
+        // Generate unique ID based on category count
+        String categoryId = "category" + (categoryDataAccess.getCategoryCount() + 1);
+        
+        // Create new category using factory
+        Category category = categoryFactory.create(categoryId, categoryName);
 
         try {
-            categoryGateway.saveCategory(category);
+            categoryDataAccess.save(category);
             CreateCategoryOutputData outputData = new CreateCategoryOutputData(
                     categoryId, categoryName, false
             );
