@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import entity.Angela.Task.Task;
 import entity.Sophia.Goal;
-import view.Sophia.CreateGoalView;
+import view.sophia.CreateGoalView;
 import interface_adapter.sophia.create_goal.CreateGoalController;
 import interface_adapter.sophia.create_goal.CreatedGoalViewModel;
 
