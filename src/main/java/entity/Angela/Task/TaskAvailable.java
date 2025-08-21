@@ -15,7 +15,7 @@ import java.util.UUID;
  * - Can have a planned due date that persists user planning
  * - No priority or completion status (those belong to Today's instances)
  */
-public class TaskAvailable {
+public class TaskAvailable implements TaskAvailableInterf {
     private final String id;
     private Info info; // Made non-final for compatibility
     private String plannedDueDate; // ISO date string or null

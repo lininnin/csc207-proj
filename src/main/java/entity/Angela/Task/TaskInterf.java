@@ -1,19 +1,32 @@
 package entity.Angela.Task;
 
-import entity.BeginAndDueDates.BeginAndDueDates;
-import entity.info.Info;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
+import entity.info.InfoInterf;
 import java.time.LocalDateTime;
 
 /**
  * Interface defining the contract for Task entities.
  * Follows Clean Architecture principles by defining what a Task must provide.
+ * Uses interface types to enable dependency inversion.
  */
 public interface TaskInterf {
     /**
-     * Gets the task's basic information.
-     * @return The Info object containing name, description, category
+     * Gets the unique identifier for this task instance.
+     * @return The task ID
      */
-    Info getInfo();
+    String getId();
+    
+    /**
+     * Gets the ID of the template task this was created from.
+     * @return The template task ID
+     */
+    String getTemplateTaskId();
+    
+    /**
+     * Gets the task's basic information.
+     * @return The InfoInterf object containing name, description, category
+     */
+    InfoInterf getInfo();
 
     /**
      * Gets the task's priority level.
@@ -35,9 +48,9 @@ public interface TaskInterf {
 
     /**
      * Gets the task's date range.
-     * @return The BeginAndDueDates object
+     * @return The BeginAndDueDatesInterf object
      */
-    BeginAndDueDates getBeginAndDueDates();
+    BeginAndDueDatesInterf getBeginAndDueDates();
 
     /**
      * Checks if the task is overdue.

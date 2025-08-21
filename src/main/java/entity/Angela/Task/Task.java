@@ -1,7 +1,9 @@
 package entity.Angela.Task;
 
 import entity.BeginAndDueDates.BeginAndDueDates;
+import entity.BeginAndDueDates.BeginAndDueDatesInterf;
 import entity.info.Info;
+import entity.info.InfoInterf;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,7 +21,7 @@ import java.util.UUID;
  * - Tracks completion status with timestamp
  * - Original position is session-only (transient)
  */
-public class Task {
+public class Task implements TaskInterf {
     private final String id;
     private final String templateTaskId;
     private Info info; // Made non-final for compatibility
@@ -175,6 +177,16 @@ public class Task {
     public BeginAndDueDates getDates() {
         return dates;
     }
+    
+    /**
+     * Gets the task's date range (interface method).
+     * 
+     * @return The BeginAndDueDatesInterf object
+     */
+    @Override
+    public BeginAndDueDatesInterf getBeginAndDueDates() {
+        return dates;
+    }
 
     /**
      * Checks if the task is completed.
@@ -182,6 +194,16 @@ public class Task {
      * @return true if completed
      */
     public boolean isCompleted() {
+        return isCompleted;
+    }
+    
+    /**
+     * Gets the task's completion status (interface method).
+     * 
+     * @return true if completed, false otherwise
+     */
+    @Override
+    public boolean getStatus() {
         return isCompleted;
     }
 
@@ -261,6 +283,16 @@ public class Task {
         }
 
         return dueDate.isBefore(LocalDate.now());
+    }
+    
+    /**
+     * Checks if the task is overdue (interface method).
+     * 
+     * @return true if overdue, false otherwise
+     */
+    @Override
+    public boolean isOverDue() {
+        return isOverdue();
     }
 
     /**
