@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
-import entity.Alex.DailyEventLog.DailyEventLogInterf;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogInterf;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Angela.DailyLog;
 import entity.Angela.DailyTaskSummary;
 import entity.Angela.Task.Task;
+import entity.alex.DailyEventLog.DailyEventLogInterf;
+import entity.alex.DailyWellnessLog.DailyWellnessLogInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import use_case.generate_feedback.GptPromptPort;
 
 public class GptPromptPortAdapter implements GptPromptPort {
