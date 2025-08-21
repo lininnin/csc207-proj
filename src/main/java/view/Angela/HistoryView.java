@@ -17,7 +17,7 @@ import interface_adapter.alex.event_related.todays_events_module.todays_events.T
 import interface_adapter.alex.event_related.todays_events_module.todays_events.TodaysEventsViewModel;
 import view.alex.Event.TodaysEventsView;
 import view.Angela.Task.TodaysTasksView;
-import view.sophia.TodayGoalView;
+import view.Sophia.TodayGoalView;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

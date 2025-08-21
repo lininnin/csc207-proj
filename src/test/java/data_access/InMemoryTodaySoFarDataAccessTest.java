@@ -6,6 +6,7 @@ import entity.alex.Event.EventInterf;
 import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInterface;
+import use_case.repository.GoalRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
