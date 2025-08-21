@@ -1,4 +1,4 @@
-package view.Alex;
+package view.alex;
 
 import interface_adapter.alex.Notification_related.NotificationState;
 import interface_adapter.alex.Notification_related.NotificationViewModel;

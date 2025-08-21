@@ -48,8 +48,8 @@ import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_well
 
 import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellnesslog.EditWellnessLogInteractor;
 
-import view.Alex.WellnessLog.AddWellnessLogView;
-import view.Alex.WellnessLog.TodaysWellnessLogView;
+import view.alex.WellnessLog.AddWellnessLogView;
+import view.alex.WellnessLog.TodaysWellnessLogView;
 import view.Angela.TodaySoFarView;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;

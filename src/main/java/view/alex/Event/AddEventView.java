@@ -1,4 +1,4 @@
-package view.Alex.Event;
+package view.alex.Event;
 
 import interface_adapter.alex.event_related.add_event.AddEventController;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;

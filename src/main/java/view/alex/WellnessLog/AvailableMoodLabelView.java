@@ -1,4 +1,4 @@
-package view.Alex.WellnessLog;
+package view.alex.WellnessLog;
 
 import entity.alex.MoodLabel.MoodLabelFactoryInterf;
 import entity.alex.MoodLabel.MoodLabelInterf;

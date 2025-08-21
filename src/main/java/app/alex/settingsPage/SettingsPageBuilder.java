@@ -14,7 +14,7 @@ import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTime
 import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeInteractor;
 import use_case.alex.Settings_related.edit_notificationTime.EditNotificationTimeOutputBoundary;
 
-import view.Alex.Settings.NotificationTimeView;
+import view.alex.Settings.NotificationTimeView;
 
 import javax.swing.*;
 import java.awt.*;

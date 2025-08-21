@@ -1,4 +1,4 @@
-package view.Alex.Event;
+package view.alex.Event;
 
 import entity.info.InfoInterf;
 import interface_adapter.alex.event_related.available_event_module.delete_event.DeletedEventState;
@@ -12,7 +12,6 @@ import interface_adapter.alex.event_related.available_event_module.edit_event.Ed
 import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventViewModel;
 import interface_adapter.alex.event_related.available_event_module.edit_event.EditedEventState;
 
-import entity.info.Info;
 import entity.Category;
 import use_case.Angela.category.CategoryGateway;
 

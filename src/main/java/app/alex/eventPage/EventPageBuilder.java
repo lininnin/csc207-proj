@@ -56,7 +56,7 @@ import data_access.alex.EventAvailableDataAccessObject;
 import data_access.alex.TodaysEventDataAccessObject;
 import entity.info.InfoFactory;
 
-import view.Alex.Event.*;
+import view.alex.Event.*;
 import view.Angela.TodaySoFarView;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;

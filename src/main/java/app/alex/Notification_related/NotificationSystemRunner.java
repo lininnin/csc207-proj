@@ -5,7 +5,7 @@ import entity.alex.NotificationTime.NotificationTimeFactory;
 import entity.alex.NotificationTime.NotificationTimeFactoryInterf;
 import interface_adapter.alex.Notification_related.*;
 import use_case.alex.notification_related.*;
-import view.Alex.NotificationView;
+import view.alex.NotificationView;
 
 /**
  * Initializes and runs the complete notification reminder system.

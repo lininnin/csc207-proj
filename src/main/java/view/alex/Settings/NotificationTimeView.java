@@ -1,4 +1,4 @@
-package view.Alex.Settings;
+package view.alex.Settings;
 
 import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeState;
 import interface_adapter.alex.Settings_related.notificationTime_module.NotificationTimeViewModel;
