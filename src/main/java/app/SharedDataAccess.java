@@ -4,7 +4,7 @@ import data_access.InMemoryTaskDataAccessObject;
 import data_access.InMemoryCategoryDataAccessObject;
 import data_access.alex.TodaysEventDataAccessObject;
 import data_access.alex.TodaysWellnessLogDataAccessObject;
-import data_access.FileGoalRepository;
+import data_access.files.FileGoalRepository;
 import entity.alex.DailyEventLog.DailyEventLogFactory;
 import entity.alex.DailyWellnessLog.DailyWellnessLogFactory;
 import entity.Sophia.GoalFactory;

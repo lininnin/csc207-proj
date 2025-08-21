@@ -3,8 +3,6 @@ package data_access;
 import entity.Category;
 import entity.Angela.Task.TaskAvailable;
 import entity.Angela.Task.Task;
-import entity.info.Info;
-import entity.info.InfoInterf;
 import use_case.Angela.category.CategoryGateway;
 import use_case.Angela.category.create.CreateCategoryDataAccessInterface;
 import use_case.Angela.category.delete.DeleteCategoryDataAccessInterface;
@@ -32,7 +30,8 @@ public class InMemoryCategoryDataAccessObject implements
         EditAvailableTaskCategoryDataAccessInterface,
         CreateTaskCategoryDataAccessInterface {
     private final Map<String, Category> categories = Collections.synchronizedMap(new HashMap<>());
-    private int nextId = 4; // Start at 4 since we have 3 default categories
+    private int nextId = 4;
+    // Start at 4 since we have 3 default categories
 
     public InMemoryCategoryDataAccessObject() {
         // Don't add default categories - let tests control this
