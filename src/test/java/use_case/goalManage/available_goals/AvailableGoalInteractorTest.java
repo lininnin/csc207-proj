@@ -1,19 +1,18 @@
 package use_case.goalManage.available_goals;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import static org.mockito.Mockito.*;
-
-import use_case.goalManage.available_goals.AvailableGoalsOutputBoundary;
-import use_case.goalManage.available_goals.AvailableGoalsOutputData;
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
+import entity.BeginAndDueDates.BeginAndDueDates;
 import entity.Sophia.Goal;
 import entity.Sophia.GoalInfo;
 import entity.info.Info;
-import entity.BeginAndDueDates.BeginAndDueDates;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for AvailableGoalsInteractor.

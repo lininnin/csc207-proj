@@ -22,6 +22,7 @@ import app.goalPage.GoalPageBuilder;
 import app.scheduler.WeeklyFeedbackScheduler;
 import app.alex.settingsPage.SettingsPageBuilder;
 import app.taskPage.TaskPageBuilder;
+import app.Angela.HistoryPageBuilder;
 import constants.Constants;
 import data_access.files.FileFeedbackRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
@@ -73,11 +74,13 @@ public class RunApp {
         final FeedbackPageBuilder feedbackPageBuilder = new FeedbackPageBuilder(feedbackRepository);
         final JPanel feedbackPage = feedbackPageBuilder.build();
         final JPanel settingPage = new SettingsPageBuilder().build();
+        final JPanel historyPage = HistoryPageBuilder.createHistoryView();
 
         centrePanel.add(taskPanel, "Tasks");
         centrePanel.add(eventPanel, "Events");
         centrePanel.add(goalPanel, "Goals");
         centrePanel.add(wellnessPanel, "WellnessLog");
+        centrePanel.add(historyPage, "History");
         centrePanel.add(feedbackPage, "FeedbackPage");
         centrePanel.add(settingPage, "Settings");
 
@@ -86,7 +89,7 @@ public class RunApp {
         setBar(sideBar);
 
         final String[] menuItems = {"📋 Tasks", "📆 Events", "🎯 Goals",
-                                    "🧠 Wellness Log", "🤖 AI-Feedback & Analysis", "⚙️ Settings"};
+                                    "🧠 Wellness Log", "📊 History", "🤖 AI-Feedback & Analysis", "⚙️ Settings"};
 
         for (String item : menuItems) {
             final JButton btn = configureButton(item, centrePanel, taskBuilder, eventBuilder);
@@ -173,6 +176,7 @@ public class RunApp {
             }
             case "🎯 Goals" -> cl.show(centrePanel, "Goals");
             case "🧠 Wellness Log" -> cl.show(centrePanel, "WellnessLog");
+            case "📊 History" -> cl.show(centrePanel, "History");
             case "🤖 AI-Feedback & Analysis" -> cl.show(centrePanel, "FeedbackPage");
             case "⚙️ Settings" -> cl.show(centrePanel, "Settings");
             default -> {
