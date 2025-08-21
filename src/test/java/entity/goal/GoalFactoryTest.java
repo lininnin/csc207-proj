@@ -1,5 +1,9 @@
-package entity.Sophia;
+package entity.goal;
 
+import entity.Sophia.Goal;
+import entity.Sophia.GoalFactory;
+import entity.Sophia.GoalInfo;
+import entity.Sophia.GoalInterface;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

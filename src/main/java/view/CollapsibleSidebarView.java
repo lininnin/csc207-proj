@@ -1,7 +1,12 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 /**
  * Sidebar + main panel container that supports collapsing sidebar.
@@ -25,14 +30,15 @@ public class CollapsibleSidebarView extends JPanel {
         splitPane.setDividerLocation(SIDEBAR_WIDTH);
         splitPane.setOneTouchExpandable(false);
         splitPane.setDividerSize(2);
-        splitPane.setResizeWeight(0); // mainContentPanel expands
+        splitPane.setResizeWeight(0);
+        // mainContentPanel expands
 
         // Toggle Button
-        JButton toggleButton = new JButton("☰");
+        final JButton toggleButton = new JButton("☰");
         toggleButton.setFocusPainted(false);
-        toggleButton.addActionListener(e -> toggleSidebar());
+        toggleButton.addActionListener(event -> toggleSidebar());
 
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topBar.add(toggleButton);
 
         add(topBar, BorderLayout.NORTH);
@@ -41,12 +47,13 @@ public class CollapsibleSidebarView extends JPanel {
 
     public void toggleSidebar() {
         if (sidebarVisible) {
-            JPanel empty = new JPanel();
+            final JPanel empty = new JPanel();
             empty.setPreferredSize(new Dimension(0, 0));
             splitPane.setLeftComponent(empty);
             splitPane.setDividerSize(0);
             splitPane.setDividerLocation(0);
-        } else {
+        }
+        else {
             splitPane.setLeftComponent(sidebarPanel);
             splitPane.setDividerSize(2);
             splitPane.setDividerLocation(SIDEBAR_WIDTH);
@@ -57,5 +64,3 @@ public class CollapsibleSidebarView extends JPanel {
         repaint();
     }
 }
-
-
