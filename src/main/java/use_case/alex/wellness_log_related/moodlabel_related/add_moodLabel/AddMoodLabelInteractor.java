@@ -1,9 +1,8 @@
 package use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabel; // 仅用于访问枚举 Type
-import entity.Alex.MoodLabel.Type;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.Type;
 
 import java.util.List;
 

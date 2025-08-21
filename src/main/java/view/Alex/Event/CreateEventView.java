@@ -54,7 +54,7 @@ public class CreateEventView extends JPanel implements PropertyChangeListener, C
         this.categoryGateway = categoryGateway;
 
         createdEventViewModel.addPropertyChangeListener(this);
-        createdEventViewModel.addListener(this);
+        //createdEventViewModel.addListener(this);
 
         this.setMaximumSize(new Dimension(150, 70));
         this.setPreferredSize(new Dimension(150, 70));

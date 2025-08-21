@@ -1,6 +1,6 @@
 package use_case.alex.wellness_log_related.moodlabel_related.add_moodLabel;
 
-import entity.Alex.MoodLabel.MoodLabelInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
 
 import java.util.List;
 

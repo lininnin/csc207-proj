@@ -1,8 +1,8 @@
 package use_case.Angela.today_so_far;
 
 import entity.Angela.Task.Task;
-import entity.Alex.Event.EventInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryInterf;
+import entity.alex.Event.EventInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
 import entity.Sophia.Goal;
 import entity.Category;
 import use_case.Angela.category.CategoryGateway;

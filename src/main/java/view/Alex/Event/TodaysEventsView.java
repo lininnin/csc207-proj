@@ -1,7 +1,6 @@
 package view.Alex.Event;
 
-import entity.Alex.Event.Event;
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 import interface_adapter.alex.event_related.add_event.AddEventController;
 import interface_adapter.alex.event_related.add_event.AddedEventState;
 import interface_adapter.alex.event_related.add_event.AddedEventViewModel;

@@ -2,16 +2,13 @@ package app.WellnessPage;
 
 import data_access.TodaysWellnessLogDataAccessObject;
 import data_access.MoodAvailableDataAccessObject;
-import entity.Alex.AvalibleMoodLabel.AvaliableMoodLabelFactory;
-import entity.Alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactory;
-import entity.Alex.DailyWellnessLog.DailyWellnessLogFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabel;
-import entity.Alex.MoodLabel.MoodLabelFactory;
-import entity.Alex.MoodLabel.MoodLabelFactoryInterf;
-import entity.Alex.MoodLabel.MoodLabelInterf;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryFactory;
-import entity.Alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
+import entity.alex.AvalibleMoodLabel.AvaliableMoodLabelFactory;
+import entity.alex.AvalibleMoodLabel.AvaliableMoodlabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelFactory;
+import entity.alex.MoodLabel.MoodLabelFactoryInterf;
+import entity.alex.MoodLabel.MoodLabelInterf;
+import entity.alex.WellnessLogEntry.WellnessLogEntryFactory;
+import entity.alex.WellnessLogEntry.WellnessLogEntryFactoryInterf;
 
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.AvailableMoodLabelState;
 import interface_adapter.alex.WellnessLog_related.moodLabel_related.delete_moodLabel.DeleteMoodLabelViewModel;
@@ -46,7 +43,6 @@ import use_case.alex.wellness_log_related.moodlabel_related.delete_moodLabel.Del
 
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInputBoundary;
 import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogInteractor;
-import use_case.alex.wellness_log_related.add_wellnessLog.AddWellnessLogOutputBoundary;
 
 import use_case.alex.wellness_log_related.todays_wellness_log_module.delete_wellnesslog.DeleteWellnessLogInteractor;
 
@@ -55,20 +51,8 @@ import use_case.alex.wellness_log_related.todays_wellness_log_module.edit_wellne
 import view.Alex.WellnessLog.AddWellnessLogView;
 import view.Alex.WellnessLog.TodaysWellnessLogView;
 import view.Angela.TodaySoFarView;
-import interface_adapter.Angela.task.overdue.OverdueTasksViewModel;
 import interface_adapter.Angela.task.overdue.OverdueTasksController;
-import interface_adapter.Angela.task.overdue.OverdueTasksPresenter;
-import interface_adapter.Angela.today_so_far.TodaySoFarViewModel;
 import interface_adapter.Angela.today_so_far.TodaySoFarController;
-import interface_adapter.Angela.today_so_far.TodaySoFarPresenter;
-import use_case.Angela.task.overdue.OverdueTasksInputBoundary;
-import use_case.Angela.task.overdue.OverdueTasksInteractor;
-import use_case.Angela.task.overdue.OverdueTasksOutputBoundary;
-import use_case.Angela.today_so_far.TodaySoFarInputBoundary;
-import use_case.Angela.today_so_far.TodaySoFarInteractor;
-import data_access.InMemoryTaskGateway;
-import data_access.InMemoryCategoryGateway;
-import data_access.InMemoryTodaySoFarDataAccess;
 
 import javax.swing.*;
 import java.awt.*;

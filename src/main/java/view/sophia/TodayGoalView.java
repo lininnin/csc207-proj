@@ -1,11 +1,5 @@
 package view.sophia;
 
-import entity.Sophia.Goal;
-import interface_adapter.sophia.today_goal.TodayGoalController;
-import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
-import interface_adapter.sophia.today_goal.TodaysGoalsState;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,11 +7,30 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import javax.swing.*;
+
+import entity.Sophia.Goal;
+import interface_adapter.sophia.today_goal.TodayGoalController;
+import interface_adapter.sophia.today_goal.TodayGoalsViewModel;
+import interface_adapter.sophia.today_goal.TodaysGoalsState;
+
+/**
+ * A Swing view that displays and manages today's goals.
+ * This panel observes the {@link TodayGoalsViewModel} and updates the
+ * displayed list of {@link Goal} objects whenever the state changes.
+ * Users can double-click a goal to edit progress or remove it from
+ * today's list through a popup menu.
+ */
 public class TodayGoalView extends JPanel implements PropertyChangeListener {
     private final TodayGoalsViewModel viewModel;
     private final TodayGoalController todayGoalController;
     private JList<Goal> goalsList;
-
+     /**
+     * Constructs a new {@code TodayGoalView}.
+     *
+     * @param viewModel            the view model containing goal data
+     * @param todayGoalController  the controller for updating and removing goals
+     */
     public TodayGoalView(TodayGoalsViewModel viewModel, TodayGoalController todayGoalController) {
         this.viewModel = viewModel;
         this.todayGoalController = todayGoalController;
@@ -27,6 +40,10 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
         initializeUI();
     }
 
+     /**
+     * Initializes the UI components, including the list of goals and
+     * event listeners for user interactions.
+     */
     private void initializeUI() {
         goalsList = new JList<>();
         goalsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -48,6 +65,10 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+     /**
+     * Displays a popup menu with options to edit or remove the selected goal.
+     * @param goal the selected goal
+     */
     private void showGoalOptions(Goal goal) {
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -74,6 +95,10 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
         );
     }
 
+    /**
+     * Opens a dialog allowing the user to edit the current progress of a goal.
+     * @param goal the goal being edited
+     */
     private void showEditDialog(Goal goal) {
         JDialog editDialog = new JDialog();
         editDialog.setTitle("Edit Goal");
@@ -110,6 +135,11 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
         editDialog.setVisible(true);
     }
 
+    /**
+     * Handles property change events from the view model.
+     * Updates the goal list when the "state" property changes.
+     * @param evt the property change event
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
@@ -120,6 +150,10 @@ public class TodayGoalView extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Custom cell renderer for displaying {@link Goal} objects in the list.
+     * Shows name, description, and progress. Completed goals are highlighted.
+     */
     private static class GoalListCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(

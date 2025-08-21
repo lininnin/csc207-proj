@@ -1,8 +1,8 @@
 package app.Notification_related;
 
 import data_access.NotificationTimeDataAccessObject;
-import entity.Alex.NotificationTime.NotificationTimeFactory;
-import entity.Alex.NotificationTime.NotificationTimeFactoryInterf;
+import entity.alex.NotificationTime.NotificationTimeFactory;
+import entity.alex.NotificationTime.NotificationTimeFactoryInterf;
 import interface_adapter.alex.Notification_related.*;
 import use_case.alex.notification_related.*;
 import view.Alex.NotificationView;

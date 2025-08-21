@@ -1,6 +1,6 @@
 package use_case.alex.event_related.add_event;
 
-import entity.Alex.Event.EventInterf;
+import entity.alex.Event.EventInterf;
 
 import java.util.List;
 
