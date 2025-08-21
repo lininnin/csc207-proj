@@ -1,4 +1,4 @@
-package entity.Ina;
+package entityTest;
 
 import entity.feedback_entry.FeedbackEntry;
 import org.junit.jupiter.api.Test;

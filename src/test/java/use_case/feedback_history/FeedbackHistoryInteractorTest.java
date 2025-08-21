@@ -1,17 +1,15 @@
 package use_case.feedback_history;
 
 import entity.feedback_entry.FeedbackEntryInterf;
-import use_case.repository.FeedbackRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 // ---- Tests ----
-public class FeedbackHistoryInteractorTest {
+class FeedbackHistoryInteractorTest {
 
     @Test
     void loadsFromRepo_sortsByDateDescending_andPresentsOnce() {
@@ -32,7 +30,7 @@ public class FeedbackHistoryInteractorTest {
         assertEquals(1, presenter.calls, "presenter should be called exactly once");
         assertNotNull(presenter.last, "output should be captured");
 
-        var dates = presenter.last.getEntries().stream().map(FeedbackEntryInterf::date).toList();
+        var dates = presenter.last.getEntries().stream().map(FeedbackEntryInterf::getDate).toList();
         assertEquals(List.of(d3, d2, d1), dates, "history must be newest → oldest");
     }
 
