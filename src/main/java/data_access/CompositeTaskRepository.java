@@ -7,6 +7,7 @@ import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
 import use_case.Angela.today_so_far.TodaySoFarDataAccessInterface;
 import entity.alex.Event.EventInterf;
 import entity.alex.WellnessLogEntry.WellnessLogEntryInterf;
+import use_case.repository.GoalRepository;
 
 import java.util.List;
 import java.util.ArrayList;

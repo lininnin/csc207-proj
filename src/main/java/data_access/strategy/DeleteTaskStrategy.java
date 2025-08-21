@@ -6,7 +6,8 @@ import entity.Angela.Task.TaskAvailableInterf;
 import entity.Angela.Task.TaskInterf;
 import entity.info.Info;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
-import data_access.GoalRepository;
+import use_case.repository.GoalRepository;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
