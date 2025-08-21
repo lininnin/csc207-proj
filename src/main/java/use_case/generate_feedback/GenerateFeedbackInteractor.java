@@ -11,9 +11,7 @@ import entity.Angela.DailyLog;
 import entity.feedback_entry.FeedbackEntryFactory;
 import entity.feedback_entry.FeedbackEntryFactoryInterf;
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.generate_feedback.mapping.BayesCorrelationPromptBuilder;
-import interface_adapter.generate_feedback.mapping.GeneralAnalysisPromptBuilder;
-import interface_adapter.generate_feedback.mapping.RecommendationPromptBuilder;
+import interface_adapter.generate_feedback.GptPromptAdapter;
 import use_case.repository.DailyLogRepository;
 import use_case.repository.FeedbackRepository;
 /**
@@ -59,7 +57,9 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final LocalDate to = monday.minusDays(1);
             final List<DailyLog> weekLogs = dailyRepo.loadBetween(from, to);
 
-            final String promptAnalysis = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
+            final GptPrompt promptBuilder = new GptPromptAdapter();
+
+            final String promptAnalysis = promptBuilder.buildAnalysis(weekLogs);
             final String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
             final JSONObject analysisJson = new JSONObject(analysisJsonStr);
 
@@ -67,11 +67,25 @@ public class GenerateFeedbackInteractor implements GenerateFeedbackInputBoundary
             final String analysisText = analysisJson.optString("analysis", "(no analysis)");
             final String extraNotes = analysisJson.optString("extra_notes", "");
             // Correlation
-            final String promptCorr = BayesCorrelationPromptBuilder.buildPrompt(weekLogs);
+            final String promptCorr = promptBuilder.buildCorrelation(weekLogs);
             final String correlationJson = gpt.callCorrelationBayes(promptCorr);
             // Recommendation
-            final String promptRec = RecommendationPromptBuilder.buildPrompt(analysisJsonStr);
+            final String promptRec = promptBuilder.buildRecommendation(analysisJsonStr);
             final String recText = gpt.callRecommendation(promptRec);
+
+//            final String promptAnalysis = GeneralAnalysisPromptBuilder.buildPromptFromWeeksLogs(weekLogs);
+//            final String analysisJsonStr = gpt.callGeneralAnalysis(promptAnalysis);
+//            final JSONObject analysisJson = new JSONObject(analysisJsonStr);
+//
+//            // Analysis
+//            final String analysisText = analysisJson.optString("analysis", "(no analysis)");
+//            final String extraNotes = analysisJson.optString("extra_notes", "");
+//            // Correlation
+//            final String promptCorr = BayesCorrelationPromptBuilder.buildPrompt(weekLogs);
+//            final String correlationJson = gpt.callCorrelationBayes(promptCorr);
+//            // Recommendation
+//            final String promptRec = RecommendationPromptBuilder.buildPrompt(analysisJsonStr);
+//            final String recText = gpt.callRecommendation(promptRec);
 
             final String combinedAnalysis;
             if (extraNotes.isBlank()) {

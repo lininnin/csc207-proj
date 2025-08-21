@@ -5,7 +5,7 @@ import data_access.in_memory_repo.InMemoryFeedbackRepository;
 import entity.Angela.DailyLog;
 
 import entity.feedback_entry.FeedbackEntryInterf;
-import interface_adapter.generate_feedback.gateway.OpenAiApiAdapter;
+import interface_adapter.generate_feedback.OpenAiApiAdapter;
 
 import java.util.List;
 

@@ -26,7 +26,7 @@ import data_access.files.FileFeedbackRepository;
 import data_access.in_memory_repo.InMemoryDailyLogRepository;
 import interface_adapter.feedback_history.FeedbackHistoryViewModel;
 import interface_adapter.generate_feedback.GenerateFeedbackPresenter;
-import interface_adapter.generate_feedback.gateway.OpenAiApiAdapter;
+import interface_adapter.generate_feedback.OpenAiApiAdapter;
 import use_case.generate_feedback.GenerateFeedbackInputBoundary;
 import use_case.generate_feedback.GenerateFeedbackInteractor;
 import use_case.generate_feedback.GenerateFeedbackOutputBoundary;
