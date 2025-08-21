@@ -17,7 +17,7 @@ import use_case.feedback_history.FeedbackHistoryInputBoundary;
 import use_case.feedback_history.FeedbackHistoryInteractor;
 import use_case.feedback_history.FeedbackHistoryOutputBoundary;
 import use_case.repository.FeedbackRepository;
-import view.feedback_panel.FeedbackEntryPanel;
+import view.feedback_panel.feedback_entry.FeedbackEntryPanel;
 import view.feedback_panel.FeedbackHistoryPanel;
 
 public final class FeedbackPageBuilder {

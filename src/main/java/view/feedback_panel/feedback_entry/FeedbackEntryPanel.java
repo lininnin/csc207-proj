@@ -1,4 +1,4 @@
-package view.feedback_panel;
+package view.feedback_panel.feedback_entry;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
