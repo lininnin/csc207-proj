@@ -49,4 +49,20 @@ public interface DeleteCategoryTaskDataAccessInterface {
      * @return true if update succeeded, false otherwise
      */
     boolean updateTodaysTaskCategory(String taskId, String newCategoryId);
+
+    /**
+     * Finds all available tasks that have empty/null category.
+     * Used to check if there are already tasks with empty categories before deletion.
+     *
+     * @return List of TaskAvailable that have empty or null category
+     */
+    List<TaskAvailable> findAvailableTasksWithEmptyCategory();
+
+    /**
+     * Finds all today's tasks that have empty/null category.
+     * Used to check if there are already tasks with empty categories before deletion.
+     *
+     * @return List of Task that have empty or null category
+     */
+    List<Task> findTodaysTasksWithEmptyCategory();
 }

@@ -4,6 +4,8 @@ import entity.Angela.Task.Task;
 import entity.Angela.Task.TaskAvailable;
 import entity.info.Info;
 import entity.info.InfoInterf;
+import entity.Sophia.Goal;
+import data_access.GoalRepository;
 import use_case.Angela.task.TaskGateway;
 import use_case.Angela.task.create.CreateTaskDataAccessInterface;
 import use_case.Angela.task.delete.DeleteTaskDataAccessInterface;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * In-memory implementation of TaskGateway and DataAccessInterfaces for quick demos.
@@ -40,6 +43,15 @@ public class InMemoryTaskGateway implements
     private final Map<String, Info> availableTasks = Collections.synchronizedMap(new HashMap<>()); // Legacy storage for backward compatibility
     private final Map<String, TaskAvailable> availableTaskTemplates = Collections.synchronizedMap(new HashMap<>()); // New storage for TaskAvailable
     private final Map<String, Task> todaysTasks = Collections.synchronizedMap(new HashMap<>());
+    private GoalRepository goalRepository; // Optional dependency for goal-task relationship checking
+
+    /**
+     * Sets the goal repository for checking goal-task relationships.
+     * This is optional and can be null if goal checking is not needed.
+     */
+    public void setGoalRepository(GoalRepository goalRepository) {
+        this.goalRepository = goalRepository;
+    }
 
     @Override
     public String saveAvailableTask(Info info) {
@@ -86,7 +98,19 @@ public class InMemoryTaskGateway implements
 
     @Override
     public List<Task> getTodaysTasks() {
-        return new ArrayList<>(todaysTasks.values());
+        List<Task> tasks = new ArrayList<>(todaysTasks.values());
+        
+        // Sort tasks alphabetically by name (case-insensitive)
+        tasks.sort((a, b) -> {
+            String nameA = a.getInfo().getName();
+            String nameB = b.getInfo().getName();
+            if (nameA == null && nameB == null) return 0;
+            if (nameA == null) return 1;  // null names go to end
+            if (nameB == null) return -1;
+            return nameA.compareToIgnoreCase(nameB);
+        });
+        
+        return tasks;
     }
 
     @Override
@@ -332,7 +356,91 @@ public class InMemoryTaskGateway implements
 
     @Override
     public List<Task> getAllTodaysTasks() {
-        return new ArrayList<>(todaysTasks.values());
+        List<Task> tasks = new ArrayList<>(todaysTasks.values());
+        
+        // Sort tasks alphabetically by name (case-insensitive)
+        tasks.sort((a, b) -> {
+            String nameA = a.getInfo().getName();
+            String nameB = b.getInfo().getName();
+            if (nameA == null && nameB == null) return 0;
+            if (nameA == null) return 1;  // null names go to end
+            if (nameB == null) return -1;
+            return nameA.compareToIgnoreCase(nameB);
+        });
+        
+        return tasks;
+    }
+
+    @Override
+    public List<String> getGoalNamesTargetingTask(String taskId) {
+        List<String> goalNames = new ArrayList<>();
+        
+        if (goalRepository == null) {
+            return goalNames; // Return empty list if no goal repository is available
+        }
+        
+        try {
+            // Get the full task info for the given taskId
+            TaskAvailable taskTemplate = availableTaskTemplates.get(taskId);
+            Info taskInfo = null;
+            
+            if (taskTemplate != null) {
+                taskInfo = taskTemplate.getInfo();
+            } else {
+                // Fall back to legacy storage
+                taskInfo = availableTasks.get(taskId);
+            }
+            
+            if (taskInfo == null) {
+                return goalNames; // Task not found, return empty list
+            }
+            
+            // Check all goals to see if any target this EXACT task
+            List<Goal> allGoals = goalRepository.getAllGoals();
+            for (Goal goal : allGoals) {
+                Info targetTaskInfo = goal.getTargetTaskInfo();
+                if (targetTaskInfo != null && isExactSameTask(taskInfo, targetTaskInfo, taskTemplate)) {
+                    goalNames.add(goal.getInfo().getName());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Warning: Error checking goal-task relationships: " + e.getMessage());
+            // Return empty list on error to allow operation to continue
+        }
+        
+        return goalNames;
+    }
+    
+    /**
+     * Checks if two tasks are exactly the same (name, category, description, one-time info).
+     */
+    private boolean isExactSameTask(Info taskInfo1, Info targetTaskInfo, TaskAvailable taskTemplate) {
+        // Compare name (case-insensitive)
+        if (!Objects.equals(taskInfo1.getName(), targetTaskInfo.getName())) {
+            return false;
+        }
+        
+        // Compare category (normalize null/empty to empty string)
+        String category1 = (taskInfo1.getCategory() == null || taskInfo1.getCategory().trim().isEmpty()) 
+            ? "" : taskInfo1.getCategory().trim();
+        String category2 = (targetTaskInfo.getCategory() == null || targetTaskInfo.getCategory().trim().isEmpty()) 
+            ? "" : targetTaskInfo.getCategory().trim();
+        if (!category1.equalsIgnoreCase(category2)) {
+            return false;
+        }
+        
+        // Compare description (normalize null to empty string)
+        String desc1 = taskInfo1.getDescription() != null ? taskInfo1.getDescription() : "";
+        String desc2 = targetTaskInfo.getDescription() != null ? targetTaskInfo.getDescription() : "";
+        if (!desc1.equals(desc2)) {
+            return false;
+        }
+        
+        // Compare one-time info (only available if we have TaskAvailable)
+        // Note: We can't compare one-time info from goal's target task since it's stored as Info
+        // For now, we'll skip one-time comparison as it's not available in the goal's target task Info
+        
+        return true;
     }
 
     @Override
@@ -490,7 +598,17 @@ public class InMemoryTaskGateway implements
             }
         }
         
-        System.out.println("DEBUG: Total tasks returned: " + allTasks.size());
+        // Sort tasks alphabetically by name (case-insensitive)
+        allTasks.sort((a, b) -> {
+            String nameA = a.getInfo().getName();
+            String nameB = b.getInfo().getName();
+            if (nameA == null && nameB == null) return 0;
+            if (nameA == null) return 1;  // null names go to end
+            if (nameB == null) return -1;
+            return nameA.compareToIgnoreCase(nameB);
+        });
+        
+        System.out.println("DEBUG: Total tasks returned (sorted alphabetically): " + allTasks.size());
         for (TaskAvailable task : allTasks) {
             System.out.println("DEBUG: Task - ID: " + task.getId() + ", Name: " + task.getInfo().getName());
         }
@@ -582,6 +700,28 @@ public class InMemoryTaskGateway implements
         }
         
         return false; // Should not reach here if templateExistsInToday worked correctly
+    }
+    
+    @Override
+    public boolean isExactDuplicateInTodaysList(String templateTaskId, Task.Priority priority, LocalDate dueDate) {
+        // Check all today's tasks for exact matches
+        for (Task task : todaysTasks.values()) {
+            if (templateTaskId != null && templateTaskId.equals(task.getTemplateTaskId())) {
+                // Found a task with the same template ID, now check priority and due date
+                
+                // Compare priority (null-safe)
+                boolean priorityMatches = Objects.equals(task.getPriority(), priority);
+                
+                // Compare due date (null-safe)
+                LocalDate taskDueDate = (task.getDates() != null) ? task.getDates().getDueDate() : null;
+                boolean dueDateMatches = Objects.equals(taskDueDate, dueDate);
+                
+                if (priorityMatches && dueDateMatches) {
+                    return true; // Exact duplicate found
+                }
+            }
+        }
+        return false; // No exact duplicate found
     }
 
     // ===== MarkTaskCompleteDataAccessInterface methods =====
@@ -720,6 +860,35 @@ public class InMemoryTaskGateway implements
         return false;
     }
 
+    @Override
+    public List<TaskAvailable> findAvailableTasksWithEmptyCategory() {
+        List<TaskAvailable> result = new ArrayList<>();
+        
+        // Check in availableTaskTemplates
+        for (TaskAvailable task : availableTaskTemplates.values()) {
+            String category = task.getInfo().getCategory();
+            if (category == null || category.trim().isEmpty()) {
+                result.add(task);
+            }
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Task> findTodaysTasksWithEmptyCategory() {
+        List<Task> result = new ArrayList<>();
+        
+        for (Task task : todaysTasks.values()) {
+            String category = task.getInfo().getCategory();
+            if (category == null || category.trim().isEmpty()) {
+                result.add(task);
+            }
+        }
+        
+        return result;
+    }
+
     // ===== RemoveFromTodayDataAccessInterface methods =====
 
     @Override
@@ -760,7 +929,19 @@ public class InMemoryTaskGateway implements
                 // Sort by due date - most overdue first (earliest date first)
                 LocalDate date1 = t1.getDates().getDueDate();
                 LocalDate date2 = t2.getDates().getDueDate();
-                return date1.compareTo(date2);
+                int dateComparison = date1.compareTo(date2);
+                
+                // If same due date, sort alphabetically by task name
+                if (dateComparison == 0) {
+                    String name1 = t1.getInfo().getName();
+                    String name2 = t2.getInfo().getName();
+                    if (name1 == null && name2 == null) return 0;
+                    if (name1 == null) return 1;
+                    if (name2 == null) return -1;
+                    return name1.compareToIgnoreCase(name2);
+                }
+                
+                return dateComparison;
             })
             .collect(Collectors.toList());
             
@@ -778,7 +959,19 @@ public class InMemoryTaskGateway implements
                 if (date1 == null || date2 == null) {
                     return 0;
                 }
-                return date1.compareTo(date2);
+                int dateComparison = date1.compareTo(date2);
+                
+                // If same due date, sort alphabetically by task name
+                if (dateComparison == 0) {
+                    String name1 = t1.getInfo().getName();
+                    String name2 = t2.getInfo().getName();
+                    if (name1 == null && name2 == null) return 0;
+                    if (name1 == null) return 1;
+                    if (name2 == null) return -1;
+                    return name1.compareToIgnoreCase(name2);
+                }
+                
+                return dateComparison;
             })
             .collect(Collectors.toList());
             

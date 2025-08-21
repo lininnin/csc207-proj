@@ -45,6 +45,9 @@ public class SharedDataAccess {
             new File("today_goal.txt"),
             new GoalFactory()
         );
+        
+        // Inject goal repository into task gateway for goal-task relationship checking
+        this.taskGateway.setGoalRepository(this.goalRepository);
     }
     
     /**

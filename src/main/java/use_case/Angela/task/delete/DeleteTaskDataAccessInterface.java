@@ -101,4 +101,13 @@ public interface DeleteTaskDataAccessInterface {
      * @return List of all today's tasks
      */
     List<Task> getAllTodaysTasks();
+
+    /**
+     * Checks if the given task is a target task for any goal.
+     * This is used to warn the user before deleting a task that is referenced by goals.
+     *
+     * @param taskId The ID of the task to check
+     * @return List of goal names that reference this task as target, empty if none
+     */
+    List<String> getGoalNamesTargetingTask(String taskId);
 }

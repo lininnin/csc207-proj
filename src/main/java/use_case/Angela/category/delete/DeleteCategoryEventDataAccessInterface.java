@@ -36,4 +36,20 @@ public interface DeleteCategoryEventDataAccessInterface {
      * @return true if update was successful
      */
     boolean clearTodaysEventCategory(String eventId);
+
+    /**
+     * Finds all available events that have empty/null category.
+     * Used to check if there are already events with empty categories before deletion.
+     *
+     * @return List of available events that have empty or null category
+     */
+    List<Info> findAvailableEventsWithEmptyCategory();
+
+    /**
+     * Finds all today's events that have empty/null category.
+     * Used to check if there are already events with empty categories before deletion.
+     *
+     * @return List of today's events that have empty or null category
+     */
+    List<Info> findTodaysEventsWithEmptyCategory();
 }

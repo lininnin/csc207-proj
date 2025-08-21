@@ -20,8 +20,9 @@ public class CreateGoalPresenter implements CreateGoalOutputBoundary {
     }
 
     /**
-     * Handles successful goal creation by displaying the success message
-     * and refreshing the Today So Far panel.
+     * Handles successful goal creation by displaying the success message.
+     * Note: Does not refresh Today So Far panel because new goals should only
+     * appear there when specifically added to today's goals.
      * @param outputData Contains the success status message and created goal details
      */
     @Override
@@ -29,14 +30,9 @@ public class CreateGoalPresenter implements CreateGoalOutputBoundary {
         // Update UI with success message
         System.out.println("Success: " + outputData.getStatusMessage());
 
-        // Refresh Today So Far panel if controller is available
-        if (todaySoFarController != null) {
-            System.out.println("DEBUG: CreateGoalPresenter calling todaySoFarController.refresh()");
-            todaySoFarController.refresh();
-        }
-        else {
-            System.out.println("DEBUG: CreateGoalPresenter - todaySoFarController is null!");
-        }
+        // Do NOT refresh Today So Far panel when creating a goal
+        // Goals should only appear in Today So Far when added to today's goals
+        System.out.println("DEBUG: CreateGoalPresenter - Goal created, not refreshing Today So Far panel");
     }
 
     /**

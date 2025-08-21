@@ -8,10 +8,13 @@ import view.FontUtil;
 
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Panel for displaying overdue tasks.
@@ -23,6 +26,9 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
     private final JLabel titleLabel;
     private final JLabel emptyLabel;
     private final JScrollPane scrollPane;
+    
+    // Map to track overdue task data by row index
+    private final Map<Integer, OverdueTaskData> rowToOverdueTaskMap = new HashMap<>();
     
     public OverdueTasksPanel(OverdueTasksViewModel viewModel) {
         this.viewModel = viewModel;
@@ -55,11 +61,19 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         add(titlePanel, BorderLayout.NORTH);
         
         // Table
-        String[] columnNames = {"Task Name", "Category", "Due Date", "Days Overdue"};
+        String[] columnNames = {"Complete", "Task Name", "Category", "Due Date", "Days Overdue"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Read-only table
+                return column == 0; // Only the Complete checkbox is editable
+            }
+            
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 0) {
+                    return Boolean.class; // Complete checkbox
+                }
+                return Object.class;
             }
         };
         
@@ -71,32 +85,48 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         overdueTable.setGridColor(Color.LIGHT_GRAY);
         
         // Set column widths with better proportions
-        overdueTable.getColumnModel().getColumn(0).setPreferredWidth(120); // Task Name
-        overdueTable.getColumnModel().getColumn(1).setPreferredWidth(80);  // Category
-        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Due Date - increased width
-        overdueTable.getColumnModel().getColumn(3).setPreferredWidth(80);  // Days Overdue
+        overdueTable.getColumnModel().getColumn(0).setPreferredWidth(60);  // Complete checkbox
+        overdueTable.getColumnModel().getColumn(1).setPreferredWidth(120); // Task Name
+        overdueTable.getColumnModel().getColumn(2).setPreferredWidth(80);  // Category
+        overdueTable.getColumnModel().getColumn(3).setPreferredWidth(100); // Due Date
+        overdueTable.getColumnModel().getColumn(4).setPreferredWidth(80);  // Days Overdue
         
         // Enable auto-resize to fit panel width
         overdueTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         
-        // Custom renderer for red text
+        // Custom renderer for red text (skip checkbox column)
         DefaultTableCellRenderer redRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 c.setForeground(Color.RED.darker());
-                if (column == 3 && value != null) { // Days Overdue column
+                if (column == 4 && value != null) { // Days Overdue column (now column 4)
                     setText(value + " days");
                 }
                 return c;
             }
         };
         
-        // Apply red renderer to all columns
-        for (int i = 0; i < overdueTable.getColumnCount(); i++) {
+        // Apply red renderer to all columns except checkbox
+        for (int i = 1; i < overdueTable.getColumnCount(); i++) {
             overdueTable.getColumnModel().getColumn(i).setCellRenderer(redRenderer);
         }
+        
+        // Add table model listener for checkbox events
+        tableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE && e.getColumn() == 0) {
+                    // Checkbox was clicked
+                    int row = e.getFirstRow();
+                    boolean completed = (Boolean) tableModel.getValueAt(row, 0);
+                    if (completed) {
+                        handleTaskCompletion(row);
+                    }
+                }
+            }
+        });
         
         scrollPane = new JScrollPane(overdueTable);
         scrollPane.setPreferredSize(new Dimension(320, 180));
@@ -126,8 +156,9 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
     }
     
     private void updateOverdueTasks(OverdueTasksState state) {
-        // Clear existing rows
+        // Clear existing rows and mapping
         tableModel.setRowCount(0);
+        rowToOverdueTaskMap.clear();
         
         if (state.getError() != null) {
             // Show error state
@@ -147,14 +178,18 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             
+            int rowIndex = 0;
             for (OverdueTaskData task : state.getOverdueTasks()) {
                 Object[] row = {
+                    false, // Complete checkbox - initially unchecked
                     task.getTaskName(),
                     task.getCategoryName().isEmpty() ? "-" : task.getCategoryName(),
                     task.getDueDate() != null ? task.getDueDate().format(formatter) : "-",
                     task.getDaysOverdue()
                 };
                 tableModel.addRow(row);
+                rowToOverdueTaskMap.put(rowIndex, task);
+                rowIndex++;
             }
             
             add(scrollPane, BorderLayout.CENTER);
@@ -171,6 +206,27 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
         repaint();
     }
     
+    /**
+     * Handles completion of an overdue task.
+     * The task remains visible in the overdue panel until end of day.
+     */
+    private void handleTaskCompletion(int row) {
+        OverdueTaskData task = rowToOverdueTaskMap.get(row);
+        if (task != null) {
+            // Visual feedback - strike through the completed task
+            String taskName = (String) tableModel.getValueAt(row, 1);
+            String strikeThrough = "<html><strike>" + taskName + "</strike></html>";
+            tableModel.setValueAt(strikeThrough, row, 1);
+            
+            // You could add logic here to call a mark task complete controller
+            // For now, we'll just provide visual feedback
+            System.out.println("DEBUG: Marking overdue task as complete: " + task.getTaskName());
+            
+            // Note: The task remains in the overdue panel as per requirements
+            // It should only be removed at the end of the day
+        }
+    }
+
     /**
      * Refreshes the overdue tasks by triggering the controller.
      * Should be called when tasks are updated elsewhere.

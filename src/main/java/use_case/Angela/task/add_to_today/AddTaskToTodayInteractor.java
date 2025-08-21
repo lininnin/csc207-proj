@@ -28,11 +28,13 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
             return;
         }
 
-        // Check if already in today AND not overdue
-        // This allows re-adding overdue tasks with new due dates
-        // For testing, allow bypassing this check to create overdue tasks
-        if (!inputData.isTestingOverdue() && dataAccess.isTaskInTodaysListAndNotOverdue(taskId)) {
-            outputBoundary.presentError("Task is already in Today's Tasks");
+        // Validate due date first
+        LocalDate dueDate = inputData.getDueDate();
+        
+        // Check for exact duplicate (same template, priority, and due date)
+        // This prevents adding the exact same task multiple times
+        if (dataAccess.isExactDuplicateInTodaysList(taskId, inputData.getPriority(), dueDate)) {
+            outputBoundary.presentError("This exact task (same priority and due date) is already in Today's Tasks");
             return;
         }
         
@@ -41,9 +43,6 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
             // This allows re-adding the same task with a different (overdue) date for testing
             System.out.println("DEBUG: Testing mode - allowing re-add of task with overdue date");
         }
-
-        // Validate due date
-        LocalDate dueDate = inputData.getDueDate();
         // TEMPORARY: Modified for testing overdue functionality
         // In production, overdue tasks should go directly to Overdue list, not Today's list
         // But for testing, we allow past dates to demonstrate the overdue functionality

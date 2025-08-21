@@ -51,4 +51,16 @@ public interface AddToTodayDataAccessInterface {
      * @return list of all available tasks as TaskAvailable objects
      */
     List<TaskAvailable> getAllAvailableTasksWithDetails();
+    
+    /**
+     * Checks if an exact duplicate task already exists in today's list.
+     * Two tasks are considered exact duplicates if they have the same template ID,
+     * priority, and due date.
+     * 
+     * @param templateTaskId the template task ID to check
+     * @param priority the priority to check (can be null)
+     * @param dueDate the due date to check (can be null)
+     * @return true if an exact duplicate exists, false otherwise
+     */
+    boolean isExactDuplicateInTodaysList(String templateTaskId, Task.Priority priority, java.time.LocalDate dueDate);
 }

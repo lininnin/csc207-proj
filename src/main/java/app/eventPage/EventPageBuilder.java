@@ -362,6 +362,18 @@ public class EventPageBuilder {
                         // No tasks in event context
                         return true;
                     }
+
+                    @Override
+                    public List<TaskAvailable> findAvailableTasksWithEmptyCategory() {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
+
+                    @Override
+                    public List<Task> findTodaysTasksWithEmptyCategory() {
+                        // No tasks in event context
+                        return new ArrayList<>();
+                    }
                 };
                 
                 // Also create an event adapter for clearing event categories
@@ -384,6 +396,16 @@ public class EventPageBuilder {
                     @Override
                     public boolean clearTodaysEventCategory(String eventId) {
                         return todaysEventDAO.clearTodaysEventCategory(eventId);
+                    }
+
+                    @Override
+                    public List<entity.info.Info> findAvailableEventsWithEmptyCategory() {
+                        return commonDao.findAvailableEventsWithEmptyCategory();
+                    }
+
+                    @Override
+                    public List<entity.info.Info> findTodaysEventsWithEmptyCategory() {
+                        return todaysEventDAO.findTodaysEventsWithEmptyCategory();
                     }
                 };
                 

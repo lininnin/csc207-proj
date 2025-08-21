@@ -188,4 +188,28 @@ public class TodaysEventDataAccessObject implements AddEventDataAccessInterf,
         return false;
     }
 
+    @Override
+    public List<Info> findAvailableEventsWithEmptyCategory() {
+        // Today's events DAO doesn't manage available events
+        // This will be handled by EventAvailableDataAccessObject
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Info> findTodaysEventsWithEmptyCategory() {
+        List<Info> result = new ArrayList<>();
+        for (EventInterf event : todayLog.getActualEvents()) {
+            if (event.getInfo() != null) {
+                String category = event.getInfo().getCategory();
+                if (category == null || category.trim().isEmpty()) {
+                    // Cast to Info since InfoInterf is implemented by Info
+                    if (event.getInfo() instanceof Info) {
+                        result.add((Info) event.getInfo());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
 }

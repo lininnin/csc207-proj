@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -141,6 +142,9 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                 }
             }
         });
+
+        // Add table sorting functionality
+        addTableSorting();
 
         // No sample data - start with empty table
 
@@ -651,6 +655,96 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             if (currentRow >= 0) {
                 super.fireEditingStopped();
             }
+        }
+    }
+
+    /**
+     * Adds table sorting functionality to clickable column headers.
+     * Supports sorting by Name, Category, Priority, and Due Date.
+     */
+    private void addTableSorting() {
+        JTableHeader header = taskTable.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            private int lastSortColumn = -1;
+            private boolean ascending = true;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = header.columnAtPoint(e.getPoint());
+                
+                // Only allow sorting on sortable columns (skip Status, Edit, Delete buttons)
+                if (columnIndex == 0 || columnIndex == 5 || columnIndex == 6) {
+                    return;
+                }
+                
+                // Toggle sort order if clicking same column
+                if (columnIndex == lastSortColumn) {
+                    ascending = !ascending;
+                } else {
+                    ascending = true;
+                    lastSortColumn = columnIndex;
+                }
+                
+                sortTableByColumn(columnIndex, ascending);
+            }
+        });
+    }
+
+    /**
+     * Sorts the table by the specified column.
+     */
+    private void sortTableByColumn(int columnIndex, boolean ascending) {
+        // Create list of row data with task IDs for sorting
+        List<RowData> rowDataList = new ArrayList<>();
+        
+        // Collect all rows and their corresponding task IDs
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            Object[] row = new Object[tableModel.getColumnCount()];
+            for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                row[j] = tableModel.getValueAt(i, j);
+            }
+            rowDataList.add(new RowData(row, rowToTaskIdMap.get(i)));
+        }
+        
+        // Sort rows based on the selected column
+        rowDataList.sort((rowData1, rowData2) -> {
+            Object val1 = rowData1.row[columnIndex];
+            Object val2 = rowData2.row[columnIndex];
+            
+            // Handle null values
+            if (val1 == null && val2 == null) return 0;
+            if (val1 == null) return ascending ? -1 : 1;
+            if (val2 == null) return ascending ? 1 : -1;
+            
+            // Sort by string comparison for most columns
+            String str1 = val1.toString();
+            String str2 = val2.toString();
+            
+            int result = str1.compareToIgnoreCase(str2);
+            return ascending ? result : -result;
+        });
+        
+        // Clear and repopulate the table
+        tableModel.setRowCount(0);
+        rowToTaskIdMap.clear();
+        
+        for (int i = 0; i < rowDataList.size(); i++) {
+            RowData rowData = rowDataList.get(i);
+            tableModel.addRow(rowData.row);
+            rowToTaskIdMap.put(i, rowData.taskId);
+        }
+    }
+
+    /**
+     * Helper class to keep row data and task ID together during sorting.
+     */
+    private static class RowData {
+        final Object[] row;
+        final String taskId;
+        
+        RowData(Object[] row, String taskId) {
+            this.row = row;
+            this.taskId = taskId;
         }
     }
 }

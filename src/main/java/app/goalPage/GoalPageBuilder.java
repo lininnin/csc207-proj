@@ -362,7 +362,19 @@ public class GoalPageBuilder {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof TaskAvailable) {
                     TaskAvailable task = (TaskAvailable) value;
-                    setText(task.getInfo().getName());
+                    String taskName = task.getInfo().getName();
+                    
+                    // Get category name if category ID exists
+                    String categoryDisplay = "";
+                    String categoryId = task.getInfo().getCategory();
+                    if (categoryId != null && !categoryId.isEmpty()) {
+                        entity.Category category = app.SharedDataAccess.getInstance().getCategoryGateway().getCategoryById(categoryId);
+                        if (category != null) {
+                            categoryDisplay = " [" + category.getName() + "]";
+                        }
+                    }
+                    
+                    setText(taskName + categoryDisplay);
                 }
                 return this;
             }
@@ -485,6 +497,8 @@ public class GoalPageBuilder {
             for (TaskAvailable task : availableTasks) {
                 targetTaskBox.addItem(task);
             }
+            
+            // Restore selection if possible
             if (selectedTask != null) {
                 for (int i = 0; i < targetTaskBox.getItemCount(); i++) {
                     TaskAvailable task = targetTaskBox.getItemAt(i);
@@ -494,6 +508,9 @@ public class GoalPageBuilder {
                     }
                 }
             }
+            
+            // Trigger repaint to ensure renderer is applied
+            targetTaskBox.repaint();
         }
     }
 

@@ -47,7 +47,19 @@ public class InMemoryCategoryGateway implements
 
     @Override
     public List<Category> getAllCategories() {
-        return new ArrayList<>(categories.values());
+        List<Category> allCategories = new ArrayList<>(categories.values());
+        
+        // Sort categories alphabetically by name (case-insensitive)
+        allCategories.sort((a, b) -> {
+            String nameA = a.getName();
+            String nameB = b.getName();
+            if (nameA == null && nameB == null) return 0;
+            if (nameA == null) return 1;  // null names go to end
+            if (nameB == null) return -1;
+            return nameA.compareToIgnoreCase(nameB);
+        });
+        
+        return allCategories;
     }
 
     @Override

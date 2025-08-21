@@ -43,6 +43,19 @@ public class DeleteTaskInteractor implements DeleteTaskInputBoundary {
             return;
         }
 
+        // Check if this task is a target of any goals
+        List<String> goalNames = dataAccess.getGoalNamesTargetingTask(taskId);
+        if (!goalNames.isEmpty()) {
+            String goalsList = String.join(", ", goalNames);
+            String warningMessage = String.format(
+                "Warning: This task '%s' is linked to goal(s): %s. " +
+                "If deleted, the goal(s) will also be deleted. Are you sure?",
+                taskTemplate.getInfo().getName(), goalsList
+            );
+            outputBoundary.prepareFailView(warningMessage);
+            return;
+        }
+
         // Check if this template has instances in Today's Tasks
         boolean existsInToday = dataAccess.templateExistsInToday(taskId);
 
