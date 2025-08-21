@@ -7,7 +7,7 @@ import entity.Sophia.GoalInfo;
 import entity.info.Info;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.goalManage.available_goals.available_goals.AvailableGoalsOutputBoundary;
+import use_case.goalManage.available_goals.AvailableGoalsOutputBoundary;
 
 import java.time.LocalDate;
 import java.util.Arrays;

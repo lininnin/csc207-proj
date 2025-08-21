@@ -197,6 +197,51 @@ class CreateCategoryInteractorTest {
         }
         assertEquals(1, categoryCount);
     }
+    
+    @Test
+    void testFailureCategoryNameExceeds20Characters() {
+        // Try to create category with name > 20 characters
+        String longName = "ThisIsAVeryLongCategoryNameThatExceeds20Characters";
+        CreateCategoryInputData inputData = new CreateCategoryInputData(longName);
+        interactor.execute(inputData);
+
+        // Verify failure
+        assertNull(testPresenter.lastOutputData);
+        assertNotNull(testPresenter.lastError);
+        assertEquals("The name of category cannot exceed 20 letters", testPresenter.lastError);
+
+        // Verify no category was created
+        assertTrue(categoryGateway.getAllCategories().isEmpty());
+    }
+    
+    @Test
+    void testFailureCategoryNameExactly20Characters() {
+        // Create category with exactly 20 characters (should succeed)
+        String exactName = "12345678901234567890"; // exactly 20 chars
+        CreateCategoryInputData inputData = new CreateCategoryInputData(exactName);
+        interactor.execute(inputData);
+
+        // Verify success
+        assertNotNull(testPresenter.lastOutputData);
+        assertEquals(exactName, testPresenter.lastOutputData.getCategoryName());
+        assertNull(testPresenter.lastError);
+    }
+    
+    @Test
+    void testExceptionHandlingDuringSave() {
+        // Create a gateway that throws exception on save
+        TestExceptionCategoryGateway exceptionGateway = new TestExceptionCategoryGateway();
+        testPresenter = new TestCreateCategoryPresenter();
+        interactor = new CreateCategoryInteractor(exceptionGateway, testPresenter);
+        
+        CreateCategoryInputData inputData = new CreateCategoryInputData("TestCategory");
+        interactor.execute(inputData);
+        
+        // Verify failure due to exception
+        assertNull(testPresenter.lastOutputData);
+        assertNotNull(testPresenter.lastError);
+        assertTrue(testPresenter.lastError.contains("Failed to create category"));
+    }
 
     /**
      * Test presenter implementation that captures output for verification.
@@ -215,6 +260,51 @@ class CreateCategoryInteractorTest {
         public void prepareFailView(String error) {
             this.lastError = error;
             this.lastOutputData = null;
+        }
+    }
+    
+    /**
+     * Test gateway that throws exception on save to test error handling.
+     */
+    private static class TestExceptionCategoryGateway implements use_case.Angela.category.CategoryGateway {
+        @Override
+        public void saveCategory(Category category) {
+            throw new RuntimeException("Database connection failed");
+        }
+        
+        @Override
+        public Category getCategoryById(String id) {
+            return null;
+        }
+        
+        @Override
+        public List<Category> getAllCategories() {
+            return new java.util.ArrayList<>();
+        }
+        
+        @Override
+        public Category getCategoryByName(String name) {
+            return null;
+        }
+        
+        @Override
+        public boolean updateCategory(Category category) {
+            return false;
+        }
+        
+        @Override
+        public boolean deleteCategory(String categoryId) {
+            return false;
+        }
+        
+        @Override
+        public boolean categoryNameExists(String name) {
+            return false;
+        }
+        
+        @Override
+        public String getNextCategoryId() {
+            return "test-id";
         }
     }
 }

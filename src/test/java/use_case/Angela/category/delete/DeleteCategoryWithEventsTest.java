@@ -253,6 +253,34 @@ class DeleteCategoryWithEventsTest {
             }
             return true;
         }
+        
+        @Override
+        public List<TaskAvailable> findAvailableTasksWithEmptyCategory() {
+            return availableTasks.stream()
+                    .filter(t -> t.getInfo().getCategory() == null || t.getInfo().getCategory().isEmpty())
+                    .toList();
+        }
+        
+        @Override
+        public List<Task> findTodaysTasksWithEmptyCategory() {
+            return todayTasks.stream()
+                    .filter(t -> t.getInfo().getCategory() == null || t.getInfo().getCategory().isEmpty())
+                    .toList();
+        }
+        
+        @Override
+        public List<Info> findAvailableEventsWithEmptyCategory() {
+            return availableEvents.stream()
+                    .filter(e -> e.getCategory() == null || e.getCategory().isEmpty())
+                    .toList();
+        }
+        
+        @Override
+        public List<Info> findTodaysEventsWithEmptyCategory() {
+            return todayEvents.stream()
+                    .filter(e -> e.getCategory() == null || e.getCategory().isEmpty())
+                    .toList();
+        }
     }
     
     /**
