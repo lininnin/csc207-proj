@@ -413,20 +413,11 @@ We value your feedback to improve MindTrack and enhance the learning experience:
 
 ## **License**
 
-This project is developed for educational purposes as part of CSC207 coursework at the University of Toronto.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### **Educational Use License**
-
-**Terms:**
-- **Academic Use**: Free to use, modify, and distribute for educational purposes
-- **Attribution Required**: Must credit original team "Bugged but Balanced"
-- **Non-Commercial**: Not for commercial use without explicit permission
-- **Open Source Spirit**: Share improvements and learning with the community
+**Educational Project:** This software was developed as part of CSC207 coursework at the University of Toronto by Team Bugged but Balanced.
 
 **Third-Party Dependencies:**
 - All third-party libraries maintain their respective licenses
 - See `pom.xml` for complete dependency list
 - OpenAI API usage subject to OpenAI's terms of service
-
-**Disclaimer:**
-This software is provided "as is" for educational purposes. The development team makes no warranties regarding its use in production environments.
