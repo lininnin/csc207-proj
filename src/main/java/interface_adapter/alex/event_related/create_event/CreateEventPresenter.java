@@ -56,7 +56,6 @@ public class CreateEventPresenter implements CreateEventOutputBoundary {
         newState.setAvailableEvents(updatedList);
         availableEventViewModel.setState(newState);
         availableEventViewModel.firePropertyChanged(AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY);
-        System.out.println("CreateEventPresenter triggered");
         
         // Refresh Today So Far panel if controller is available
         if (todaySoFarController != null) {

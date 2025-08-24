@@ -38,7 +38,6 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     private CategoryGateway categoryGateway;
 
     public AddToTodayView(AddTaskToTodayViewModel viewModel) {
-        System.out.println("DEBUG: AddToTodayView constructor called");
         this.viewModel = viewModel;
         if (viewModel != null) {
             viewModel.addPropertyChangeListener(this);
@@ -99,10 +98,8 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
                 // Ensure text is set properly
                 String text = value != null ? value.toString() : "";
                 setText(text);
-                // DEBUG: Check for missing uppercase letters
                 if (text.contains("L")) {
-                    System.out.println("DEBUG: Priority renderer text: '" + text + "' chars: " + 
-                        java.util.Arrays.toString(text.toCharArray()));
+                        java.util.Arrays.toString(text.toCharArray());
                 }
                 // Use FontUtil to fix missing W, E, L, F uppercase letters
                 setFont(FontUtil.getStandardFont());
@@ -150,7 +147,6 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     }
 
     public void setDataAccess(AddToTodayDataAccessInterface dataAccess) {
-        System.out.println("DEBUG: AddToTodayView.setDataAccess() called with dataAccess: " + dataAccess);
         this.dataAccess = dataAccess;
         refreshTasks();
     }
@@ -161,15 +157,12 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
     }
 
     private void refreshTasks() {
-        System.out.println("DEBUG: AddToTodayView.refreshTasks() called");
         
         taskDropdown.removeAllItems();
         taskDropdown.addItem(new TaskItem("", "-- Select Task --"));
 
         if (dataAccess != null) {
-            System.out.println("DEBUG: dataAccess is not null, fetching tasks");
             List<TaskAvailableInterf> tasks = dataAccess.getAllAvailableTasksWithDetails();
-            System.out.println("DEBUG: Number of tasks received: " + tasks.size());
             
             for (TaskAvailableInterf task : tasks) {
                 String categoryName = null;
@@ -180,16 +173,11 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
                         categoryName = category.getName();
                     }
                 }
-                System.out.println("DEBUG: Adding task to dropdown - ID: " + task.getId() + 
-                                 ", Name: " + task.getInfo().getName() + 
-                                 ", Category: " + categoryName);
                 taskDropdown.addItem(new TaskItem(task.getId(), task.getInfo().getName(), categoryName));
             }
         } else {
-            System.out.println("DEBUG: dataAccess is null!");
         }
         
-        System.out.println("DEBUG: Total items in dropdown: " + taskDropdown.getItemCount());
     }
 
     private void handleAddToToday() {
@@ -228,7 +216,6 @@ public class AddToTodayView extends JPanel implements PropertyChangeListener {
             if (state != null) {
                 // Check for refresh needed (e.g., when new tasks are created)
                 if (state.isRefreshNeeded()) {
-                    System.out.println("DEBUG: Refresh needed flag detected, refreshing task list");
                     refreshTasks();
                     // Reset the flag
                     state.setRefreshNeeded(false);

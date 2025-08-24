@@ -28,9 +28,7 @@ public class OverdueTasksInteractor implements OverdueTasksInputBoundary {
     public void execute(OverdueTasksInputData inputData) {
         try {
             int daysBack = inputData.getDaysBack();
-            System.out.println("DEBUG: OverdueTasksInteractor.execute() called with daysBack: " + daysBack);
             List<TaskInterf> overdueTasks = taskDataAccess.getOverdueTasks(daysBack);
-            System.out.println("DEBUG: Found " + overdueTasks.size() + " overdue tasks");
             
             // Convert to output data
             List<OverdueTasksOutputData.OverdueTaskData> overdueDataList = new ArrayList<>();

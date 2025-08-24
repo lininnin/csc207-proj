@@ -5,6 +5,7 @@ target/
 homework-5-group/
 .DS_Store
 homework-5-group/
+README_CHECKLIST.md
 .idea/
 *.iml
 /daily_logs.json

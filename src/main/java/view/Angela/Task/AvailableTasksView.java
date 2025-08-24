@@ -108,16 +108,10 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
                 // In edit mode: ALL columns should be editable (including buttons for Save/Cancel)
                 if (row == editingRow && editingTaskId != null) {
                     boolean editable = true;
-                    System.out.println("DEBUG: isCellEditable - row: " + row + ", column: " + column + 
-                                     ", editingRow: " + editingRow + ", in edit mode, editable: " + editable);
                     return editable;
                 }
                 // Normal mode: only button columns
                 boolean editable = column == 4 || column == 5;
-                if (editable) {
-                    System.out.println("DEBUG: isCellEditable - row: " + row + ", column: " + column + 
-                                     ", button column, editable: true");
-                }
                 return editable;
             }
 
@@ -207,7 +201,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         this.editAvailableTaskViewModel = viewModel;
         if (viewModel != null) {
             viewModel.addPropertyChangeListener(this);
-            System.out.println("DEBUG: AvailableTasksView registered as listener to EditAvailableTaskViewModel");
         }
     }
 
@@ -226,8 +219,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("DEBUG: propertyChange - property: " + evt.getPropertyName() + 
-                         ", newValue: " + evt.getNewValue());
         
         if (AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY.equals(evt.getPropertyName())) {
             AvailableTasksState state = (AvailableTasksState) evt.getNewValue();
@@ -243,7 +234,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         } else if (editAvailableTaskViewModel != null && 
                    EditAvailableTaskViewModel.EDIT_AVAILABLE_TASK_STATE_PROPERTY.equals(evt.getPropertyName())) {
             EditAvailableTaskState state = (EditAvailableTaskState) evt.getNewValue();
-            System.out.println("DEBUG: Edit state property change detected, state: " + state);
             handleEditState(state);
         }
     }
@@ -273,14 +263,11 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
     private void handleEditState(EditAvailableTaskState state) {
         if (state == null) {
-            System.out.println("DEBUG: handleEditState - state is null, ignoring");
             return;
         }
         
-        System.out.println("DEBUG: handleEditState - state received: " + state);
         
         if (state.getSuccessMessage() != null) {
-            System.out.println("DEBUG: Showing success message: " + state.getSuccessMessage());
             showMessage(state.getSuccessMessage(), false);
             
             // On success, clear the editing state (but don't call exitEditMode to avoid recursion)
@@ -295,15 +282,12 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             
             // The refresh triggered by presenter will update the table
         } else if (state.getError() != null) {
-            System.out.println("DEBUG: Showing error message: " + state.getError());
             showMessage(state.getError(), true);
             // Keep edit mode on error - don't change editingTaskId or editingRow
-            System.out.println("DEBUG: Keeping edit mode due to error");
         }
     }
 
     private void showMessage(String message, boolean isError) {
-        System.out.println("DEBUG: showMessage called - message: " + message + ", isError: " + isError);
         messageLabel.setForeground(isError ? Color.RED : new Color(0, 128, 0));
         messageLabel.setText(message);
         
@@ -330,8 +314,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         
         // If we're editing, cancel the edit (don't save)
         if (editingTaskId != null || editingRow != -1) {
-            System.out.println("DEBUG: refreshTasks - cancelling edit mode without saving, editingTaskId: " + 
-                             editingTaskId + ", editingRow: " + editingRow);
             
             // IMPORTANT: Restore original values instead of clearing
             if (editNameField != null && originalName != null) {
@@ -431,7 +413,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         if (currentMessage != null && !currentMessage.trim().isEmpty() && !" ".equals(currentMessage)) {
             messageLabel.setText(currentMessage);
             messageLabel.setForeground(currentColor);
-            System.out.println("DEBUG: Restored message after refresh: " + currentMessage);
         } else {
             messageLabel.setText(" ");
         }
@@ -453,19 +434,13 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             }
         }
         
-        System.out.println("DEBUG: enterEditMode called for row: " + row + ", taskId: " + taskId + 
-                         ", current editingTaskId: " + editingTaskId + ", current editingRow: " + editingRow);
-        
         if (editingTaskId != null || editingRow != -1) {
             // Already editing another row
-            System.out.println("DEBUG: Already editing taskId " + editingTaskId + 
-                             " at row " + editingRow + ", ignoring enterEditMode");
             return;
         }
 
         editingTaskId = taskId;
         editingRow = row;
-        System.out.println("DEBUG: Set editingTaskId to: " + editingTaskId + ", editingRow to: " + editingRow);
 
         // Get current values
         String currentName = (String) tableModel.getValueAt(row, 0);
@@ -506,7 +481,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
 
         // DON'T update button text in the model - this overwrites the task ID!
         // The ButtonRenderer will handle showing the correct text based on editingRow
-        System.out.println("DEBUG: NOT updating button text in model - renderer will handle it");
 
         // Force table to repaint
         tableModel.fireTableRowsUpdated(row, row);
@@ -515,22 +489,16 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
         tableModel.fireTableCellUpdated(row, 4);
         tableModel.fireTableCellUpdated(row, 5);
         
-        System.out.println("DEBUG: enterEditMode complete - editingTaskId: " + editingTaskId + 
-                         ", editingRow: " + editingRow);
     }
 
     private void exitEditMode(int row, boolean save) {
-        System.out.println("DEBUG: exitEditMode called - row: " + row + ", save: " + save + 
-                         ", editingTaskId: " + editingTaskId + ", editingRow: " + editingRow);
         
         // Check if we're actually editing
         if (editingTaskId == null && editingRow == -1) {
-            System.out.println("DEBUG: exitEditMode - not editing, returning");
             return;
         }
 
         if (save && editAvailableTaskController != null && editingTaskId != null) {
-            System.out.println("DEBUG: Saving changes for taskId: " + editingTaskId);
             // Get the edited values
             String newName = editNameField.getText();
             String newDescription = editDescriptionField.getText();
@@ -538,25 +506,17 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             String newCategoryId = selectedCategory != null ? selectedCategory.getId() : "";
             boolean isOneTime = editOneTimeCheckbox.isSelected();
             
-            System.out.println("DEBUG: Save values - name: " + newName + ", desc: " + newDescription + 
-                             ", categoryId: " + newCategoryId + ", isOneTime: " + isOneTime);
-
             // Call controller to save
             editAvailableTaskController.execute(editingTaskId, newName, newDescription, newCategoryId, isOneTime);
             
             // IMPORTANT: Don't reset edit mode here - wait for success/error response
             // The handleEditState will decide whether to exit edit mode
-            System.out.println("DEBUG: Save initiated - waiting for response to determine if edit mode should continue");
             return; // Return early, don't execute the reset code below
         } else {
-            System.out.println("DEBUG: Cancel clicked - not saving changes. save=" + save + 
-                             ", controller=" + (editAvailableTaskController != null) + 
-                             ", editingTaskId=" + editingTaskId);
         }
 
         // Only reset if we're cancelling (save=false)
         if (!save) {
-            System.out.println("DEBUG: Cancelling edit - resetting state");
             
             // Reset editing state
             editingTaskId = null;
@@ -580,7 +540,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             // Only refresh on cancel to restore original values
             refreshTasks();
         }
-        System.out.println("DEBUG: exitEditMode complete - editingTaskId: " + editingTaskId + ", editingRow: " + editingRow);
     }
 
     private void loadCategoriesIntoCombo(String currentCategoryName) {
@@ -629,10 +588,8 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             if (row == editingRow && editingTaskId != null) {
                 if (column == 4) {
                     setText("Save");
-                    System.out.println("DEBUG: ButtonRenderer - Setting text to 'Save' for row " + row);
                 } else if (column == 5) {
                     setText("Cancel");
-                    System.out.println("DEBUG: ButtonRenderer - Setting text to 'Cancel' for row " + row);
                 }
             } else {
                 setText(defaultText);
@@ -668,7 +625,6 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             setClickCountToStart(1);
 
             button.addActionListener(e -> {
-                System.out.println("DEBUG: Button action listener triggered - label: " + label);
                 isPushed = true;
                 SwingUtilities.invokeLater(() -> {
                     fireEditingStopped();
@@ -689,42 +645,28 @@ public class AvailableTasksView extends JPanel implements PropertyChangeListener
             } else {
                 button.setText(label);
             }
-            
-            System.out.println("DEBUG: getTableCellEditorComponent - row: " + row + ", column: " + column + 
-                             ", editingRow: " + editingRow + ", editingTaskId: " + editingTaskId +
-                             ", buttonText: " + button.getText() + ", taskId: " + taskId);
-            
             return button;
         }
 
         @Override
         public Object getCellEditorValue() {
-            System.out.println("DEBUG: getCellEditorValue - isPushed: " + isPushed + ", row: " + row + 
-                             ", editingRow: " + editingRow + ", editingTaskId: " + editingTaskId +
-                             ", label: " + label + ", buttonText: " + button.getText());
-            
             if (isPushed) {
                 // Check button text to determine action (more reliable than row comparison)
                 String buttonText = button.getText();
-                System.out.println("DEBUG: Button pushed with text: " + buttonText);
                 
                 if ("Save".equals(buttonText)) {
-                    System.out.println("DEBUG: Save button clicked for row " + row);
                     SwingUtilities.invokeLater(() -> {
                         exitEditMode(row, true);
                     });
                 } else if ("Cancel".equals(buttonText)) {
-                    System.out.println("DEBUG: Cancel button clicked for row " + row);
                     SwingUtilities.invokeLater(() -> {
                         exitEditMode(row, false);
                     });
                 } else if ("Delete".equals(buttonText) && deleteTaskController != null) {
-                    System.out.println("DEBUG: Delete button clicked for taskId: " + taskId);
                     SwingUtilities.invokeLater(() -> {
                         deleteTaskController.execute(taskId, true);
                     });
                 } else if ("Edit".equals(buttonText)) {
-                    System.out.println("DEBUG: Edit button clicked - calling enterEditMode for row " + row);
                     SwingUtilities.invokeLater(() -> {
                         enterEditMode(row);
                     });

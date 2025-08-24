@@ -99,7 +99,6 @@ public class DailySnapshotService {
         
         // Don't overwrite existing snapshot for today
         if (historyDataAccess.hasSnapshot(today)) {
-            System.out.println("Snapshot already exists for " + today);
             return;
         }
         
@@ -165,12 +164,10 @@ public class DailySnapshotService {
         
         boolean saved = historyDataAccess.saveSnapshot(snapshot);
         if (saved) {
-            System.out.println("Successfully saved snapshot for " + today);
             
             // Clean up old snapshots (keep last 30 days)
             int deleted = historyDataAccess.cleanupOldSnapshots(30);
             if (deleted > 0) {
-                System.out.println("Cleaned up " + deleted + " old snapshots");
             }
         } else {
             System.err.println("Failed to save snapshot for " + today);

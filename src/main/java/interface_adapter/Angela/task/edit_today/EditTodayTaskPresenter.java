@@ -39,7 +39,6 @@ public class EditTodayTaskPresenter implements EditTodayTaskOutputBoundary {
 
     @Override
     public void prepareSuccessView(EditTodayTaskOutputData outputData) {
-        System.out.println("DEBUG: EditTodayTaskPresenter.prepareSuccessView - message: " + outputData.getMessage());
         
         // Create success state
         EditTodayTaskState editState = new EditTodayTaskState();
@@ -67,15 +66,12 @@ public class EditTodayTaskPresenter implements EditTodayTaskOutputBoundary {
         // Also refresh Today So Far panel since due dates might affect overdue status
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after editing today task");
         }
         
-        System.out.println("DEBUG: Triggered Today's Tasks refresh after edit");
     }
 
     @Override
     public void prepareFailView(String error) {
-        System.out.println("DEBUG: EditTodayTaskPresenter.prepareFailView - error: " + error);
         
         // Create error state
         EditTodayTaskState state = new EditTodayTaskState();

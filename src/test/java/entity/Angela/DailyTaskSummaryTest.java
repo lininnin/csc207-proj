@@ -11,6 +11,7 @@ import entity.BeginAndDueDates.BeginAndDueDates;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -120,6 +121,35 @@ class DailyTaskSummaryTest {
         
         assertTrue(dailyTaskSummary.getScheduledTasks().isEmpty());
         assertTrue(dailyTaskSummary.getCompletedTasks().isEmpty());
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate()); // Should trigger updateCompletionRate() with empty list
+    }
+    
+    @Test
+    void testUpdateCompletionRateEdgeCases() {
+        // Test when addScheduledTask() doesn't add task (null case) but with empty list
+        DailyTaskSummary emptySummary = new DailyTaskSummary(testDate);
+        
+        // Try to add null task - this should not call updateCompletionRate since task is null
+        emptySummary.addScheduledTask(null);
+        assertEquals(0.0, emptySummary.getCompletionRate());
+        
+        // Test with existing tasks
+        Info info = new Info.Builder("Test task").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
+        
+        // Add task to trigger updateCompletionRate
+        dailyTaskSummary.addScheduledTask(task);
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate());
+        
+        // Try to add the same task again - should call updateCompletionRate but not add duplicate
+        dailyTaskSummary.addScheduledTask(task);
+        assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate());
+        
+        // Try to add null - should not call updateCompletionRate
+        dailyTaskSummary.addScheduledTask(null);
+        assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
     }
 
     @Test
@@ -151,6 +181,18 @@ class DailyTaskSummaryTest {
 
     @Test
     void testCompletionRateWithNoScheduledTasks() {
+        assertEquals(0.0, dailyTaskSummary.getCompletionRate());
+        
+        // Also test when updateCompletionRate() is called on empty list
+        Info info = new Info.Builder("Test task").build();
+        BeginAndDueDates dates = new BeginAndDueDates(testDate, testDate.plusDays(1));
+        Task task = (Task) taskFactory.create("template1", info, dates, false);
+        
+        // Try to mark a task completed when no tasks are scheduled
+        // This should trigger updateCompletionRate() with empty scheduledTasks
+        dailyTaskSummary.markTaskCompleted(task);
+        
+        // Should remain 0.0 since no tasks are scheduled
         assertEquals(0.0, dailyTaskSummary.getCompletionRate());
     }
 
@@ -353,5 +395,23 @@ class DailyTaskSummaryTest {
         
         // Should only appear once
         assertEquals(1, dailyTaskSummary.getScheduledTasks().size());
+    }
+    
+    @Test
+    void testUpdateCompletionRateWithEmptyList() throws Exception {
+        // Use reflection to test the private updateCompletionRate method with empty scheduledTasks
+        DailyTaskSummary emptySummary = new DailyTaskSummary(testDate);
+        
+        // Verify initial state - empty list
+        assertTrue(emptySummary.getScheduledTasks().isEmpty());
+        assertEquals(0.0, emptySummary.getCompletionRate());
+        
+        // Use reflection to call private updateCompletionRate method
+        Method updateCompletionRateMethod = DailyTaskSummary.class.getDeclaredMethod("updateCompletionRate");
+        updateCompletionRateMethod.setAccessible(true);
+        updateCompletionRateMethod.invoke(emptySummary);
+        
+        // Should still be 0.0 after calling updateCompletionRate on empty list
+        assertEquals(0.0, emptySummary.getCompletionRate());
     }
 }

@@ -32,7 +32,6 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
 
     @Override
     public void presentSuccess(CreateTaskOutputData outputData) {
-        System.out.println("DEBUG: CreateTaskPresenter.presentSuccess called");
 
         // Update create task view model to show success and clear form
         CreateTaskState createState = createTaskViewModel.getState();
@@ -44,14 +43,12 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
         createState.setSuccessMessage(outputData.getMessage());
         createTaskViewModel.setState(createState);
         createTaskViewModel.firePropertyChanged(CreateTaskViewModel.CREATE_TASK_STATE_PROPERTY);
-        System.out.println("DEBUG: Fired property change for CreateTaskViewModel");
 
         // Update available tasks view model to trigger refresh
         AvailableTasksState availableState = availableTasksViewModel.getState();
         availableState.setRefreshNeeded(true);
         availableTasksViewModel.setState(availableState);
         availableTasksViewModel.firePropertyChanged(AvailableTasksViewModel.AVAILABLE_TASKS_STATE_PROPERTY);
-        System.out.println("DEBUG: Fired property change for AvailableTasksViewModel with refreshNeeded=true");
 
         // Also notify AddTaskToToday view to refresh its dropdown
         if (addTaskToTodayViewModel != null) {
@@ -62,7 +59,6 @@ public class CreateTaskPresenter implements CreateTaskOutputBoundary {
             addToTodayState.setRefreshNeeded(true);
             addTaskToTodayViewModel.setState(addToTodayState);
             addTaskToTodayViewModel.firePropertyChanged();
-            System.out.println("DEBUG: Fired property change for AddTaskToTodayViewModel with refreshNeeded=true");
         }
 
         // Note: Removed viewManagerModel.setActiveView() as we want to stay on the same page

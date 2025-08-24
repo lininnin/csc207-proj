@@ -16,7 +16,6 @@ public class TodaySoFarPresenter implements TodaySoFarOutputBoundary {
     
     @Override
     public void presentTodaySoFar(TodaySoFarOutputData outputData) {
-        System.out.println("DEBUG: TodaySoFarPresenter.presentTodaySoFar() called");
         TodaySoFarState state = new TodaySoFarState();
         
         // Convert output data to state
@@ -28,9 +27,6 @@ public class TodaySoFarPresenter implements TodaySoFarOutputBoundary {
         
         // Update view model
         viewModel.setState(state);
-        System.out.println("DEBUG: Firing property change with " + 
-                          (state.getGoals() != null ? state.getGoals().size() : 0) + " goals, " + 
-                          (state.getCompletedItems() != null ? state.getCompletedItems().size() : 0) + " completed items");
         viewModel.firePropertyChanged();
     }
     

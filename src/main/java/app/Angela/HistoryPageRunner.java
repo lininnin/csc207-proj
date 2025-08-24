@@ -133,7 +133,6 @@ public class HistoryPageRunner {
             dataAccess.saveSnapshot(snapshot);
         }
         
-        System.out.println("Sample history data created for the past 8 days");
     }
     
     private static JMenuBar createMenuBar() {

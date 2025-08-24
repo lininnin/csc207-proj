@@ -37,11 +37,9 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
     @Override
     public void execute(DeleteCategoryInputData inputData) {
         String categoryId = inputData.getCategoryId();
-        System.out.println("DEBUG: DeleteCategoryInteractor.execute() called with categoryId: " + categoryId);
 
         // Check if category exists
         Category category = categoryDataAccess.getCategoryById(categoryId);
-        System.out.println("DEBUG: Found category: " + (category != null ? category.getName() : "null"));
         
         if (category == null) {
             outputBoundary.prepareFailView("Category not found");
@@ -152,9 +150,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         }
         
         // CRITICAL: Update all tasks that have this category BEFORE deleting the category
-        System.out.println("DEBUG: Updating tasks with category: " + category.getName());
         boolean taskUpdateSuccess = taskDataAccess.updateTasksCategoryToNull(categoryId);
-        System.out.println("DEBUG: Task update result: " + taskUpdateSuccess);
         
         if (!taskUpdateSuccess) {
             outputBoundary.prepareFailView("Failed to delete category");
@@ -164,9 +160,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         // CRITICAL: Update all events that have this category BEFORE deleting the category
         boolean eventUpdateSuccess = true;
         if (eventDataAccess != null) {
-            System.out.println("DEBUG: Updating events with category: " + category.getName());
             eventUpdateSuccess = eventDataAccess.updateEventsCategoryToNull(categoryId);
-            System.out.println("DEBUG: Event update result: " + eventUpdateSuccess);
             
             if (!eventUpdateSuccess) {
                 outputBoundary.prepareFailView("Failed to delete category");
@@ -175,9 +169,7 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
         }
 
         // Now delete the category
-        System.out.println("DEBUG: Deleting category: " + category.getName());
         boolean deleted = categoryDataAccess.deleteCategory(category);
-        System.out.println("DEBUG: Category deletion result: " + deleted);
 
         if (deleted) {
             String message;
@@ -194,7 +186,6 @@ public class DeleteCategoryInteractor implements DeleteCategoryInputBoundary {
                 );
             }
             
-            System.out.println("DEBUG: " + message);
             DeleteCategoryOutputData outputData = new DeleteCategoryOutputData(categoryId, message);
             outputBoundary.prepareSuccessView(outputData);
         } else {

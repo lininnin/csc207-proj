@@ -280,6 +280,5 @@ public class HistoryPageBuilder {
             historyDataAccess.saveSnapshot(snapshot);
         }
         
-        System.out.println("Sample history data created for the past 8 days with varied content");
     }
 }
