@@ -2,6 +2,8 @@
 
 *A comprehensive wellness tracking and productivity analytics application that helps users understand the relationship between their daily activities and mental wellbeing.*
 
+![MindTrack Main Interface](images/main-interface.png)
+
 ---
 
 ## **Table of Contents**
@@ -27,7 +29,7 @@
 |------|-----------------|-------------------------------------------------------------------------------|
 | Angela (Qian) Su | @angelaqaaa     | Task management, category system, and history tracking                        |
 | Alex/Qinyue Li | @lininnin       | Event tracking, wellness logging, mood management, and notification system    |
-| Ina Wang | @iwa964         | AI feedback generation, correlation analysis, and data validation             |
+| Ina Wang | @iwa964 and @InaW2006 | AI feedback generation, correlation analysis, and data validation             |
 | Sophia Lin | @phiaLXY28      | Goal setting and goal tracking                                 |
 
 *This project was developed as part of CSC207 at the University of Toronto, implementing Clean Architecture principles and SOLID design patterns.*
@@ -65,11 +67,15 @@ Many people struggle to understand the connection between their daily activities
 - **Overdue Detection**: Special panel for overdue tasks with 7-day history
 - **One-time vs Regular Tasks**: Flexible task types for different use cases
 
+![Task Management Interface](images/task-management.png)
+
 ### **📆 Event Tracking** 
 - **Activity Logging**: Record events that impact wellness (weather, social interactions, etc.)
 - **Correlation Analysis**: Events are analyzed for wellness impact during AI processing
 - **Flexible Categorization**: Organize events by custom categories
 - **Daily Recurrence**: Optional due dates for recurring events
+
+![Event Tracking Interface](images/event-tracking.png)
 
 ### **🎯 Goal Setting & Progress Tracking**
 - **Available → Current Goals**: Template goals that become active with specific targets
@@ -77,11 +83,15 @@ Many people struggle to understand the connection between their daily activities
 - **Automatic Progress Updates**: Goals update when linked tasks are completed
 - **Today So Far Panel**: Real-time goal progress display (e.g., "Gym: 2/3 this week")
 
+![Goal Setting Interface](images/goal-setting.png)
+
 ### **🧠 Wellness Logging**
 - **Multi-dimensional Tracking**: Mood, stress (1-10), energy (1-10), fatigue (1-10)
 - **Custom Mood Labels**: Create and categorize positive/negative mood states
 - **Time-segmented Analysis**: Morning/afternoon/evening entries for detailed correlation
 - **Reminder System**: 3 daily notifications (customizable times: 8 AM, 12 PM, 8 PM)
+
+![Wellness Logging Interface](images/wellness-logging.png)
 
 ### **🤖 AI-Powered Analysis**
 - **Automatic Weekly Reports**: Generated automatically every Monday at midnight EST with 7+ days of data
@@ -92,6 +102,8 @@ Many people struggle to understand the connection between their daily activities
   3. **Personalized Recommendations**: AI-generated actionable advice based on patterns
 - **Comprehensive Feedback**: Single integrated report combining all analysis types
 
+![AI Analysis Results](images/ai-analysis.png)
+
 ### **📊 Data Visualization & History**
 - **Today So Far Panel**: Real-time daily summary with overdue tasks, goals progress, completion rates, and wellness metrics
 - **Historical Data**: Access to past daily logs and productivity trends via History page
@@ -99,15 +111,22 @@ Many people struggle to understand the connection between their daily activities
 - **Category Management**: Create, edit, and delete categories with cascade updates
 - **Overdue Tasks Panel**: Special 7-day history panel showing overdue tasks
 
+![Historical Data Interface](images/historical-data.png)
+
 ---
 
 ## **Installation Instructions**
 
 ### **Prerequisites**
-- **Java 11 or higher** (JDK 11 minimum as per Maven configuration)
-- **Maven 3.6+** for build management
-- **Git** for version control
+- **Java 11 or higher** - [Download JDK](https://adoptium.net/) (JDK 11 minimum as per Maven configuration)
+- **Maven 3.6+** - [Download Maven](https://maven.apache.org/download.cgi) for build management
+- **Git** - [Download Git](https://git-scm.com/downloads) for version control
 - **4GB RAM minimum** (8GB recommended for optimal performance)
+
+### **System Compatibility**
+- **Operating Systems**: Windows 10+, macOS 10.14+, Linux Ubuntu 18+
+- **Architecture**: x64 systems (Intel/AMD 64-bit)
+- **Network**: Internet connection required for AI analysis features
 
 ### **Step 1: Clone the Repository**
 ```bash
@@ -144,8 +163,11 @@ OPENAI_API_KEY=your-key mvn exec:java -Dexec.mainClass="app.RunApp"
 # Compile the application
 mvn compile
 
-# Run the main application
+# Run the main application (recommended method)
 mvn exec:java -Dexec.mainClass="app.RunApp"
+
+# Alternative: If you experience font rendering issues, run through IDE
+# Open src/main/java/app/RunApp.java in your IDE and run directly
 ```
 
 ### **Common Installation Issues**
@@ -169,6 +191,20 @@ mvn dependency:purge-local-repository
 mvn clean install -U
 ```
 
+**Font Rendering Issues**
+```bash
+# If you see garbled text or missing characters when running via Maven:
+# 1. Try setting system properties
+mvn exec:java -Dexec.mainClass="app.RunApp" -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel
+
+# 2. Alternative: Run directly from IDE (IntelliJ/Eclipse)
+# This typically provides better font rendering
+
+# 3. On Linux systems, install additional fonts
+sudo apt-get install fonts-dejavu-core fonts-liberation
+```
+![Installation Process](images/installation-demo.png)
+
 **Windows-Specific Issues**
 - Ensure proper PATH environment variables
 - Use `mvn.cmd` instead of `mvn` if needed
@@ -183,6 +219,19 @@ mvn clean install -U
 2. **Navigate using the sidebar** - click any module button to switch views
 3. **Create categories** before adding tasks/events
 4. **Set up notifications** in Settings for wellness logging reminders
+
+**Quick Start Example:**
+```bash
+# 1. Run the application
+mvn exec:java -Dexec.mainClass="app.RunApp"
+
+# 2. In the GUI:
+# - Create categories: "Work", "Health", "Personal"
+# - Add an available task: "Exercise" in "Health" category
+# - Move it to today's list with HIGH priority
+# - Log wellness entry with your current mood and stress level (1-10)
+```
+
 
 ### **Basic Workflow**
 
@@ -223,29 +272,23 @@ mvn clean install -U
    Includes: General analysis + Bayesian correlations + Recommendations
    ```
 
-2. **Manual Generation** (if needed):
+2. **Review Historical Feedback**:
    ```
-   AI Feedback Panel → Generate Analysis → Single comprehensive report
-   Limited to once per week
-   ```
-
-3. **Review Historical Feedback**:
-   ```
-   AI Feedback Panel → History → Browse past analyses and recommendations
+   Right side of AI Feedback Panel → Click date to browse past analyses and recommendations
    ```
 
 ### **Advanced Features**
 
 #### **Goal Tracking**
 ```
-1. Goals Panel → Create Goal → Link to existing task
-2. Available Goals → Add to Current → Set frequency (e.g., 3 times) + period (Weekly/Monthly)  
-3. Complete linked tasks → Goal progress updates automatically in "Today So Far"
+1. Goals Panel → Create Goal → Set frequency (e.g., 3 times) + period (Weekly/Monthly) → Link to existing task
+2. Available Goals → Add to Current   
+3. Complete linked tasks → Goal progress updates automatically in "Today So Far" and "Current Goal"
 ```
 
-#### **Data Export** *(Future Feature)*
+#### **Data Export** 
 ```
-History Panel → Export → Select date range → Choose format (CSV/JSON)
+History Panel → Select a date → Click Export
 ```
 
 ---
@@ -336,14 +379,14 @@ We value your feedback to improve MindTrack and enhance the learning experience:
 ### **How to Provide Feedback**
 
 #### **Bug Reports**
-- **GitHub Issues**: Create detailed issue reports with:
+- **GitHub Issues**: [Create issue reports here](https://github.com/lininnin/csc207-proj/issues) with:
   - Steps to reproduce the problem
   - Expected vs actual behavior  
   - System information (OS, Java version)
   - Screenshots if applicable
 
 #### **Feature Requests**
-- **Discussion Forum**: Propose new features with:
+- **GitHub Discussions**: [Propose new features here](https://github.com/lininnin/csc207-proj/discussions) with:
   - Clear use case description
   - Benefits and justification
   - Implementation considerations
