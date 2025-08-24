@@ -25,12 +25,6 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
     @Override
     public void execute(AddWellnessLogInputData inputData) {
         try {
-            System.out.println("[Interactor] Creating WellnessLogEntry...");
-            System.out.println("  Mood: " + inputData.getMoodLabel());
-            System.out.println("  Stress: " + inputData.getStressLevel());
-            System.out.println("  Energy: " + inputData.getEnergyLevel());
-            System.out.println("  Fatigue: " + inputData.getFatigueLevel());
-            System.out.println("  Note: " + inputData.getUserNote());
 
             // Create the entity (factory returns an interface type)
             WellnessLogEntryInterf entry = factory.create(
@@ -42,12 +36,10 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
                     inputData.getUserNote()
             );
 
-            System.out.println("[Interactor] Entry created: " + entry);
 
             // Save to data layer
             dataAccess.save(entry);
 
-            System.out.println("[Interactor] Entry saved to DAO");
 
             // Return success
             AddWellnessLogOutputData outputData =
@@ -55,7 +47,6 @@ public class AddWellnessLogInteractor implements AddWellnessLogInputBoundary {
             presenter.prepareSuccessView(outputData);
 
         } catch (Exception e) {
-            System.out.println("[Interactor] Exception occurred:");
             e.printStackTrace();
             presenter.prepareFailView("Failed to add log: " + e.getMessage());
         }

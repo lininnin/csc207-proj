@@ -42,7 +42,6 @@ public class AddTaskToTodayInteractor implements AddTaskToTodayInputBoundary {
         // If testing overdue and task is already in today's list, remove it first
         if (inputData.isTestingOverdue() && dataAccess.isTaskInTodaysList(taskId)) {
             // This allows re-adding the same task with a different (overdue) date for testing
-            System.out.println("DEBUG: Testing mode - allowing re-add of task with overdue date");
         }
         // TEMPORARY: Modified for testing overdue functionality
         // In production, overdue tasks should go directly to Overdue list, not Today's list

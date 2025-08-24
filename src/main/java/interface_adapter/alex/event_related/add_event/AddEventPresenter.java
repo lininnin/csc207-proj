@@ -52,10 +52,8 @@ public class AddEventPresenter implements AddEventOutputBoundary {
         
         // Refresh Today So Far panel if controller is available
         if (todaySoFarController != null) {
-            System.out.println("DEBUG: AddEventPresenter calling todaySoFarController.refresh()");
             todaySoFarController.refresh();
         } else {
-            System.out.println("DEBUG: AddEventPresenter - todaySoFarController is null!");
         }
     }
 

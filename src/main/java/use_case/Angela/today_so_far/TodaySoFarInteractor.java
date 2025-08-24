@@ -31,12 +31,10 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
     
     @Override
     public void refreshTodaySoFar() {
-        System.out.println("DEBUG: TodaySoFarInteractor.refreshTodaySoFar() called");
         try {
             // Collect Goals data
             List<TodaySoFarOutputData.GoalProgress> goalProgressList = new ArrayList<>();
             List<GoalInterface> activeGoals = dataAccess.getActiveGoals();
-            System.out.println("DEBUG: Active goals count: " + (activeGoals != null ? activeGoals.size() : 0));
             if (activeGoals != null) {
                 for (GoalInterface goal : activeGoals) {
                     // Cast to concrete type for method access - this is cross-module compatibility issue
@@ -44,8 +42,6 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
                     String name = concreteGoal.getGoalInfo().getInfo().getName();
                     String period = formatPeriod(concreteGoal);
                     String progress = formatProgress(concreteGoal);
-                    System.out.println("DEBUG: Adding goal to Today So Far - Name: " + name + 
-                                      ", Period: " + period + ", Progress: " + progress);
                     goalProgressList.add(new TodaySoFarOutputData.GoalProgress(name, period, progress));
                 }
             }
@@ -55,7 +51,6 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             
             // Add completed tasks
             List<TaskInterf> completedTasks = dataAccess.getCompletedTasksForToday();
-            System.out.println("DEBUG: Completed tasks count: " + (completedTasks != null ? completedTasks.size() : 0));
             if (completedTasks != null) {
                 for (TaskInterf task : completedTasks) {
                     String name = task.getInfo().getName();
@@ -66,13 +61,11 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
             
             // Add completed events
             List<EventInterf> completedEvents = dataAccess.getCompletedEventsForToday();
-            System.out.println("DEBUG: Completed events count: " + (completedEvents != null ? completedEvents.size() : 0));
             if (completedEvents != null) {
                 for (EventInterf event : completedEvents) {
                     String name = event.getInfo().getName();
                     String categoryName = getCategoryName(event.getInfo().getCategory());
                     completedItems.add(new TodaySoFarOutputData.CompletedItem("Event", name, categoryName));
-                    System.out.println("DEBUG: Added event to completed items: " + name);
                 }
             }
             
@@ -103,11 +96,9 @@ public class TodaySoFarInteractor implements TodaySoFarInputBoundary {
                 wellnessEntries
             );
             
-            System.out.println("DEBUG: Presenting output data to boundary");
             outputBoundary.presentTodaySoFar(outputData);
             
         } catch (Exception e) {
-            System.out.println("DEBUG: Error in refreshTodaySoFar: " + e.getMessage());
             e.printStackTrace();
             outputBoundary.presentError("Failed to load Today So Far data: " + e.getMessage());
         }

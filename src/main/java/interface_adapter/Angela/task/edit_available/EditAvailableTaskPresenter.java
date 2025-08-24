@@ -31,17 +31,14 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
 
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
-        System.out.println("DEBUG: EditAvailableTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
     }
     
     public void setAddTaskToTodayViewModel(AddTaskToTodayViewModel addTaskToTodayViewModel) {
         this.addTaskToTodayViewModel = addTaskToTodayViewModel;
-        System.out.println("DEBUG: EditAvailableTaskPresenter - AddTaskToTodayViewModel set: " + (addTaskToTodayViewModel != null));
     }
 
     @Override
     public void prepareSuccessView(EditAvailableTaskOutputData outputData) {
-        System.out.println("DEBUG: EditAvailableTaskPresenter.prepareSuccessView - message: " + outputData.getMessage());
         
         // Create a new state object (don't assume one exists)
         EditAvailableTaskState editState = new EditAvailableTaskState();
@@ -69,7 +66,6 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
             todayState.setRefreshNeeded(true);
             todayTasksViewModel.setState(todayState);
             todayTasksViewModel.firePropertyChanged();
-            System.out.println("DEBUG: Triggered Today's Tasks refresh after edit");
         }
         
         // Also refresh overdue tasks if controller is available
@@ -86,19 +82,16 @@ public class EditAvailableTaskPresenter implements EditAvailableTaskOutputBounda
             addToTodayState.setRefreshNeeded(true);
             addTaskToTodayViewModel.setState(addToTodayState);
             addTaskToTodayViewModel.firePropertyChanged();
-            System.out.println("DEBUG: Triggered Add to Today dropdown refresh after task edit");
         }
         
         // Also refresh Today So Far panel when tasks are edited (especially category changes)
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after task edit");
         }
     }
 
     @Override
     public void prepareFailView(String error) {
-        System.out.println("DEBUG: EditAvailableTaskPresenter.prepareFailView - error: " + error);
         
         // Create a new state object (don't assume one exists)
         EditAvailableTaskState state = new EditAvailableTaskState();

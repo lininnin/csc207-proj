@@ -135,7 +135,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                 int row = e.getFirstRow();
                 Boolean isCompleted = (Boolean) tableModel.getValueAt(row, 0);
                 String taskId = rowToTaskIdMap.get(row); // Get task ID from our map
-                System.out.println("DEBUG: Task " + taskId + " completion status changed to: " + isCompleted);
                 // Call controller to update task completion status
                 if (taskId != null && isCompleted != null) {
                     markTaskCompleteController.execute(taskId, isCompleted);
@@ -291,7 +290,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
                 });
                 
                 if (isBeingEdited) {
-                    System.out.println("DEBUG: Row " + rowIndex + " is in edit mode during refresh");
                 }
                 
                 rowIndex++;
@@ -314,8 +312,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
     }
     
     private void handleEditTask(String taskId) {
-        System.out.println("DEBUG: handleEditTask called with taskId: " + taskId);
-        System.out.println("DEBUG: editTodayTaskController is " + (editTodayTaskController != null ? "NOT NULL" : "NULL"));
         
         // The taskId passed in is actually the task ID we need
         // Find the row for this task by comparing with tasks from gateway
@@ -336,7 +332,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             tableRow++;
         }
         
-        System.out.println("DEBUG: Found row " + row + " for taskId " + taskId);
         
         if (row >= 0) {
             enterEditMode(row);
@@ -372,24 +367,20 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         // Use Task's ID, not Info's ID, for editing Today's tasks
         String taskId = targetTask.getId();
         
-        System.out.println("DEBUG: enterEditMode for row: " + row + ", taskId: " + taskId);
         
         // ALWAYS exit any previous edit mode first
         if (editingRow != -1 && editingRow != row) {
-            System.out.println("DEBUG: Exiting edit mode for row " + editingRow + " before entering row " + row);
             exitEditMode(editingRow, false); // Cancel the previous edit
         }
         
         // If clicking Edit on the same row that's already editing, do nothing
         if (editingRow == row) {
-            System.out.println("DEBUG: Row " + row + " is already in edit mode");
             return;
         }
         
         // Now set the new editing state
         editingTaskId = taskId;
         editingRow = row;
-        System.out.println("DEBUG: Set editingTaskId = " + editingTaskId + ", editingRow = " + editingRow);
         
         // Get current values
         String currentPriorityStr = (String) tableModel.getValueAt(row, 3);
@@ -462,7 +453,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         tableModel.setValueAt("Cancel", row, 6);
         
         // Verify the values were set
-        System.out.println("DEBUG: After setValueAt - Column 5: '" + tableModel.getValueAt(row, 5) + "', Column 6: '" + tableModel.getValueAt(row, 6) + "'");
         
         // Force the model to notify listeners about these specific cells
         tableModel.fireTableCellUpdated(row, 5);
@@ -475,22 +465,18 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             taskTable.revalidate();
             taskTable.repaint();
         });
-        System.out.println("DEBUG: Changed buttons to Save/Cancel for row " + row);
         
         // Manually verify the change
         SwingUtilities.invokeLater(() -> {
             String col5 = (String) tableModel.getValueAt(row, 5);
             String col6 = (String) tableModel.getValueAt(row, 6);
-            System.out.println("DEBUG: After invokeLater - Row " + row + " buttons: col5='" + col5 + "', col6='" + col6 + "'");
         });
     }
     
     private void exitEditMode(int row, boolean save) {
-        System.out.println("DEBUG: exitEditMode - row: " + row + ", save: " + save);
         
         // Check if we're actually editing this row
         if (editingRow != row) {
-            System.out.println("DEBUG: Not editing row " + row + ", actual editingRow: " + editingRow);
             return;
         }
         
@@ -500,7 +486,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             Task.Priority priority = "None".equals(selectedPriority) ? null : Task.Priority.valueOf(selectedPriority);
             LocalDate dueDate = editDatePicker.getDate();
             
-            System.out.println("DEBUG: Saving - priority: " + priority + ", dueDate: " + dueDate);
             
             // Call controller to save
             editTodayTaskController.execute(editingTaskId, priority, dueDate);
@@ -541,7 +526,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             
             // Debug: Always log for edit column during edit mode
             if (editingRow != -1 && row == editingRow && column == 5) {
-                System.out.println("DEBUG: ButtonRenderer - edit mode row " + row + ", column 5 (Edit/Save), text from model: '" + buttonText + "'");
             }
             
             setForeground(UIManager.getColor("Button.foreground"));
@@ -592,7 +576,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
             String buttonText = (String) value;
             button.setText(buttonText);
             
-            System.out.println("DEBUG: ButtonEditor - row: " + row + ", taskId from map: " + taskId + ", buttonText: " + buttonText);
             
             isPushed = false;
             return button;
@@ -602,7 +585,6 @@ public class TodaysTasksView extends JPanel implements PropertyChangeListener {
         public Object getCellEditorValue() {
             if (isPushed && currentRow >= 0) {  // Check currentRow is valid
                 String buttonText = button.getText();
-                System.out.println("DEBUG: Button " + buttonText + " clicked at row: " + currentRow + ", taskId: " + taskId);
                 
                 SwingUtilities.invokeLater(() -> {
                     // Handle button actions after editor completes

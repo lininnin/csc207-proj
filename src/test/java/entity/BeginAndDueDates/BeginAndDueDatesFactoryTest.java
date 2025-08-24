@@ -328,4 +328,332 @@ class BeginAndDueDatesFactoryTest {
         assertEquals(minDate, dates.getBeginDate());
         assertEquals(maxDate, dates.getDueDate());
     }
+
+    // Immutable factory method tests
+
+    @Test
+    void testCreateImmutableWithBothDates() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(today, tomorrow);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(tomorrow, immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testCreateImmutableWithNullDates() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(null, null);
+        
+        assertNotNull(immutable);
+        assertNull(immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableWithOnlyBeginDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(today, null);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableWithOnlyDueDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(null, tomorrow);
+        
+        assertNotNull(immutable);
+        assertNull(immutable.getBeginDate());
+        assertEquals(tomorrow, immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableThrowsWhenBeginAfterDue() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> factory.createImmutable(tomorrow, today)
+        );
+    }
+
+    @Test
+    void testCreateImmutableOpenEndedWithValidDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableOpenEnded(today);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testCreateImmutableOpenEndedWithNull() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableOpenEnded(null);
+        
+        assertNotNull(immutable);
+        assertNull(immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableOpenEndedWithPastDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableOpenEnded(yesterday);
+        
+        assertNotNull(immutable);
+        assertEquals(yesterday, immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableOpenEndedWithFutureDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableOpenEnded(nextWeek);
+        
+        assertNotNull(immutable);
+        assertEquals(nextWeek, immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableEmpty() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableEmpty();
+        
+        assertNotNull(immutable);
+        assertNull(immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testCreateImmutableEmptyIsIndependent() {
+        ImmutableBeginAndDueDates immutable1 = factory.createImmutableEmpty();
+        ImmutableBeginAndDueDates immutable2 = factory.createImmutableEmpty();
+        
+        assertNotSame(immutable1, immutable2);
+        assertEquals(immutable1, immutable2); // Equal but not same instance
+    }
+
+    @Test
+    void testCreateImmutableStartingTodayWithDueDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableStartingToday(7);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today.plusDays(7), immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertFalse(immutable.isOverdue());
+        assertTrue(immutable.isDueTodayOrFuture());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testCreateImmutableStartingTodayWithNullDays() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableStartingToday(null);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableStartingTodayWithZeroDays() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableStartingToday(0);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today, immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertFalse(immutable.isOverdue());
+        assertTrue(immutable.isDueTodayOrFuture());
+    }
+
+    @Test
+    void testCreateImmutableStartingTodayWithNegativeDays() {
+        // Negative days would create a due date before today (begin date)
+        // This should throw an exception because begin > due
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> factory.createImmutableStartingToday(-1)
+        );
+    }
+
+    @Test
+    void testCreateImmutableStartingTodayWithLargeDuration() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableStartingToday(365);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today.plusDays(365), immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertFalse(immutable.isOverdue());
+        assertTrue(immutable.isDueTodayOrFuture());
+    }
+
+    @Test
+    void testCreateImmutableWithDurationValidInputs() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableWithDuration(today, 10);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today.plusDays(10), immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testCreateImmutableWithDurationZeroDays() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableWithDuration(today, 0);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today, immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableWithDurationNegativeDays() {
+        // Negative duration would create due date before begin date
+        // This should throw an exception because begin > due
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> factory.createImmutableWithDuration(today, -1)
+        );
+    }
+
+    @Test
+    void testCreateImmutableWithDurationNullBeginDate() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> factory.createImmutableWithDuration(null, 10)
+        );
+        
+        assertEquals("Begin date cannot be null when creating with duration", 
+                    exception.getMessage());
+    }
+
+    @Test
+    void testCreateImmutableWithDurationPastBeginDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableWithDuration(yesterday, 5);
+        
+        assertNotNull(immutable);
+        assertEquals(yesterday, immutable.getBeginDate());
+        assertEquals(yesterday.plusDays(5), immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableWithDurationFutureBeginDate() {
+        ImmutableBeginAndDueDates immutable = factory.createImmutableWithDuration(nextWeek, 30);
+        
+        assertNotNull(immutable);
+        assertEquals(nextWeek, immutable.getBeginDate());
+        assertEquals(nextWeek.plusDays(30), immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertFalse(immutable.isOverdue());
+        assertTrue(immutable.isDueTodayOrFuture());
+    }
+
+    @Test
+    void testCreateImmutableFromBeginAndDueDates() {
+        BeginAndDueDates mutable = new BeginAndDueDates(today, tomorrow);
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(mutable);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(tomorrow, immutable.getDueDate());
+        assertTrue(immutable.hasDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+        
+        // Should be equal but different instances
+        assertNotSame(mutable, immutable);
+        assertEquals(mutable.getBeginDate(), immutable.getBeginDate());
+        assertEquals(mutable.getDueDate(), immutable.getDueDate());
+    }
+
+    @Test
+    void testCreateImmutableFromBeginAndDueDatesWithNulls() {
+        BeginAndDueDates mutable = new BeginAndDueDates(null, null);
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(mutable);
+        
+        assertNotNull(immutable);
+        assertNull(immutable.getBeginDate());
+        assertNull(immutable.getDueDate());
+        assertFalse(immutable.hasDueDate());
+    }
+
+    @Test
+    void testCreateImmutableFromBeginAndDueDatesWithNullInput() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> factory.createImmutable((BeginAndDueDates) null)
+        );
+        
+        assertEquals("BeginAndDueDates cannot be null", exception.getMessage());
+    }
+
+    // Test immutable vs mutable equivalence
+    @Test
+    void testImmutableAndMutableEquivalence() {
+        // Same dates should produce equivalent results
+        BeginAndDueDatesInterf mutable = factory.create(today, tomorrow);
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(today, tomorrow);
+        
+        // Test equivalent methods
+        assertEquals(mutable.getBeginDate(), immutable.getBeginDate());
+        assertEquals(mutable.getDueDate(), immutable.getDueDate());
+        assertEquals(mutable.hasDueDate(), immutable.hasDueDate());
+        assertEquals(mutable.isOverdue(), immutable.isOverdue());
+        assertEquals(mutable.isDueTodayOrFuture(), immutable.isDueTodayOrFuture());
+        
+        // Test conversion back
+        BeginAndDueDates convertedMutable = immutable.toMutableBeginAndDueDates();
+        assertEquals(mutable.getBeginDate(), convertedMutable.getBeginDate());
+        assertEquals(mutable.getDueDate(), convertedMutable.getDueDate());
+    }
+
+    @Test
+    void testImmutableFactoryWithMaxDuration() {
+        // Test with very large duration
+        int maxDays = 10000;
+        ImmutableBeginAndDueDates immutable = factory.createImmutableWithDuration(today, maxDays);
+        
+        assertNotNull(immutable);
+        assertEquals(today, immutable.getBeginDate());
+        assertEquals(today.plusDays(maxDays), immutable.getDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
+
+    @Test
+    void testImmutableFactoryWithLeapYear() {
+        LocalDate leapDay = LocalDate.of(2024, 2, 29);
+        
+        ImmutableBeginAndDueDates immutable1 = factory.createImmutable(leapDay, leapDay.plusDays(1));
+        assertEquals(LocalDate.of(2024, 3, 1), immutable1.getDueDate());
+        
+        ImmutableBeginAndDueDates immutable2 = factory.createImmutableWithDuration(leapDay, 365);
+        assertEquals(LocalDate.of(2025, 2, 28), immutable2.getDueDate());
+    }
+
+    @Test
+    void testImmutableFactoryWithSpecialDates() {
+        LocalDate minDate = LocalDate.MIN;
+        LocalDate maxDate = LocalDate.MAX;
+        
+        // Should handle extreme dates
+        ImmutableBeginAndDueDates immutable = factory.createImmutable(minDate, maxDate);
+        
+        assertNotNull(immutable);
+        assertEquals(minDate, immutable.getBeginDate());
+        assertEquals(maxDate, immutable.getDueDate());
+        assertInstanceOf(ImmutableBeginAndDueDates.class, immutable);
+    }
 }

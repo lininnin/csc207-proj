@@ -43,7 +43,6 @@ public class EditWellnessLogPresenter implements EditWellnessLogOutputBoundary {
         editViewModel.fireStateChanged();
 
         // ✅ 同步更新 Today VM
-        System.out.println("✅ Presenter: updating TodaysWellnessLogViewModel");
         List<WellnessLogEntryInterf> updatedList = dataAccess.getTodaysWellnessLogEntries();
         TodaysWellnessLogState newTodayState = new TodaysWellnessLogState();
         newTodayState.setEntries(updatedList);

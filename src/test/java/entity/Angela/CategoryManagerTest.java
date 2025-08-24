@@ -275,6 +275,31 @@ class CategoryManagerTest {
         assertTrue(categoryManager.hasCategoryIgnoreCase("work"));
         assertTrue(categoryManager.hasCategoryIgnoreCase("WORK"));
         assertTrue(categoryManager.hasCategoryIgnoreCase("WoRk"));
+        assertFalse(categoryManager.hasCategoryIgnoreCase(null)); // Test null parameter
+        assertFalse(categoryManager.hasCategoryIgnoreCase("NonExistent"));
+    }
+
+    @Test
+    void testHasCategoryExactCase() {
+        // Add categories with specific cases
+        categoryManager.addCategory("Work");
+        categoryManager.addCategory("Personal");
+        
+        // Test exact case matching
+        assertTrue(categoryManager.hasCategoryExactCase("Work"));
+        assertTrue(categoryManager.hasCategoryExactCase("Personal"));
+        
+        // Test case sensitivity
+        assertFalse(categoryManager.hasCategoryExactCase("work"));
+        assertFalse(categoryManager.hasCategoryExactCase("WORK"));
+        assertFalse(categoryManager.hasCategoryExactCase("WoRk"));
+        assertFalse(categoryManager.hasCategoryExactCase("personal"));
+        
+        // Test null parameter
+        assertFalse(categoryManager.hasCategoryExactCase(null));
+        
+        // Test non-existent category
+        assertFalse(categoryManager.hasCategoryExactCase("NonExistent"));
     }
 
     @Test

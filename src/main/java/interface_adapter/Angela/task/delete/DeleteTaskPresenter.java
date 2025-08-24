@@ -30,12 +30,10 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
 
     public void setTodayTasksViewModel(TodayTasksViewModel todayTasksViewModel) {
         this.todayTasksViewModel = todayTasksViewModel;
-        System.out.println("DEBUG: DeleteTaskPresenter - TodayTasksViewModel set: " + (todayTasksViewModel != null));
     }
     
     public void setAddTaskToTodayViewModel(AddTaskToTodayViewModel addTaskToTodayViewModel) {
         this.addTaskToTodayViewModel = addTaskToTodayViewModel;
-        System.out.println("DEBUG: DeleteTaskPresenter - AddTaskToTodayViewModel set: " + (addTaskToTodayViewModel != null));
     }
     
     public void setOverdueTasksController(OverdueTasksController controller) {
@@ -70,7 +68,6 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
             todayState.setRefreshNeeded(true);
             todayTasksViewModel.setState(todayState);
             todayTasksViewModel.firePropertyChanged();
-            System.out.println("DEBUG: Triggered Today's Tasks refresh after delete");
         }
         
         // Also refresh overdue tasks if controller is available
@@ -81,7 +78,6 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
         // Also refresh Today So Far panel since the deleted task might be in completed/overdue sections
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after task delete");
         }
         
         // Also trigger refresh of Add to Today dropdown since the deleted task should be removed
@@ -93,7 +89,6 @@ public class DeleteTaskPresenter implements DeleteTaskOutputBoundary {
             addToTodayState.setRefreshNeeded(true);
             addTaskToTodayViewModel.setState(addToTodayState);
             addTaskToTodayViewModel.firePropertyChanged();
-            System.out.println("DEBUG: Triggered Add to Today dropdown refresh after task delete");
         }
     }
 

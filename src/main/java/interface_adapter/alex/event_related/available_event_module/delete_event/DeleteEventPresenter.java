@@ -67,7 +67,6 @@ public class DeleteEventPresenter implements DeleteEventOutputBoundary {
         // ✅ Refresh Today So Far panel to remove deleted event if it was displayed
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after event delete");
         }
     }
 

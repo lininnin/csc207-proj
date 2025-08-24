@@ -72,7 +72,6 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
             // CRITICAL: Update all tasks that use this category
             // Update available tasks
             List<TaskAvailable> availableTasks = taskDataAccess.findAvailableTasksByCategory(categoryId);
-            System.out.println("DEBUG: Found " + availableTasks.size() + " available tasks with category: " + oldName);
             
             int updatedAvailableCount = 0;
             for (TaskAvailable task : availableTasks) {
@@ -83,7 +82,6 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
             
             // Update today's tasks
             List<Task> todaysTasks = taskDataAccess.findTodaysTasksByCategory(categoryId);
-            System.out.println("DEBUG: Found " + todaysTasks.size() + " today's tasks with category: " + oldName);
             
             int updatedTodaysCount = 0;
             for (Task task : todaysTasks) {
@@ -91,10 +89,6 @@ public class EditCategoryInteractor implements EditCategoryInputBoundary {
                 // So we don't need to update the task's category field
                 updatedTodaysCount++;
             }
-            
-            System.out.println("DEBUG: Category '" + oldName + "' renamed to '" + newName + 
-                             "'. Found " + updatedAvailableCount + " available tasks and " + 
-                             updatedTodaysCount + " today's tasks using this category.");
             
             EditCategoryOutputData outputData = new EditCategoryOutputData(
                     categoryId, oldName, newName

@@ -29,8 +29,6 @@ public class EditTodayTaskController {
      * @param dueDate The new due date (can be null)
      */
     public void execute(String taskId, Task.Priority priority, LocalDate dueDate) {
-        System.out.println("DEBUG: EditTodayTaskController.execute - taskId: " + taskId + 
-                          ", priority: " + priority + ", dueDate: " + dueDate);
         
         EditTodayTaskInputData inputData = new EditTodayTaskInputData(taskId, priority, dueDate);
         editTodayTaskInteractor.execute(inputData);

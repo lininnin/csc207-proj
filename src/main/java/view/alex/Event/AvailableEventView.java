@@ -78,7 +78,6 @@ public class AvailableEventView extends JPanel {
         // === 注册监听 ===
 
         availableEventViewModel.addPropertyChangeListener(evt -> {
-            System.out.println("AvailableEventView received property change: " + evt.getPropertyName());
             if (AvailableEventViewModel.AVAILABLE_EVENTS_PROPERTY.equals(evt.getPropertyName())) {
                 refreshEventList((AvailableEventState) evt.getNewValue());
             } else if ("state".equals(evt.getPropertyName())) {
@@ -136,7 +135,6 @@ public class AvailableEventView extends JPanel {
         eventListPanel.removeAll();
 
         List<InfoInterf> events = state.getAvailableEvents();
-        System.out.println("Refreshing event list, count: " + events.size());
 
         if (events.isEmpty()) {
             JLabel emptyLabel = new JLabel("No available events.", SwingConstants.CENTER);

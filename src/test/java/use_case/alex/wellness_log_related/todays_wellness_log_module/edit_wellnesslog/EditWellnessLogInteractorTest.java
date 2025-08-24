@@ -46,7 +46,7 @@ public class EditWellnessLogInteractorTest {
 
         interactor.execute(inputData);
 
-        verify(mockPresenter).prepareFailView("Log not found for ID: " + logId);
+        verify(mockPresenter).prepareFailView("Wellness log not found for ID: " + logId);
     }
 
     /**

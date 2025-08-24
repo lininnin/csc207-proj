@@ -49,7 +49,6 @@ public class AddTaskToTodayPresenter implements AddTaskToTodayOutputBoundary {
         // Also refresh Today So Far panel to update completion rate
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after adding task to today");
         }
     }
 

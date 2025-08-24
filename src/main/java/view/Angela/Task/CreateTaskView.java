@@ -186,12 +186,10 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        System.out.println("DEBUG: Create button clicked");
         if (evt.getSource() == createButton && createTaskController != null) {
             CategoryItem selectedCategory = (CategoryItem) categoryComboBox.getSelectedItem();
             String categoryId = selectedCategory != null ? selectedCategory.getId() : "";
 
-            System.out.println("DEBUG: Executing create task with name: " + taskNameField.getText());
             createTaskController.execute(
                     taskNameField.getText(),
                     descriptionArea.getText(),
@@ -203,16 +201,13 @@ public class CreateTaskView extends JPanel implements ActionListener, PropertyCh
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("DEBUG: CreateTaskView received property change: " + evt.getPropertyName());
         if (CreateTaskViewModel.CREATE_TASK_STATE_PROPERTY.equals(evt.getPropertyName())) {
             CreateTaskState state = (CreateTaskState) evt.getNewValue();
 
             if (state.getError() != null) {
-                System.out.println("DEBUG: Showing error: " + state.getError());
                 errorLabel.setText(state.getError());
                 errorLabel.setForeground(Color.RED);
             } else if (state.getSuccessMessage() != null) {
-                System.out.println("DEBUG: Showing success: " + state.getSuccessMessage());
                 errorLabel.setText(state.getSuccessMessage());
                 errorLabel.setForeground(new Color(0, 128, 0));
                 clearForm();

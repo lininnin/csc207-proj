@@ -220,7 +220,6 @@ public class OverdueTasksPanel extends JPanel implements PropertyChangeListener 
             
             // You could add logic here to call a mark task complete controller
             // For now, we'll just provide visual feedback
-            System.out.println("DEBUG: Marking overdue task as complete: " + task.getTaskName());
             
             // Note: The task remains in the overdue panel as per requirements
             // It should only be removed at the end of the day

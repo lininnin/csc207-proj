@@ -75,7 +75,6 @@ public class EventAvailableDataAccessObjectTest {
     @Test
     public void testContainsTrue() {
         when(mockInfo.getId()).thenReturn("abc");
-        when(mockInfo.equals(any())).thenReturn(true);
         when(mockEventAvailable.contains(mockInfo)).thenReturn(true);
 
         assertTrue(dao.contains(mockInfo));

@@ -60,11 +60,11 @@ class TaskAvailableTest {
         
         assertFalse(task.isOneTime());
         
-        task.setOneTime(true);
-        assertTrue(task.isOneTime());
+        TaskAvailable oneTimeTask = task.withOneTimeFlag(true);
+        assertTrue(oneTimeTask.isOneTime());
         
-        task.setOneTime(false);
-        assertFalse(task.isOneTime());
+        TaskAvailable regularTask = oneTimeTask.withOneTimeFlag(false);
+        assertFalse(regularTask.isOneTime());
     }
 
     @Test
@@ -74,11 +74,11 @@ class TaskAvailableTest {
         assertNull(task.getPlannedDueDate());
         
         String plannedDate = LocalDate.now().plusDays(3).toString();
-        task.setPlannedDueDate(plannedDate);
-        assertEquals(plannedDate, task.getPlannedDueDate());
+        TaskAvailable taskWithDate = task.withPlannedDueDate(plannedDate);
+        assertEquals(plannedDate, taskWithDate.getPlannedDueDate());
         
-        task.setPlannedDueDate(null);
-        assertNull(task.getPlannedDueDate());
+        TaskAvailable taskWithoutDate = taskWithDate.withPlannedDueDate(null);
+        assertNull(taskWithoutDate.getPlannedDueDate());
     }
 
     @Test
@@ -236,4 +236,293 @@ class TaskAvailableTest {
     }
 
     // Test removed - originalPosition not available on TaskAvailable entity
+
+    // Tests for uncovered methods to achieve 100% coverage
+
+    @Test
+    void testHasPlannedDueDateWithValidDate() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        // Initially false
+        assertFalse(task.hasPlannedDueDate());
+        
+        // Set a planned due date
+        TaskAvailable taskWithDate = task.withPlannedDueDate(LocalDate.now().plusDays(5).toString());
+        assertTrue(taskWithDate.hasPlannedDueDate());
+    }
+
+    @Test
+    void testHasPlannedDueDateWithEmptyString() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        // Set empty string
+        TaskAvailable taskWithEmptyDate = task.withPlannedDueDate("");
+        assertFalse(taskWithEmptyDate.hasPlannedDueDate());
+    }
+
+    @Test
+    void testHasPlannedDueDateWithNull() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        // Set null
+        TaskAvailable taskWithNullDate = task.withPlannedDueDate(null);
+        assertFalse(taskWithNullDate.hasPlannedDueDate());
+    }
+
+    @Test
+    void testWithPlannedDueDateImmutableUpdate() {
+        TaskAvailable originalTask = new TaskAvailable(testInfo);
+        String dueDate = LocalDate.now().plusDays(10).toString();
+        
+        TaskAvailable updatedTask = originalTask.withPlannedDueDate(dueDate);
+        
+        // Original should be unchanged
+        assertNull(originalTask.getPlannedDueDate());
+        
+        // New task should have the due date
+        assertEquals(dueDate, updatedTask.getPlannedDueDate());
+        
+        // Should be different instances
+        assertNotSame(originalTask, updatedTask);
+        
+        // Should have same ID and info
+        assertEquals(originalTask.getId(), updatedTask.getId());
+        assertEquals(originalTask.getInfo(), updatedTask.getInfo());
+    }
+
+    @Test
+    void testWithPlannedDueDateWithNull() {
+        TaskAvailable originalTask = new TaskAvailable(
+            "task-id",
+            testInfo,
+            LocalDate.now().plusDays(5).toString(),
+            false
+        );
+        
+        TaskAvailable updatedTask = originalTask.withPlannedDueDate(null);
+        
+        // Original should have due date
+        assertNotNull(originalTask.getPlannedDueDate());
+        
+        // New task should have null due date
+        assertNull(updatedTask.getPlannedDueDate());
+    }
+
+    @Test
+    void testIsDuplicateOfWithSameNameAndCategory() {
+        Info info1 = new Info.Builder("Duplicate Task")
+                .category("work")
+                .build();
+        Info info2 = new Info.Builder("Duplicate Task")
+                .category("work")
+                .build();
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertTrue(task1.isDuplicateOf(task2));
+        assertTrue(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfWithSameNameDifferentCategory() {
+        Info info1 = new Info.Builder("Same Name")
+                .category("work")
+                .build();
+        Info info2 = new Info.Builder("Same Name")
+                .category("personal")
+                .build();
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertFalse(task1.isDuplicateOf(task2));
+        assertFalse(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfWithDifferentNameSameCategory() {
+        Info info1 = new Info.Builder("Task One")
+                .category("work")
+                .build();
+        Info info2 = new Info.Builder("Task Two")
+                .category("work")
+                .build();
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertFalse(task1.isDuplicateOf(task2));
+        assertFalse(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfCaseInsensitive() {
+        Info info1 = new Info.Builder("Test Task")
+                .category("Work")
+                .build();
+        Info info2 = new Info.Builder("test task")
+                .category("WORK")
+                .build();
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertTrue(task1.isDuplicateOf(task2));
+        assertTrue(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfWithBothNullCategories() {
+        Info info1 = new Info.Builder("Task Name")
+                .build(); // No category (null)
+        Info info2 = new Info.Builder("Task Name")
+                .build(); // No category (null)
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertTrue(task1.isDuplicateOf(task2));
+        assertTrue(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfWithOneNullCategory() {
+        Info info1 = new Info.Builder("Task Name")
+                .category("work")
+                .build();
+        Info info2 = new Info.Builder("Task Name")
+                .build(); // No category (null)
+        
+        TaskAvailable task1 = new TaskAvailable(info1);
+        TaskAvailable task2 = new TaskAvailable(info2);
+        
+        assertFalse(task1.isDuplicateOf(task2));
+        assertFalse(task2.isDuplicateOf(task1));
+    }
+
+    @Test
+    void testIsDuplicateOfWithNull() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        assertFalse(task.isDuplicateOf(null));
+    }
+
+    @Test
+    void testToString() {
+        String plannedDate = LocalDate.now().plusDays(3).toString();
+        TaskAvailable task = new TaskAvailable(
+            "test-id-123",
+            testInfo,
+            plannedDate,
+            true
+        );
+        
+        String result = task.toString();
+        
+        // Should contain key information
+        assertTrue(result.contains("TaskAvailable{"));
+        assertTrue(result.contains("id='test-id-123'"));
+        assertTrue(result.contains("name='Test Task'"));
+        assertTrue(result.contains("category='category-123'"));
+        assertTrue(result.contains("oneTime=true"));
+        assertTrue(result.contains("plannedDueDate='" + plannedDate + "'"));
+        assertTrue(result.contains("}"));
+    }
+
+    @Test
+    void testToStringWithNullPlannedDueDate() {
+        TaskAvailable task = new TaskAvailable(
+            "test-id-456",
+            testInfo,
+            null,
+            false
+        );
+        
+        String result = task.toString();
+        
+        // Should not contain plannedDueDate when null
+        assertTrue(result.contains("TaskAvailable{"));
+        assertTrue(result.contains("id='test-id-456'"));
+        assertTrue(result.contains("oneTime=false"));
+        assertFalse(result.contains("plannedDueDate="));
+    }
+
+    @Test
+    void testHashCode() {
+        TaskAvailable task1 = new TaskAvailable(
+            "same-id",
+            testInfo,
+            null,
+            false
+        );
+        TaskAvailable task2 = new TaskAvailable(
+            "same-id",
+            testInfo,
+            LocalDate.now().toString(),
+            true
+        );
+        TaskAvailable task3 = new TaskAvailable(
+            "different-id",
+            testInfo,
+            null,
+            false
+        );
+        
+        // Same ID should have same hash code
+        assertEquals(task1.hashCode(), task2.hashCode());
+        
+        // Different ID should have different hash code
+        assertNotEquals(task1.hashCode(), task3.hashCode());
+    }
+
+    @Test
+    void testConstructorValidationNullId() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new TaskAvailable(null, testInfo, null, false);
+        });
+    }
+
+    @Test
+    void testConstructorValidationEmptyId() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new TaskAvailable("", testInfo, null, false);
+        });
+    }
+
+    @Test
+    void testConstructorValidationWhitespaceId() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new TaskAvailable("   ", testInfo, null, false);
+        });
+    }
+
+    @Test
+    void testConstructorValidationNullInfoInFullConstructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new TaskAvailable("valid-id", null, null, false);
+        });
+    }
+
+    @Test
+    void testEqualsWithNull() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        assertFalse(task.equals(null));
+    }
+
+    @Test
+    void testEqualsWithDifferentClass() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        String notATask = "not a task";
+        
+        assertFalse(task.equals(notATask));
+    }
+
+    @Test
+    void testEqualsSameInstance() {
+        TaskAvailable task = new TaskAvailable(testInfo);
+        
+        assertTrue(task.equals(task));
+    }
 }

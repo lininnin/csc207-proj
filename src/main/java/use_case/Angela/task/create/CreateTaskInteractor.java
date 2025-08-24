@@ -74,17 +74,14 @@ public class CreateTaskInteractor implements CreateTaskInputBoundary {
 
         // Create TaskAvailable using factory with immutable approach
         TaskAvailableInterf taskAvailable = taskAvailableFactory.create(taskInfo, inputData.isOneTime());
-        System.out.println("DEBUG: Creating TaskAvailable with isOneTime: " + inputData.isOneTime());
 
         // Save the task using the correct method that handles TaskAvailable
         String taskId = dataAccess.saveTaskAvailable(taskAvailable);
-        System.out.println("DEBUG: Task saved with ID: " + taskId + ", isOneTime: " + taskAvailable.isOneTime());
 
         // Present success
         CreateTaskOutputData outputData = new CreateTaskOutputData(
                 taskId, taskName, "Task created successfully"
         );
-        System.out.println("DEBUG: Calling outputBoundary.presentSuccess");
         outputBoundary.presentSuccess(outputData);
     }
 }

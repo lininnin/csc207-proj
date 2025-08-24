@@ -75,7 +75,6 @@ public class EditEventPresenter implements EditEventOutputBoundary {
         // 5. Also refresh Today So Far panel to show updated event names/categories
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after event edit");
         }
 
     }

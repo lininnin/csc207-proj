@@ -26,9 +26,6 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
         String description = inputData.getDescription();
         String categoryId = inputData.getCategoryId();
         boolean isOneTime = inputData.isOneTime();
-        
-        System.out.println("DEBUG: EditAvailableTaskInteractor.execute - taskId: " + taskId + 
-                         ", name: " + name + ", isOneTime: " + isOneTime);
 
         // Validate name
         if (name == null || name.trim().isEmpty()) {
@@ -71,16 +68,13 @@ public class EditAvailableTaskInteractor implements EditAvailableTaskInputBounda
 
         // Update the task
         boolean updated = dataAccess.updateAvailableTask(taskId, name, description, categoryId, isOneTime);
-        System.out.println("DEBUG: Task update result: " + updated);
 
         if (updated) {
             EditAvailableTaskOutputData outputData = new EditAvailableTaskOutputData(
                     taskId, name, "Task updated successfully"
             );
-            System.out.println("DEBUG: Calling prepareSuccessView");
             outputBoundary.prepareSuccessView(outputData);
         } else {
-            System.out.println("DEBUG: Update failed, calling prepareFailView");
             outputBoundary.prepareFailView("Failed to update task");
         }
     }

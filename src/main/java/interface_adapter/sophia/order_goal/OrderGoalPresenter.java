@@ -15,7 +15,6 @@ public class OrderGoalPresenter implements OrderGoalsOutputBoundary {
     @Override
     public void present(OrderGoalsOutputData outputData) {
         for (Goal goal : outputData.getOrderedGoals()) {
-            System.out.println(goal.getInfo().getName());
         }
     }
 }

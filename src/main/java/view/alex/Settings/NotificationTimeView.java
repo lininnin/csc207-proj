@@ -76,8 +76,6 @@ public class NotificationTimeView extends JPanel implements PropertyChangeListen
         });
 
         saveButton.addActionListener(e -> {
-            System.out.println("✅ [View] Save clicked with values: "
-                    + getReminder1Text() + ", " + getReminder2Text() + ", " + getReminder3Text());
             controller.execute(
                     getReminder1Text(),
                     getReminder2Text(),

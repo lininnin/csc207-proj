@@ -23,9 +23,6 @@ public class OverdueTasksStrategy implements OverdueTasksDataAccessInterface {
     @Override
     public List<TaskInterf> getOverdueTasks(int daysBack) {
         LocalDate cutoffDate = LocalDate.now().minusDays(daysBack);
-        System.out.println("DEBUG: OverdueTasksStrategy.getOverdueTasks() called with daysBack: " + daysBack);
-        System.out.println("DEBUG: Cutoff date: " + cutoffDate + ", Today: " + LocalDate.now());
-        System.out.println("DEBUG: Total today's tasks to check: " + todaysTasks.size());
         
         return todaysTasks.values().stream()
                 .filter(task -> task.getBeginAndDueDates().getDueDate() != null)
