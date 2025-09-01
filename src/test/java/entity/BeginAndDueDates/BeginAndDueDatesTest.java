@@ -360,4 +360,265 @@ class BeginAndDueDatesTest {
         assertEquals(leapDay2024, dates.getBeginDate());
         assertEquals(march1st2024, dates.getDueDate());
     }
+
+    // Immutable Update Methods Tests
+    @Test
+    void testWithBeginDateValid() {
+        BeginAndDueDates original = new BeginAndDueDates(today, nextWeek);
+        
+        BeginAndDueDates updated = original.withBeginDate(tomorrow);
+        
+        assertNotSame(original, updated);
+        assertEquals(tomorrow, updated.getBeginDate());
+        assertEquals(nextWeek, updated.getDueDate());
+        assertEquals(today, original.getBeginDate()); // Original unchanged
+    }
+
+    @Test
+    void testWithBeginDateToNull() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withBeginDate(null);
+        
+        assertNotSame(original, updated);
+        assertNull(updated.getBeginDate());
+        assertEquals(tomorrow, updated.getDueDate());
+    }
+
+    @Test
+    void testWithBeginDateThrowsWhenAfterDue() {
+        BeginAndDueDates dates = new BeginAndDueDates(today, tomorrow);
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> dates.withBeginDate(nextWeek)
+        );
+        
+        assertEquals("Begin date cannot be after due date", exception.getMessage());
+    }
+
+    @Test
+    void testWithBeginDateAllowsValidAfterDue() {
+        BeginAndDueDates original = new BeginAndDueDates(yesterday, null);
+        
+        BeginAndDueDates updated = original.withBeginDate(nextWeek);
+        
+        assertEquals(nextWeek, updated.getBeginDate());
+        assertNull(updated.getDueDate());
+    }
+
+    @Test
+    void testWithDueDateValid() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withDueDate(nextWeek);
+        
+        assertNotSame(original, updated);
+        assertEquals(today, updated.getBeginDate());
+        assertEquals(nextWeek, updated.getDueDate());
+        assertEquals(tomorrow, original.getDueDate()); // Original unchanged
+    }
+
+    @Test
+    void testWithDueDateToNull() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withDueDate(null);
+        
+        assertNotSame(original, updated);
+        assertEquals(today, updated.getBeginDate());
+        assertNull(updated.getDueDate());
+    }
+
+    @Test
+    void testWithDueDateThrowsWhenBeforeBegin() {
+        BeginAndDueDates dates = new BeginAndDueDates(tomorrow, nextWeek);
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> dates.withDueDate(today)
+        );
+        
+        assertEquals("Due date cannot be before begin date", exception.getMessage());
+    }
+
+    @Test
+    void testWithDueDateAllowsValidBeforeBegin() {
+        BeginAndDueDates original = new BeginAndDueDates(null, tomorrow);
+        
+        BeginAndDueDates updated = original.withDueDate(yesterday);
+        
+        assertNull(updated.getBeginDate());
+        assertEquals(yesterday, updated.getDueDate());
+    }
+
+    @Test
+    void testWithDatesValid() {
+        BeginAndDueDates original = new BeginAndDueDates(yesterday, today);
+        
+        BeginAndDueDates updated = original.withDates(today, nextWeek);
+        
+        assertNotSame(original, updated);
+        assertEquals(today, updated.getBeginDate());
+        assertEquals(nextWeek, updated.getDueDate());
+        assertEquals(yesterday, original.getBeginDate()); // Original unchanged
+        assertEquals(today, original.getDueDate());
+    }
+
+    @Test
+    void testWithDatesBothNull() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withDates(null, null);
+        
+        assertNotSame(original, updated);
+        assertNull(updated.getBeginDate());
+        assertNull(updated.getDueDate());
+    }
+
+    @Test
+    void testWithDatesSameDates() {
+        BeginAndDueDates original = new BeginAndDueDates(yesterday, yesterday);
+        
+        BeginAndDueDates updated = original.withDates(today, today);
+        
+        assertNotSame(original, updated);
+        assertEquals(today, updated.getBeginDate());
+        assertEquals(today, updated.getDueDate());
+    }
+
+    @Test
+    void testWithDatesThrowsWhenBeginAfterDue() {
+        BeginAndDueDates dates = new BeginAndDueDates(today, tomorrow);
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> dates.withDates(nextWeek, tomorrow)
+        );
+        
+        assertEquals("Begin date cannot be after due date", exception.getMessage());
+    }
+
+    @Test
+    void testWithDatesNullBeginValidDue() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withDates(null, nextWeek);
+        
+        assertNull(updated.getBeginDate());
+        assertEquals(nextWeek, updated.getDueDate());
+    }
+
+    @Test
+    void testWithDatesValidBeginNullDue() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        BeginAndDueDates updated = original.withDates(yesterday, null);
+        
+        assertEquals(yesterday, updated.getBeginDate());
+        assertNull(updated.getDueDate());
+    }
+
+    // Complex toString Tests
+    @Test
+    void testToStringComplexFormatting() {
+        BeginAndDueDates dates = new BeginAndDueDates(
+            LocalDate.of(2024, 12, 31),
+            LocalDate.of(2025, 1, 1)
+        );
+        
+        String result = dates.toString();
+        assertTrue(result.contains("BeginAndDueDates{"));
+        assertTrue(result.contains("beginDate=2024-12-31"));
+        assertTrue(result.contains("dueDate=2025-01-01"));
+        assertTrue(result.contains(", "));
+    }
+
+    @Test
+    void testToStringOnlyBeginDateFormatting() {
+        BeginAndDueDates dates = new BeginAndDueDates(
+            LocalDate.of(2024, 6, 15),
+            null
+        );
+        
+        String result = dates.toString();
+        assertEquals("BeginAndDueDates{beginDate=2024-06-15}", result);
+        assertFalse(result.contains(", "));
+        assertFalse(result.contains("dueDate"));
+    }
+
+    @Test
+    void testToStringOnlyDueDateFormatting() {
+        BeginAndDueDates dates = new BeginAndDueDates(
+            null,
+            LocalDate.of(2024, 6, 15)
+        );
+        
+        String result = dates.toString();
+        assertEquals("BeginAndDueDates{dueDate=2024-06-15}", result);
+        assertFalse(result.contains(", "));
+        assertFalse(result.contains("beginDate"));
+    }
+
+    @Test
+    void testToStringEmptyFormatting() {
+        BeginAndDueDates dates = new BeginAndDueDates(null, null);
+        
+        String result = dates.toString();
+        assertEquals("BeginAndDueDates{}", result);
+        assertFalse(result.contains("beginDate"));
+        assertFalse(result.contains("dueDate"));
+    }
+
+    // Additional Edge Cases
+    @Test
+    void testImmutableUpdateChaining() {
+        BeginAndDueDates original = new BeginAndDueDates(lastWeek, yesterday);
+        
+        BeginAndDueDates chained = original
+            .withDueDate(nextWeek)  // First extend due date to allow begin date update
+            .withBeginDate(today)   // Then update begin date
+            .withDates(tomorrow, nextWeek.plusDays(1));
+        
+        // Original unchanged
+        assertEquals(lastWeek, original.getBeginDate());
+        assertEquals(yesterday, original.getDueDate());
+        
+        // Final result correct
+        assertEquals(tomorrow, chained.getBeginDate());
+        assertEquals(nextWeek.plusDays(1), chained.getDueDate());
+    }
+
+    @Test
+    void testEqualsAndHashCodeConsistencyWithImmutableMethods() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        BeginAndDueDates copy = new BeginAndDueDates(today, tomorrow);
+        BeginAndDueDates fromWith = original.withDates(today, tomorrow);
+        
+        assertEquals(original, copy);
+        assertEquals(original, fromWith);
+        assertEquals(copy, fromWith);
+        
+        assertEquals(original.hashCode(), copy.hashCode());
+        assertEquals(original.hashCode(), fromWith.hashCode());
+    }
+
+    @Test
+    void testWithMethodsPreserveImmutability() {
+        BeginAndDueDates original = new BeginAndDueDates(today, tomorrow);
+        
+        // Multiple operations on same object
+        BeginAndDueDates result1 = original.withBeginDate(yesterday);
+        BeginAndDueDates result2 = original.withDueDate(nextWeek);
+        BeginAndDueDates result3 = original.withDates(null, null);
+        
+        // Original unchanged
+        assertEquals(today, original.getBeginDate());
+        assertEquals(tomorrow, original.getDueDate());
+        
+        // Each result different
+        assertNotEquals(result1, result2);
+        assertNotEquals(result2, result3);
+        assertNotEquals(result1, result3);
+    }
 }

@@ -13,7 +13,6 @@ public class EditTodaysGoalPresenter implements EditTodaysGoalOutputBoundary {
      */
     @Override
     public void prepareSuccessView(EditTodaysGoalOutputData outputData) {
-        System.out.println("SUCCESS: " + outputData.getMessage());
     }
 
     /**
@@ -22,7 +21,6 @@ public class EditTodaysGoalPresenter implements EditTodaysGoalOutputBoundary {
      */
     @Override
     public void prepareConfirmationView(EditTodaysGoalOutputData outputData) {
-        System.out.println("CONFIRM: " + outputData.getMessage());
     }
 
     /**

@@ -22,23 +22,12 @@ public class DeleteTaskInteractor implements DeleteTaskInputBoundary {
     public void execute(DeleteTaskInputData inputData) {
         String taskId = inputData.getTaskId();
         
-        // DEBUG: Log the task ID we're trying to delete
-        System.out.println("DEBUG: DeleteTaskInteractor - Attempting to delete task with ID: " + taskId);
 
         // Get the TaskAvailable (template) to check if it exists
         TaskAvailableInterf taskTemplate = dataAccess.getTaskAvailableById(taskId);
         
-        // DEBUG: Log whether we found the task
-        System.out.println("DEBUG: DeleteTaskInteractor - Task template found: " + (taskTemplate != null));
         
         if (taskTemplate == null) {
-            // DEBUG: Log all available tasks
-            System.out.println("DEBUG: DeleteTaskInteractor - Available tasks count: " + 
-                dataAccess.getAllAvailableTaskTemplates().size());
-            for (TaskAvailableInterf task : dataAccess.getAllAvailableTaskTemplates()) {
-                System.out.println("DEBUG: Available task ID: " + task.getId() + ", Name: " + task.getInfo().getName());
-            }
-            
             outputBoundary.prepareFailView("Task not found in Available Tasks");
             return;
         }
@@ -69,8 +58,6 @@ public class DeleteTaskInteractor implements DeleteTaskInputBoundary {
         // Delete the task completely
         boolean deleted = dataAccess.deleteTaskCompletely(taskId);
         
-        // DEBUG: Log deletion result
-        System.out.println("DEBUG: DeleteTaskInteractor - Deletion result: " + deleted);
 
         if (deleted) {
             String message = existsInToday ?

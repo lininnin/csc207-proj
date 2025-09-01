@@ -25,8 +25,6 @@ public class AddTaskToTodayController {
      * @param dueDate the due date (can be null)
      */
     public void execute(String taskId, Task.Priority priority, LocalDate dueDate) {
-        System.out.println("DEBUG [AddTaskToTodayController]: execute() called - taskId: " + taskId + 
-                          ", priority: " + priority + ", dueDate: " + dueDate);
         AddTaskToTodayInputData inputData = new AddTaskToTodayInputData(taskId, priority, dueDate);
         inputBoundary.execute(inputData);
     }
@@ -40,8 +38,6 @@ public class AddTaskToTodayController {
      * @param dueDate the due date (should be in the past for testing)
      */
     public void executeForTestingOverdue(String taskId, Task.Priority priority, LocalDate dueDate) {
-        System.out.println("DEBUG [AddTaskToTodayController]: executeForTestingOverdue() called - taskId: " + taskId + 
-                          ", priority: " + priority + ", dueDate: " + dueDate);
         AddTaskToTodayInputData inputData = new AddTaskToTodayInputData(taskId, priority, dueDate, true);
         inputBoundary.execute(inputData);
     }

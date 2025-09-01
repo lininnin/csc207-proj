@@ -89,15 +89,11 @@ public class InMemoryTodaySoFarDataAccess implements TodaySoFarDataAccessInterfa
                 // Get today's goals (not current/available goals)
                 // Today's goals are the ones that have been added to today's list
                 List<Goal> todayGoals = goalRepository.getTodayGoals();
-                System.out.println("DEBUG: InMemoryTodaySoFarDataAccess.getActiveGoals() returning " + 
-                                   (todayGoals != null ? todayGoals.size() : 0) + " goals");
                 return new ArrayList<>(todayGoals);
             } catch (Exception e) {
-                System.out.println("DEBUG: Error getting today's goals: " + e.getMessage());
                 return new ArrayList<>();
             }
         }
-        System.out.println("DEBUG: goalRepository is null in InMemoryTodaySoFarDataAccess");
         return new ArrayList<>();
     }
     

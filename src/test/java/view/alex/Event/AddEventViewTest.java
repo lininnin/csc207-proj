@@ -81,9 +81,9 @@ public class AddEventViewTest {
 
     @Test
     public void testAddEventFail() {
-        // 不设置 selectedName，相当于错误输入
+        // Clear the comboBox to ensure no selection
         JComboBox<String> comboBox = findComboBox();
-        comboBox.setSelectedItem(null);
+        comboBox.removeAllItems(); // Remove all items so getSelectedItem() returns null
 
         JButton addButton = findAddButton();
         addButton.doClick();
@@ -126,7 +126,9 @@ public class AddEventViewTest {
 
     private JLabel findMessageLabel() {
         for (Component c : view.getComponents()) {
-            if (c instanceof JLabel label && !label.getText().contains("Name")) {
+            if (c instanceof JLabel label && 
+                !label.getText().contains("Name") && 
+                !label.getText().contains("Add Today's Event")) {
                 return label;
             }
         }

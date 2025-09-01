@@ -56,7 +56,6 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
             todaySoFarController.refresh();
         }
         
-        System.out.println("DEBUG: MarkTaskCompletePresenter - Success: " + message);
     }
 
     @Override
@@ -72,6 +71,5 @@ public class MarkTaskCompletePresenter implements MarkTaskCompleteOutputBoundary
         todayTasksViewModel.setState(currentState);
         todayTasksViewModel.firePropertyChanged();
         
-        System.out.println("DEBUG: MarkTaskCompletePresenter - Error: " + error);
     }
 }

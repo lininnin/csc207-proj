@@ -78,45 +78,33 @@ public class MarkTaskCompleteInteractor implements MarkTaskCompleteInputBoundary
         try {
             // Get today's goals
             List<Goal> todayGoals = goalRepository.getTodayGoals();
-            System.out.println("DEBUG: Found " + todayGoals.size() + " today's goals");
             
             for (Goal goal : todayGoals) {
-                System.out.println("DEBUG: Checking goal: " + goal.getGoalInfo().getInfo().getName());
                 
                 // Check if this goal's target task matches the completed task
                 if (goal.getGoalInfo() == null) {
-                    System.out.println("DEBUG: Goal has null GoalInfo");
                 } else if (goal.getGoalInfo().getTargetTaskInfo() == null) {
-                    System.out.println("DEBUG: Goal has null TargetTaskInfo");
                 } else {
                     
                     String targetTaskName = goal.getGoalInfo().getTargetTaskInfo().getName();
                     String completedTaskName = task.getInfo().getName();
                     
-                    System.out.println("DEBUG: Goal target task: '" + targetTaskName + "'");
-                    System.out.println("DEBUG: Completed task: '" + completedTaskName + "'");
                     
                     // Match by task name (could also match by ID if available)
                     if (targetTaskName != null && targetTaskName.equals(completedTaskName)) {
-                        System.out.println("DEBUG: MATCH FOUND! Updating goal progress.");
                         // Update the goal's progress
                         int currentProgress = goal.getCurrentProgress();
                         if (isCompleted) {
                             // Increment progress if task is completed
                             goal.setCurrentProgress(currentProgress + 1);
-                            System.out.println("DEBUG: Updated goal '" + goal.getGoalInfo().getInfo().getName() + 
-                                             "' progress to " + (currentProgress + 1));
                         } else if (currentProgress > 0) {
                             // Decrement progress if task is marked incomplete (but don't go below 0)
                             goal.setCurrentProgress(currentProgress - 1);
-                            System.out.println("DEBUG: Updated goal '" + goal.getGoalInfo().getInfo().getName() + 
-                                             "' progress to " + (currentProgress - 1));
                         }
                         
                         // Save the updated goal
                         goalRepository.save(goal);
                     } else {
-                        System.out.println("DEBUG: No match - task names don't match");
                     }
                 }
             }

@@ -149,7 +149,6 @@ public class AddWellnessLogView extends JPanel implements PropertyChangeListener
 
         // Submit listener
         submitButton.addActionListener(e -> {
-            System.out.println("Submit button clicked!");
             MoodLabelInterf mood = selectedMoodLabel;
 
             Levels stress = (Levels) stressComboBox.getSelectedItem();

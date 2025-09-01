@@ -43,7 +43,6 @@ public class RemoveFromTodayPresenter implements RemoveFromTodayOutputBoundary {
         // Also refresh Today So Far panel to update completion rate
         if (todaySoFarController != null) {
             todaySoFarController.refresh();
-            System.out.println("DEBUG: Triggered Today So Far refresh after removing task from today");
         }
     }
 

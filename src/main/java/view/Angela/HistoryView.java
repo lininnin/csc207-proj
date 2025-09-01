@@ -349,17 +349,12 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
     }
     
     private void updateHistoricalData(ViewHistoryState state) {
-        System.out.println("DEBUG: updateHistoricalData called, hasData = " + state.hasData());
         
         if (!state.hasData()) {
-            System.out.println("DEBUG: No data, showing empty state");
             showEmptyState();
             return;
         }
         
-        System.out.println("DEBUG: Goals count = " + state.getGoalProgress().size());
-        System.out.println("DEBUG: Completed tasks count = " + state.getCompletedTasks().size());
-        System.out.println("DEBUG: Completion rate = " + state.getTaskCompletionRate());
         
         // Update TodaySoFar view model with historical data
         TodaySoFarState soFarState = new TodaySoFarState();
@@ -382,14 +377,9 @@ public class HistoryView extends JPanel implements PropertyChangeListener {
         soFarState.setCompletedItems(completedItems);
         soFarState.setCompletionRate(state.getTaskCompletionRate());
         soFarState.setWellnessEntries(new ArrayList<>()); // Empty for Angela's scope
-        
-        System.out.println("DEBUG: Setting TodaySoFar state with " + goalProgressList.size() + " goals, " + 
-                          completedItems.size() + " completed items, " + state.getTaskCompletionRate() + "% completion");
-        
         todaySoFarViewModel.setState(soFarState);
         todaySoFarViewModel.firePropertyChanged();
         
-        System.out.println("DEBUG: TodaySoFar view model updated and property change fired");
         
         // Update historical tasks panel
         updateHistoricalTasksPanel(state.getTodaysTasks(), state.getCompletedTasks());

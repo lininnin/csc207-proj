@@ -24,7 +24,6 @@ public class EditTodayTaskInteractor implements EditTodayTaskInputBoundary {
 
     @Override
     public void execute(EditTodayTaskInputData inputData) {
-        System.out.println("DEBUG: EditTodayTaskInteractor.execute - taskId: " + inputData.getTaskId());
         
         // Validate input
         if (inputData.getTaskId() == null || inputData.getTaskId().trim().isEmpty()) {
@@ -71,7 +70,6 @@ public class EditTodayTaskInteractor implements EditTodayTaskInputBoundary {
                 
                 outputBoundary.prepareSuccessView(outputData);
                 
-                System.out.println("DEBUG: Task updated successfully - " + message);
             } else {
                 outputBoundary.prepareFailView("Failed to update task");
             }

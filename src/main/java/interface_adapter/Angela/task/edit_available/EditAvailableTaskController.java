@@ -25,8 +25,6 @@ public class EditAvailableTaskController {
      */
     public void execute(String taskId, String name, String description, 
                         String categoryId, boolean isOneTime) {
-        System.out.println("DEBUG: EditAvailableTaskController.execute called - taskId: " + taskId + 
-                         ", name: " + name + ", isOneTime: " + isOneTime);
         
         EditAvailableTaskInputData inputData = new EditAvailableTaskInputData(
                 taskId, name, description, categoryId, isOneTime
